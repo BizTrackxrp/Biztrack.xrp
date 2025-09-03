@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const connectBtn = document.getElementById('connect-btn');
   if (connectBtn) {
     // Initialize XummPkce with your public API key and optional redirect URL
-    const xumm = new XummPkce('YOUR_PUBLIC_API_KEY', {
+    const xumm = new XummPkce('b2d17c82-172d-46d8-8940-5ca385c26ad9', {
       redirectUrl: window.location.origin,
     });
 

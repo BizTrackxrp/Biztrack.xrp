@@ -338,3 +338,21 @@ footer {
     align-items: stretch;
   }
 }
+
+/* Connect Wallet Button */
+.connect-btn {
+  background: #0a65ff;
+  color: #ffffff;
+  border: 2px solid #0a65ff;
+  border-radius: 30px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.connect-btn:hover {
+  background: #094eda;
+  border-color: #094eda;
+}

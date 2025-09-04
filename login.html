@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizTrack – Supply Chain Tracker</title>
+  <style>
+    /* Basic styling for the BizTrack demo page */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    nav .logo {
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+    nav .right button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .container {
+      padding: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    form label {
+      display: block;
+      margin-top: 0.5rem;
+    }
+    form input {
+      width: 100%;
+      padding: 0.4rem;
+      margin-top: 0.2rem;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form button {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #246b28;
+    }
+    .hidden {
+      display: none;
+    }
+    .error {
+      color: #c62828;
+      margin-top: 0.5rem;
+    }
+    .success {
+      color: #2e7d32;
+      margin-top: 0.5rem;
+    }
+    a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    /* Responsive design */
+    @media (max-width: 600px) {
+      nav .logo {
+        font-size: 1rem;
+      }
+      nav .right button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">BizTrack</div>
+    <div class="right">
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign&nbsp;Up</button>
+      <button id="logoutBtn" class="hidden">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Login form -->
+    <div id="loginSection" class="hidden">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>Email:
+          <input type="email" id="loginEmail" required />
+        </label>
+        <label>Password:
+          <input type="password" id="loginPassword" required />
+        </label>
+        <!-- Two-factor field appears only when needed -->
+        <div id="twofaDiv" class="hidden">
+          <label>2FA&nbsp;Code:
+            <input type="text" id="twofaCode" pattern="\d{6}" />
+          </label>
+        </div>
+        <button type="submit">Login</button>
+        <div id="loginError" class="error"></div>
+      </form>
+      <p><a href="#" id="forgotPasswordLink">Forgot password?</a></p>
+    </div>
+
+    <!-- Sign‑up form -->
+    <div id="signupSection" class="hidden">
+      <h2>Create account</h2>
+      <form id="signupForm">
+        <label>Company&nbsp;name:
+          <input type="text" id="signupCompany" required />
+        </label>
+        <label>Email:
+          <input type="email" id="signupEmail" required />
+        </label>
+        <label>Password:
+          <input type="password" id="signupPassword" required />
+        </label>
+        <button type="submit">Sign&nbsp;Up</button>
+        <div id="signupError" class="error"></div>
+      </form>
+    </div>
+
+    <!-- Password reset request -->
+    <div id="resetRequestSection" class="hidden">
+      <h2>Reset password</h2>
+      <form id="resetRequestForm">
+        <label>Enter your email to receive a verification code:
+          <input type="email" id="resetEmail" required />
+        </label>
+        <button type="submit">Send code</button>
+        <div id="resetRequestMsg"></div>
+      </form>
+    </div>
+
+    <!-- Code verification -->
+    <div id="codeVerifySection" class="hidden">
+      <h2>Enter verification code</h2>
+      <form id="codeVerifyForm">
+        <label>Verification&nbsp;code:
+          <input type="text" id="verificationCodeInput" required />
+        </label>
+        <button type="submit">Verify</button>
+        <div id="codeVerifyMsg" class="error"></div>
+      </form>
+    </div>
+
+    <!-- Set new password -->
+    <div id="newPasswordSection" class="hidden">
+      <h2>Set new password</h2>
+      <form id="newPasswordForm">
+        <label>New password:
+          <input type="password" id="newPassword1" required />
+        </label>
+        <label>Confirm password:
+          <input type="password" id="newPassword2" required />
+        </label>
+        <button type="submit">Reset password</button>
+        <div id="newPasswordMsg" class="error"></div>
+      </form>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardSection" class="hidden">
+      <h2>Welcome,&nbsp;<span id="userEmailSpan"></span></h2>
+      <!-- Settings for enabling/disabling 2FA -->
+      <div id="settingsSection">
+        <h3>Settings</h3>
+        <label><input type="checkbox" id="enable2FA" />&nbsp;Enable&nbsp;2FA</label>
+        <p id="twofaInfo" class="success"></p>
+      </div>
+      <p>This is a demo interface showing how businesses might log into BizTrack to manage their supply-chain NFTs on XRPL. In a full product, you could show additional menus here to mint product IDs, view tracking events or manage subscription payments.</p>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      /*
+       * A simple demonstration of account registration, login, password reset and 2FA
+       * using localStorage for data persistence. This is not production code.
+       */
+      const loginBtn = document.getElementById('loginBtn');
+      const signupBtn = document.getElementById('signupBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const loginSection = document.getElementById('loginSection');
+      const signupSection = document.getElementById('signupSection');
+      const resetRequestSection = document.getElementById('resetRequestSection');
+      const codeVerifySection = document.getElementById('codeVerifySection');
+      const newPasswordSection = document.getElementById('newPasswordSection');
+      const dashboardSection = document.getElementById('dashboardSection');
+
+      let currentUser = null;
+      let resetEmail = null;
+      let generatedCode = null;
+
+      function show(section) {
+        // Hide all sections then display the selected one
+        [loginSection, signupSection, resetRequestSection, codeVerifySection, newPasswordSection, dashboardSection].forEach(s => {
+          if (s) s.classList.add('hidden');
+        });
+        if (section) section.classList.remove('hidden');
+      }
+
+      // Event handlers for navigation
+      loginBtn.addEventListener('click', () => {
+        show(loginSection);
+      });
+      signupBtn.addEventListener('click', () => {
+        show(signupSection);
+      });
+      logoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        logoutBtn.classList.add('hidden');
+        loginBtn.classList.remove('hidden');
+        signupBtn.classList.remove('hidden');
+        show(loginSection);
+      });
+
+      // Helper to get stored users
+      function loadUsers() {
+        return JSON.parse(localStorage.getItem('users') || '[]');
+      }
+      // Helper to save users
+      function saveUsers(users) {
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+
+      // Password hashing using Web Crypto API (SHA-256)
+      async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        // Convert buffer to hex string
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      }
+
+      // Sign‑up handler
+      document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const company = document.getElementById('signupCompany').value.trim();
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+        const password = document.getElementById('signupPassword').value;
+        const users = loadUsers();
+        if (users.some(u => u.email === email)) {
+          document.getElementById('signupError').textContent = 'Email already registered.';
+          return;
+        }
+        // Hash the password before storing
+        const hashed = await hashPassword(password);
+        users.push({ company, email, password: hashed, twoFAEnabled: false });
+        saveUsers(users);
+        document.getElementById('signupError').textContent = '';
+        alert('Account created. Please login.');
+        show(loginSection);
+      });
+
+      // Login handler
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const code = document.getElementById('twofaCode').value;
+        const users = loadUsers();
+        // Hash the entered password before comparing
+        const hashed = await hashPassword(password);
+        const user = users.find(u => u.email === email && u.password === hashed);
+        if (!user) {
+          document.getElementById('loginError').textContent = 'Invalid email or password.';
+          return;
+        }
+        // Check if 2FA is enabled
+        if (user.twoFAEnabled) {
+          if (!generatedCode || code !== generatedCode) {
+            document.getElementById('loginError').textContent = 'Enter the 2FA code sent to your email.';
+            document.getElementById('twofaDiv').classList.remove('hidden');
+            // Generate a code only once per login attempt
+            if (!generatedCode) {
+              generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+              // In a real system, the code would be emailed to the user. Here we display it for demonstration.
+              alert('2FA code: ' + generatedCode);
+            }
+            return;
+          }
+        }
+        // Login successful
+        currentUser = user;
+        document.getElementById('loginError').textContent = '';
+        loginBtn.classList.add('hidden');
+        signupBtn.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        document.getElementById('userEmailSpan').textContent = currentUser.email;
+        document.getElementById('enable2FA').checked = currentUser.twoFAEnabled;
+        generatedCode = null;
+        document.getElementById('twofaCode').value = '';
+        document.getElementById('twofaDiv').classList.add('hidden');
+        show(dashboardSection);
+      });
+
+      // Forgot password link
+      document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        show(resetRequestSection);
+      });
+
+      // Handle password reset request
+      document.getElementById('resetRequestForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value.trim().toLowerCase();
+        const users = loadUsers();
+        if (!users.some(u => u.email === email)) {
+          document.getElementById('resetRequestMsg').textContent = 'No account with that email.';
+          return;
+        }
+        resetEmail = email;
+        generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+        // In a real implementation, email the code. Here we display it.
+        document.getElementById('resetRequestMsg').textContent = 'Verification code sent to your email: ' + generatedCode;
+        show(codeVerifySection);
+      });
+
+      // Code verification handler
+      document.getElementById('codeVerifyForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = document.getElementById('verificationCodeInput').value;
+        if (code !== generatedCode) {
+          document.getElementById('codeVerifyMsg').textContent = 'Invalid code.';
+          return;
+        }
+        document.getElementById('codeVerifyMsg').textContent = '';
+        show(newPasswordSection);
+      });
+
+      // New password submission
+      document.getElementById('newPasswordForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const p1 = document.getElementById('newPassword1').value;
+        const p2 = document.getElementById('newPassword2').value;
+        if (p1 !== p2) {
+          document.getElementById('newPasswordMsg').textContent = 'Passwords do not match.';
+          return;
+        }
+        const users = loadUsers();
+        const idx = users.findIndex(u => u.email === resetEmail);
+        if (idx === -1) {
+          document.getElementById('newPasswordMsg').textContent = 'User not found.';
+          return;
+        }
+        // Hash the new password before saving
+        (async () => {
+          const hashedNew = await hashPassword(p1);
+          users[idx].password = hashedNew;
+          saveUsers(users);
+          document.getElementById('newPasswordMsg').textContent = '';
+          resetEmail = null;
+          generatedCode = null;
+          alert('Password updated. Please login.');
+          show(loginSection);
+        })();
+      });
+
+      // Toggle 2FA setting
+      document.getElementById('enable2FA').addEventListener('change', (e) => {
+        const checked = e.target.checked;
+        if (!currentUser) return;
+        const users = loadUsers();
+        const idx = users.findIndex(u => u.email === currentUser.email);
+        if (idx !== -1) {
+          users[idx].twoFAEnabled = checked;
+          saveUsers(users);
+          currentUser.twoFAEnabled = checked;
+          document.getElementById('twofaInfo').textContent = checked ? '2FA enabled. Next login will require a verification code.' : '2FA disabled.';
+        }
+      });
+
+      // Show login section on first load
+      show(loginSection);
+    })();
+  </script>
+</body>
+</html>

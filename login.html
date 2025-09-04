@@ -284,12 +284,23 @@
         const password = document.getElementById('loginPassword').value;
         const code = document.getElementById('twofaCode').value;
         const users = loadUsers();
-        // Hash the entered password before comparing
-        const hashed = await hashPassword(password);
-        const user = users.find(u => u.email === email && u.password === hashed);
-        if (!user) {
-          document.getElementById('loginError').textContent = 'Invalid email or password.';
-          return;
+// Hash the entered password before comparing
+const hashed = await hashPassword(password);
+// Try to find a user with a hashed password match
+let user = users.find(u => u.email === email && u.password === hashed);
+// Fallback: if not found, look for a matching plain-text password
+if (!user) {
+  const userPlain = users.find(u => u.email === email && u.password === password);
+  if (userPlain) {
+    userPlain.password = hashed;
+    saveUsers(users);
+    user = userPlain;
+  }
+}
+if (!user) {
+  document.getElementById('loginError').textContent = 'Invalid email or password.';
+  return;
+}
         }
         // Check if 2FA is enabled
         if (user.twoFAEnabled) {

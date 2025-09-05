@@ -46,7 +46,7 @@ html, body {
 }
 
 .navbar .logo {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
@@ -181,4 +181,46 @@ html, body {
     margin: 1rem;
     padding: 1rem;
   }
+}
+
+/* Dashboard-specific styles */
+.d.dashboard-container {
+/ * Dashboard-specific styles */
+- .dashboard-container {
+    
+    max-width: 960px;
+    
+    margin: 2rem auto;
+  padding: 2rem;
+}
+
+
+.dashboard-container h2 {
+  font-size: 2rem;
+  margin-top: 0;
+}
+
+.dashboard-container h3 {
+  font-size: 1.4rem;
+  margin-top: 0;
+}
+
+.dashboard-container p,
+.dashboard-container li {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.batch-form,
+.history-box {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+#batchList li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
 }

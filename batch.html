@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Details</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; }
+    nav { display:flex; justify-content:space-between; align-items:center; background-color:#f5f5f5; padding:1rem; border-bottom:1px solid #ddd; }
+    nav .logo { font-weight:bold; font-size:1.3rem; }
+    nav .right button { margin-left:0.5rem; padding:0.5rem 1rem; font-size:0.9rem; cursor:pointer; }
+    .container { padding:1rem; max-width:800px; margin:0 auto; }
+    #eventsList li { margin-bottom:0.5rem; }
+    #addEventSection label { display:block; margin-top:0.5rem; }
+    #addEventSection input { width:100%; padding:0.4rem; margin-top:0.2rem; box-sizing:border-box; border:1px solid #ccc; border-radius:4px; }
+    button { margin-top:1rem; padding:0.6rem 1rem; background-color:#2e7d32; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    button:hover { background-color:#246b28; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">BizTrack</div>
+    <div class="right">
+      <button id="navDashboard">Dashboard</button>
+      <button id="navSettings">Settings</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 id="batchTitle">Batch</h2>
+    <p><strong>Quantity:</strong> <span id="batchQty"></span></p>
+    <p><strong>Status:</strong> <span id="batchStatus"></span></p>
+    <div id="qrContainer" style="margin:1rem 0;"></div>
+    <button id="downloadQrBtn">Download QR Code</button>
+    <h3>Events</h3>
+    <ul id="eventsList"></ul>
+    <div id="addEventSection">
+      <h4>Add Event</h4>
+      <label>Note:
+        <input type="text" id="eventNote" placeholder="Enter note" />
+      </label>
+      <label>Location: <span id="locationDisplay"></span>
+        <button id="captureLocationBtn" type="button">Capture Location</button>
+      </label>
+      <button id="addEventBtn">Add Event</button>
+    </div>
+    <button id="finalizeBtn">Finalize Batch</button>
+  </div>
+<script>
+function loadCurrentUser() {
+  try { return JSON.parse(localStorage.getItem('currentUser')); } catch(e) { return null; }
+}
+function loadBatches() {
+  try { return JSON.parse(localStorage.getItem('batches')) || []; } catch(e) { return []; }
+}
+function saveBatches(batches) {
+  localStorage.setItem('batches', JSON.stringify(batches));
+}
+function getBatchByCode(code) {
+  return loadBatches().find(b => b.code === code);
+}
+function updateBatch(updated) {
+  const batches = loadBatches();
+  const idx = batches.findIndex(b => b.code === updated.code);
+  if (idx !== -1) {
+    batches[idx] = updated;
+    saveBatches(batches);
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const user = loadCurrentUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  document.getElementById('navDashboard').onclick = () => { window.location.href = 'dashboard.html'; };
+  document.getElementById('navSettings').onclick = () => { window.location.href = 'settings.html'; };
+  document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; };
+
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (!code) {
+    alert('No batch specified');
+    return;
+  }
+  let batch = getBatchByCode(code);
+  if (!batch) {
+    alert('Batch not found');
+    return;
+  }
+  if (!Array.isArray(batch.events)) batch.events = [];
+  if (batch.finalized === undefined) batch.finalized = false;
+  document.getElementById('batchTitle').textContent = batch.name;
+  document.getElementById('batchQty').textContent = batch.quantity;
+  document.getElementById('batchStatus').textContent = batch.finalized ? 'Finalized' : 'In Progress';
+  const qrDiv = document.getElementById('qrContainer');
+  new QRCode(qrDiv, { text: batch.code, width: 200, height: 200 });
+
+  function displayEvents() {
+    const list = document.getElementById('eventsList');
+    list.innerHTML = '';
+    if (batch.events.length === 0) {
+      const li = document.createElement('li');
+      li.textContent = 'No events yet.';
+      list.appendChild(li);
+      return;
+    }
+    batch.events.forEach(ev => {
+      const li = document.createElement('li');
+      const date = new Date(ev.timestamp);
+      let text = date.toLocaleString();
+      if (ev.location) {
+        text += ' \u2013 (' + ev.location.lat.toFixed(5) + ', ' + ev.location.lon.toFixed(5) + ')';
+      }
+      if (ev.note) {
+        text += ' \u2013 ' + ev.note;
+      }
+      li.textContent = text;
+      list.appendChild(li);
+    });
+  }
+  displayEvents();
+  let capturedLocation = null;
+  document.getElementById('captureLocationBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation not supported');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition((pos) => {
+      capturedLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      document.getElementById('locationDisplay').textContent = capturedLocation.lat.toFixed(5) + ', ' + capturedLocation.lon.toFixed(5);
+    }, (err) => {
+      alert('Unable to get location: ' + err.message);
+    });
+  });
+  document.getElementById('addEventBtn').addEventListener('click', () => {
+    if (batch.finalized) {
+      alert('This batch is finalized and cannot be updated.');
+      return;
+    }
+    const note = document.getElementById('eventNote').value.trim();
+    const ev = {
+      timestamp: Date.now(),
+      note: note || '',
+      location: capturedLocation ? { lat: capturedLocation.lat, lon: capturedLocation.lon } : null
+    };
+    batch.events.push(ev);
+    updateBatch(batch);
+    displayEvents();
+    document.getElementById('eventNote').value = '';
+    capturedLocation = null;
+    document.getElementById('locationDisplay').textContent = '';
+  });
+  document.getElementById('finalizeBtn').addEventListener('click', () => {
+    if (batch.finalized) {
+      alert('Batch already finalized.');
+      return;
+    }
+    if (confirm('Are you sure you want to finalize this batch? No further events can be added.')) {
+      batch.finalized = true;
+      updateBatch(batch);
+      document.getElementById('batchStatus').textContent = 'Finalized';
+      document.getElementById('addEventSection').classList.add('hidden');
+      document.getElementById('finalizeBtn').classList.add('hidden');
+    }
+  });
+  if (batch.finalized) {
+    document.getElementById('addEventSection').classList.add('hidden');
+    document.getElementById('finalizeBtn').classList.add('hidden');
+  }
+  document.getElementById('downloadQrBtn').addEventListener('click', () => {
+    const img = qrDiv.getElementsByTagName('img')[0];
+    if (!img) {
+      alert('QR code not ready.');
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = img.src;
+    link.download = batch.name + '-qr.png';
+    link.click();
+  });
+});
+</script>
+</body>
+</html>

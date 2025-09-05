@@ -184,9 +184,7 @@ html, body {
 }
 
 /* Dashboard-specific styles */
-.d.dashboard-container {
-/ * Dashboard-specific styles */
-- .dashboard-container {
+.dashboard-container {
     
     max-width: 960px;
     

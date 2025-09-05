@@ -63,12 +63,23 @@
     form button:hover, button:hover {
       background-color: #246b28;
     }
+    /* Search input styling */
+    #searchInput {
+      margin-top: 1rem;
+      padding: 0.4rem;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <nav>
     <div class="logo">BizTrack</div>
     <div class="right">
+      <!-- Settings button added here -->
+      <button id="settingsBtn">Settings</button>
       <button id="logoutBtn">Logout</button>
     </div>
   </nav>
@@ -78,6 +89,8 @@
     <div id="dashboardMain">
       <button id="createBatchBtn">Create New Batch</button>
       <h3>History</h3>
+      <!-- Search input for filtering batches -->
+      <input type="text" id="searchInput" placeholder="Search batch name...">
       <ul id="historyList"></ul>
     </div>
     <div id="createBatchSection" class="hidden">
@@ -113,19 +126,32 @@
     function saveBatches(batches) {
       localStorage.setItem('batches', JSON.stringify(batches));
     }
-    function displayHistory() {
+    /**
+     * Display history of batches.
+     * Accepts an optional filter string to match batch names.
+     */
+    function displayHistory(filter = '') {
       const list = document.getElementById('historyList');
       const batches = loadBatches();
       list.innerHTML = '';
-      if (!batches || batches.length === 0) {
+      let filtered = batches;
+      if (filter) {
+        const lower = filter.toLowerCase();
+        filtered = batches.filter(b => (b.name || '').toLowerCase().includes(lower));
+      }
+      if (!filtered || filtered.length === 0) {
         const li = document.createElement('li');
         li.textContent = 'No history available.';
         list.appendChild(li);
         return;
       }
-      batches.forEach((batch) => {
+      filtered.forEach((batch) => {
         const li = document.createElement('li');
-        li.textContent = batch.name + ' – ' + batch.quantity + ' items';
+        const a = document.createElement('a');
+        a.href = 'batch.html?code=' + encodeURIComponent(batch.code);
+        // Show finalized status in the text
+        a.textContent = `${batch.name} – ${batch.quantity} items${batch.finalized ? ' (Finalized)' : ''}`;
+        li.appendChild(a);
         list.appendChild(li);
       });
     }
@@ -141,6 +167,7 @@
       const generateBtn = document.getElementById('generateBtn');
       const saveBatchBtn = document.getElementById('saveBatchBtn');
       const cancelBatchBtn = document.getElementById('cancelBatchBtn');
+      const searchInput = document.getElementById('searchInput');
       let qrCodeObj = null;
       createBtn.addEventListener('click', () => {
         dashboardMain.classList.add('hidden');
@@ -157,7 +184,8 @@
         const qrDiv = document.getElementById('qrcode');
         qrDiv.innerHTML = '';
         const payload = name + '-' + Date.now();
-        qrCodeObj = { name: name, quantity: qty, code: payload };
+        // Include finalized and events fields for later tracking
+        qrCodeObj = { name: name, quantity: qty, code: payload, finalized: false, events: [] };
         new QRCode(qrDiv, {
           text: payload,
           width: 200,
@@ -178,7 +206,7 @@
         saveBatchBtn.classList.add('hidden');
         createSection.classList.add('hidden');
         dashboardMain.classList.remove('hidden');
-        displayHistory();
+        displayHistory(searchInput.value.trim());
       });
       cancelBatchBtn.addEventListener('click', () => {
         // reset
@@ -190,10 +218,21 @@
         createSection.classList.add('hidden');
         dashboardMain.classList.remove('hidden');
       });
+      // Logout handler
       document.getElementById('logoutBtn').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'login.html';
       });
+      // Settings button navigation
+      document.getElementById('settingsBtn').addEventListener('click', () => {
+        window.location.href = 'settings.html';
+      });
+      // Search input listener
+      searchInput.addEventListener('input', () => {
+        const filter = searchInput.value.trim();
+        displayHistory(filter);
+      });
+      // Initially display history
       displayHistory();
     });
   </script>

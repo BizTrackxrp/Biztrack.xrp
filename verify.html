@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizTrack.xrp – Verify Product</title>
-  <link href="https ://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Product – BizTrack.xrp</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <nav class="navbar">
       <div class="logo">BizTrack.xrp</div>
-      <input type="checkbox" id="menu-toggle" />
-      <label for="menu-toggle" class="hamburger">
-        <span></span><span></span><span></span>
-      </label>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="business.html">For&nbsp;Businesses</a></li>
-        <li><a href="verify.html" class="active">Verify&nbsp;Product</a></li>
-                <li><button id="connect-btn" class="connect-btn">Connect Wallet</button></li>
-      </ul>
-    </nav>
-  </header>
-  <main class="container verify-page">
-    <section class="verify-intro">
-      <h1>Verify a Product</h1>
-      <p>Enter a product ID (the string encoded in the QR code) to see its on‑chain history and authenticity. In a real deployment, this page is automatically loaded when a customer scans the QR code.</p>
-      <div class="verify-form">
-        <input type="text" id="product-id-input" placeholder="Enter Product ID" />
-        <button id="verify-button" class="btn primary">Verify</button>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="business.html">For Businesses</a>
+        <a href="verify.html" class="active">Verify Product</a>
+        <a href="login.html">Login</a>
+        <a href="#" id="connectWalletLink">Connect Wallet</a>
       </div>
-      <div id="verification-result" class="verification-result"></div>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2025 BizTrack.xrp – Empowering consumers with transparency.</p>
-  </footer>
-  <script src="js/verify.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/xumm-oauth2-pkce@2.8.7/dist/index.umd.js"></script>
-   <script src="js/wallet.js"></scrpt>
-</body>
+    </nav>
+
+    <div style="max-width:800px; margin:2rem auto; text-align:center;">
+      <h2>Verify a Product’s Authenticity</h2>
+      <p>
+        Enter the product ID or scan the QR code to retrieve the on‑chain record
+        of a product. You'll be shown its history, authenticity and
+        sustainability metrics.
+      </p>
+      <div class="form-group" style="max-width:400px; margin:1rem auto;">
+        <label for="verifyId">Product ID</label>
+        <input id="verifyId" type="text" />
+      </div>
+      <button class="btn" id="verifyBtn">Verify</button>
+      <p id="verifyMsg" style="color:#c00; margin-top:0.5rem;"></p>
+      <div id="verifyResult" style="margin-top:1.5rem;"></div>
+    </div>
+
+    <script src="js/verify.js"></script>
+    <script src="js/wallet.js"></script>
+  </body>
 </html>

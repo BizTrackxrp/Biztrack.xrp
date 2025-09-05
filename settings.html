@@ -1,287 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BizTrack - Settings</title>
-<style>
-/* Basic styles similar to other pages */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f5f5f5;
-  padding: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-nav .logo {
-  font-weight: bold;
-  font-size: 1.3rem;
-}
-nav .right a {
-  margin-left: 1rem;
-  text-decoration: none;
-  color: #1976d2;
-}
-.container {
-  padding: 1rem;
-  max-width: 800px;
-  margin: auto;
-}
-/* Tab styles */
-.tabs {
-  display: flex;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-.tabs button {
-  background: none;
-  border: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.tabs button.active {
-  border-bottom: 2px solid #1976d2;
-  font-weight: bold;
-}
-.section {
-  display: none;
-}
-.section.active {
-  display: block;
-}
-input[type="text"], input[type="password"], input[type="email"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-button.save {
-  margin-top: 0.5rem;
-}
-.card {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-.card.selected {
-  border-color: #1976d2;
-}
-</style>
-</head>
-<body>
-<nav>
-  <div class="logo">BizTrack</div>
-  <div class="right">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="settings.html">Settings</a>
-    <a href="#" id="logoutLink">Logout</a>
-  </div>
-</nav>
-<div class="container">
-  <h2>Settings</h2>
-  <div class="tabs">
-    <button data-tab="subscription" class="active">Subscription</button>
-    <button data-tab="account">Account</button>
-    <button data-tab="billing">Billing</button>
-    <button data-tab="cancel">Cancel</button>
-    <button data-tab="legal">Legal</button>
-  </div>
-  <div id="subscription" class="section active">
-    <h3>Choose your plan</h3>
-    <div class="card" data-plan="starter">
-      <h4>Starter (Pay per use)</h4>
-      <p>Up to 2,500 events per month</p>
-      <p>Basic dashboard & tracking</p>
-      <p>Email support</p>
-      <button class="choosePlan">Select Starter</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings – BizTrack.xrp</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">BizTrack.xrp</div>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="business.html">For Businesses</a>
+        <a href="verify.html">Verify Product</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="connectWalletLink">Connect Wallet</a>
+        <a href="login.html" id="logoutLink">Logout</a>
+      </div>
+    </nav>
+
+    <div class="settings-container">
+      <h2>Account Settings</h2>
+      <p>Manage your security settings below.</p>
+      <div style="margin-top:1rem;">
+        <label>
+          Enable 2FA
+          <span class="toggle-switch">
+            <input type="checkbox" id="toggle2fa" />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+      <div id="2faSetup" style="display:none; margin-top:1.5rem;">
+        <p>
+          Scan this QR code with your authenticator app or copy the code below.
+          After scanning, enter the 6‑digit code from your app to verify.
+        </p>
+        <div class="qr-code">
+          <img id="qrImage" src="" alt="2FA QR Code" />
+          <div id="secretContainer" style="font-family: monospace; word-break: break-all; margin-top:0.5rem;"></div>
+        </div>
+        <div class="form-group">
+          <label for="verifyTotp">Enter code from authenticator</label>
+          <input id="verifyTotp" type="text" maxlength="6" placeholder="000000" />
+        </div>
+        <button class="btn" id="verifyTotpBtn">Verify &amp; Enable</button>
+        <p id="verifyMsg" style="color:#c00; margin-top:0.5rem;"></p>
+      </div>
     </div>
-    <div class="card" data-plan="growth">
-      <h4>Growth ($2000/month)</h4>
-      <p>Up to 25,000 events per month</p>
-      <p>Advanced analytics & reporting</p>
-      <p>API access for ERP/CRM integration</p>
-      <p>Priority support</p>
-      <button class="choosePlan">Select Growth</button>
-    </div>
-    <div class="card" data-plan="enterprise">
-      <h4>Enterprise (Custom pricing)</h4>
-      <p>Unlimited events</p>
-      <p>Compliance-ready audit trail</p>
-      <p>Dedicated account manager</p>
-      <p>IoT/RFID integration</p>
-      <button class="choosePlan">Select Enterprise</button>
-    </div>
-    <p id="currentPlanInfo"></p>
-  </div>
-  <div id="account" class="section">
-    <h3>Account Settings</h3>
-    <label>Email</label>
-    <input type="email" id="accountEmail" disabled>
-    <label>Business Name</label>
-    <input type="text" id="accountBusiness">
-    <label>Personal Name</label>
-    <input type="text" id="accountName">
-    <label>New Password</label>
-    <input type="password" id="accountPassword">
-    <label><input type="checkbox" id="account2fa"> Enable 2FA</label>
-    <button id="saveAccount" class="save">Save Account</button>
-  </div>
-  <div id="billing" class="section">
-    <h3>Billing</h3>
-    <div id="cardsContainer"></div>
-    <h4>Add new card</h4>
-    <input type="text" id="newCardNumber" placeholder="Card number">
-    <input type="text" id="newCardExp" placeholder="Expiry (MM/YY)">
-    <input type="text" id="newCardCvc" placeholder="CVC">
-    <button id="addCard">Add Card</button>
-  </div>
-  <div id="cancel" class="section">
-    <h3>Cancel Subscription</h3>
-    <p>If you cancel, service will remain active until the end of your billing cycle.</p>
-    <button id="cancelService">Cancel Service</button>
-  </div>
-  <div id="legal" class="section">
-    <h3>Terms of Service & Privacy Policy</h3>
-    <p>Terms of Service and Privacy Policy content goes here...</p>
-  </div>
-</div>
-<script>
-// Tab switching
-document.querySelectorAll('.tabs button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
-});
 
-function loadCurrentUser() {
-  const userStr = localStorage.getItem('currentUser');
-  return userStr ? JSON.parse(userStr) : null;
-}
-function saveCurrentUser(user) {
-  localStorage.setItem('currentUser', JSON.stringify(user));
-}
-
-// Load user details
-const user = loadCurrentUser();
-if (!user) {
-  // Not logged in, redirect to login
-  window.location.href = 'login.html';
-}
-// Populate account fields
-document.getElementById('accountEmail').value = user.email || '';
-document.getElementById('accountBusiness').value = user.company || '';
-document.getElementById('accountName').value = user.name || '';
-document.getElementById('account2fa').checked = !!user.twoFAEnabled;
-document.getElementById('currentPlanInfo').textContent = user.plan ? 'Current plan: ' + user.plan : 'No plan selected';
-
-// Choose plan buttons
-document.querySelectorAll('.choosePlan').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const plan = btn.parentElement.dataset.plan;
-    user.plan = plan;
-    saveCurrentUser(user);
-    document.getElementById('currentPlanInfo').textContent = 'Current plan: ' + plan;
-    // highlight selected card
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
-    btn.parentElement.classList.add('selected');
-  });
-});
-
-// Save account settings
-document.getElementById('saveAccount').addEventListener('click', () => {
-  user.company = document.getElementById('accountBusiness').value.trim();
-  user.name = document.getElementById('accountName').value.trim();
-  const newPwd = document.getElementById('accountPassword').value;
-  if (newPwd) {
-    // update password; no hashing for demo
-    user.password = newPwd;
-  }
-  user.twoFAEnabled = document.getElementById('account2fa').checked;
-  saveCurrentUser(user);
-  alert('Account updated');
-});
-
-// Billing: load cards (simple list of card last4 and default)
-if (!user.cards) user.cards = [];
-function renderCards() {
-  const container = document.getElementById('cardsContainer');
-  container.innerHTML = '';
-  if (user.cards.length === 0) {
-    container.textContent = 'No cards on file.';
-  } else {
-    user.cards.forEach((card, idx) => {
-      const div = document.createElement('div');
-      div.className = 'card' + (card.default ? ' selected' : '');
-      div.innerHTML = '<p>Card ending in ' + card.last4 + '</p>' +
-                      '<button class="setDefault" data-index="'+idx+'">Set as default</button>' +
-                      '<button class="deleteCard" data-index="'+idx+'">Delete</button>';
-      container.appendChild(div);
-    });
-    // attach events
-    container.querySelectorAll('.setDefault').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const index = parseInt(btn.dataset.index);
-        user.cards.forEach((c,i) => c.default = (i === index));
-        saveCurrentUser(user);
-        renderCards();
-      });
-    });
-    container.querySelectorAll('.deleteCard').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const index = parseInt(btn.dataset.index);
-        if (confirm('Delete this card?')) {
-          user.cards.splice(index, 1);
-          saveCurrentUser(user);
-          renderCards();
-        }
-      });
-    });
-  }
-}
-renderCards();
-document.getElementById('addCard').addEventListener('click', () => {
-  const number = document.getElementById('newCardNumber').value.trim();
-  if (!number) { alert('Enter card number'); return; }
-  const last4 = number.slice(-4);
-  const newCard = { last4: last4, default: user.cards.length === 0 };
-  user.cards.push(newCard);
-  document.getElementById('newCardNumber').value = '';
-  document.getElementById('newCardExp').value = '';
-  document.getElementById('newCardCvc').value = '';
-  saveCurrentUser(user);
-  renderCards();
-});
-
-// Cancel service
-document.getElementById('cancelService').addEventListener('click', () => {
-  if (confirm('Are you sure you want to cancel your subscription?')) {
-    user.plan = null;
-    saveCurrentUser(user);
-    alert('Subscription cancelled. Service will end at the end of your billing cycle.');
-    document.getElementById('currentPlanInfo').textContent = 'No plan selected';
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
-  }
-});
-
-// Logout
-document.getElementById('logoutLink').addEventListener('click', (e) => {
-  e.preventDefault();
-  localStorage.removeItem('currentUser');
-  window.location.href = 'login.html';
-});
-</script>
-</body>
+    <script src="js/auth.js"></script>
+    <script src="js/wallet.js"></script>
+    <script src="js/settings.js"></script>
+  </body>
 </html>

@@ -1,67 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizTrack.xrp – Decentralized Supply Chain Tracker</title>
-  <!-- Import Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BizTrack.xrp – Decentralized Supply Chain</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Navigation bar visible on every page -->
     <nav class="navbar">
       <div class="logo">BizTrack.xrp</div>
-      <input type="checkbox" id="menu-toggle" />
-      <label for="menu-toggle" class="hamburger">
-        <span></span><span></span><span></span>
-      </label>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="business.html">For&nbsp;Businesses</a></li>
-        <li><a href="verify.html">Verify&nbsp;Product</a></li>
-                <li><a href="login.html">Login</a></li>
-                  
-                    <li><button id="connect-btn" class="connect-btn">Connect Wallet</button>/li>
-                    
-      </ul>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <!-- Decorative network background image -->
-    <img src="assets/hero.png" alt="Network representing supply chains" class="hero-img">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>Decentralized Supply&nbsp;Chain Tracking on XRPL</h1>
-      <p>Issue unique product IDs, track events, and verify authenticity with QR codes – no central onboarding required.</p>
-      <div class="hero-buttons">
-        <a href="business.html" class="btn primary">Get Started</a>
-        <a href="verify.html" class="btn secondary">Verify Product</a>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="business.html">For Businesses</a>
+        <a href="verify.html">Verify Product</a>
+        <a href="login.html">Login</a>
+        <a href="#" id="connectWalletLink">Connect Wallet</a>
       </div>
-    </div>
-  </section>
+    </nav>
 
-  <section class="features">
-    <div class="feature">
-      <h2>Unique On‑Chain IDs</h2>
-      <p>Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper‑proof tracking.</p>
-    </div>
-    <div class="feature">
-      <h2>Immutable Event Tracking</h2>
-      <p>Supply chain updates are signed by authorized wallets and published on‑chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS or Arweave.</p>
-    </div>
-    <div class="feature">
-      <h2>Instant Customer Verification</h2>
-      <p>Customers scan a QR code to view a product’s verified history, authenticity and sustainability metrics. No crypto knowledge required—the landing page presents plain‑language details.</p>
-    </div>
-  </section>
+    <!-- Hero section -->
+    <section style="padding: 2rem; text-align: center;">
+      <h1>Decentralized Supply Chain Tracking on XRPL</h1>
+      <p>
+        Issue unique product IDs, track events, and verify authenticity with QR
+        codes – no central onboarding required.
+      </p>
+      <div style="margin-top: 1.5rem;">
+        <a href="business.html" class="btn">Get Started</a>
+        <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+      </div>
+    </section>
 
-  <footer>
-    <p>&copy; 2025 BizTrack.xrp – Built for decentralized product tracking. Inspired by VeChain’s supply chain innovations that track quality, authenticity and logistics data across the full product journey【948708967991131†L388-L400】.</p>
-  </footer>
-  <script src="https://xumm.app/assets/cdn/xumm-oauth2-pkce.min.js"></sript>
-</<script src="js/wallet.js"></script>
-</body>
+    <!-- Feature highlights -->
+    <section style="padding: 2rem; background-color: #f5f8fc;">
+      <div style="max-width: 960px; margin: 0 auto;">
+        <h2>Why BizTrack.xrp?</h2>
+        <p>
+          Each product is assigned a unique identifier stored on the XRP
+          Ledger. QR codes link the physical item to its blockchain record,
+          enabling secure, tamper‑proof tracking.
+        </p>
+        <p>
+          Supply chain updates are signed by authorized wallets and published
+          on‑chain. Optional metadata, such as photos or temperature logs,
+          lives on decentralized storage like IPFS or Arweave.
+        </p>
+        <p>
+          Customers scan a QR code to view a product’s verified history,
+          authenticity and sustainability metrics. No crypto knowledge
+          required—the landing page presents plain‑language details.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top: auto; padding: 1rem; text-align: center; background-color: #003366; color: #ffffff;">
+      © 2025 BizTrack.xrp – Built for decentralized product tracking.
+    </footer>
+
+    <script src="js/wallet.js"></script>
+  </body>
 </html>

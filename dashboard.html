@@ -1,240 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizTrack Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #f5f5f5;
-      padding: 1rem;
-      border-bottom: 1px solid #ddd;
-    }
-    nav .logo {
-      font-weight: bold;
-      font-size: 1.3rem;
-    }
-    nav .right button {
-      margin-left: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-    .container {
-      padding: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .hidden { display:none; }
-    #historyList li {
-      margin-bottom: 0.5rem;
-    }
-    form label {
-      display: block;
-      margin-top: 0.5rem;
-    }
-    form input {
-      width: 100%;
-      padding: 0.4rem;
-      margin-top: 0.2rem;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    form button, button {
-      margin-top: 1rem;
-      padding: 0.6rem 1rem;
-      background-color: #2e7d32;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    form button:hover, button:hover {
-      background-color: #246b28;
-    }
-    /* Search input styling */
-    #searchInput {
-      margin-top: 1rem;
-      padding: 0.4rem;
-      width: 100%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <div class="logo">BizTrack</div>
-    <div class="right">
-      <!-- Settings button added here -->
-      <button id="settingsBtn">Settings</button>
-      <button id="logoutBtn">Logout</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – BizTrack.xrp</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">BizTrack.xrp</div>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="business.html">For Businesses</a>
+        <a href="verify.html">Verify Product</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="#" id="connectWalletLink">Connect Wallet</a>
+        <a href="login.html" id="logoutLink">Logout</a>
+      </div>
+    </nav>
+
+    <div style="max-width:960px; margin:2rem auto;">
+      <h2>Welcome to your dashboard</h2>
+      <p>This area will show your company’s products and supply chain events.</p>
+      <p><a href="settings.html">Settings</a> – manage your 2FA and account preferences.</p>
+
+      <h3>Your latest batch entries</h3>
+      <ul id="batchList">
+        <!-- Dynamically populated by auth.js for demonstration -->
+      </ul>
     </div>
-  </nav>
-  <div class="container">
-    <h2>Dashboard</h2>
-    <div id="welcomeMsg"></div>
-    <div id="dashboardMain">
-      <button id="createBatchBtn">Create New Batch</button>
-      <h3>History</h3>
-      <!-- Search input for filtering batches -->
-      <input type="text" id="searchInput" placeholder="Search batch name...">
-      <ul id="historyList"></ul>
-    </div>
-    <div id="createBatchSection" class="hidden">
-      <h3>Create Batch</h3>
-      <label>Batch Name:
-        <input type="text" id="batchName" required />
-      </label>
-      <label>Quantity:
-        <input type="number" id="batchQuantity" min="1" required />
-      </label>
-      <button id="generateBtn">Generate QR</button>
-      <div id="qrcode" style="margin-top:1rem;"></div>
-      <button id="saveBatchBtn" class="hidden">Save Batch</button>
-      <button id="cancelBatchBtn">Cancel</button>
-    </div>
-  </div>
-  <script>
-    // Load current user from localStorage if available
-    function loadCurrentUser() {
-      try {
-        return JSON.parse(localStorage.getItem('currentUser'));
-      } catch (e) {
-        return null;
-      }
-    }
-    function loadBatches() {
-      try {
-        return JSON.parse(localStorage.getItem('batches')) || [];
-      } catch (e) {
-        return [];
-      }
-    }
-    function saveBatches(batches) {
-      localStorage.setItem('batches', JSON.stringify(batches));
-    }
-    /**
-     * Display history of batches.
-     * Accepts an optional filter string to match batch names.
-     */
-    function displayHistory(filter = '') {
-      const list = document.getElementById('historyList');
-      const batches = loadBatches();
-      list.innerHTML = '';
-      let filtered = batches;
-      if (filter) {
-        const lower = filter.toLowerCase();
-        filtered = batches.filter(b => (b.name || '').toLowerCase().includes(lower));
-      }
-      if (!filtered || filtered.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = 'No history available.';
-        list.appendChild(li);
-        return;
-      }
-      filtered.forEach((batch) => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = 'batch.html?code=' + encodeURIComponent(batch.code);
-        // Show finalized status in the text
-        a.textContent = `${batch.name} – ${batch.quantity} items${batch.finalized ? ' (Finalized)' : ''}`;
-        li.appendChild(a);
-        list.appendChild(li);
-      });
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = loadCurrentUser();
-      const welcomeDiv = document.getElementById('welcomeMsg');
-      if (user) {
-        welcomeDiv.textContent = 'Welcome, ' + (user.company || user.email);
-      }
-      const createBtn = document.getElementById('createBatchBtn');
-      const createSection = document.getElementById('createBatchSection');
-      const dashboardMain = document.getElementById('dashboardMain');
-      const generateBtn = document.getElementById('generateBtn');
-      const saveBatchBtn = document.getElementById('saveBatchBtn');
-      const cancelBatchBtn = document.getElementById('cancelBatchBtn');
-      const searchInput = document.getElementById('searchInput');
-      let qrCodeObj = null;
-      createBtn.addEventListener('click', () => {
-        dashboardMain.classList.add('hidden');
-        createSection.classList.remove('hidden');
-      });
-      generateBtn.addEventListener('click', () => {
-        const name = document.getElementById('batchName').value.trim();
-        const qty = document.getElementById('batchQuantity').value;
-        if (!name || !qty) {
-          alert('Please enter batch name and quantity.');
+
+    <script src="js/auth.js"></script>
+    <script src="js/wallet.js"></script>
+    <script>
+      // On dashboard load, ensure the user is authenticated and load sample data
+      window.addEventListener('DOMContentLoaded', () => {
+        if (!Auth.isLoggedIn()) {
+          // not authenticated; redirect to login
+          window.location.href = 'login.html';
           return;
         }
-        // generate QR code using batch name and timestamp
-        const qrDiv = document.getElementById('qrcode');
-        qrDiv.innerHTML = '';
-        const payload = name + '-' + Date.now();
-        // Include finalized and events fields for later tracking
-        qrCodeObj = { name: name, quantity: qty, code: payload, finalized: false, events: [] };
-        new QRCode(qrDiv, {
-          text: payload,
-          width: 200,
-          height: 200
-        });
-        saveBatchBtn.classList.remove('hidden');
+        // populate a sample list to illustrate the infinite loop fix
+        const list = document.getElementById('batchList');
+        const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+        if (!batches.length) {
+          list.innerHTML = '<li>No batch entries yet. Use the business page to create one.</li>';
+        } else {
+          batches.forEach((b, idx) => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = `Batch ${idx + 1}: ${b.name}`;
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              alert(`Opening details for ${b.name}`);
+              // In a real app, you would navigate to a detailed page. No login loop!
+            });
+            li.appendChild(link);
+            list.appendChild(li);
+          });
+        }
       });
-      saveBatchBtn.addEventListener('click', () => {
-        if (!qrCodeObj) return;
-        const batches = loadBatches();
-        batches.push(qrCodeObj);
-        saveBatches(batches);
-        qrCodeObj = null;
-        // reset form
-        document.getElementById('batchName').value = '';
-        document.getElementById('batchQuantity').value = '';
-        document.getElementById('qrcode').innerHTML = '';
-        saveBatchBtn.classList.add('hidden');
-        createSection.classList.add('hidden');
-        dashboardMain.classList.remove('hidden');
-        displayHistory(searchInput.value.trim());
-      });
-      cancelBatchBtn.addEventListener('click', () => {
-        // reset
-        qrCodeObj = null;
-        document.getElementById('batchName').value = '';
-        document.getElementById('batchQuantity').value = '';
-        document.getElementById('qrcode').innerHTML = '';
-        saveBatchBtn.classList.add('hidden');
-        createSection.classList.add('hidden');
-        dashboardMain.classList.remove('hidden');
-      });
-      // Logout handler
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
+
+      document.getElementById('logoutLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        Auth.logout();
         window.location.href = 'login.html';
       });
-      // Settings button navigation
-      document.getElementById('settingsBtn').addEventListener('click', () => {
-        window.location.href = 'settings.html';
-      });
-      // Search input listener
-      searchInput.addEventListener('input', () => {
-        const filter = searchInput.value.trim();
-        displayHistory(filter);
-      });
-      // Initially display history
-      displayHistory();
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

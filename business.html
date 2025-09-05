@@ -1,113 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizTrack.xrp – For Businesses</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For Businesses – BizTrack.xrp</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <nav class="navbar">
       <div class="logo">BizTrack.xrp</div>
-      <input type="checkbox" id="menu-toggle" />
-      <label for="menu-toggle" class="hamburger">
-        <span></span><span></span><span></span>
-      </label>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="business.html" class="active">For&nbsp;Businesses</a></li>
-        <li><a href="verify.html">Verify&nbsp;Product</a></li>
-            <li><button id="connect-btn" class="connect-btn">Connect Wallet</button></li>
-      </ul>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="business.html" class="active">For Businesses</a>
+        <a href="verify.html">Verify Product</a>
+        <a href="login.html">Login</a>
+        <a href="#" id="connectWalletLink">Connect Wallet</a>
+      </div>
     </nav>
-   </header>
 
-  <main class="container business-page">
-    <section class="intro">
-      <h1>Empower Your Supply&nbsp;Chain</h1>
-      <p>BizTrack.xrp enables any business to issue on‑chain product IDs, generate QR codes and record supply chain events—without a centralized SaaS provider or onboarding process.</p>
-    </section>
-
-    <section class="workflow">
-      <h2>Create a Product ID</h2>
-      <ol class="steps">
-        <li><strong>Connect wallet:</strong> Use an XRPL‑compatible wallet (Xaman, GemWallet, Xaman, Ledger) to connect to our dApp.</li>
-        <li><strong>Enter details:</strong> Provide the product name, SKU and batch number, plus optional metadata like origin, ingredients or certifications.</li>
-        <li><strong>Mint token:</strong> A smart contract or XRPL Hook mints a unique on‑chain ID (NFT or token) representing the physical item.</li>
-        <li><strong>Download QR code:</strong> Print or embed the QR code on your product packaging to link customers to the blockchain record.</li>
+    <div style="max-width:960px; margin:2rem auto;">
+      <h2>Empower Your Supply Chain</h2>
+      <p>
+        BizTrack.xrp enables any business to issue on‑chain product IDs,
+        generate QR codes and record supply chain events—without a centralized
+        SaaS provider or onboarding process.
+      </p>
+      <h3>Create a Product ID</h3>
+      <ol>
+        <li>Connect wallet: Use an XRPL‑compatible wallet (Xaman, GemWallet, Ledger) to connect to our dApp.</li>
+        <li>Enter details: Provide the product name, SKU and batch number, plus optional metadata like origin or certifications.</li>
+        <li>Mint token: A smart contract mints a unique on‑chain ID (NFT or token) representing the physical item.</li>
+        <li>Download QR code: Print or embed the QR code on your product packaging to link customers to the blockchain record.</li>
       </ol>
-    </section>
-
-    <section class="create-form-section">
-      <h2>Generate a QR Code</h2>
-      <p>This demo form illustrates the product creation workflow. Integrating an XRPL wallet and minting the NFT/token would occur in a production dApp.</p>
-      <form id="create-form" class="create-form">
+      <div style="margin-top:2rem;">
+        <h3>Generate a QR Code</h3>
+        <p>This demo form illustrates the product creation workflow.</p>
         <div class="form-group">
-          <label for="product-name">Product Name</label>
-          <input type="text" id="product-name" placeholder="e.g. Organic Honey" required />
+          <label for="prodName">Product Name</label>
+          <input id="prodName" type="text" />
         </div>
         <div class="form-group">
           <label for="sku">SKU</label>
-          <input type="text" id="sku" placeholder="e.g. HNY-001" />
+          <input id="sku" type="text" />
         </div>
         <div class="form-group">
           <label for="batch">Batch Number</label>
-          <input type="text" id="batch" placeholder="e.g. 2025-07-A" />
+          <input id="batch" type="text" />
         </div>
         <div class="form-group">
           <label for="metadata">Optional Metadata</label>
-          <textarea id="metadata" placeholder="Origin, ingredients, certifications..."></textarea>
+          <input id="metadata" type="text" />
         </div>
-        <button type="submit" class="btn primary">Generate QR</button>
-      </form>
-      <div id="qr-preview" class="qr-preview"></div>
-    </section>
+        <button class="btn" id="generateQRBtn">Generate QR</button>
+        <p id="qrMsg" style="color:#c00; margin-top:0.5rem;"></p>
+      </div>
+      <div id="qrOutput" class="qr-code" style="display:none;"></div>
+    </div>
 
-    <section class="updates">
-      <h2>Record Supply&nbsp;Chain Events</h2>
-      <p>At each stage—manufacturer, distributor, retailer—authorized wallets sign event updates such as <em>Received at warehouse</em>, <em>Quality checked</em> or <em>Shipped to retailer</em>. These events are stored on the XRP Ledger with optional rich metadata on IPFS or Arweave. Each update is immutable and publicly verifiable, ensuring transparency and authenticity.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 BizTrack.xrp. Build your decentralized supply chain solution today.</p>
-  </footer>
-
-  <script>
-  // Demo QR generator using simple canvas (placeholder). In a real app, you'd use a QR library and XRPL API.
-  document.getElementById('create-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const productName = document.getElementById('product-name').value || '';
-    const sku = document.getElementById('sku').value || '';
-    const batch = document.getElementById('batch').value || '';
-    const metadata = document.getElementById('metadata').value || '';
-    const data = JSON.stringify({ productName, sku, batch, metadata, timestamp: Date.now() });
-    // Create simple QR placeholder (ASCII block); in production, integrate a QR generator
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 200;
-    const ctx = canvas.getContext('2d');
-    // Fill white background
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0,0,200,200);
-    // Draw pattern based on data hash
-    let hash = 0;
-    for (let i = 0; i < data.length; i++) hash = data.charCodeAt(i) + ((hash << 5) - hash);
-    for (let y=0; y<20; y++) {
-      for (let x=0; x<20; x++) {
-        const bit = (hash >> (x*y % 32)) & 1;
-        ctx.fillStyle = bit ? '#0a65ff' : '#e1e8ff';
-        ctx.fillRect(x*10, y*10, 10, 10);
-      }
-    }
-    const preview = document.getElementById('qr-preview');
-    preview.innerHTML = '';
-    preview.appendChild(canvas);
-  });
-</script>
-<s<script src="https://cdn.jsdelivr.net/npm/xumm-oauth2-pkce@2.8.7/dist/index.umd.js"></script>
-<script src="js/wallet.js"></script>
-</body>
-</htm</html>
+    <script src="js/business.js"></script>
+    <script src="js/wallet.js"></script>
+  </body>
 </html>

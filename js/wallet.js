@@ -2,6 +2,7 @@
 // Minimal placeholder for wallet connection. This module defines a global
 // Wallet object that will eventually integrate with Xaman or WalletConnect.
 
+window.walletConnectProjectId = 'ae375bf4f56af99bcb5274b3a1cc0423';
 window.Wallet = {
   async connect() {
     // In a real application you'd instantiate a WalletConnect provider here,

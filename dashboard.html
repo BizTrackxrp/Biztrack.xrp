@@ -11,61 +11,129 @@
       <div class="logo">BizTrack.xrp</div>
       <div>
         <a href="index.html">Home</a>
-        <a href="business.html">For Businesses</a>
+        <!-- Removed For Businesses link on dashboard -->
         <a href="verify.html">Verify Product</a>
         <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="settings.html">Settings</a>
         <a href="#" id="connectWalletLink">Connect Wallet</a>
-        <a href="login.html" id="logoutLink">Logout</a>
       </div>
     </nav>
 
-    <div style="max-width:960px; margin:2rem auto;">
+    <div class="dashboard-container">
       <h2>Welcome to your dashboard</h2>
-      <p>This area will show your company’s products and supply chain events.</p>
-      <p><a href="settings.html">Settings</a> – manage your 2FA and account preferences.</p>
+      <p>Manage your product batches and view history.</p>
 
-      <h3>Your latest batch entries</h3>
-      <ul id="batchList">
-        <!-- Dynamically populated by auth.js for demonstration -->
-      </ul>
+      <div class="batch-form">
+        <h3>Create a new batch</h3>
+        <div class="form-group">
+          <label for="dashProdName">Product Name</label>
+          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
+        </div>
+        <div class="form-group">
+          <label for="dashSku">SKU</label>
+          <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
+        </div>
+        <div class="form-group">
+          <label for="dashBatch">Batch Number</label>
+          <input id="dashBatch" type="text" placeholder="e.g. 001" />
+        </div>
+        <div class="form-group">
+          <label for="dashMetadata">Metadata (optional)</label>
+          <input id="dashMetadata" type="text" placeholder="e.g. Harvest date" />
+        </div>Create class="btn" id="dashCreateBtn">Create Batch</button>
+        <p id="dashMsg" style="color:#c00; margin-top:0.5rem;"></p>
+        <div id="dashQrOutput" class="qr-code" style="display:none;"></div>
+      </div>
+
+      <div class="history-box">
+        <h3>Your latest batch entries</h3>
+        <ul id="batchList">
+        </ul>
+      </div>
     </div>
 
     <script src="js/auth.js"></script>
     <script src="js/wallet.js"></script>
     <script>
-      // On dashboard load, ensure the user is authenticated and load sample data
       window.addEventListener('DOMContentLoaded', () => {
+        // Ensure user is authenticated
         if (!Auth.isLoggedIn()) {
-          // not authenticated; redirect to login
           window.location.href = 'login.html';
           return;
         }
-        // populate a sample list to illustrate the infinite loop fix
-        const list = document.getElementById('batchList');
-        const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-        if (!batches.length) {
-          list.innerHTML = '<li>No batch entries yet. Use the business page to create one.</li>';
-        } else {
-          batches.forEach((b, idx) => {
-            const li = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = '#';
-            link.textContent = `Batch ${idx + 1}: ${b.name}`;
-            link.addEventListener('click', (e) => {
-              e.preventDefault();
-              alert(`Opening details for ${b.name}`);
-              // In a real app, you would navigate to a detailed page. No login loop!
-            });
-            li.appendChild(link);
-            list.appendChild(li);
-          });
-        }
-      });
 
-      document.getElementById('logoutLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        Auth.logout();
-        window.location.href = 'login.html';
+        const batchList = document.getElementById('batchList');
+        const populateBatches = () => {
+          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+          batchList.innerHTML = '';
+          if (!batches.length) {
+            batchList.innerHTML = '<li>No batch entries yet. Use the form above to create one.</li>';
+          } else {
+            batches.forEach((b, idx) => {
+              const li = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = '#';
+              link.textContent = `Batch ${idx + 1}: ${b.name}`;
+              link.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert(`Opening details for ${b.name}`);
+                // In a real app, you would navigate to a detailed page.
+              });
+              li.appendChild(link);
+              batchList.appendChild(li);
+            });
+          }
+        };
+
+        // Populate list on load
+        populateBatches();
+
+        // Handle batch creation
+        const createBtn = document.getElementById('dashCreateBtn');
+        createBtn.addEventListener('click', () => {
+          const name = document.getElementById('dashProdName').value.trim();
+          const sku = document.getElementById('dashSku').value.trim();
+          const batch = document.getElementById('dashBatch').value.trim();
+          const meta = document.getElementById('dashMetadata').value.trim();
+          const msgEl = document.getElementById('dashMsg');
+          const qrOutput = document.getElementById('dashQrOutput');
+          msgEl.textContent = '';
+
+          if (!name || !sku || !batch) {
+            msgEl.textContent = 'Please fill in product name, SKU and batch number.';
+            return;
+          }
+
+          // Create a record object
+          const record = {
+            name,
+            sku,
+            batch,
+            metadata: meta,
+            id: crypto.randomUUID(),
+          };
+
+          // Save to localStorage
+          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+          batches.push(record);
+          localStorage.setItem('biztrack-batches', JSON.stringify(batches));
+
+          // Generate QR code (use encodeURIComponent)
+          const url = encodeURIComponent(`https://biztrack-xrp.vercel.app/verify.html?id=${record.id}`);
+          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
+          qrOutput.innerHTML = `<img src="${qrUrl}" alt="QR Code for product" /><p>Scan to verify</p>`;
+          qrOutput.style.display = 'block';
+
+          // Clear inputs
+          document.getElementById('dashProdName').value =
+            document.getElementById('dashSku').value =
+            document.getElementById('dashBatch').value =
+            document.getElementById('dashMetadata').value =
+              '';
+
+          // Refresh list
+          populateBatches();
+        });
       });
     </script>
   </body>

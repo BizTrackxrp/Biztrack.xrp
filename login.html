@@ -293,14 +293,14 @@ if (!user) {
   const userPlain = users.find(u => u.email === email && u.password === password);
   if (userPlain) {
     userPlain.password = hashed;
-    saveUsers(users);
+    sveUsers(users);
     user = userPlain;
   }
 }
 if (!user) {
   document.getElementById('loginError').textContent = 'Invalid email or password.';
-  return;
-}
+  turn;
+
         }
         // Check if 2FA is enabled
         if (user.twoFAEnabled) {

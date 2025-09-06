@@ -1,4 +1,4 @@
-/*
+*
  * wallet.js
  *
  * Integrates Xaman (XUMM) login via the /api/xumm-login backend endpoint.
@@ -10,7 +10,7 @@ window.Wallet = {
   async connect() {
     try {
       // POST to our XUMM login API endpoint.
-      const res = await fetch('/api/xumm-login.js', {
+      const res = await fetch('/api/xumm-login', {
         method: 'POST'
       });
       if (!res.ok) {

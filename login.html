@@ -1,84 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login – BizTrack.xrp</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <nav class="navbar">
-      <div class="logo">BizTrack.xrp</div>
-      <div>
-        <a href="index.html">Home</a>
-        <a href="business.html">For Businesses</a>
-        <a href="verify.html">Verify Product</a>
-        <a href="login.html" class="active">Login</a>
-        <a href="#" id="connectWalletLink">Connect Wallet</a>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - BizTrack</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="BizTrack — Home">
+      <img class="brand__mark" src="assets/logo.svg" alt="" />
+      <span class="brand__name">BizTrack</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a class="nav__link" href="index.html">Home</a>
+      <a class="nav__link" href="business.html">For Businesses</a>
+      <a class="nav__link" href="verify.html">Verify Product</a>
+      <a class="nav__link" href="login.html">Login</a>
+      <a class="nav__link nav__link--accent" href="login.html#sign-up">Sign-up</a>
     </nav>
+  </header>
 
-    <div class="auth-container">
-      <h2>Login</h2>
-      <div class="form-group">
-        <label for="loginEmail">Email</label>
-        <input id="loginEmail" type="email" />
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password" />
-      </div>
-      <!-- 2FA code input is hidden until required -->
-      <div class="form-group" id="totpGroup" style="display:none;">
-        <label for="loginTotp">2FA Code</label>
-        <input id="loginTotp" type="text" maxlength="6" placeholder="000000" />
-      </div>
-      <button class="btn" id="loginBtn">Login</button>
-      <p id="loginMsg" style="color:#c00; margin-top:0.5rem;"></p>
-
-      <p style="text-align:center; margin-top:1rem;">
-        Don’t have an account? <a href="#" id="showSignup">Sign Up</a>
-      </p>
-      <p style="text-align:center;">
-        <a href="#" id="showReset">Forgot password?</a>
-      </p>
+  <div class="auth-container">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" />
     </div>
-
-    <div class="auth-container" id="signupContainer" style="display:none;">
-      <h2>Create Account</h2>
-      <div class="form-group">
-        <label for="companyName">Company name</label>
-        <input id="companyName" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="signupEmail">Email</label>
-        <input id="signupEmail" type="email" />
-      </div>
-      <div class="form-group">
-        <label for="signupPassword">Password</label>
-        <input id="signupPassword" type="password" />
-      </div>
-      <button class="btn" id="signupBtn">Sign Up</button>
-      <p id="signupMsg" style="color:#c00; margin-top:0.5rem;"></p>
-      <p style="text-align:center; margin-top:1rem;">
-        Already have an account? <a href="#" id="showLoginFromSignup">Login</a>
-      </p>
+    <div class="form-group">
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" />
     </div>
-
-    <div class="auth-container" id="resetContainer" style="display:none;">
-      <h2>Reset Password</h2>
-      <div class="form-group">
-        <label for="resetEmail">Enter your email to receive a verification code</label>
-        <input id="resetEmail" type="email" />
-      </div>
-      <button class="btn" id="resetSendCodeBtn">Send code</button>
-      <p id="resetMsg" style="color:#c00; margin-top:0.5rem;"></p>
-      <p style="text-align:center; margin-top:1rem;">
-        Remember your password? <a href="#" id="showLoginFromReset">Back to login</a>
-      </p>
-    </div>
-
-    <script src="js/auth.js"></script>
-    <script src="js/wallet.js"></script>
-  </body>
+    <!-- Additional authentication fields (e.g., 2FA) can be added here -->
+    <button class="btn btn--primary" type="submit">Log In</button>
+  </div>
+</body>
 </html>

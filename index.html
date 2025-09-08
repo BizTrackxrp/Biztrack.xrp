@@ -1,64 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BizTrack.xrp – Decentralized Supply Chain</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!-- Navigation bar visible on every page -->
-    <nav class="navbar">
-      <div class="logo">BizTrack.xrp</div>
-      <div>
-        <a href="index.html">Home</a>
-        <a href="business.html">For Businesses</a>
-        <a href="verify.html">Verify Product</a>
-        <a href="login.html">Login</a>
-        <a href="#" id="connectWalletLink">Connect Wallet</a>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizTrack - Decentralized Supply Chain</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="BizTrack — Home">
+      <img class="brand__mark" src="assets/logo.svg" alt="" />
+      <span class="brand__name">BizTrack</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a class="nav__link" href="index.html">Home</a>
+      <a class="nav__link" href="business.html">For Businesses</a>
+      <a class="nav__link" href="verify.html">Verify Product</a>
+      <a class="nav__link" href="login.html">Login</a>
+      <a class="nav__link nav__link--accent" href="login.html#sign-up">Sign-up</a>
     </nav>
+  </header>
 
-    <!-- Hero section -->
-    <section style="padding: 2rem; text-align: center;">
-      <h1>Decentralized Supply Chain Tracking on XRPL</h1>
-      <p>
-        Issue unique product IDs, track events, and verify authenticity with QR
-        codes – no central onboarding required.
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero__title">Decentralized Supply Chain Tracking on XRPL</h1>
+      <p class="hero__subtitle">
+        BizTrack is a simplified supply chain tool that blends <strong>AI</strong> and the
+        <strong>XRPL</strong> to make tracking fast, transparent, and fraud-resistant.
       </p>
-      <div style="margin-top: 1.5rem;">
-        <a href="business.html" class="btn">Get Started</a>
-        <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="business.html">Get Started</a>
+        <a class="btn btn--ghost" href="verify.html">Verify Product</a>
       </div>
-    </section>
+    </div>
+    <div class="hero__mark" aria-hidden="true"></div>
+  </section>
 
-    <!-- Feature highlights -->
-    <section style="padding: 2rem; background-color: #f5f8fc;">
-      <div style="max-width: 960px; margin: 0 auto;">
-        <h2>Why BizTrack.xrp?</h2>
-        <p>
-          Each product is assigned a unique identifier stored on the XRP
-          Ledger. QR codes link the physical item to its blockchain record,
-          enabling secure, tamper‑proof tracking.
+  <section class="why">
+    <div class="container why__grid">
+      <div class="why__copy">
+        <h2 class="section-title">Why BizTrack?</h2>
+        <p class="lede">
+          Every product receives a tamper-evident ID on the XRPL. Updates are
+          cryptographically signed by authorized wallets and verified in real-time by AI —
+          so recalls are faster, fraud gets flagged sooner, and customers trust what they scan.
         </p>
-        <p>
-          Supply chain updates are signed by authorized wallets and published
-          on‑chain. Optional metadata, such as photos or temperature logs,
-          lives on decentralized storage like IPFS or Arweave.
-        </p>
-        <p>
-          Customers scan a QR code to view a product’s verified history,
-          authenticity and sustainability metrics. No crypto knowledge
-          required—the landing page presents plain‑language details.
-        </p>
+        <ul class="bullets">
+          <li><strong>AI anomaly detection</strong> to catch duplicate IDs, missing events,
+          and out-of-range telemetry before it reaches your customer.</li>
+          <li><strong>XRPL notarization</strong> for each event: origin, custody, and
+          sustainability attributes — signed and immutable.</li>
+          <li><strong>One-scan confidence</strong> — a simple QR shows verified origin,
+          authenticity, and key sustainability signals in plain language.</li>
+          <li><strong>Drop-in onboarding</strong> — no heavy vendor lock-in; works with
+          your existing labels & processes.</li>
+        </ul>
+        <div class="why__cta">
+          <a class="btn btn--primary" href="business.html">Launch a Pilot</a>
+          <a class="btn btn--ghost" href="verify.html">See a Live Example</a>
+        </div>
       </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="margin-top: auto; padding: 1rem; text-align: center; background-color: #003366; color: #ffffff;">
-      © 2025 BizTrack.xrp – Built for decentralized product tracking.
-    </footer>
-
-    <script src="js/wallet.js"></script>
-  </body>
+      <aside class="why__aside">
+        <div class="stat">
+          <div class="stat__value">↓ 72%</div>
+          <div class="stat__label">time to investigate issues</div>
+        </div>
+        <div class="stat">
+          <div class="stat__value">↑ 3×</div>
+          <div class="stat__label">faster supplier onboarding</div>
+        </div>
+        <div class="stat">
+          <div class="stat__value">100%</div>
+          <div class="stat__label">QR-based authenticity checks</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</body>
 </html>

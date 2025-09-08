@@ -1,65 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <    <title>For Businesses – BizTrack</title>
+    <title>For Businesses – BizTrack</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
- <body>
-  <header class="site-header">
-    <a class="brand" href="index.html" aria-label="BizTrack – Home">
-      <img class="brand_mark" src="assets/logo.svg" alt="">
-      <span class="brand_name">BizTrack</span>
-    </a>
-    <nav class="main-nav" aria-label="Primary">
-      <a class="nav_link" href="index.html">Home</a>
-      <a class="nav_link" href="business.html">For Businesses</a>
-      <a class="nav_link" href="verify.html">Verify Product</a>
-      <a class="nav_link" href="login.html">Login</a>
-      <a class="nav_link nav_link--accent" href="login.html#sign-up">Sign-up</a>
-    </nav>
-  </header> </header>
+  <body>
+    <!-- Header / Global Nav -->
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="BizTrack – Home">
+        <img class="brand_mark" src="assets/logo.svg" alt="">
+        <span class="brand_name">BizTrack</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a class="nav_link" href="index.html">Home</a>
+        <a class="nav_link" href="business.html">For Businesses</a>
+        <a class="nav_link" href="verify.html">Verify Product</a>
+        <a class="nav_link" href="login.html">Login</a>
+        <a class="nav_link nav_link--accent" href="login.html#sign-up">Sign-up</a>
+      </nav>
+    </header>
 
-y>
-    <niv style="max-width:960px; margin:2rem auto;">
-      <h2>Empower Your Supply Chain</h2>
+    <main style="max-width:960px; margin:2rem auto;">
+      <h2>Empower Your Supply Chain</h2>
       <p>
- BizTrack enables any business to issue on‑chain product IDs,
+        BizTrack enables any business to issue on-chain product IDs,
         generate QR codes and record supply chain events—without a centralized
         SaaS provider or onboarding process.
       </p>
+
       <h3>Create a Product ID</h3>
       <ol>
-        <li>Connect wallet: Use an XRPL‑compatible wallet (Xaman, GemWallet, Ledger) to connect to our dApp.</li>
+        <li>Connect wallet: Use an XRPL-compatible wallet (Xaman, GemWallet, Ledger) to connect to our dApp.</li>
         <li>Enter details: Provide the product name, SKU and batch number, plus optional metadata like origin or certifications.</li>
-        <li>Mint token: A smart contract mints a unique on‑chain ID (NFT or token) representing the physical item.</li>
+        <li>Mint token: A smart contract mints a unique on-chain ID (NFT or token) representing the physical item.</li>
         <li>Download QR code: Print or embed the QR code on your product packaging to link customers to the blockchain record.</li>
       </ol>
+
       <div style="margin-top:2rem;">
         <h3>Generate a QR Code</h3>
         <p>This demo form illustrates the product creation workflow.</p>
+
         <div class="form-group">
           <label for="prodName">Product Name</label>
           <input id="prodName" type="text" />
         </div>
+
         <div class="form-group">
           <label for="sku">SKU</label>
           <input id="sku" type="text" />
         </div>
+
         <div class="form-group">
           <label for="batch">Batch Number</label>
           <input id="batch" type="text" />
         </div>
+
         <div class="form-group">
           <label for="metadata">Optional Metadata</label>
           <input id="metadata" type="text" />
         </div>
+
         <button class="btn" id="generateQRBtn">Generate QR</button>
         <p id="qrMsg" style="color:#c00; margin-top:0.5rem;"></p>
+
+        <div id="qrOutput" class="qr-code" style="display:none;"></div>
       </div>
-      <div id="qrOutput" class="qr-code" style="display:none;"></div>
-    </div>
+    </main>
 
     <script src="js/business.js"></script>
     <script src="js/wallet.js"></script>

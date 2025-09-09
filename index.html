@@ -1,64 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BizTrack.xrp – Decentralized Supply Chain</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!-- Navigation bar visible on every page -->
-    <nav class="navbar">
-      <div class="logo">BizTrack.xrp</div>
-      <div>
-        <a href="index.html">Home</a>
-        <a href="business.html">For Businesses</a>
-        <a href="verify.html">Verify Product</a>
-        <a href="login.html">Login</a>
-        <a href="#" id="connectWalletLink">Connect Wallet</a>
-      </div>
-    </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizTrack - Decentralized Supply Chain</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Navigation bar visible on every page -->
+  <nav class="navbar">
+    <div class="logo"><a href="index.html"><img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe.png" alt="BizTrack" style="height:1.5em;margin-right:0.3em;vertical-align:middle;">BizTrack</a></div>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="business.html">For Businesses</a>
+      <a href="verify.html">Verify Product</a>
+      <a href="login.html">Login/Signup</a>
+    </div>
+  </nav>
 
-    <!-- Hero section -->
-    <section style="padding: 2rem; text-align: center;">
-      <h1>Decentralized Supply Chain Tracking on XRPL</h1>
+  <!-- Hero section -->
+  <section style="padding: 2rem; text-align: center;">
+    <h1>Decentralized Supply Chain Tracking on XRPL</h1>
+    <p>
+      Issue unique product IDs, track events, and verify authenticity with QR codes - no central onboarding required.
+    </p>
+    <div style="margin-top: 1.5rem;">
+      <a href="business.html" class="btn">Get Started</a>
+      <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+    </div>
+  </section>
+
+  <!-- Feature highlights -->
+  <section style="padding: 2rem; background-color: #f5f8fc;">
+    <div style="max-width: 960px; margin: 0 auto;">
+      <h2>Why BizTrack?</h2>
       <p>
-        Issue unique product IDs, track events, and verify authenticity with QR
-        codes – no central onboarding required.
+        Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper-proof tracking.
       </p>
-      <div style="margin-top: 1.5rem;">
-        <a href="business.html" class="btn">Get Started</a>
-        <a href="verify.html" class="btn btn-secondary">Verify Product</a>
-      </div>
-    </section>
+      <p>
+        Supply chain updates are signed by authorized wallets and published on-chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS or Arweave.
+      </p>
+      <p>
+        Customers scan a QR code to view a product's verified history, authenticity and sustainability metrics. No crypto knowledge required - the landing page presents plain-language details.
+      </p>
+    </div>
+  </section>
 
-    <!-- Feature highlights -->
-    <section style="padding: 2rem; background-color: #f5f8fc;">
-      <div style="max-width: 960px; margin: 0 auto;">
-        <h2>Why BizTrack.xrp?</h2>
-        <p>
-          Each product is assigned a unique identifier stored on the XRP
-          Ledger. QR codes link the physical item to its blockchain record,
-          enabling secure, tamper‑proof tracking.
-        </p>
-        <p>
-          Supply chain updates are signed by authorized wallets and published
-          on‑chain. Optional metadata, such as photos or temperature logs,
-          lives on decentralized storage like IPFS or Arweave.
-        </p>
-        <p>
-          Customers scan a QR code to view a product’s verified history,
-          authenticity and sustainability metrics. No crypto knowledge
-          required—the landing page presents plain‑language details.
-        </p>
-      </div>
-    </section>
+  <!-- Footer -->
+  <footer style="margin-top: auto; padding: 1rem; text-align: center; background-color: #003366; color: #ffffff;">
+    &copy; 2025 BizTrack - Built for decentralized product tracking.
+  </footer>
 
-    <!-- Footer -->
-    <footer style="margin-top: auto; padding: 1rem; text-align: center; background-color: #003366; color: #ffffff;">
-      © 2025 BizTrack.xrp – Built for decentralized product tracking.
-    </footer>
-
-    <script src="js/wallet.js"></script>
-  </body>
+  <script src="js/wallet.js"></script>
+</body>
 </html>

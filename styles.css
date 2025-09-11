@@ -242,3 +242,13 @@ html, body {
     margin: 0.5rem 0;
   }
 }
+/* Increase logo size and hide BizTrack text in navbar */
+.navbar .logo img {
+  height: 3em;
+  vertical-align: middle;
+}
+
+.navbar .logo {
+  font-size: 0;
+}
+

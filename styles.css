@@ -33,6 +33,15 @@ html, body {
   align-items: center;
   justify-content: space-between;
 }
+/* Restore logo text size and hide logo image */
+.navbar .logo img {
+  display: none;
+}
+.navbar .logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
 
 .navbar a {
   color: #ffffff;

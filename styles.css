@@ -261,3 +261,178 @@ html, body {
   font-size: 0;
 }
 
+
+
+/* Begin custom vertical navigation styles */
+
+/* Hide the hamburger icon by default */
+.navbar .icon {
+  display: none;
+}
+
+/* Place nav links container styling */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style for active nav link */
+.nav-links a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Desktop layout (min-width 769px) */
+@media (min-width: 769px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 2rem 1rem;
+    background-color: #003366;
+    color: #ffffff;
+  }
+  .navbar .logo {
+    margin-bottom: 2rem;
+  }
+  .navbar .logo img {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+  }
+  .navbar .nav-links {
+    width: 100%;
+  }
+  .navbar .nav-links a {
+    color: #ffffff;
+    padding: 0.5rem 0;
+    display: block;
+  }
+  .navbar .nav-links a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+  body {
+/*
+    margin-left: 240px; width: 100%;
+    height: auto;
+    position: relative;
+    padding: 1rem;
+  }
+  .navbar .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #003366;
+    padding: 1rem;
+  }
+  .navbar.open .nav-links {
+    display: flex;
+  }
+  .navbar .nav-links a {
+    color: #ffffff;
+    padding: 0.5rem 0;
+  }
+  .navbar .icon {
+    display: block;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+    */
+ 
+  
+/* Responsive vertical navigation styles */
+@media (min-width: 769px) {
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    padding: 1rem;
+  }
+
+  .navbar .logo {
+    margin-bottom: 2rem;
+  }
+
+  .navbar .nav-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navbar .nav-links a {
+    color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+  }
+
+  .navbar .nav-links a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  .navbar .icon {
+    display: none;
+  }
+
+  body {
+    margin-left: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .navbar .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #003366;
+    padding: 1rem;
+  }
+
+  .navbar.open .nav-links {
+    display: flex;
+  }
+
+  .navbar .nav-links a {
+    color: #ffffff;
+    padding: 0.5rem 0;
+  }
+
+  .navbar .icon {
+    display: block;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  body {
+    margin-left: 0;
+  }
+}
+
+/* End custom vertical navigation styles */

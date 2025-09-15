@@ -9,16 +9,16 @@
 <body>
   <!-- Navigation bar visible on every page -->
   <nav class="navbar">
-        <div class="logo">
-            <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack" style="display:inline-block;height:3em;vertical-align:middle;">
-
+    <div class="logo">
+      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
     </div>
-      <div>
-  <a href="index.html">Home</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
       <a href="business.html">For Businesses</a>
       <a href="verify.html">Verify Product</a>
       <a href="login.html">Login/Signup</a>
     </div>
+    <a class="icon" onclick="toggleMenu()">&#9776;</a>
   </nav>
 
   <!-- Hero section -->
@@ -34,7 +34,7 @@
   </section>
 
   <!-- Feature highlights -->
-  <section style="padding: 2rem; background-color: #f5f8fc;">
+  <section style="padding: 2rem; background-color: #f5f5fc;">
     <div style="max-width: 960px; margin: 0 auto;">
       <h2>Why BizTrack?</h2>
       <p>
@@ -55,5 +55,6 @@
   </footer>
 
   <script src="js/wallet.js"></script>
+  <script src="js/nav.js"></script>
 </body>
 </html>

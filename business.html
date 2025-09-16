@@ -7,20 +7,18 @@ e<!DOCTYPE html>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <nav class="navbar">
-        <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
- >
-    
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
   </div>
-            <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="business.html" class="active">For Businesses</a>
-      <a href="verify.html">Verify Product</a>
-      <a href="login.html">Login/Signup</a>
-    </div>
-                    <a class="icon" onclick="toggleMenu()">&#9776;</a>
-  </nav>
-  <div style="max-width:960px; margin:2rem auto;">
+  <ul class="sidebar-nav">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="business.html" class="active">For Businesses</a></li>
+    <li><a href="verify.html">Verify Product</a></li>
+    <li><a href="login.html">Login/Signup</a></li>
+  </ul>
+</nav>
+<div class="main-with-sidebar">
     <h2>Empower Your Supply Chain</h2>
     <p>
       BizTrack enables any business to issue on‑chain product IDs,
@@ -58,7 +56,9 @@ e<!DOCTYPE html>
     </div>
     <div id="qrOutput" class="qr-code" style="display:none;"></div>
   </div>
-  <script src="js/business.js"></script>
+  < </div>
+
+    script src="js/business.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/wallet.js"></script>
 </body>

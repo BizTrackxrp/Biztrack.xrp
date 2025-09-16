@@ -356,3 +356,55 @@ footer {
   background: #094eda;
   border-color: #094eda;
 }
+
+/* ===== Left Sidebar (top-left logo + links) ===== */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;       /* top:0; right:auto; bottom:0; left:0 */
+  width: 240px;
+  background: #083a71;     /* navy */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 20px;
+}
+
+.sidebar-logo {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+  margin-bottom: 24px;     /* nav sits right under the logo */
+}
+
+.sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar-nav li {
+  margin-bottom: 14px;
+}
+.sidebar-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+}
+.sidebar-nav a:hover {
+  text-decoration: underline;
+}
+.sidebar-nav a.active {
+  text-decoration: underline;
+}
+
+/* Push page content to the right of the sidebar */
+.main-with-sidebar {
+  margin-left: 240px;
+}
+
+/* Hide the old top navbar if present */
+.navbar {
+  display: none !important;
+}
+

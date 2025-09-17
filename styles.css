@@ -509,7 +509,7 @@ html, body {
 }
 /* Adjust hero section to align with sidebar and reduce whitespace */
 .main-with-sidebar > section:first-of-type {
-  padding-top: 0 !important;
+  padding-top:00 !important;
   margin-top: 0 !important;
   text-align: left !important;
 }
@@ -519,5 +519,5 @@ html, body {
 
 /* Pull hero section up to reduce top whitespace */
 .main-with-sidebar > section:first-of-type {
-  margin-top: -4rem !important;
+  margin-top: -6rem !important;
 }

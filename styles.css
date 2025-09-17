@@ -492,3 +492,17 @@ html, body {
 .navbar {
   display: none !important;
 }
+
+/* Adjust layout to condense page */
+.sidebar {
+  width: 200px;
+  padding: 1rem 0.75rem;
+}
+
+.sidebar-logo img {
+  width: 160px;
+}
+
+.main-with-sidebar {
+  margin-left: 200px;
+}

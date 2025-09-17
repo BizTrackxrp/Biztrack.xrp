@@ -7,16 +7,18 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <nav class="navbar">
-<<div class="logo"><a href="index.html">BizTrack</a></div>
-      <div>
-        <a href="index.html">Home</a>
-        <a href="business.html">For Businesses</a>
-        <a href="verify.html" class="active">Verify Product</a>
-        <a href="login.html">Login</a>
-        <a href="#" id="connectWalletLink">Connect Wallet</a>
-      </div>
-    </nav>
+  <nav class="sidebar">
+  <div class="sidebar-logo">
+    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
+  </div>
+  <ul class="sidebar-nav">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="business.html">For Businesses</a></li>
+    <li><a href="verify.html" class="active">Verify Product</a></li>
+    <li><a href="login.html">Login/Signup</a></li>
+  </ul>
+</nav>
+<div class="main-with-siebar">
 
     <div style="max-width:800px; margin:2rem auto; text-align:center;">
       <h2>Verify a Product’s Authenticity</h2>
@@ -33,6 +35,7 @@
       <p id="verifyMsg" style="color:#c00; margin-top:0.5rem;"></p>
       <div id="verifyResult" style="margin-top:1.5rem;"></div>
     </div>
+  </</div>>
 
     <script src="js/verify.js"></script>
     <script src="js/wallet.js"></script>

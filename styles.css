@@ -516,3 +516,8 @@ html, body {
 .main-with-sidebar > section:first-of-type h1 {
   margin-top: 0 !important;
 }
+
+/* Pull hero section up to reduce top whitespace */
+.main-with-sidebar > section:first-of-type {
+  margin-top: -4rem !important;
+}

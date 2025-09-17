@@ -1,5 +1,6 @@
 /*
-  Global styles for BizTrack.xrp redesign.
+
+Global styles for BizTrack.xrp redesign.
 
   We adopt a simple design system with the following palette:
     – Primary: Royal Blue (#003366) for headers, navigation and call‑to‑action
@@ -505,4 +506,13 @@ html, body {
 
 .main-with-sidebar {
   margin-left: 200px;
+}
+/* Adjust hero section to align with sidebar and reduce whitespace */
+.main-with-sidebar > section:first-of-type {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  text-align: left !important;
+}
+.main-with-sidebar > section:first-of-type h1 {
+  margin-top: 0 !important;
 }

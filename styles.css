@@ -508,18 +508,39 @@ html, body {
   margin-left: 200px;
 }
 /* Adjust hero section to align with sidebar and reduce whitespace */
+.m/* Adjust hero section to align with sidebar and reduce whitespace */
 .main-with-sidebar > section:first-of-type {
-  padding-top:00 !important;
-  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-top: -6rem !important;
   text-align: left !important;
 }
 .main-with-sidebar > section:first-of-type h1 {
   margin-top: 0 !important;
 }
 
-/* Pull hero section up to reduce top whitespace */
-.main-with-sidebar > section:first-of-type {
-  margin-top: -6rem !important;
+/* Design enhancements: updated color palette, typography, button styles, layout grids, and footer */
+:root {
+  --primary-color: #003366;
+  --secondary-color: #ffffff;
+  --accent-color: #f57c00;
+  --accent-green: #0db14b;
+  --text-color: #1e2a61;
+  --bg-color: #f7f8fa;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+/* Sidebar nav links with icons */
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}ortant;
   /* Design enhancements: updated color palette, typography, button styles, layout grids, and footer */
 :root {
   --primary-color: #003366;

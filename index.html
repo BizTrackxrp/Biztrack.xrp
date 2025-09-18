@@ -5,52 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizTrack - Decentralized Supply Chain</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-o5OiaM+1WvKdHGeIxxdz7k3MG/ekOxJalM0dVE2VvW6PUx+IgtJwyGHUp3DHwaEw5Io3gEYjvC6lK/2Cr3zZBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<!-- Navigation bar visible on every page -->
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack" />
+<body>
+  <!-- Navigation bar visible on every page -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack" />
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="business.html"><i class="fa-solid fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html"><i class="fa-solid fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="login.html"><i class="fa-solid fa-user"></i> Login/Signup</a></li>
+    </ul>
+  </nav>
+  <div class="main-with-sidebar">
+    <!-- Hero section -->
+    <section class="hero">
+      <h1>Decentralized Supply Chain Tracking on XRPL</h1>
+      <p>Issue unique product IDs, track events, and verify authenticity with QR codes – no central onboarding required.</p>
+      <div class="hero-buttons">
+        <a href="business.html" class="btn btn-primary">Get Started</a>
+        <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+      </div>
+    </section>
+    <!-- Feature highlights -->
+    <section class="features">
+      <div class="features-content">
+        <h2>Why BizTrack?</h2>
+        <p>Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper-proof tracking.</p>
+        <p>Supply chain updates are signed by authorized wallets and published on-chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS or Arweave.</p>
+        <p>Customers scan a QR code to view a product's verified history, authenticity and sustainability metrics. No crypto knowledge required – the landing page presents plain-language details.</p>
+      </div>
+    </section>
   </div>
-  <ul class="sidebar-nav">
-    <li><a href="index.html" class="active">Home</a></li>
-    <li><a href="business.html">For Businesses</a></li>
-    <li><a href="verify.html">Verify Product</a></li>
-    <li><a href="login.html">Login/Signup</a></li>
-  </ul>
-</nav>
-<div class="main-with-sidebar">
-  <!-- Hero section -->
-  <section style="padding: 0; text-align: left;">
-    <h1>Decentralized Supply Chain Tracking on XRPL</h1>
-    <p>
-      Issue unique product IDs, track events, and verify authenticity with QR codes - no central onboarding required.
-    </p>
-    <div style="margin-top: 1.5rem;">
-      <a href="business.html" class="btn">Get Started</a>
-      <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="#">FAQ</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy</a>
     </div>
-  </section>
-  <!-- Feature highlights -->
-  <section style="padding: 2rem; background-color: #f5f5fc;">
-    <div style="max-width: 960px; margin: 0 auto;">
-      <h2>Why BizTrack?</h2>
-      <p>
-        Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper-proof tracking.
-      </p>
-      <p>
-        Supply chain updates are signed by authorized wallets and published on-chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS or Arweave.
-      </p>
-      <p>
-        Customers scan a QR code to view a product's verified history, authenticity and sustainability metrics. No crypto knowledge required - the landing page presents plain-language details.
-      </p>
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="#"><i class="fa-brands fa-github"></i></a>
     </div>
-  </section>
-</div>
-<!-- Footer -->
-<footer style="margin-top: auto; padding: 1rem; text-align: center; background-color: #003366; color: #ffffff;">
-  &copy; 2025 BizTrack - Built for decentralized product tracking.
-</footer>
-<script src="js/wallet.js"></script>
-<script src="js/nav.js"></script>
+    <p>&copy; 2025 BizTrack - Built for decentralized product tracking.</p>
+  </footer>
+  <script src="js/wallet.js"></script>
+  <script src="js/nav.js"></script>
 </body>
 </html>

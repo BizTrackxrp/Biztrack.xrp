@@ -646,5 +646,11 @@ body {
   font-size: 1.5rem;
   color: var(--secondary-color);
 }
+/* Further adjust hero spacing */
+.hero {
+  margin-top: -4rem;
+}
+
+
 
 }

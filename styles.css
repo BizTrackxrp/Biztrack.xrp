@@ -1,3 +1,4 @@
+
 /*
 
 Global styles for BizTrack.xrp redesign.
@@ -525,13 +526,13 @@ html, body {
   --accent-color: #f57c00;
   --accent-green: #0db14b;
   --text-color: #1e2a61;
-  --bg-color: #f7f8fa;
+  --bg-color: #e7f3ff;
+  
 }
 
-body {
-  font-family: 'Poppins', sans-serif;
+body {-
   color: var(--text-color);
-  background-color: var(--bg-color);
+  background-color: #e7f3ff !important;
 }
 
 /* Sidebar nav links with icons */
@@ -548,10 +549,9 @@ body {
   --accent-color: #f57c00;
   --accent-green: #0db14b;
   --text-color: #1e2a61;
-  --bg-color: #f7f8fa;
+  --bg-color:#e7f3ff##e7f3ff;
 }
-
-body {
+  --bg-color: #e7f3ff;body {
   font-family: 'Poppins', sans-serif;
   color: var(--text-color);
   background-color: var(--bg-color);

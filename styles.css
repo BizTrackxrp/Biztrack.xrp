@@ -580,7 +580,7 @@ body {-
 .btn-primary {
   background-color: transparent;
   color: var(--accent-color);
-  border 2px solid var(--accent-color);
+  border: 2px solid var(--accent-color);
 }
 
 .btn-primary:hover {

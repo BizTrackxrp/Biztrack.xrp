@@ -526,7 +526,7 @@ html, body {
   --accent-color: #f57c00;
   --accent-green: #0db14b;
   --text-color: #1e2a61;
-  --bg-color: #e7f3ff;
+  --bg-color: 8e7f3ff;
   
 }
 
@@ -578,13 +578,14 @@ body {-
 }
 
 .btn-primary {
-  background-color: var(--accent-color);
-  color: #ffffff;
-  border: none;
+  background-color: transparent;
+  color: var(--accent-color);
+  border 2px solid var(--accent-color);
 }
 
 .btn-primary:hover {
-  background-color: #e06b00;
+  background-color: var(--accent-color);
+      color: var(--secondary-color);
 }
 
 .btn-secondary {

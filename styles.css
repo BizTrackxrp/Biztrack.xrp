@@ -520,7 +520,7 @@ html, body {
 }
 
 /* Design enhancements: updated color palette, typography, button styles, layout grids, and footer */
-:root {
+:root 8rem
   --primary-color: #003366;
   --secondary-color: #ffffff;
   --accent-color: #f57c00;

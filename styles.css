@@ -513,6 +513,7 @@ html, body {
 .main-with-sidebar > section:first-of-type {
   padding-top: 0 !important;
   margin-top: -8rem !important;
+    margin-top: -12rem !important;
   text-align: left !important;
 }
 .main-with-sidebar > section:first-of-type h1 {

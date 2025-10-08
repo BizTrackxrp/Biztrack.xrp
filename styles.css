@@ -512,9 +512,11 @@ html, body {
 .m/* Adjust hero section to align with sidebar and reduce whitespace */
 .main-with-sidebar > section:first-of-type {
   padding-top: 0 !important;
-  margin-top: -8rem !important;
+  margin-top: -20rem !important;
     margin-top: -12rem !important;
   text-align: left !important;
+      margin-top: -20rem !important;
+  
 }
 .main-with-sidebar > section:first-of-type h1 {
   margin-top: 0 !important;

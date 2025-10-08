@@ -99,12 +99,13 @@ body {
 
 .hero-content {
   position: absolute;
-  top  top: 30%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 800px;
   padding: 0 1rem;
 }
+
 
 .hero-content h1 {
   font-family: 'Montserrat', sans-serif;

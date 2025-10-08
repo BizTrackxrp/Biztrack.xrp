@@ -99,7 +99,7 @@ body {
 
 .hero-content {
   position: absolute;
-  ttop: 30%;
+  top  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 800px;

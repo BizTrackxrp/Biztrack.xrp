@@ -217,59 +217,6 @@
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
     }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 1.5rem 0;
-      color: #94a3b8;
-      font-size: 0.875rem;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .divider span {
-      padding: 0 1rem;
-    }
-
-    .wallet-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .btn-wallet {
-      width: 100%;
-      padding: 0.875rem;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      border: 2px solid #e2e8f0;
-      background: white;
-      color: #334155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      transition: all 0.2s;
-    }
-
-    .btn-wallet:hover {
-      border-color: #3b82f6;
-      background: #f8fafc;
-      transform: translateY(-2px);
-    }
-
-    .btn-wallet i {
-      font-size: 1.25rem;
-    }
-
     .terms {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
@@ -366,25 +313,6 @@
             Login
           </button>
         </form>
-
-        <div class="divider">
-          <span>Or connect with</span>
-        </div>
-
-        <div class="wallet-buttons">
-          <button class="btn-wallet" onclick="connectWallet('xaman')">
-            <i class="fas fa-wallet"></i>
-            Connect with Xaman
-          </button>
-          <button class="btn-wallet" onclick="connectWallet('gemwallet')">
-            <i class="fas fa-gem"></i>
-            Connect with GemWallet
-          </button>
-          <button class="btn-wallet" onclick="connectWallet('ledger')">
-            <i class="fas fa-shield-alt"></i>
-            Connect with Ledger
-          </button>
-        </div>
       </div>
 
       <!-- Signup Tab -->
@@ -426,30 +354,11 @@
             <i class="fas fa-user-plus"></i>
             Create Account
           </button>
+
+          <div class="terms">
+            By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </div>
         </form>
-
-        <div class="divider">
-          <span>Or sign up with</span>
-        </div>
-
-        <div class="wallet-buttons">
-          <button class="btn-wallet" onclick="connectWallet('xaman')">
-            <i class="fas fa-wallet"></i>
-            Sign up with Xaman
-          </button>
-          <button class="btn-wallet" onclick="connectWallet('gemwallet')">
-            <i class="fas fa-gem"></i>
-            Sign up with GemWallet
-          </button>
-          <button class="btn-wallet" onclick="connectWallet('ledger')">
-            <i class="fas fa-shield-alt"></i>
-            Sign up with Ledger
-          </button>
-        </div>
-
-        <div class="terms">
-          By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-        </div>
       </div>
     </div>
   </div>
@@ -494,12 +403,6 @@
       alert('Account created successfully!\n\nName: ' + name + '\nEmail: ' + email);
       // In production, this would create the account
     });
-
-    // Wallet connection
-    function connectWallet(walletType) {
-      alert('Connecting to ' + walletType + '...\n\nWallet integration coming soon!');
-      // In production, this would connect to the actual wallet
-    }
   </script>
 </body>
 </html>

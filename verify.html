@@ -3,37 +3,631 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Product - BizTrack.xrp</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Verify Product - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.125rem;
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Verify Section */
+    .verify-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .verify-container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .verify-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #334155;
+      font-size: 1rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.25rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    .scan-option {
+      text-align: center;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px dashed #cbd5e1;
+    }
+
+    .scan-option i {
+      font-size: 3rem;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .scan-option p {
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+
+    .scan-option small {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    /* Results Section */
+    .results-section {
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .results-section.show {
+      display: block;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 2px solid #3b82f6;
+    }
+
+    .product-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .verified-badge {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.75rem;
+    }
+
+    .product-title h3 {
+      font-size: 1.5rem;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .product-title .verified-text {
+      color: #10b981;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .detail-value {
+      color: #0f172a;
+      font-weight: 500;
+    }
+
+    .timeline {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #cbd5e1;
+    }
+
+    .timeline h4 {
+      color: #0f172a;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-left: 0.5rem;
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      background: #3b82f6;
+      border-radius: 50%;
+      margin-top: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-date {
+      font-size: 0.875rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .timeline-event {
+      color: #334155;
+      margin-top: 0.25rem;
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      padding: 1.5rem;
+      color: #991b1b;
+      text-align: center;
+    }
+
+    .error-message i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .verify-container {
+        padding: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
+      <h1>🚚 BizTrack</h1>
     </div>
     <ul class="sidebar-nav">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="business.html">For Businesses</a></li>
-      <li><a href="verify.html" class="active">Verify Product</a></li>
-      <li><a href="login.html">Login/Signup</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
     </ul>
   </nav>
-  <div class="main-with-sidebar">
-    <div style="max-width:800px; margin:2rem auto; text-align:center;">
-      <h2>Verify a Product’s Authenticity</h2>
-      <p>
-        Enter the product ID or scan the QR code to retrieve the on-chain record of a product. You'll be shown its history, authenticity and sustainability metrics.
-      </p>
-      <div class="form-group" style="max-width:400px; margin:1rem auto;">
-        <label for="verifyId">Product ID</label>
-        <input id="verifyId" type="text" />
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1>Verify a Product's Authenticity</h1>
+      <p>Enter the product ID or scan the QR code to retrieve the on-chain record of a product. You'll be shown its history, authenticity and sustainability metrics.</p>
+    </header>
+
+    <!-- Verify Section -->
+    <section class="verify-section">
+      <div class="verify-container">
+        <form class="verify-form" id="verifyForm">
+          <div class="form-group">
+            <label for="productId">Product ID</label>
+            <div class="input-wrapper">
+              <i class="fas fa-barcode"></i>
+              <input type="text" id="productId" placeholder="Enter product ID (e.g., OCB-2024-001)" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+            Verify Product
+          </button>
+        </form>
+
+        <div class="scan-option">
+          <i class="fas fa-qrcode"></i>
+          <p>Or scan a QR code</p>
+          <small>Use your phone's camera to scan a product QR code</small>
+        </div>
+
+        <!-- Results Section (hidden by default) -->
+        <div class="results-section" id="resultsSection">
+          <!-- Success result -->
+          <div class="product-card" id="successResult" style="display: none;">
+            <div class="product-header">
+              <div class="verified-badge">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="product-title">
+                <h3 id="productName">Organic Coffee Beans</h3>
+                <span class="verified-text">✓ Verified Authentic</span>
+              </div>
+            </div>
+
+            <div class="product-details">
+              <div class="detail-item">
+                <span class="detail-label">SKU</span>
+                <span class="detail-value" id="productSku">OCB-2024-001</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Batch Number</span>
+                <span class="detail-value" id="productBatch">BATCH-12345</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Origin</span>
+                <span class="detail-value" id="productOrigin">Colombia</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Manufacturer</span>
+                <span class="detail-value" id="productMfg">BeanCo International</span>
+              </div>
+            </div>
+
+            <div class="timeline">
+              <h4>Supply Chain History</h4>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-date">Jan 15, 2025</div>
+                  <div class="timeline-event">Product created and registered on blockchain</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-date">Jan 18, 2025</div>
+                  <div class="timeline-event">Quality inspection passed</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-date">Jan 20, 2025</div>
+                  <div class="timeline-event">Shipped to distributor</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-date">Jan 23, 2025</div>
+                  <div class="timeline-event">Arrived at retail location</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error result -->
+          <div class="error-message" id="errorResult" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Product Not Found</h3>
+            <p>The product ID you entered could not be found in our blockchain records. Please check the ID and try again.</p>
+          </div>
+        </div>
       </div>
-      <button class="btn" id="verifyBtn">Verify</button>
-      <p id="verifyMsg" style="color:#c00; margin-top:0.5rem;"></p>
-      <div id="verifyResult" style="margin-top:1.5rem;"></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">FAQ</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+      </div>
     </div>
-  </div>
-  <script src="js/verify.js"></script>
-  <script src="js/wallet.js"></script>
+  </footer>
+
+  <script>
+    // Demo verification logic
+    document.getElementById('verifyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const productId = document.getElementById('productId').value.trim();
+      const resultsSection = document.getElementById('resultsSection');
+      const successResult = document.getElementById('successResult');
+      const errorResult = document.getElementById('errorResult');
+      
+      // Show results section
+      resultsSection.classList.add('show');
+      
+      // Simulate verification (in real app, this would query the blockchain)
+      // Show success for any ID starting with 'OCB' or 'VALID', otherwise show error
+      if (productId.toUpperCase().startsWith('OCB') || productId.toUpperCase().startsWith('VALID')) {
+        successResult.style.display = 'block';
+        errorResult.style.display = 'none';
+        
+        // Update product details with entered ID
+        document.getElementById('productSku').textContent = productId;
+      } else {
+        successResult.style.display = 'none';
+        errorResult.style.display = 'block';
+      }
+      
+      // Scroll to results
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
 </body>
 </html>

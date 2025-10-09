@@ -78,6 +78,10 @@ body {
   text-align: center;
   color: #ffffff;
   overflow: hidden;
+  min-height: 400px;  /* Add this line */
+  display: flex;      /* Add this line */
+  align-items: center; /* Add this line */
+  justify-content: center; /* Add this line */
 }
 
 
@@ -93,12 +97,10 @@ body {
 }
 
 .hero-content {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+ position: relative;  /* Change from absolute to relative */
   max-width: 800px;
-  padding: 0 1rem;
+  padding: 2rem 1rem;  /* Change from 0 1rem */
+  /* Remove top, left, and transform lines */
 }
 
 

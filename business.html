@@ -1,74 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For Businesses – BizTrack</title>
-  <link rel="stylesheet" href="styles.css" />
-    <style>
-    :root {
-      --lightblue-bg: #e7f3ff;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Businesses - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
+
     body {
-      background-color: var(--lightblue-bg);
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.125rem;
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Content Section */
+    .content-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .workflow-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .workflow-section h2 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #0f172a;
+    }
+
+    .steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    .step-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+
+    .step-content p {
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    /* Form Section */
+    .form-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section h2 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+
+    .form-description {
+      color: #64748b;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn {
+      padding: 0.875rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    .qr-preview {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px dashed #cbd5e1;
+      text-align: center;
+    }
+
+    .qr-preview img {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .qr-placeholder {
+      color: #94a3b8;
+      font-size: 1rem;
+      padding: 3rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .workflow-section,
+      .form-section {
+        padding: 1.5rem;
+      }
     }
   </style>
-  
 </head>
 <body>
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
-  </div>
-  <ul class="sidebar-nav">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="business.html" class="active">For Businesses</a></li>
-    <li><a href="verify.html">Verify Product</a></li>
-    <li><a href="login.html">Login/Signup</a></li>
-  </ul>
-</nav>
-<div class="main-with-sidebar">
-    <h2>Empower Your Supply Chain</h2>
-    <p>
-      BizTrack enables any business to issue on‑chain product IDs,
-      generate QR codes and record supply chain events—without a centralized
-      SaaS provider or onboarding process.
-    </p>
-    <h3>Create a Product ID</h3>
-    <ol>
-      <li>Connect wallet: Use an XRPL‑compatible wallet (Xaman, GemWallet, Ledger) to connect to our dApp.</li>
-      <li>Enter details: Provide the product name, SKU and batch number, plus optional metadata like origin or certifications.</li>
-      <li>Mint token: A smart contract mints a unique on‑chain ID (NFT or token) representing the physical item.</li>
-      <li>Download QR code: Print or embed the QR code on your product packaging to link customers to the blockchain record.</li>
-    </ol>
-    <div style="margin-top:2rem;">
-      <h3>Generate a QR Code</h3>
-      <p>This demo form illustrates the product creation workflow.</p>
-      <div class="form-group">
-        <label for="prodName">Product Name</label>
-        <input id="prodName" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="sku">SKU</label>
-        <input id="sku" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="batch">Batch Number</label>
-        <input id="batch" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="metadata">Optional Metadata</label>
-        <input id="metadata" type="text" />
-      </div>
-      <button class="btn" id="generateQRBtn">Generate QR</button>
-      <p id="qrMsg" style="color:#c00; margin-top:0.5rem;"></p>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🚚 BizTrack</h1>
     </div>
-    <div id="qrOutput" class="qr-code" style="display:none;"></div>
-  </div>
-  < </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html" class="active"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
+    </ul>
+  </nav>
 
-    script src="js/business.js"></script>
-<script src="js/nav.js"></script>
-<script src="js/wallet.js"></script>
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1>Empower Your Supply Chain</h1>
+      <p>BizTrack enables any business to issue on-chain product IDs, generate QR codes and record supply chain events—without a centralized SaaS provider or onboarding process.</p>
+    </header>
+
+    <!-- Content -->
+    <div class="content-section">
+      <!-- Workflow Steps -->
+      <section class="workflow-section">
+        <h2>Create a Product ID</h2>
+        <ol class="steps">
+          <li class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Connect Wallet</h3>
+              <p>Use an XRPL-compatible wallet (Xaman, GemWallet, Ledger) to connect to our dApp.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Enter Details</h3>
+              <p>Provide the product name, SKU and batch number, plus optional metadata like origin or certifications.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Mint Token</h3>
+              <p>A smart contract mints a unique on-chain ID (NFT or token) representing the physical item.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Download QR Code</h3>
+              <p>Print or embed the QR code on your product packaging to link customers to the blockchain record.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- QR Code Form -->
+      <section class="form-section">
+        <h2>Generate a QR Code</h2>
+        <p class="form-description">This demo form illustrates the product creation workflow.</p>
+        
+        <form id="qrForm">
+          <div class="form-group">
+            <label for="productName">Product Name</label>
+            <input type="text" id="productName" placeholder="e.g., Organic Coffee Beans" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sku">SKU</label>
+            <input type="text" id="sku" placeholder="e.g., OCB-2024-001" required>
+          </div>
+
+          <div class="form-group">
+            <label for="batchNumber">Batch Number</label>
+            <input type="text" id="batchNumber" placeholder="e.g., BATCH-12345">
+          </div>
+
+          <div class="form-group">
+            <label for="metadata">Optional Metadata</label>
+            <textarea id="metadata" placeholder="Additional information like origin, certifications, etc."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-qrcode"></i>
+            Generate QR
+          </button>
+        </form>
+
+        <div class="qr-preview" id="qrPreview">
+          <div class="qr-placeholder">
+            <i class="fas fa-qrcode" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+            <p>QR code will appear here after generation</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">FAQ</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple QR generation demo (placeholder)
+    document.getElementById('qrForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const productName = document.getElementById('productName').value;
+      const sku = document.getElementById('sku').value;
+      const batchNumber = document.getElementById('batchNumber').value;
+      
+      // Create a placeholder QR code
+      const qrData = `${productName}-${sku}-${batchNumber}`;
+      const qrPreview = document.getElementById('qrPreview');
+      
+      qrPreview.innerHTML = `
+        <div style="padding: 2rem;">
+          <h3 style="color: #0f172a; margin-bottom: 1rem;">QR Code Generated!</h3>
+          <div style="background: white; padding: 2rem; border-radius: 12px; display: inline-block;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}" alt="QR Code">
+          </div>
+          <p style="margin-top: 1rem; color: #64748b;">Product: ${productName}</p>
+          <p style="color: #64748b;">SKU: ${sku}</p>
+          ${batchNumber ? `<p style="color: #64748b;">Batch: ${batchNumber}</p>` : ''}
+        </div>
+      `;
+    });
+  </script>
 </body>
 </html>

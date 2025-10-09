@@ -1,88 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login – BizTrack.xrp</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
- <nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Back to Home Button */
+    .back-home {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      z-index: 100;
+    }
+
+    .back-home a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      transition: all 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .back-home a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-4px);
+    }
+
+    /* Login Container */
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 3rem 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .login-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      opacity: 0.95;
+      font-size: 0.95rem;
+    }
+
+    .login-tabs {
+      display: flex;
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 1rem;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tab-button.active {
+      color: #3b82f6;
+    }
+
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #3b82f6;
+    }
+
+    .login-body {
+      padding: 2.5rem;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 2.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-top: -0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .forgot-password a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    .wallet-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-wallet {
+      width: 100%;
+      padding: 0.875rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: 2px solid #e2e8f0;
+      background: white;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .btn-wallet:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+      transform: translateY(-2px);
+    }
+
+    .btn-wallet i {
+      font-size: 1.25rem;
+    }
+
+    .terms {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .terms a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+
+      .back-home {
+        top: 1rem;
+        left: 1rem;
+      }
+
+      .login-header {
+        padding: 2rem 1.5rem 1.5rem;
+      }
+
+      .login-header h1 {
+        font-size: 1.75rem;
+      }
+
+      .login-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Back to Home -->
+  <div class="back-home">
+    <a href="index.html">
+      <i class="fas fa-arrow-left"></i>
+      Back to Home
+    </a>
   </div>
-  <ul class="sidebar-nav">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="business.html">For Businesses</a></li>
-    <li><a href="verify.html">Verify Product</a></li>
-    <li><a href="login.html" class="active">Login</a></li>
-    <li><a href="#" id="connectWalletLink">Connect Wallet</a></li>
-  </ul>
-</nav>
-i<div class="main-with-sidebar">
 
-    <div class="auth-container">
-      <h2>Login</h2>
-      <div class="form-group">
-        <label for="loginEmail">Email</label>
-        <input id="loginEmail" type="email" />
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password" />
-      </div>
-      <!-- 2FA code input is hidden until required -->
-      <div class="form-group" id="totpGroup" style="display:none;">
-        <label for="loginTotp">2FA Code</label>
-        <input id="loginTotp" type="text" maxlength="6" placeholder="000000" />
-      </div>
-      <button class="btn" id="loginBtn">Login</button>
-      <p id="loginMsg" style="color:#c00; margin-top:0.5rem;"></p>
-
-      <p style="text-align:center; margin-top:1rem;">
-        Don’t have an account? <a href="#" id="showSignup">Sign Up</a>
-      </p>
-      <p style="text-align:center;">
-        <a href="#" id="showReset">Forgot password?</a>
-      </p>
+  <!-- Login Container -->
+  <div class="login-container">
+    <!-- Header -->
+    <div class="login-header">
+      <h1>Welcome to BizTrack</h1>
+      <p>Secure blockchain-powered supply chain tracking</p>
     </div>
 
-    <div class="auth-container" id="signupContainer" style="display:none;">
-      <h2>Create Account</h2>
-      <div class="form-group">
-        <label for="companyName">Company name</label>
-        <input id="companyName" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="signupEmail">Email</label>
-        <input id="signupEmail" type="email" />
-      </div>
-      <div class="form-group">
-        <label for="signupPassword">Password</label>
-        <input id="signupPassword" type="password" />
-      </div>
-      <button class="btn" id="signupBtn">Sign Up</button>
-      <p id="signupMsg" style="color:#c00; margin-top:0.5rem;"></p>
-      <p style="text-align:center; margin-top:1rem;">
-        Already have an account? <a href="#" id="showLoginFromSignup">Login</a>
-      </p>
+    <!-- Tabs -->
+    <div class="login-tabs">
+      <button class="tab-button active" onclick="switchTab('login')">Login</button>
+      <button class="tab-button" onclick="switchTab('signup')">Sign Up</button>
     </div>
 
-    <div class="auth-container" id="resetContainer" style="display:none;">
-      <h2>Reset Password</h2>
-      <div class="form-group">
-        <label for="resetEmail">Enter your email to receive a verification code</label>
-        <input id="resetEmail" type="email" />
-      </div>
-      <button class="btn" id="resetSendCodeBtn">Send code</button>
-      <p id="resetMsg" style="color:#c00; margin-top:0.5rem;"></p>
-      <p style="text-align:center; margin-top:1rem;">
-        Remember your password? <a href="#" id="showLoginFromReset">Back to login</a>
-      </p>
-    </div>
+    <!-- Body -->
+    <div class="login-body">
+      <!-- Login Tab -->
+      <div class="tab-content active" id="loginTab">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="loginEmail" placeholder="Enter your email" required>
+            </div>
+          </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/wallet.js"></script>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+          </div>
+
+          <div class="forgot-password">
+            <a href="#" onclick="alert('Password reset functionality coming soon!'); return false;">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Login
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>Or connect with</span>
+        </div>
+
+        <div class="wallet-buttons">
+          <button class="btn-wallet" onclick="connectWallet('xaman')">
+            <i class="fas fa-wallet"></i>
+            Connect with Xaman
+          </button>
+          <button class="btn-wallet" onclick="connectWallet('gemwallet')">
+            <i class="fas fa-gem"></i>
+            Connect with GemWallet
+          </button>
+          <button class="btn-wallet" onclick="connectWallet('ledger')">
+            <i class="fas fa-shield-alt"></i>
+            Connect with Ledger
+          </button>
+        </div>
+      </div>
+
+      <!-- Signup Tab -->
+      <div class="tab-content" id="signupTab">
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user"></i>
+              <input type="text" id="signupName" placeholder="Enter your full name" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="signupEmail" placeholder="Enter your email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="signupPassword" placeholder="Create a password" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signupConfirmPassword">Confirm Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            Create Account
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>Or sign up with</span>
+        </div>
+
+        <div class="wallet-buttons">
+          <button class="btn-wallet" onclick="connectWallet('xaman')">
+            <i class="fas fa-wallet"></i>
+            Sign up with Xaman
+          </button>
+          <button class="btn-wallet" onclick="connectWallet('gemwallet')">
+            <i class="fas fa-gem"></i>
+            Sign up with GemWallet
+          </button>
+          <button class="btn-wallet" onclick="connectWallet('ledger')">
+            <i class="fas fa-shield-alt"></i>
+            Sign up with Ledger
+          </button>
+        </div>
+
+        <div class="terms">
+          By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
   </div>
-  </body>
+
+  <script>
+    // Tab switching
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(tab + 'Tab').classList.add('active');
+    }
+
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      alert('Login functionality coming soon!\n\nEmail: ' + email);
+      // In production, this would authenticate the user
+    });
+
+    // Signup form
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      alert('Account created successfully!\n\nName: ' + name + '\nEmail: ' + email);
+      // In production, this would create the account
+    });
+
+    // Wallet connection
+    function connectWallet(walletType) {
+      alert('Connecting to ' + walletType + '...\n\nWallet integration coming soon!');
+      // In production, this would connect to the actual wallet
+    }
+  </script>
+</body>
 </html>

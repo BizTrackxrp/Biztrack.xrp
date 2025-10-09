@@ -1,75 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizTrack - Decentralized Supply Chain</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-o5OiaM+1WvKdHGeIxxdz7k3MG/ekOxJalM0dVE2VvW6PUx+IgtJwyGHUp3DHwaEw5Io3gEYjvC6lK/2Cr3zZBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-    :root {
-      --lightblue-bg: #e7f3ff;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizTrack - Decentralized Supply Chain Tracking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
+
     body {
-      background-color: var(--lightblue-bg);
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+      opacity: 0.4;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #1e40af;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 2rem;
+      background: white;
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .features-intro {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 4rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      border-color: #3b82f6;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .feature-card p {
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
-
-  </head>>
+</head>
 <body>
-  <!-- Navigation bar visible on every page -->
+  <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack" />
+      <h1>🚚 BizTrack</h1>
     </div>
     <ul class="sidebar-nav">
-      <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-      <li><a href="business.html"><i class="fa-solid fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html"><i class="fa-solid fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="login.html"><i class="fa-solid fa-user"></i> Login/Signup</a></li>
+      <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
     </ul>
   </nav>
-  <div class="main-with-sidebar">
-    <!-- Hero section -->
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
     <section class="hero">
-      <h1>Decentralized Supply Chain Tracking on XRPL</h1>
-      <p>Issue unique product IDs, track events, and verify authenticity with QR codes – no central onboarding required.</p>
-      <div class="hero-buttons">
-        <a href="business.html" class="btn btn-primary">Get Started</a>
-        <a href="verify.html" class="btn btn-secondary">Verify Product</a>
+      <div class="hero-content">
+        <h1>Decentralized Supply Chain Tracking on XRPL</h1>
+        <p>Issue unique product IDs, track events, and verify authenticity with QR codes – no central onboarding required.</p>
+        <div class="hero-buttons">
+          <a href="business.html" class="btn btn-primary">
+            <i class="fas fa-rocket"></i>
+            Get Started
+          </a>
+          <a href="verify.html" class="btn btn-secondary">
+            <i class="fas fa-qrcode"></i>
+            Verify Product
+          </a>
+        </div>
       </div>
     </section>
-    <!-- Feature highlights -->
+
+    <!-- Features Section -->
     <section class="features">
-      <div class="features-content">
+      <div class="features-container">
         <h2>Why BizTrack?</h2>
-        <p>Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper-proof tracking.</p>
-        <p>Supply chain updates are signed by authorized wallets and published on-chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS or Arweave.</p>
-        <p>Customers scan a QR code to view a product's verified history, authenticity and sustainability metrics. No crypto knowledge required – the landing page presents plain-language details.</p>
+        <p class="features-intro">Blockchain-powered supply chain tracking that's secure, transparent, and tamper-proof.</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-fingerprint"></i>
+            </div>
+            <h3>Unique Product Identity</h3>
+            <p>Each product is assigned a unique identifier stored on the XRP Ledger. QR codes link the physical item to its blockchain record, enabling secure, tamper-proof tracking.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Secure On-Chain Updates</h3>
+            <p>Supply chain updates are signed by authorized wallets and published on-chain. Optional metadata, such as photos or temperature logs, lives on decentralized storage like IPFS.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Easy Verification</h3>
+            <p>Customers scan a QR code to view a product's verified history, authenticity and sustainability metrics. No crypto knowledge required – the landing page presents plain-language details.</p>
+          </div>
+        </div>
       </div>
     </section>
-  </div>
+  </main>
+
   <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="#">FAQ</a>
-      <a href="#">Contact</a>
-      <a href="#">Privacy</a>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">FAQ</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+      </div>
     </div>
-    <div class="social-icons">
-      <a href="#"><i class="fa-brands fa-twitter"></i></a>
-      <a href="#"><i class="fa-brands fa-linkedin"></i></a>
-      <a href="#"><i class="fa-brands fa-github"></i></a>
-    </div>
-    <p>&copy; 2025 BizTrack - Built for decentralized product tracking.</p>
   </footer>
-  <script src="js/wallet.js"></script>
-  <script src="js/nav.js"></script>
 </body>
 </html>

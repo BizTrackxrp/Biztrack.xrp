@@ -72,9 +72,9 @@ module.exports = async (req, res) => {
     const prepared = await client.autofill({
       TransactionType: 'Payment',
       Account: wallet.address,
-      Destination: wallet.address, // Send to self
-      Amount: '1', // 1 drop (minimal amount)
-      LastLedgerSequence: ledger + 30, // 30 ledger buffer for slower networks
+      Destination: wallet.address,
+      Amount: '1',
+      LastLedgerSequence: ledger + 30,
       Memos: [
         {
           Memo: {
@@ -94,8 +94,8 @@ module.exports = async (req, res) => {
     await client.disconnect();
 
     const txHash = result.result.hash;
-    const actualFee = result.result.Fee; // Fee in drops
-    const feeInXRP = Number(actualFee) / 1000000; // Convert drops to XRP
+    const actualFee = result.result.Fee;
+    const feeInXRP = Number(actualFee) / 1000000;
 
     console.log('XRPL Transaction:', txHash);
     console.log('Actual Fee:', feeInXRP, 'XRP');

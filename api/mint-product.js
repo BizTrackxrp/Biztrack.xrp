@@ -1,6 +1,3 @@
-## FILE 2: /api/mint-product.js
-## Location: api/mint-product.js (create new file in the api folder)
-
 const { Client, Wallet } = require('xrpl');
 const axios = require('axios');
 const { Pool } = require('pg');

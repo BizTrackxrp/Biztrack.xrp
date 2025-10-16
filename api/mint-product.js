@@ -95,15 +95,18 @@ module.exports = async (req, res) => {
     console.log('Submitting transaction...');
     const submitResult = await client.submit(signed.tx_blob);
 
-    console.log('Waiting for validation...');
     const txHash = submitResult.result.tx_json.hash;
+    console.log('Transaction hash:', txHash);
+    console.log('Submit result:', submitResult.result.engine_result);
+
+    console.log('Waiting for validation...');
 
     // Wait for transaction to be validated
     let validated = false;
     let attempts = 0;
     let txResult;
 
-    while (!validated && attempts < 30) {
+    while (!validated && attempts < 60) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       try {
@@ -112,11 +115,13 @@ module.exports = async (req, res) => {
           transaction: txHash
         });
         
+        console.log('Polling attempt', attempts, '- validated:', txResult.result.validated);
+        
         if (txResult.result.validated) {
           validated = true;
         }
       } catch (error) {
-        // Transaction not yet in ledger, keep waiting
+        console.log('Polling attempt', attempts, '- not found yet');
       }
       
       attempts++;
@@ -125,7 +130,7 @@ module.exports = async (req, res) => {
     await client.disconnect();
 
     if (!validated) {
-      throw new Error('Transaction not validated within timeout');
+      throw new Error(`Transaction not validated within timeout. TxHash: ${txHash}. Check: https://livenet.xrpl.org/transactions/${txHash}`);
     }
 
     const actualFee = txResult.result.Fee;

@@ -65,12 +65,16 @@ module.exports = async (req, res) => {
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
+    // Get current ledger and add buffer
+    const ledger = await client.getLedgerIndex();
+
     // Create transaction with IPFS hash in memo
     const prepared = await client.autofill({
       TransactionType: 'Payment',
       Account: wallet.address,
       Destination: wallet.address, // Send to self
       Amount: '1', // 1 drop (minimal amount)
+      LastLedgerSequence: ledger + 30, // 30 ledger buffer for slower networks
       Memos: [
         {
           Memo: {

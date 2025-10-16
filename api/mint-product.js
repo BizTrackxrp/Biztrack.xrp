@@ -65,12 +65,17 @@ module.exports = async (req, res) => {
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
-    // Create transaction with IPFS hash in memo - let autofill handle ledger sequence
+    // Get current ledger and use a much larger buffer
+    const ledgerIndex = await client.getLedgerIndex();
+    console.log('Current ledger:', ledgerIndex);
+
+    // Create transaction with IPFS hash in memo
     const prepared = await client.autofill({
       TransactionType: 'Payment',
       Account: wallet.address,
       Destination: wallet.address,
       Amount: '1',
+      LastLedgerSequence: ledgerIndex + 75,
       Memos: [
         {
           Memo: {
@@ -84,14 +89,46 @@ module.exports = async (req, res) => {
       ]
     });
 
-    console.log('Signing and submitting transaction...');
+    console.log('Signing transaction...');
     const signed = wallet.sign(prepared);
-    const result = await client.submitAndWait(signed.tx_blob);
+
+    console.log('Submitting transaction...');
+    const submitResult = await client.submit(signed.tx_blob);
+
+    console.log('Waiting for validation...');
+    const txHash = submitResult.result.tx_json.hash;
+
+    // Wait for transaction to be validated
+    let validated = false;
+    let attempts = 0;
+    let txResult;
+
+    while (!validated && attempts < 30) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      try {
+        txResult = await client.request({
+          command: 'tx',
+          transaction: txHash
+        });
+        
+        if (txResult.result.validated) {
+          validated = true;
+        }
+      } catch (error) {
+        // Transaction not yet in ledger, keep waiting
+      }
+      
+      attempts++;
+    }
 
     await client.disconnect();
 
-    const txHash = result.result.hash;
-    const actualFee = result.result.Fee;
+    if (!validated) {
+      throw new Error('Transaction not validated within timeout');
+    }
+
+    const actualFee = txResult.result.Fee;
     const feeInXRP = Number(actualFee) / 1000000;
 
     console.log('XRPL Transaction:', txHash);

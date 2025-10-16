@@ -65,34 +65,3 @@ module.exports = async (req, res) => {
     });
   }
 };
-
-## ============================================
-## INSTALLATION INSTRUCTIONS
-
-1. **Update package.json:**
-   - If package.json exists in your repo root, ADD the dependencies above to it
-   - If it doesn't exist, create it with the content above
-   - Run: npm install (or let Vercel install automatically on deploy)
-
-2. **Create the API files:**
-   - Create: api/mint-product.js (paste FILE 2 content)
-   - Create: api/verify-product.js (paste FILE 3 content)
-
-3. **Commit and push to GitHub:**
-   git add .
-   git commit -m "Add minting and verification APIs"
-   git push
-
-4. **Vercel will auto-deploy** - wait for deployment to complete
-
-5. **Test the minting endpoint:**
-   Use Postman or curl:
-   
-   curl -X POST https://biztrack-xrp.vercel.app/api/mint-product \
-     -H "Content-Type: application/json" \
-     -d '{
-       "productName": "Test Product",
-       "sku": "TEST-001",
-       "batchNumber": "BATCH-001",
-       "metadata": {"origin": "Test Factory"}
-     }'

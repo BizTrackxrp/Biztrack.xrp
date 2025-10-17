@@ -34,7 +34,8 @@ module.exports = async (req, res) => {
       sku: sku || null,
       batchNumber: batchNumber || null,
       metadata: metadata || {},
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      mintedBy: 'BizTrack Supply Chain Tracking'
     };
 
     console.log('Uploading to IPFS...');
@@ -59,29 +60,27 @@ module.exports = async (req, res) => {
     const ipfsHash = pinataResponse.data.IpfsHash;
     console.log('IPFS Hash:', ipfsHash);
 
-    // Step 3: Mint to XRPL
-    console.log('Minting to XRPL...');
+    // Step 3: Write IPFS hash to XRPL using AccountSet
+    console.log('Writing to XRPL...');
     
-    // Use XRPL Labs cluster (Wietse's infrastructure)
     client = new Client('wss://xrplcluster.com');
     await client.connect();
     console.log('Connected to XRPL');
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
-    // Prepare transaction template
+    // Prepare AccountSet transaction with memo containing IPFS hash
     const tx = {
-      TransactionType: 'Payment',
+      TransactionType: 'AccountSet',
       Account: wallet.address,
-      Destination: wallet.address,
-      Amount: '1',
       Memos: [
         {
           Memo: {
-            MemoType: Buffer.from('BizTrack').toString('hex').toUpperCase(),
+            MemoType: Buffer.from('BizTrack-Product').toString('hex').toUpperCase(),
             MemoData: Buffer.from(JSON.stringify({
               productId,
-              ipfsHash
+              ipfsHash,
+              timestamp: new Date().toISOString()
             })).toString('hex').toUpperCase()
           }
         }
@@ -96,7 +95,7 @@ module.exports = async (req, res) => {
     console.log('Autofilling transaction...');
     const prepared = await client.autofill(tx);
     
-    // Override with fresh ledger + 4 (XRPL best practice)
+    // Get fresh ledger and set LastLedgerSequence
     const freshLedger = await client.getLedgerIndex();
     prepared.LastLedgerSequence = freshLedger + 4;
     
@@ -127,7 +126,7 @@ module.exports = async (req, res) => {
 
     console.log('Waiting for validation (max 15 seconds)...');
 
-    // Wait for transaction to be validated (should be fast with +4 buffer)
+    // Wait for transaction to be validated
     let validated = false;
     let attempts = 0;
     let txResult;
@@ -153,8 +152,8 @@ module.exports = async (req, res) => {
     }
 
     if (!validated) {
-      // Transaction submitted but not yet validated - this is OK, it will process
-      console.log('Transaction submitted but not yet validated. It should process shortly.');
+      // Transaction submitted but not yet validated
+      console.log('Transaction submitted but not yet validated.');
       await client.disconnect();
       
       return res.status(202).json({
@@ -165,6 +164,7 @@ module.exports = async (req, res) => {
         ipfsHash,
         xrplTxHash: txHash,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
+        verificationUrl: `https://www.biztrack.io/verify?id=${productId}`,
         note: 'Check the explorer link in ~10 seconds to verify transaction success'
       });
     }
@@ -188,7 +188,7 @@ module.exports = async (req, res) => {
 
     await client.disconnect();
 
-    // Step 5: Return success response
+    // Step 5: Return success response with ACTUAL COST
     return res.status(200).json({
       success: true,
       productId,
@@ -197,16 +197,22 @@ module.exports = async (req, res) => {
       actualCost: {
         fee: feeInXRP,
         feeInDrops: actualFee,
-        currency: 'XRP'
+        currency: 'XRP',
+        feeInUSD: (feeInXRP * 2.5).toFixed(6) // Approximate at $2.50/XRP
       },
       verificationUrl: `https://www.biztrack.io/verify?id=${productId}`,
-      blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`
+      blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
+      ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`
     });
 
   } catch (error) {
     console.error('Minting error:', error);
     if (client) {
-      await client.disconnect();
+      try {
+        await client.disconnect();
+      } catch (e) {
+        // Ignore disconnect errors
+      }
     }
     return res.status(500).json({
       error: 'Minting failed',

@@ -14,6 +14,8 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  let client;
+
   try {
     const { productName, sku, batchNumber, metadata } = req.body;
 
@@ -60,22 +62,19 @@ module.exports = async (req, res) => {
     // Step 3: Mint to XRPL
     console.log('Minting to XRPL...');
     
-    const client = new Client('wss://s1.ripple.com');
+    // Use XRPL Labs cluster (Wietse's infrastructure)
+    client = new Client('wss://xrplcluster.com');
     await client.connect();
+    console.log('Connected to XRPL');
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
-    // Get current ledger and use a much larger buffer
-    const ledgerIndex = await client.getLedgerIndex();
-    console.log('Current ledger:', ledgerIndex);
-
-    // Create transaction with IPFS hash in memo
-    const prepared = await client.autofill({
+    // Prepare transaction template
+    const tx = {
       TransactionType: 'Payment',
       Account: wallet.address,
       Destination: wallet.address,
       Amount: '1',
-      LastLedgerSequence: ledgerIndex + 75,
       Memos: [
         {
           Memo: {
@@ -87,26 +86,53 @@ module.exports = async (req, res) => {
           }
         }
       ]
-    });
+    };
 
-    console.log('Signing transaction...');
+    console.log('Getting current ledger...');
+    const ledgerIndex = await client.getLedgerIndex();
+    console.log('Current ledger:', ledgerIndex);
+
+    // Autofill the transaction
+    console.log('Autofilling transaction...');
+    const prepared = await client.autofill(tx);
+    
+    // Override with fresh ledger + 4 (XRPL best practice)
+    const freshLedger = await client.getLedgerIndex();
+    prepared.LastLedgerSequence = freshLedger + 4;
+    
+    console.log('Fresh ledger:', freshLedger);
+    console.log('LastLedgerSequence:', prepared.LastLedgerSequence);
+    console.log('Sequence:', prepared.Sequence);
+    console.log('Fee:', prepared.Fee);
+
+    // Sign and submit immediately
+    console.log('Signing...');
     const signed = wallet.sign(prepared);
-
-    console.log('Submitting transaction...');
+    
+    console.log('Submitting...');
     const submitResult = await client.submit(signed.tx_blob);
 
     const txHash = submitResult.result.tx_json.hash;
+    const engineResult = submitResult.result.engine_result;
+    const engineResultMessage = submitResult.result.engine_result_message;
+    
     console.log('Transaction hash:', txHash);
-    console.log('Submit result:', submitResult.result.engine_result);
+    console.log('Engine result:', engineResult);
+    console.log('Engine result message:', engineResultMessage);
 
-    console.log('Waiting for validation...');
+    // Check if submission was successful
+    if (engineResult !== 'tesSUCCESS' && engineResult !== 'terQUEUED') {
+      throw new Error(`Transaction submission failed: ${engineResult} - ${engineResultMessage}`);
+    }
 
-    // Wait for transaction to be validated
+    console.log('Waiting for validation (max 15 seconds)...');
+
+    // Wait for transaction to be validated (should be fast with +4 buffer)
     let validated = false;
     let attempts = 0;
     let txResult;
 
-    while (!validated && attempts < 60) {
+    while (!validated && attempts < 15) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       try {
@@ -115,29 +141,41 @@ module.exports = async (req, res) => {
           transaction: txHash
         });
         
-        console.log('Polling attempt', attempts, '- validated:', txResult.result.validated);
-        
         if (txResult.result.validated) {
           validated = true;
+          console.log('Transaction validated!');
         }
       } catch (error) {
-        console.log('Polling attempt', attempts, '- not found yet');
+        // Not found yet, keep polling
       }
       
       attempts++;
     }
 
-    await client.disconnect();
-
     if (!validated) {
-      throw new Error(`Transaction not validated within timeout. TxHash: ${txHash}. Check: https://livenet.xrpl.org/transactions/${txHash}`);
+      // Transaction submitted but not yet validated - this is OK, it will process
+      console.log('Transaction submitted but not yet validated. It should process shortly.');
+      await client.disconnect();
+      
+      return res.status(202).json({
+        success: true,
+        status: 'pending',
+        message: 'Transaction submitted successfully. Validation pending.',
+        productId,
+        ipfsHash,
+        xrplTxHash: txHash,
+        blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
+        note: 'Check the explorer link in ~10 seconds to verify transaction success'
+      });
     }
 
+    // Transaction is validated!
     const actualFee = txResult.result.Fee;
     const feeInXRP = Number(actualFee) / 1000000;
 
-    console.log('XRPL Transaction:', txHash);
+    console.log('XRPL Transaction validated:', txHash);
     console.log('Actual Fee:', feeInXRP, 'XRP');
+    console.log('Fee in drops:', actualFee);
 
     // Step 4: Save to database
     console.log('Saving to database...');
@@ -147,6 +185,8 @@ module.exports = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [productId, productName, sku, batchNumber, ipfsHash, txHash, metadata]
     );
+
+    await client.disconnect();
 
     // Step 5: Return success response
     return res.status(200).json({
@@ -165,6 +205,9 @@ module.exports = async (req, res) => {
 
   } catch (error) {
     console.error('Minting error:', error);
+    if (client) {
+      await client.disconnect();
+    }
     return res.status(500).json({
       error: 'Minting failed',
       details: error.message

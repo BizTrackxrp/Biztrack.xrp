@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard – BizTrack.xrp</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   </head>
   <body>
   <nav class="sidebar">
@@ -19,13 +20,14 @@
     <li><a href="#" id="connectWalletLink">Connect Wallet</a></li>
   </ul>
 </nav>
-<<div class="main-with-sidebar">
+
+<div class="main-with-sidebar">
     <div class="dashboard-container">
       <h2>Welcome to your dashboard</h2>
-      <p>Manage your product batches and view history.</p>
+      <p>Manage your products and mint to blockchain.</p>
 
       <div class="batch-form">
-        <h3>Create a new batch</h3>
+        <h3>Mint New Product</h3>
         <div class="form-group">
           <label for="dashProdName">Product Name</label>
           <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
@@ -39,21 +41,22 @@
           <input id="dashBatch" type="text" placeholder="e.g. 001" />
         </div>
         <div class="form-group">
-          <label for="dashMetadata">Metadata (optional)</label>
-          <input id="dashMetadata" type="text" placeholder="e.g. Harvest date" />
-   
-</div>
-<button class="btn" id="dashCreateBtn">Create Batch</button>
-
+          <label for="dashMetadata">Additional Info (optional)</label>
+          <textarea id="dashMetadata" placeholder="e.g. Harvest date, origin, certifications" rows="3"></textarea>
+        </div>
+        <button class="btn" id="dashCreateBtn">Mint to Blockchain</button>
+        <p id="dashMsg" style="margin-top:0.5rem;"></p>
         
-             
-          
-        <p id="dashMsg" style="color:#c00; margin-top:0.5rem;"></p>
-        <div id="dashQrOutput" class="qr-code" style="display:none;"></div>
+        <div id="dashQrOutput" class="qr-code" style="display:none; margin-top:1rem;">
+          <canvas id="qrCanvas"></canvas>
+          <p style="margin-top:0.5rem;">Scan to verify product authenticity</p>
+          <button class="btn" id="downloadQrBtn" style="margin-top:0.5rem;">Download QR Code</button>
+          <a id="blockchainLink" href="#" target="_blank" style="display:block; margin-top:0.5rem;">View on Blockchain Explorer</a>
+        </div>
       </div>
 
       <div class="history-box">
-        <h3>Your latest batch entries</h3>
+        <h3>Your Minted Products</h3>
         <ul id="batchList">
         </ul>
       </div>
@@ -70,80 +73,167 @@
         }
 
         const batchList = document.getElementById('batchList');
+        const msgEl = document.getElementById('dashMsg');
+        const qrOutput = document.getElementById('dashQrOutput');
+        const qrCanvas = document.getElementById('qrCanvas');
+        const downloadQrBtn = document.getElementById('downloadQrBtn');
+        const blockchainLink = document.getElementById('blockchainLink');
+        
+        let currentProductId = null;
+        let currentVerificationUrl = null;
+
         const populateBatches = () => {
           const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
           batchList.innerHTML = '';
           if (!batches.length) {
-            batchList.innerHTML = '<li>No batch entries yet. Use the form above to create one.</li>';
+            batchList.innerHTML = '<li>No products minted yet. Use the form above to mint your first product.</li>';
           } else {
-            batches.forEach((b, idx) => {
+            batches.slice().reverse().forEach((b) => {
               const li = document.createElement('li');
-              const link = document.createElement('a');
-              link.href = '#';
-              link.textContent = `Batch ${idx + 1}: ${b.name}`;
-              link.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert(`Opening details for ${b.name}`);
-                // In a real app, you would navigate to a detailed page.
-              });
-              li.appendChild(link);
+              li.innerHTML = `
+                <strong>${b.productName}</strong> (SKU: ${b.sku}, Batch: ${b.batchNumber})
+                <br><small>Product ID: ${b.productId}</small>
+                <br><button class="btn" onclick="regenerateQR('${b.productId}', '${b.xrplTxHash}')" style="margin-top:0.5rem; font-size:0.9rem;">Generate QR Code</button>
+                <a href="https://livenet.xrpl.org/transactions/${b.xrplTxHash}" target="_blank" style="margin-left:0.5rem;">View Transaction</a>
+              `;
               batchList.appendChild(li);
             });
           }
         };
 
+        // Function to generate QR code
+        window.regenerateQR = (productId, txHash) => {
+          currentProductId = productId;
+          currentVerificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
+          
+          QRCode.toCanvas(qrCanvas, currentVerificationUrl, {
+            width: 512,
+            margin: 2,
+            color: {
+              dark: '#000000',
+              light: '#FFFFFF'
+            }
+          }, (error) => {
+            if (error) {
+              console.error(error);
+              msgEl.textContent = 'Error generating QR code';
+              msgEl.style.color = '#c00';
+            } else {
+              qrOutput.style.display = 'block';
+              blockchainLink.href = `https://livenet.xrpl.org/transactions/${txHash}`;
+              window.scrollTo({ top: qrOutput.offsetTop - 100, behavior: 'smooth' });
+            }
+          });
+        };
+
+        // Download QR code
+        downloadQrBtn.addEventListener('click', () => {
+          const link = document.createElement('a');
+          link.download = `BizTrack-QR-${currentProductId}.png`;
+          link.href = qrCanvas.toDataURL();
+          link.click();
+        });
+
         // Populate list on load
         populateBatches();
 
-        // Handle batch creation
+        // Handle product minting
         const createBtn = document.getElementById('dashCreateBtn');
-        createBtn.addEventListener('click', () => {
-          const name = document.getElementById('dashProdName').value.trim();
+        createBtn.addEventListener('click', async () => {
+          const productName = document.getElementById('dashProdName').value.trim();
           const sku = document.getElementById('dashSku').value.trim();
-          const batch = document.getElementById('dashBatch').value.trim();
-          const meta = document.getElementById('dashMetadata').value.trim();
-          const msgEl = document.getElementById('dashMsg');
-          const qrOutput = document.getElementById('dashQrOutput');
+          const batchNumber = document.getElementById('dashBatch').value.trim();
+          const metadata = document.getElementById('dashMetadata').value.trim();
+          
           msgEl.textContent = '';
+          qrOutput.style.display = 'none';
 
-          if (!name || !sku || !batch) {
+          if (!productName || !sku || !batchNumber) {
             msgEl.textContent = 'Please fill in product name, SKU and batch number.';
+            msgEl.style.color = '#c00';
             return;
           }
 
-          // Create a record object
-          const record = {
-            name,
-            sku,
-            batch,
-            metadata: meta,
-            id: crypto.randomUUID(),
-          };
+          // Show loading
+          createBtn.disabled = true;
+          createBtn.textContent = 'Minting to Blockchain...';
+          msgEl.textContent = 'Uploading to IPFS and writing to XRPL...';
+          msgEl.style.color = '#0066cc';
 
-          // Save to localStorage
-          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-          batches.push(record);
-          localStorage.setItem('biztrack-batches', JSON.stringify(batches));
+          try {
+            // Call your minting API
+            const response = await fetch('/api/mint-product', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                productName,
+                sku,
+                batchNumber,
+                metadata: metadata ? { notes: metadata } : {}
+              })
+            });
 
-          // Generate QR code (use encodeURIComponent)
-          const url = encodeURIComponent(`https://biztrack-xrp.vercel.app/verify.html?id=${record.id}`);
-          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
-          qrOutput.innerHTML = `<img src="${qrUrl}" alt="QR Code for product" /><p>Scan to verify</p>`;
-          qrOutput.style.display = 'block';
+            const result = await response.json();
 
-          // Clear inputs
-          document.getElementById('dashProdName').value =
-            document.getElementById('dashSku').value =
-            document.getElementById('dashBatch').value =
-            document.getElementById('dashMetadata').value =
-              '';
+            if (!response.ok) {
+              throw new Error(result.details || result.error || 'Minting failed');
+            }
 
-          // Refresh list
-          populateBatches();
+            // Success!
+            msgEl.textContent = `✓ Successfully minted to blockchain! Cost: ${result.actualCost.fee} XRP (~$${result.actualCost.feeInUSD})`;
+            msgEl.style.color = '#00aa00';
+
+            // Save to localStorage
+            const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+            batches.push({
+              productName,
+              sku,
+              batchNumber,
+              productId: result.productId,
+              ipfsHash: result.ipfsHash,
+              xrplTxHash: result.xrplTxHash,
+              timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('biztrack-batches', JSON.stringify(batches));
+
+            // Generate QR code
+            currentProductId = result.productId;
+            currentVerificationUrl = result.verificationUrl;
+            
+            QRCode.toCanvas(qrCanvas, currentVerificationUrl, {
+              width: 512,
+              margin: 2,
+              color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+              }
+            });
+            
+            qrOutput.style.display = 'block';
+            blockchainLink.href = result.blockchainExplorer;
+
+            // Clear inputs
+            document.getElementById('dashProdName').value = '';
+            document.getElementById('dashSku').value = '';
+            document.getElementById('dashBatch').value = '';
+            document.getElementById('dashMetadata').value = '';
+
+            // Refresh list
+            populateBatches();
+
+          } catch (error) {
+            msgEl.textContent = `✗ Error: ${error.message}`;
+            msgEl.style.color = '#c00';
+            console.error('Minting error:', error);
+          } finally {
+            createBtn.disabled = false;
+            createBtn.textContent = 'Mint to Blockchain';
+          }
         });
       });
     </script>
 </div>
 </body>
-  </html>
 </html>

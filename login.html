@@ -27,7 +27,6 @@
       padding: 2rem;
     }
 
-    /* Back to Home Button */
     .back-home {
       position: fixed;
       top: 2rem;
@@ -55,7 +54,6 @@
       transform: translateX(-4px);
     }
 
-    /* Login Container */
     .login-container {
       background: white;
       border-radius: 20px;
@@ -212,9 +210,14 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .terms {
@@ -235,7 +238,35 @@
       text-decoration: underline;
     }
 
-    /* Responsive */
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
     @media (max-width: 640px) {
       body {
         padding: 1rem;
@@ -261,7 +292,6 @@
   </style>
 </head>
 <body>
-  <!-- Back to Home -->
   <div class="back-home">
     <a href="index.html">
       <i class="fas fa-arrow-left"></i>
@@ -269,24 +299,21 @@
     </a>
   </div>
 
-  <!-- Login Container -->
   <div class="login-container">
-    <!-- Header -->
     <div class="login-header">
       <h1>Welcome to BizTrack</h1>
       <p>Secure blockchain-powered supply chain tracking</p>
     </div>
 
-    <!-- Tabs -->
     <div class="login-tabs">
       <button class="tab-button active" onclick="switchTab('login')">Login</button>
       <button class="tab-button" onclick="switchTab('signup')">Sign Up</button>
     </div>
 
-    <!-- Body -->
     <div class="login-body">
       <!-- Login Tab -->
       <div class="tab-content active" id="loginTab">
+        <div id="loginAlert" class="alert"></div>
         <form id="loginForm">
           <div class="form-group">
             <label for="loginEmail">Email</label>
@@ -308,7 +335,7 @@
             <a href="#" onclick="alert('Password reset functionality coming soon!'); return false;">Forgot password?</a>
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary" id="loginBtn">
             <i class="fas fa-sign-in-alt"></i>
             Login
           </button>
@@ -317,15 +344,8 @@
 
       <!-- Signup Tab -->
       <div class="tab-content" id="signupTab">
+        <div id="signupAlert" class="alert"></div>
         <form id="signupForm">
-          <div class="form-group">
-            <label for="signupName">Full Name</label>
-            <div class="input-wrapper">
-              <i class="fas fa-user"></i>
-              <input type="text" id="signupName" placeholder="Enter your full name" required>
-            </div>
-          </div>
-
           <div class="form-group">
             <label for="signupEmail">Email</label>
             <div class="input-wrapper">
@@ -338,7 +358,7 @@
             <label for="signupPassword">Password</label>
             <div class="input-wrapper">
               <i class="fas fa-lock"></i>
-              <input type="password" id="signupPassword" placeholder="Create a password" required>
+              <input type="password" id="signupPassword" placeholder="Create a password (min 8 characters)" required minlength="8">
             </div>
           </div>
 
@@ -350,7 +370,15 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <div class="form-group">
+            <label for="signupCompanyName">Company Name (Optional)</label>
+            <div class="input-wrapper">
+              <i class="fas fa-building"></i>
+              <input type="text" id="signupCompanyName" placeholder="Enter your company name (optional)">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="signupBtn">
             <i class="fas fa-user-plus"></i>
             Create Account
           </button>
@@ -363,46 +391,130 @@
     </div>
   </div>
 
+  <script src="js/auth.js"></script>
   <script>
+    // Redirect to dashboard if already logged in
+    redirectIfAuthenticated();
+
     // Tab switching
     function switchTab(tab) {
-      // Update tab buttons
       document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
       });
       event.target.classList.add('active');
 
-      // Update tab content
       document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
       });
       document.getElementById(tab + 'Tab').classList.add('active');
+
+      // Clear alerts when switching tabs
+      hideAlert('loginAlert');
+      hideAlert('signupAlert');
     }
 
-    // Login form
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // Alert functions
+    function showAlert(elementId, message, type) {
+      const alert = document.getElementById(elementId);
+      alert.textContent = message;
+      alert.className = `alert alert-${type} show`;
+    }
+
+    function hideAlert(elementId) {
+      const alert = document.getElementById(elementId);
+      alert.className = 'alert';
+    }
+
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
       const email = document.getElementById('loginEmail').value;
-      alert('Login functionality coming soon!\n\nEmail: ' + email);
-      // In production, this would authenticate the user
+      const password = document.getElementById('loginPassword').value;
+      const loginBtn = document.getElementById('loginBtn');
+
+      // Disable button and show loading state
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+      try {
+        const result = await login(email, password);
+
+        if (result.success) {
+          showAlert('loginAlert', 'Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          showAlert('loginAlert', result.error, 'error');
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        }
+      } catch (error) {
+        showAlert('loginAlert', 'An unexpected error occurred. Please try again.', 'error');
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+      }
     });
 
-    // Signup form
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
+    // Signup form handler
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const name = document.getElementById('signupName').value;
+      
       const email = document.getElementById('signupEmail').value;
       const password = document.getElementById('signupPassword').value;
       const confirmPassword = document.getElementById('signupConfirmPassword').value;
+      const companyName = document.getElementById('signupCompanyName').value;
+      const signupBtn = document.getElementById('signupBtn');
 
+      // Validate passwords match
       if (password !== confirmPassword) {
-        alert('Passwords do not match!');
+        showAlert('signupAlert', 'Passwords do not match!', 'error');
         return;
       }
 
-      alert('Account created successfully!\n\nName: ' + name + '\nEmail: ' + email);
-      // In production, this would create the account
+      // Validate password length
+      if (password.length < 8) {
+        showAlert('signupAlert', 'Password must be at least 8 characters long', 'error');
+        return;
+      }
+
+      // Disable button and show loading state
+      signupBtn.disabled = true;
+      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+      try {
+        const result = await register(companyName, email, password);
+
+        if (result.success) {
+          showAlert('signupAlert', result.message, 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          showAlert('signupAlert', result.error, 'error');
+          signupBtn.disabled = false;
+          signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        }
+      } catch (error) {
+        showAlert('signupAlert', 'An unexpected error occurred. Please try again.', 'error');
+        signupBtn.disabled = false;
+        signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+      }
     });
   </script>
 </body>
 </html>
+```
+
+---
+
+## 📁 File Structure:
+```
+your-project/
+├── login.html          (paste the HTML above)
+├── js/
+│   └── auth.js         (paste the auth.js above)
+└── api/
+    ├── login.js        (you already have this)
+    └── register.js     (you already have this)

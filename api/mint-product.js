@@ -29,10 +29,10 @@ module.exports = async (req, res) => {
     const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const verificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
 
-    // Step 1: Generate QR Code as PNG buffer
+    // Step 1: Generate QR Code as PNG buffer (smaller size)
     console.log('Generating QR code...');
     const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
-      width: 512,
+      width: 300,
       margin: 2,
       color: {
         dark: '#000000',

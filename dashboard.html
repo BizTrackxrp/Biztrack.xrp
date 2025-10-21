@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -244,16 +244,28 @@
 
     /* QR Output */
     .qr-output {
-      margin-top: 2rem;
-      padding: 2rem;
-      background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
-      border-radius: 16px;
-      border: 2px solid #E2E8F0;
+      margin-top: 1rem;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      border: none;
       text-align: center;
+      display: none;
     }
 
-    .qr-output canvas {
-      max-width: 100%;
+    .qr-output.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .qr-output img {
+      max-width: 512px;
+      width: 100%;
       height: auto;
       border-radius: 12px;
       background: white;
@@ -418,7 +430,7 @@
       <div id="dashMsg"></div>
       
       <div id="dashQrOutput" class="qr-output" style="display:none;">
-        <canvas id="qrCanvas"></canvas>
+        <div id="qrCanvas"></div>
         <p>Scan to verify product authenticity</p>
         <div class="qr-actions">
           <button class="btn btn-secondary" id="downloadQrBtn">
@@ -441,8 +453,16 @@
   </div>
 
   <script src="js/auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
+      // Check if QRCode library loaded
+      if (typeof QRCode === 'undefined') {
+        console.error('QRCode library failed to load');
+        const msgEl = document.getElementById('dashMsg');
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> QR Code library failed to load. Please refresh the page.</div>';
+        return;
+      }
       // Ensure user is authenticated
       if (!requireAuth || !requireAuth()) {
         window.location.href = 'login.html';
@@ -499,31 +519,38 @@
         currentProductId = productId;
         currentVerificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
         
-        QRCode.toCanvas(qrCanvas, currentVerificationUrl, {
-          width: 512,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-          }
-        }, (error) => {
-          if (error) {
-            console.error(error);
-            msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Error generating QR code</div>';
-          } else {
-            qrOutput.style.display = 'block';
-            blockchainLink.href = `https://livenet.xrpl.org/transactions/${txHash}`;
-            window.scrollTo({ top: qrOutput.offsetTop - 100, behavior: 'smooth' });
-          }
-        });
+        try {
+          // Clear previous QR code
+          qrCanvas.innerHTML = '';
+          
+          // Generate new QR code
+          new QRCode(qrCanvas, {
+            text: currentVerificationUrl,
+            width: 512,
+            height: 512,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          
+          qrOutput.style.display = 'block';
+          blockchainLink.href = `https://livenet.xrpl.org/transactions/${txHash}`;
+          window.scrollTo({ top: qrOutput.offsetTop - 100, behavior: 'smooth' });
+        } catch (error) {
+          console.error(error);
+          msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Error generating QR code</div>';
+        }
       };
 
       // Download QR code
       downloadQrBtn.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.download = `BizTrack-QR-${currentProductId}.png`;
-        link.href = qrCanvas.toDataURL();
-        link.click();
+        const canvas = qrCanvas.querySelector('canvas');
+        if (canvas) {
+          const link = document.createElement('a');
+          link.download = `BizTrack-QR-${currentProductId}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        }
       });
 
       // Populate list on load
@@ -591,13 +618,17 @@
           currentProductId = result.productId;
           currentVerificationUrl = result.verificationUrl;
           
-          QRCode.toCanvas(qrCanvas, currentVerificationUrl, {
+          // Clear previous QR code
+          qrCanvas.innerHTML = '';
+          
+          // Generate new QR code
+          new QRCode(qrCanvas, {
+            text: currentVerificationUrl,
             width: 512,
-            margin: 2,
-            color: {
-              dark: '#000000',
-              light: '#FFFFFF'
-            }
+            height: 512,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
           });
           
           qrOutput.style.display = 'block';

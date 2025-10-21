@@ -377,7 +377,6 @@
       <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
       <li><a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
       <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-      <li><a href="#" id="connectWalletLink"><i class="fas fa-wallet"></i> Connect Wallet</a></li>
     </ul>
   </nav>
 
@@ -442,7 +441,6 @@
   </div>
 
   <script src="js/auth.js"></script>
-  <script src="js/wallet.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       // Ensure user is authenticated
@@ -574,7 +572,7 @@
           }
 
           // Success!
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully minted to blockchain! Cost: ${result.actualCost.fee} XRP (~$${result.actualCost.feeInUSD})</div>`;
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully minted to blockchain! Cost: ${result.actualCost.fee} XRP (~${result.actualCost.feeInUSD})</div>`;
 
           // Save to localStorage
           const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');

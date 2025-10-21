@@ -1,6 +1,7 @@
 const { Client, Wallet } = require('xrpl');
 const axios = require('axios');
 const { Pool } = require('pg');
+const QRCode = require('qrcode');
 
 // Database connection
 const pool = new Pool({
@@ -26,21 +27,58 @@ module.exports = async (req, res) => {
 
     // Generate unique product ID
     const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const verificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
 
-    // Step 1: Prepare product data for IPFS
+    // Step 1: Generate QR Code as PNG buffer
+    console.log('Generating QR code...');
+    const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
+      width: 512,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+
+    // Step 2: Upload QR code to IPFS
+    console.log('Uploading QR code to IPFS...');
+    const FormData = require('form-data');
+    const qrFormData = new FormData();
+    qrFormData.append('file', qrCodeBuffer, {
+      filename: `${productId}-qr.png`,
+      contentType: 'image/png'
+    });
+
+    const qrPinataResponse = await axios.post(
+      'https://api.pinata.cloud/pinning/pinFileToIPFS',
+      qrFormData,
+      {
+        headers: {
+          ...qrFormData.getHeaders(),
+          'Authorization': `Bearer ${process.env.PINATA_JWT}`
+        }
+      }
+    );
+
+    const qrIpfsHash = qrPinataResponse.data.IpfsHash;
+    console.log('QR Code IPFS Hash:', qrIpfsHash);
+
+    // Step 3: Prepare product data for IPFS
     const productData = {
       productId,
       productName,
       sku: sku || null,
       batchNumber: batchNumber || null,
       metadata: metadata || {},
+      qrCodeIpfsHash: qrIpfsHash,
+      verificationUrl,
       createdAt: new Date().toISOString(),
       mintedBy: 'BizTrack Supply Chain Tracking'
     };
 
-    console.log('Uploading to IPFS...');
+    console.log('Uploading product data to IPFS...');
 
-    // Step 2: Upload to IPFS via Pinata
+    // Step 4: Upload product data to IPFS via Pinata
     const pinataResponse = await axios.post(
       'https://api.pinata.cloud/pinning/pinJSONToIPFS',
       {
@@ -58,9 +96,9 @@ module.exports = async (req, res) => {
     );
 
     const ipfsHash = pinataResponse.data.IpfsHash;
-    console.log('IPFS Hash:', ipfsHash);
+    console.log('Product Data IPFS Hash:', ipfsHash);
 
-    // Step 3: Write IPFS hash to XRPL using AccountSet
+    // Step 5: Write IPFS hash to XRPL using AccountSet
     console.log('Writing to XRPL...');
     
     client = new Client('wss://xrplcluster.com');
@@ -80,6 +118,7 @@ module.exports = async (req, res) => {
             MemoData: Buffer.from(JSON.stringify({
               productId,
               ipfsHash,
+              qrCodeIpfsHash: qrIpfsHash,
               timestamp: new Date().toISOString()
             })).toString('hex').toUpperCase()
           }
@@ -162,9 +201,11 @@ module.exports = async (req, res) => {
         message: 'Transaction submitted successfully. Validation pending.',
         productId,
         ipfsHash,
+        qrCodeIpfsHash: qrIpfsHash,
         xrplTxHash: txHash,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
-        verificationUrl: `https://www.biztrack.io/verify?id=${productId}`,
+        verificationUrl,
+        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${qrIpfsHash}`,
         note: 'Check the explorer link in ~10 seconds to verify transaction success'
       });
     }
@@ -177,22 +218,23 @@ module.exports = async (req, res) => {
     console.log('Actual Fee:', feeInXRP, 'XRP');
     console.log('Fee in drops:', actualFee);
 
-    // Step 4: Save to database
+    // Step 6: Save to database
     console.log('Saving to database...');
     
     await pool.query(
-      `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, metadata)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [productId, productName, sku, batchNumber, ipfsHash, txHash, metadata]
+      `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [productId, productName, sku, batchNumber, ipfsHash, txHash, qrIpfsHash, metadata]
     );
 
     await client.disconnect();
 
-    // Step 5: Return success response with ACTUAL COST
+    // Step 7: Return success response with ACTUAL COST
     return res.status(200).json({
       success: true,
       productId,
       ipfsHash,
+      qrCodeIpfsHash: qrIpfsHash,
       xrplTxHash: txHash,
       actualCost: {
         fee: feeInXRP,
@@ -200,7 +242,8 @@ module.exports = async (req, res) => {
         currency: 'XRP',
         feeInUSD: (feeInXRP * 2.5).toFixed(6) // Approximate at $2.50/XRP
       },
-      verificationUrl: `https://www.biztrack.io/verify?id=${productId}`,
+      verificationUrl,
+      qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${qrIpfsHash}`,
       blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
       ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`
     });

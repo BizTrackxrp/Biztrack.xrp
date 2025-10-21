@@ -1,57 +1,748 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Settings – BizTrack.xrp</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: white;
+      border-right: 1px solid #E2E8F0;
+      padding: 2rem 0;
+      z-index: 100;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .sidebar-logo {
+      padding: 0 2rem 2rem;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-logo img {
+      max-width: 160px;
+      height: auto;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 2rem;
+      color: #64748B;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background: #F8FAFC;
+      color: #4F46E5;
+    }
+
+    .sidebar-nav a.active {
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
+      color: #4F46E5;
+      border-left: 3px solid #4F46E5;
+    }
+
+    .sidebar-nav a i {
+      margin-right: 0.75rem;
+      width: 20px;
+    }
+
+    /* Main content */
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .settings-header {
+      margin-bottom: 3rem;
+    }
+
+    .settings-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+
+    .settings-header p {
+      font-size: 1.125rem;
+      color: #64748B;
+    }
+
+    /* Settings Sections */
+    .settings-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+      margin-bottom: 2rem;
+    }
+
+    .settings-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .settings-section h2 i {
+      color: #4F46E5;
+    }
+
+    .settings-section .section-description {
+      color: #64748B;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #64748B;
+      font-size: 0.875rem;
+    }
+
+    /* Toggle Switch */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      max-width: 500px;
+    }
+
+    .toggle-label {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toggle-label strong {
+      color: #1E293B;
+      font-weight: 600;
+    }
+
+    .toggle-label small {
+      color: #64748B;
+      font-size: 0.875rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #CBD5E1;
+      transition: 0.3s;
+      border-radius: 28px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background: #4F46E5;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.875rem 1.75rem;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #DC2626, #EF4444);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-danger:hover {
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Messages */
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .message.success {
+      background: #F0FDF4;
+      color: #16A34A;
+      border: 1px solid #BBF7D0;
+    }
+
+    .message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    /* 2FA Setup */
+    .twofa-setup {
+      background: #F8FAFC;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      border: 2px solid #E2E8F0;
+    }
+
+    .qr-code {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    .qr-code img {
+      max-width: 200px;
+      border-radius: 12px;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .secret-code {
+      font-family: 'Courier New', monospace;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      word-break: break-all;
+      margin: 1rem 0;
+      border: 2px solid #E2E8F0;
+      font-weight: 600;
+      color: #4F46E5;
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+      border: 2px solid #FCA5A5;
+      background: #FEF2F2;
+    }
+
+    .danger-zone h2 {
+      color: #DC2626;
+    }
+
+    .danger-zone h2 i {
+      color: #DC2626;
+    }
+
+    /* Stats Card */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      padding: 1.5rem;
+      border-radius: 12px;
+      color: white;
+    }
+
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 240px;
+      }
+      .main-with-sidebar {
+        margin-left: 240px;
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+      .settings-header h1 {
+        font-size: 2rem;
+      }
+      .toggle-container {
+        max-width: 100%;
+      }
+      .form-group input,
+      .form-group select {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
   <nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
-  </div>
-  <ul class="sidebar-nav">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="business.html">For Businesses</a></li>
-    <li><a href="verify.html">Verify Product</a></li>
-    <li><a href="login.html">Login/Signup</a></li>
-  </ul>
-</nav>
-<ddiv class="main-with-sidebar">
-      <h2>Account Settings</h2>
-      <p>Manage your security settings below.</p>
-      <div style="margin-top:1rem;">
-        <label>
-          Enable 2FA
-          <span class="toggle-switch">
-            <input type="checkbox" id="toggle2fa" />
-            <span class="slider"></span>
-          </span>
-        </label>
-      </div>
-      <div id="2faSetup" style="display:none; margin-top:1.5rem;">
-        <p>
-          Scan this QR code with your authenticator app or copy the code below.
-          After scanning, enter the 6‑digit code from your app to verify.
-        </p>
-        <div class="qr-code">
-          <img id="qrImage" src="" alt="2FA QR Code" />
-          <div id="secretContainer" style="font-family: monospace; word-break: break-all; margin-top:0.5rem;"></div>
+    <div class="sidebar-logo">
+      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-with-sidebar">
+    <div class="settings-header">
+      <h1>Account Settings</h1>
+      <p>Manage your account, security, and preferences.</p>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="settings-section">
+      <h2><i class="fas fa-shield-alt"></i> Security</h2>
+      <p class="section-description">Keep your account secure with these settings.</p>
+
+      <!-- Change Password -->
+      <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: #334155;">Change Password</h3>
+      <form id="changePasswordForm">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Enter current password" required>
         </div>
         <div class="form-group">
-          <label for="verifyTotp">Enter code from authenticator</label>
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="Enter new password (min 8 characters)" minlength="8" required>
+          <small>Must be at least 8 characters long</small>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+        </div>
+        <button type="submit" class="btn">
+          <i class="fas fa-key"></i>
+          Update Password
+        </button>
+        <div id="passwordMsg"></div>
+      </form>
+
+      <hr style="margin: 2rem 0; border: none; border-top: 1px solid #E2E8F0;">
+
+      <!-- 2FA Toggle -->
+      <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: #334155;">Two-Factor Authentication</h3>
+      <div class="toggle-container">
+        <div class="toggle-label">
+          <strong>Enable 2FA</strong>
+          <small>Add an extra layer of security to your account</small>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle2fa">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div id="2faSetup" class="twofa-setup" style="display:none;">
+        <p style="margin-bottom: 1rem;">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.) or manually enter the code below.</p>
+        <div class="qr-code">
+          <img id="qrImage" src="" alt="2FA QR Code" />
+          <div class="secret-code" id="secretContainer"></div>
+        </div>
+        <div class="form-group">
+          <label for="verifyTotp">Enter 6-digit code from authenticator</label>
           <input id="verifyTotp" type="text" maxlength="6" placeholder="000000" />
         </div>
-        <button class="btn" id="verifyTotpBtn">Verify &amp; Enable</button>
-        <p id="verifyMsg" style="color:#c00; margin-top:0.5rem;"></p>
+        <button class="btn" id="verifyTotpBtn">
+          <i class="fas fa-check"></i>
+          Verify & Enable 2FA
+        </button>
+        <div id="verifyMsg"></div>
       </div>
-  </div>
-</div>
+    </div>
 
-  <</div>
-<script src="js/auth.js"></script>
-<script src="js/wallet.js"></script>
-<script src="js/settings.js"></script>
+    <!-- Account Information -->
+    <div class="settings-section">
+      <h2><i class="fas fa-user"></i> Account Information</h2>
+      <p class="section-description">Update your account details.</p>
+
+      <form id="accountInfoForm">
+        <div class="form-group">
+          <label for="accountEmail">Email Address</label>
+          <input type="email" id="accountEmail" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" placeholder="Your Company Name">
+          <small>Optional - appears on your account</small>
+        </div>
+        <button type="submit" class="btn">
+          <i class="fas fa-save"></i>
+          Save Changes
+        </button>
+        <div id="accountMsg"></div>
+      </form>
+    </div>
+
+    <!-- Preferences -->
+    <div class="settings-section">
+      <h2><i class="fas fa-sliders-h"></i> Preferences</h2>
+      <p class="section-description">Customize your BizTrack experience.</p>
+
+      <form id="preferencesForm">
+        <div class="form-group">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="timezone">Time Zone</label>
+          <select id="timezone">
+            <option value="UTC">UTC (Coordinated Universal Time)</option>
+            <option value="America/New_York">Eastern Time (ET)</option>
+            <option value="America/Chicago">Central Time (CT)</option>
+            <option value="America/Denver">Mountain Time (MT)</option>
+            <option value="America/Los_Angeles">Pacific Time (PT)</option>
+            <option value="Europe/London">London (GMT)</option>
+            <option value="Europe/Paris">Paris (CET)</option>
+            <option value="Asia/Tokyo">Tokyo (JST)</option>
+            <option value="Asia/Shanghai">Shanghai (CST)</option>
+            <option value="Australia/Sydney">Sydney (AEDT)</option>
+          </select>
+        </div>
+        <div class="toggle-container">
+          <div class="toggle-label">
+            <strong>Dark Mode</strong>
+            <small>Switch to dark theme</small>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button type="submit" class="btn">
+          <i class="fas fa-save"></i>
+          Save Preferences
+        </button>
+        <div id="preferencesMsg"></div>
+      </form>
+    </div>
+
+    <!-- Usage Statistics -->
+    <div class="settings-section">
+      <h2><i class="fas fa-chart-bar"></i> Usage Statistics</h2>
+      <p class="section-description">Track your BizTrack activity.</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="totalProducts">0</div>
+          <div class="stat-label">Total Products Minted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="thisMonth">0</div>
+          <div class="stat-label">This Month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalScans">0</div>
+          <div class="stat-label">QR Code Scans</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="settings-section danger-zone">
+      <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+      <p class="section-description">These actions cannot be undone.</p>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn btn-danger" id="logoutAllBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout from All Devices
+        </button>
+        <button class="btn btn-danger" id="deleteAccountBtn">
+          <i class="fas fa-trash"></i>
+          Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/wallet.js"></script>
+  <script>
+    // Ensure user is authenticated
+    if (!requireAuth || !requireAuth()) {
+      window.location.href = 'login.html';
+    }
+
+    // Load user data
+    const user = getCurrentUser();
+    if (user) {
+      document.getElementById('accountEmail').value = user.email || '';
+      document.getElementById('companyName').value = user.companyName || '';
+    }
+
+    // Load preferences from localStorage
+    const prefs = JSON.parse(localStorage.getItem('biztrack-preferences') || '{}');
+    if (prefs.language) document.getElementById('language').value = prefs.language;
+    if (prefs.timezone) document.getElementById('timezone').value = prefs.timezone;
+    if (prefs.darkMode) document.getElementById('darkMode').checked = prefs.darkMode;
+
+    // Load usage statistics
+    const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+    document.getElementById('totalProducts').textContent = batches.length;
+    
+    const thisMonth = batches.filter(b => {
+      const batchDate = new Date(b.timestamp);
+      const now = new Date();
+      return batchDate.getMonth() === now.getMonth() && batchDate.getFullYear() === now.getFullYear();
+    }).length;
+    document.getElementById('thisMonth').textContent = thisMonth;
+
+    // Change Password
+    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgEl = document.getElementById('passwordMsg');
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (newPassword !== confirmPassword) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> New passwords do not match!</div>';
+        return;
+      }
+
+      msgEl.innerHTML = '<div class="message info"><i class="fas fa-spinner fa-spin"></i> Updating password...</div>';
+
+      // TODO: Call your API to change password
+      setTimeout(() => {
+        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Password updated successfully!</div>';
+        e.target.reset();
+      }, 1000);
+    });
+
+    // Update Account Info
+    document.getElementById('accountInfoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgEl = document.getElementById('accountMsg');
+      msgEl.innerHTML = '<div class="message info"><i class="fas fa-spinner fa-spin"></i> Saving changes...</div>';
+
+      // TODO: Call your API to update account info
+      setTimeout(() => {
+        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Account information updated!</div>';
+      }, 1000);
+    });
+
+    // Save Preferences
+    document.getElementById('preferencesForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const msgEl = document.getElementById('preferencesMsg');
+      
+      const preferences = {
+        language: document.getElementById('language').value,
+        timezone: document.getElementById('timezone').value,
+        darkMode: document.getElementById('darkMode').checked
+      };
+      
+      localStorage.setItem('biztrack-preferences', JSON.stringify(preferences));
+      msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Preferences saved!</div>';
+    });
+
+    // 2FA Toggle (placeholder - implement with your backend)
+    document.getElementById('toggle2fa').addEventListener('change', (e) => {
+      const setup = document.getElementById('2faSetup');
+      if (e.target.checked) {
+        setup.style.display = 'block';
+        // TODO: Call API to generate 2FA secret and QR code
+        document.getElementById('qrImage').src = 'https://via.placeholder.com/200x200?text=2FA+QR+Code';
+        document.getElementById('secretContainer').textContent = 'ABCD EFGH IJKL MNOP';
+      } else {
+        setup.style.display = 'none';
+      }
+    });
+
+    // Verify 2FA
+    document.getElementById('verifyTotpBtn').addEventListener('click', () => {
+      const code = document.getElementById('verifyTotp').value;
+      const msgEl = document.getElementById('verifyMsg');
+      
+      if (code.length !== 6) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please enter a 6-digit code</div>';
+        return;
+      }
+
+      // TODO: Verify with your backend
+      msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> 2FA enabled successfully!</div>';
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) {
+        logout();
+      }
+    });
+
+    // Logout All Devices
+    document.getElementById('logoutAllBtn').addEventListener('click', () => {
+      if (confirm('This will logout all devices. Continue?')) {
+        // TODO: Call API to invalidate all sessions
+        logout();
+      }
+    });
+
+    // Delete Account
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+      if (confirm('⚠️ WARNING: This will permanently delete your account and all data. This cannot be undone. Are you absolutely sure?')) {
+        // TODO: Call API to delete account
+        logout();
+      }
+    });
+  </script>
 </body>
-</</html>
+</html>

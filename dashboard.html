@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -24,7 +23,6 @@
       min-height: 100vh;
     }
 
-    /* Sidebar */
     .sidebar {
       position: fixed;
       left: 0;
@@ -65,7 +63,6 @@
       text-decoration: none;
       font-weight: 600;
       transition: all 0.2s;
-      position: relative;
     }
 
     .sidebar-nav a:hover {
@@ -84,14 +81,12 @@
       width: 20px;
     }
 
-    /* Main content */
     .main-with-sidebar {
       margin-left: 280px;
       padding: 2rem 3rem;
       min-height: 100vh;
     }
 
-    /* Header */
     .dashboard-header {
       margin-bottom: 3rem;
     }
@@ -108,7 +103,6 @@
       color: #64748B;
     }
 
-    /* Cards */
     .card {
       background: white;
       border-radius: 16px;
@@ -132,7 +126,6 @@
       color: #4F46E5;
     }
 
-    /* Form */
     .form-group {
       margin-bottom: 1.5rem;
     }
@@ -170,7 +163,6 @@
       min-height: 100px;
     }
 
-    /* Buttons */
     .btn {
       padding: 1rem 2rem;
       background: linear-gradient(135deg, #4F46E5, #7C3AED);
@@ -208,12 +200,26 @@
       background: #F8FAFC;
     }
 
-    .btn-small {
+    .btn-toggle {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #E2E8F0;
+      box-shadow: none;
       padding: 0.5rem 1rem;
       font-size: 0.875rem;
     }
 
-    /* Messages */
+    .btn-toggle:hover {
+      background: #F8FAFC;
+      border-color: #4F46E5;
+      transform: none;
+    }
+
+    .btn-toggle i.rotate {
+      transform: rotate(180deg);
+      transition: transform 0.3s;
+    }
+
     .message {
       padding: 1rem;
       border-radius: 12px;
@@ -242,52 +248,6 @@
       border: 1px solid #BFDBFE;
     }
 
-    /* QR Output */
-    .qr-output {
-      margin-top: 1rem;
-      padding: 0;
-      background: transparent;
-      border-radius: 0;
-      border: none;
-      text-align: center;
-      display: none;
-    }
-
-    .qr-output.show {
-      display: block;
-      animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .qr-output img {
-      max-width: 512px;
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      background: white;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .qr-output p {
-      margin-top: 1rem;
-      font-weight: 600;
-      color: #475569;
-    }
-
-    .qr-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    /* Product List */
     .product-list {
       list-style: none;
     }
@@ -303,7 +263,6 @@
 
     .product-list li:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transform: translateY(-2px);
     }
 
     .product-list strong {
@@ -338,6 +297,43 @@
       color: #7C3AED;
     }
 
+    .qr-output {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      text-align: center;
+      display: none;
+    }
+
+    .qr-output.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; max-height: 0; }
+      to { opacity: 1; max-height: 800px; }
+    }
+
+    .qr-output img {
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .qr-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
     .empty-state {
       text-align: center;
       padding: 3rem 1rem;
@@ -350,7 +346,6 @@
       margin-bottom: 1rem;
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
       .sidebar {
         width: 240px;
@@ -364,7 +359,6 @@
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
-        transition: transform 0.3s;
       }
       .main-with-sidebar {
         margin-left: 0;
@@ -372,9 +366,6 @@
       }
       .dashboard-header h1 {
         font-size: 2rem;
-      }
-      .qr-actions {
-        flex-direction: column;
       }
     }
   </style>
@@ -398,7 +389,6 @@
       <p>Manage your products and mint to blockchain.</p>
     </div>
 
-    <!-- Mint New Product Card -->
     <div class="card">
       <h3><i class="fas fa-plus-circle"></i> Mint New Product</h3>
       
@@ -428,24 +418,8 @@
       </button>
       
       <div id="dashMsg"></div>
-      
-      <div id="dashQrOutput" class="qr-output" style="display:none;">
-        <div id="qrCanvas"></div>
-        <p>Scan to verify product authenticity</p>
-        <div class="qr-actions">
-          <button class="btn btn-secondary" id="downloadQrBtn">
-            <i class="fas fa-download"></i>
-            Download QR Code
-          </button>
-          <a id="blockchainLink" href="#" target="_blank" class="btn btn-secondary">
-            <i class="fas fa-external-link-alt"></i>
-            View on Blockchain
-          </a>
-        </div>
-      </div>
     </div>
 
-    <!-- Your Minted Products Card -->
     <div class="card">
       <h3><i class="fas fa-box"></i> Your Minted Products</h3>
       <ul id="batchList" class="product-list"></ul>
@@ -453,17 +427,8 @@
   </div>
 
   <script src="js/auth.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // Check if QRCode library loaded
-      if (typeof QRCode === 'undefined') {
-        console.error('QRCode library failed to load');
-        const msgEl = document.getElementById('dashMsg');
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> QR Code library failed to load. Please refresh the page.</div>';
-        return;
-      }
-      // Ensure user is authenticated
       if (!requireAuth || !requireAuth()) {
         window.location.href = 'login.html';
         return;
@@ -471,13 +436,6 @@
 
       const batchList = document.getElementById('batchList');
       const msgEl = document.getElementById('dashMsg');
-      const qrOutput = document.getElementById('dashQrOutput');
-      const qrCanvas = document.getElementById('qrCanvas');
-      const downloadQrBtn = document.getElementById('downloadQrBtn');
-      const blockchainLink = document.getElementById('blockchainLink');
-      
-      let currentProductId = null;
-      let currentVerificationUrl = null;
 
       const populateBatches = () => {
         const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
@@ -494,6 +452,7 @@
         } else {
           batches.slice().reverse().forEach((b) => {
             const li = document.createElement('li');
+            const qrSectionId = `qr-section-${b.productId}`;
             li.innerHTML = `
               <div>
                 <strong>${b.productName}</strong>
@@ -501,12 +460,21 @@
                 <br><small>Product ID: ${b.productId}</small>
               </div>
               <div class="product-actions">
-                <button class="btn btn-small" onclick="regenerateQR('${b.productId}', '${b.xrplTxHash}')">
-                  <i class="fas fa-qrcode"></i> Generate QR
+                <button class="btn btn-toggle" onclick="toggleQR('${qrSectionId}', '${b.qrCodeIpfsHash}', this)">
+                  <i class="fas fa-chevron-down"></i> Show QR Code
                 </button>
                 <a href="https://livenet.xrpl.org/transactions/${b.xrplTxHash}" target="_blank">
                   <i class="fas fa-external-link-alt"></i> View Transaction
                 </a>
+              </div>
+              <div id="${qrSectionId}" class="qr-output">
+                <img src="https://gateway.pinata.cloud/ipfs/${b.qrCodeIpfsHash}" alt="QR Code" />
+                <p style="margin-top: 1rem; font-weight: 600; color: #475569;">Scan to verify product authenticity</p>
+                <div class="qr-actions">
+                  <a href="https://gateway.pinata.cloud/ipfs/${b.qrCodeIpfsHash}" download="BizTrack-QR-${b.productId}.png" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Download QR Code
+                  </a>
+                </div>
               </div>
             `;
             batchList.appendChild(li);
@@ -514,49 +482,25 @@
         }
       };
 
-      // Function to generate QR code
-      window.regenerateQR = (productId, txHash) => {
-        currentProductId = productId;
-        currentVerificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
+      window.toggleQR = (sectionId, ipfsHash, button) => {
+        const section = document.getElementById(sectionId);
+        const icon = button.querySelector('i');
         
-        try {
-          // Clear previous QR code
-          qrCanvas.innerHTML = '';
-          
-          // Generate new QR code
-          new QRCode(qrCanvas, {
-            text: currentVerificationUrl,
-            width: 512,
-            height: 512,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-          });
-          
-          qrOutput.style.display = 'block';
-          blockchainLink.href = `https://livenet.xrpl.org/transactions/${txHash}`;
-          window.scrollTo({ top: qrOutput.offsetTop - 100, behavior: 'smooth' });
-        } catch (error) {
-          console.error(error);
-          msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Error generating QR code</div>';
+        if (section.classList.contains('show')) {
+          section.classList.remove('show');
+          icon.classList.remove('fa-chevron-up', 'rotate');
+          icon.classList.add('fa-chevron-down');
+          button.innerHTML = '<i class="fas fa-chevron-down"></i> Show QR Code';
+        } else {
+          section.classList.add('show');
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up', 'rotate');
+          button.innerHTML = '<i class="fas fa-chevron-up rotate"></i> Hide QR Code';
         }
       };
 
-      // Download QR code
-      downloadQrBtn.addEventListener('click', () => {
-        const canvas = qrCanvas.querySelector('canvas');
-        if (canvas) {
-          const link = document.createElement('a');
-          link.download = `BizTrack-QR-${currentProductId}.png`;
-          link.href = canvas.toDataURL();
-          link.click();
-        }
-      });
-
-      // Populate list on load
       populateBatches();
 
-      // Handle product minting
       const createBtn = document.getElementById('dashCreateBtn');
       createBtn.addEventListener('click', async () => {
         const productName = document.getElementById('dashProdName').value.trim();
@@ -565,25 +509,20 @@
         const metadata = document.getElementById('dashMetadata').value.trim();
         
         msgEl.innerHTML = '';
-        qrOutput.style.display = 'none';
 
         if (!productName || !sku || !batchNumber) {
           msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please fill in product name, SKU and batch number.</div>';
           return;
         }
 
-        // Show loading
         createBtn.disabled = true;
         createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting to Blockchain...';
         msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to IPFS and writing to XRPL...</div>';
 
         try {
-          // Call your minting API
           const response = await fetch('/api/mint-product', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               productName,
               sku,
@@ -598,10 +537,8 @@
             throw new Error(result.details || result.error || 'Minting failed');
           }
 
-          // Success!
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully minted to blockchain! Cost: ${result.actualCost.fee} XRP (~${result.actualCost.feeInUSD})</div>`;
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Product successfully minted to blockchain!</div>`;
 
-          // Save to localStorage
           const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
           batches.push({
             productName,
@@ -609,38 +546,17 @@
             batchNumber,
             productId: result.productId,
             ipfsHash: result.ipfsHash,
+            qrCodeIpfsHash: result.qrCodeIpfsHash,
             xrplTxHash: result.xrplTxHash,
             timestamp: new Date().toISOString()
           });
           localStorage.setItem('biztrack-batches', JSON.stringify(batches));
 
-          // Generate QR code
-          currentProductId = result.productId;
-          currentVerificationUrl = result.verificationUrl;
-          
-          // Clear previous QR code
-          qrCanvas.innerHTML = '';
-          
-          // Generate new QR code
-          new QRCode(qrCanvas, {
-            text: currentVerificationUrl,
-            width: 512,
-            height: 512,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-          });
-          
-          qrOutput.style.display = 'block';
-          blockchainLink.href = result.blockchainExplorer;
-
-          // Clear inputs
           document.getElementById('dashProdName').value = '';
           document.getElementById('dashSku').value = '';
           document.getElementById('dashBatch').value = '';
           document.getElementById('dashMetadata').value = '';
 
-          // Refresh list
           populateBatches();
 
         } catch (error) {

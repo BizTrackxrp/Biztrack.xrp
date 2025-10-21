@@ -1,11 +1,24 @@
 // auth.js - Authentication handling for BizTrack
-
 const API_BASE_URL = '/api';
+
+// Get storage (localStorage or sessionStorage)
+function getStorage() {
+  // Check both storages to find where token is stored
+  if (localStorage.getItem('authToken')) {
+    return localStorage;
+  }
+  if (sessionStorage.getItem('authToken')) {
+    return sessionStorage;
+  }
+  // Default to localStorage if nothing found
+  return localStorage;
+}
 
 // Check if user is already logged in
 function checkAuth() {
-  const token = localStorage.getItem('authToken');
-  const user = localStorage.getItem('user');
+  const storage = getStorage();
+  const token = storage.getItem('authToken');
+  const user = storage.getItem('user');
   
   if (token && user) {
     return {
@@ -23,7 +36,7 @@ function checkAuth() {
 }
 
 // Login function
-async function login(email, password) {
+async function login(email, password, rememberMe = true) {
   try {
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
@@ -42,16 +55,24 @@ async function login(email, password) {
       throw new Error(data.error || 'Login failed');
     }
 
-    // Store token and user info
-    localStorage.setItem('authToken', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    // Choose storage based on "Remember Me" checkbox
+    const storage = rememberMe ? localStorage : sessionStorage;
+    
+    // Clear any existing auth data from both storages
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
+    
+    // Store token and user info in chosen storage
+    storage.setItem('authToken', data.token);
+    storage.setItem('user', JSON.stringify(data.user));
 
     return {
       success: true,
       message: data.message,
       user: data.user
     };
-
   } catch (error) {
     console.error('Login error:', error);
     return {
@@ -62,7 +83,7 @@ async function login(email, password) {
 }
 
 // Register/Signup function
-async function register(companyName, email, password) {
+async function register(companyName, email, password, rememberMe = true) {
   try {
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
@@ -84,8 +105,8 @@ async function register(companyName, email, password) {
 
     // After successful registration, automatically log in
     if (data.success) {
-      // Now login with the credentials
-      const loginResult = await login(email, password);
+      // Now login with the credentials (passing rememberMe preference)
+      const loginResult = await login(email, password, rememberMe);
       if (loginResult.success) {
         return {
           success: true,
@@ -100,7 +121,6 @@ async function register(companyName, email, password) {
       message: data.message || 'Account created successfully',
       needsLogin: true
     };
-
   } catch (error) {
     console.error('Registration error:', error);
     return {
@@ -112,19 +132,24 @@ async function register(companyName, email, password) {
 
 // Logout function
 function logout() {
+  // Clear from both storages
   localStorage.removeItem('authToken');
   localStorage.removeItem('user');
+  sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('user');
   window.location.href = '/login.html';
 }
 
 // Get auth token for API requests
 function getAuthToken() {
-  return localStorage.getItem('authToken');
+  const storage = getStorage();
+  return storage.getItem('authToken');
 }
 
 // Get current user
 function getCurrentUser() {
-  const userStr = localStorage.getItem('user');
+  const storage = getStorage();
+  const userStr = storage.getItem('user');
   return userStr ? JSON.parse(userStr) : null;
 }
 

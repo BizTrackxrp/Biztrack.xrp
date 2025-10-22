@@ -411,6 +411,23 @@
         <label for="dashMetadata">Additional Info (optional)</label>
         <textarea id="dashMetadata" placeholder="e.g. Harvest date, origin, certifications" rows="3"></textarea>
       </div>
+
+      <div class="form-group">
+        <label>Photos (optional)</label>
+        <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
+            <i class="fas fa-camera"></i> Add Photos
+          </button>
+          <button type="button" class="btn btn-secondary" id="captureLocationBtn">
+            <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Capture Location</span>
+          </button>
+        </div>
+        <div id="photoPreview" style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;"></div>
+        <p id="locationDisplay" style="margin-top: 0.75rem; color: #10B981; font-size: 0.875rem; display: none;">
+          <i class="fas fa-check-circle"></i> Location captured!
+        </p>
+      </div>
       
       <button class="btn" id="dashCreateBtn">
         <i class="fas fa-rocket"></i>

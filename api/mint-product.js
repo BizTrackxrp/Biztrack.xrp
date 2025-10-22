@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   let client;
 
   try {
-    const { productName, sku, batchNumber, metadata } = req.body;
+    const { productName, sku, batchNumber, metadata, photos, location } = req.body;
 
     // Validate required fields
     if (!productName) {
@@ -29,7 +29,40 @@ module.exports = async (req, res) => {
     const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-    // Step 1: Generate QR Code as PNG buffer
+    // Step 1: Upload photos to IPFS (if provided)
+    let photoHashes = [];
+    if (photos && photos.length > 0) {
+      console.log(`Uploading ${photos.length} photos to IPFS...`);
+      
+      for (let i = 0; i < photos.length; i++) {
+        const photoData = photos[i];
+        // Photos come as base64 strings from frontend
+        const buffer = Buffer.from(photoData.split(',')[1], 'base64');
+        
+        const FormData = require('form-data');
+        const photoFormData = new FormData();
+        photoFormData.append('file', buffer, {
+          filename: `${productId}-photo-${i + 1}.jpg`,
+          contentType: 'image/jpeg'
+        });
+
+        const photoResponse = await axios.post(
+          'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          photoFormData,
+          {
+            headers: {
+              ...photoFormData.getHeaders(),
+              'Authorization': `Bearer ${process.env.PINATA_JWT}`
+            }
+          }
+        );
+
+        photoHashes.push(photoResponse.data.IpfsHash);
+        console.log(`Photo ${i + 1} IPFS Hash:`, photoResponse.data.IpfsHash);
+      }
+    }
+
+    // Step 2: Generate QR Code as PNG buffer
     console.log('Generating QR code...');
     const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
       width: 300,

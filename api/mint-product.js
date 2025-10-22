@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
 
     // Generate unique product ID
     const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const verificationUrl = `https://www.biztrack.io/verify?id=${productId}`;
+    const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
     // Step 1: Generate QR Code as PNG buffer
     console.log('Generating QR code...');

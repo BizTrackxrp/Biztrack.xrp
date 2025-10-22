@@ -354,6 +354,27 @@
           <ul class="metadata-list" id="metadataList"></ul>
         </div>
 
+        <div id="photosSection" style="display: none; margin-top: 2rem;">
+          <h3 class="section-title">
+            <i class="fas fa-images"></i>
+            Product Photos
+          </h3>
+          <div id="photoGallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;"></div>
+        </div>
+
+        <div id="locationSection" style="display: none; margin-top: 2rem;">
+          <h3 class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Location
+          </h3>
+          <div style="padding: 1rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0;">
+            <p id="locationCoords" style="margin-bottom: 0.5rem;"></p>
+            <a id="mapLink" href="#" target="_blank" style="color: #4F46E5; text-decoration: none; font-weight: 600;">
+              <i class="fas fa-external-link-alt"></i> View on Google Maps
+            </a>
+          </div>
+        </div>
+
         <div class="links-grid">
           <a id="blockchainLink" href="#" target="_blank" class="link-card">
             <i class="fas fa-cube"></i>
@@ -405,14 +426,29 @@
     async function verifyProduct() {
       searchCard.style.display = 'none';
       loadingCard.style.display = 'block';
+      
+      const loadingSubtext = document.getElementById('loadingSubtext');
 
       try {
+        // Update loading message
+        loadingSubtext.textContent = 'Connecting to database...';
+        
         const response = await fetch(`/api/get-product?id=${encodeURIComponent(productId)}`);
+        
+        // Update loading message
+        loadingSubtext.textContent = 'Retrieving product data from IPFS...';
+        
         const data = await response.json();
 
         if (!response.ok) {
           throw new Error(data.message || data.error || 'Product not found');
         }
+
+        // Update loading message
+        loadingSubtext.textContent = 'Verifying blockchain transaction...';
+        
+        // Small delay to show the final message
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Display product information
         displayProduct(data.product);
@@ -453,6 +489,36 @@
           li.innerHTML = `<strong>${key}:</strong> ${value}`;
           metadataList.appendChild(li);
         }
+      }
+
+      // Photos from IPFS data
+      if (product.ipfsData && product.ipfsData.photos && product.ipfsData.photos.length > 0) {
+        const photosSection = document.getElementById('photosSection');
+        const photoGallery = document.getElementById('photoGallery');
+        photosSection.style.display = 'block';
+
+        product.ipfsData.photos.forEach(photoHash => {
+          const img = document.createElement('img');
+          img.src = `https://gateway.pinata.cloud/ipfs/${photoHash}`;
+          img.style.cssText = 'width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #E2E8F0; cursor: pointer;';
+          img.onclick = () => window.open(img.src, '_blank');
+          photoGallery.appendChild(img);
+        });
+      }
+
+      // Location from IPFS data
+      if (product.ipfsData && product.ipfsData.location) {
+        const locationSection = document.getElementById('locationSection');
+        const locationCoords = document.getElementById('locationCoords');
+        const mapLink = document.getElementById('mapLink');
+        locationSection.style.display = 'block';
+
+        const { latitude, longitude, accuracy } = product.ipfsData.location;
+        locationCoords.innerHTML = `
+          <strong>Coordinates:</strong> ${latitude.toFixed(6)}, ${longitude.toFixed(6)}<br>
+          ${accuracy ? `<small style="color: #64748B;">Accuracy: ±${Math.round(accuracy)}m</small>` : ''}
+        `;
+        mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
       }
 
       // Links

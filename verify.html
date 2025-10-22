@@ -303,7 +303,8 @@
     <div class="card" id="loadingCard" style="display: none;">
       <div class="loading">
         <i class="fas fa-spinner"></i>
-        <p style="margin-top: 1rem; color: #64748B;">Verifying product on blockchain...</p>
+        <p style="margin-top: 1rem; color: #64748B; font-weight: 600;">Verifying product on blockchain...</p>
+        <p style="margin-top: 0.5rem; color: #94A3B8; font-size: 0.875rem;" id="loadingSubtext">Fetching data from IPFS and XRPL...</p>
       </div>
     </div>
 
@@ -374,19 +375,36 @@
   <script>
     // Get product ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+    let productId = urlParams.get('id');
 
     // Elements
+    const searchCard = document.getElementById('searchCard');
     const loadingCard = document.getElementById('loadingCard');
     const errorCard = document.getElementById('errorCard');
     const productCard = document.getElementById('productCard');
     const errorMessage = document.getElementById('errorMessage');
 
+    // If no product ID in URL, show search form
+    if (!productId) {
+      searchCard.style.display = 'block';
+      
+      // Handle search form submission
+      document.getElementById('searchForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const searchInput = document.getElementById('searchInput').value.trim();
+        if (searchInput) {
+          // Reload page with product ID
+          window.location.href = `/verify.html?id=${encodeURIComponent(searchInput)}`;
+        }
+      });
+    } else {
+      // Product ID in URL, start verification
+      verifyProduct();
+    }
+
     async function verifyProduct() {
-      if (!productId) {
-        showError('No product ID provided. Please scan a valid QR code.');
-        return;
-      }
+      searchCard.style.display = 'none';
+      loadingCard.style.display = 'block';
 
       try {
         const response = await fetch(`/api/get-product?id=${encodeURIComponent(productId)}`);
@@ -447,12 +465,10 @@
 
     function showError(message) {
       loadingCard.style.display = 'none';
+      searchCard.style.display = 'none';
       errorCard.style.display = 'block';
       errorMessage.textContent = message;
     }
-
-    // Start verification
-    verifyProduct();
   </script>
 </body>
 </html>

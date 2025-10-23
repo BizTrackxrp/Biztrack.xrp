@@ -466,45 +466,80 @@
       let selectedPhotos = [];
       let capturedLocation = null;
 
-      // Handle photo selection from gallery
-      photoInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        
-        files.forEach(file => {
-          if (selectedPhotos.length >= 5) {
-            alert('Maximum 5 photos allowed');
-            return;
-          }
-
+      // Compress image to prevent request size issues
+      function compressImage(file) {
+        return new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onload = (event) => {
-            selectedPhotos.push(event.target.result);
-            displayPhotoPreview();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+              
+              // Max dimensions
+              const MAX_WIDTH = 1200;
+              const MAX_HEIGHT = 1200;
+              
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              // Compress to 80% quality
+              resolve(canvas.toDataURL('image/jpeg', 0.8));
+            };
+            img.src = e.target.result;
           };
           reader.readAsDataURL(file);
         });
-        // Reset input so same photo can be selected again
+      }
+
+      // Handle photo selection from gallery
+      photoInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        
+        for (const file of files) {
+          if (selectedPhotos.length >= 5) {
+            alert('Maximum 5 photos allowed');
+            break;
+          }
+          
+          const compressed = await compressImage(file);
+          selectedPhotos.push(compressed);
+          displayPhotoPreview();
+        }
+        
         photoInput.value = '';
       });
 
       // Handle photo capture from camera
-      cameraInput.addEventListener('change', (e) => {
+      cameraInput.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
         
-        files.forEach(file => {
+        for (const file of files) {
           if (selectedPhotos.length >= 5) {
             alert('Maximum 5 photos allowed');
-            return;
+            break;
           }
-
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            selectedPhotos.push(event.target.result);
-            displayPhotoPreview();
-          };
-          reader.readAsDataURL(file);
-        });
-        // Reset input so camera can be used again
+          
+          const compressed = await compressImage(file);
+          selectedPhotos.push(compressed);
+          displayPhotoPreview();
+        }
+        
         cameraInput.value = '';
       });
 

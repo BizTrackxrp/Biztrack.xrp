@@ -415,9 +415,13 @@
       <div class="form-group">
         <label>Photos (optional)</label>
         <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">
+            <i class="fas fa-camera"></i> Take Photo
+          </button>
           <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
-            <i class="fas fa-camera"></i> Add Photos
+            <i class="fas fa-images"></i> Choose from Gallery
           </button>
           <button type="button" class="btn btn-secondary" id="captureLocationBtn">
             <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Capture Location</span>
@@ -454,6 +458,7 @@
       const batchList = document.getElementById('batchList');
       const msgEl = document.getElementById('dashMsg');
       const photoInput = document.getElementById('photoInput');
+      const cameraInput = document.getElementById('cameraInput');
       const photoPreview = document.getElementById('photoPreview');
       const captureLocationBtn = document.getElementById('captureLocationBtn');
       const locationDisplay = document.getElementById('locationDisplay');
@@ -461,7 +466,7 @@
       let selectedPhotos = [];
       let capturedLocation = null;
 
-      // Handle photo selection
+      // Handle photo selection from gallery
       photoInput.addEventListener('change', (e) => {
         const files = Array.from(e.target.files);
         
@@ -478,6 +483,29 @@
           };
           reader.readAsDataURL(file);
         });
+        // Reset input so same photo can be selected again
+        photoInput.value = '';
+      });
+
+      // Handle photo capture from camera
+      cameraInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        
+        files.forEach(file => {
+          if (selectedPhotos.length >= 5) {
+            alert('Maximum 5 photos allowed');
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            selectedPhotos.push(event.target.result);
+            displayPhotoPreview();
+          };
+          reader.readAsDataURL(file);
+        });
+        // Reset input so camera can be used again
+        cameraInput.value = '';
       });
 
       function displayPhotoPreview() {
@@ -649,6 +677,11 @@
           document.getElementById('dashSku').value = '';
           document.getElementById('dashBatch').value = '';
           document.getElementById('dashMetadata').value = '';
+          selectedPhotos = [];
+          capturedLocation = null;
+          photoPreview.innerHTML = '';
+          locationDisplay.style.display = 'none';
+          document.getElementById('locationBtnText').textContent = 'Capture Location';
 
           populateBatches();
 

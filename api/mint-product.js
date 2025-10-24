@@ -2,7 +2,6 @@ const { Client, Wallet } = require('xrpl');
 const axios = require('axios');
 const { Pool } = require('pg');
 const QRCode = require('qrcode');
-const archiver = require('archiver');
 
 // Database connection
 const pool = new Pool({
@@ -246,52 +245,9 @@ module.exports = async (req, res) => {
 
     await client.disconnect();
 
-    // Step 4: For batch orders, return JSON with products + base64 ZIP
-    if (isBatchOrder && qrCodeBuffers.length > 1) {
-      console.log('\nCreating ZIP file in memory...');
-      
-      const archive = archiver('zip', {
-        zlib: { level: 9 }
-      });
-
-      const chunks = [];
-      archive.on('data', (chunk) => chunks.push(chunk));
-
-      for (const qrData of qrCodeBuffers) {
-        archive.append(qrData.buffer, { name: qrData.filename });
-      }
-
-      const summaryText = `BizTrack Batch Order Summary
-=====================================
-Product Name: ${productName}
-SKU Prefix: ${skuPrefix}
-Batch Number: ${batchNumber || 'N/A'}
-Total Items: ${quantity}
-Created: ${new Date().toISOString()}
-
-Products Created:
-${products.map((p, idx) => `${idx + 1}. ${p.sku}
-   Product ID: ${p.productId}
-   Verification URL: ${p.verificationUrl}
-   XRPL TX: ${p.xrplTxHash}
-`).join('\n')}
-
-Total Cost: ${(0.000012 * quantity).toFixed(6)} XRP
-`;
-
-      archive.append(summaryText, { name: 'BATCH_SUMMARY.txt' });
-
-      await archive.finalize();
-
-      await new Promise((resolve, reject) => {
-        archive.on('end', resolve);
-        archive.on('error', reject);
-      });
-
-      const zipBuffer = Buffer.concat(chunks);
-      const zipBase64 = zipBuffer.toString('base64');
-
-      console.log('ZIP created successfully!');
+    // Step 4: For batch orders, return product data (no ZIP creation)
+    if (isBatchOrder && products.length > 1) {
+      console.log('\nBatch order complete - returning product data');
 
       return res.status(200).json({
         success: true,
@@ -304,9 +260,9 @@ Total Cost: ${(0.000012 * quantity).toFixed(6)} XRP
           timestamp: new Date().toISOString()
         },
         products: products,
-        zipFile: {
-          filename: `BizTrack-QRCodes-${skuPrefix}-${Date.now()}.zip`,
-          data: zipBase64
+        totalCost: {
+          xrp: (0.000012 * quantity).toFixed(6),
+          usd: (0.000012 * quantity * 2.5).toFixed(6)
         }
       });
     } else {

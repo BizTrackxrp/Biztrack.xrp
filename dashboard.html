@@ -499,7 +499,7 @@
         </div>
         <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;">Starter Plan</p>
       </div>
-      <button class="usage-counter-upgrade" onclick="alert('Upgrade feature coming soon!')">
+      <button class="usage-counter-upgrade" onclick="showPricingModal()">
         <i class="fas fa-arrow-up"></i> Upgrade Plan
       </button>
     </div>
@@ -522,7 +522,10 @@
       <div class="batch-quantity-section" id="batchQuantitySection">
         <h4><i class="fas fa-boxes"></i> Batch Order Settings</h4>
         <div class="form-group">
-          <label for="batchQuantity">Quantity (1-100)</label>
+          <label for="batchQuantity">
+            Quantity (1-<span id="maxBatchQuantity">100</span>)
+            <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
+          </label>
           <input 
             id="batchQuantity" 
             type="number" 
@@ -1087,6 +1090,9 @@ ${batch.products.map((p, idx) => `${idx + 1}. ${p.sku}
         skuInput.style.cursor = 'not-allowed';
         skuLabel.innerHTML = 'SKU <small style="color: #10B981;">(Auto-generated)</small>';
         mintButtonText.textContent = 'Mint Batch to Blockchain';
+        
+        // Calculate and show remaining QR codes
+        updateBatchLimit();
       } else {
         toggle.classList.remove('active');
         section.classList.remove('active');
@@ -1097,6 +1103,28 @@ ${batch.products.map((p, idx) => `${idx + 1}. ${p.sku}
         skuInput.style.cursor = 'text';
         skuLabel.textContent = 'SKU';
         mintButtonText.textContent = 'Mint to Blockchain';
+      }
+    }
+
+    function updateBatchLimit() {
+      const remaining = qrLimit - qrUsedThisMonth;
+      const maxBatch = Math.min(remaining, 100);
+      
+      document.getElementById('maxBatchQuantity').textContent = maxBatch;
+      document.getElementById('remainingQRs').textContent = `(${remaining.toLocaleString()} QR codes remaining)`;
+      
+      const batchInput = document.getElementById('batchQuantity');
+      batchInput.max = maxBatch;
+      
+      // If current value exceeds max, set to max
+      if (parseInt(batchInput.value) > maxBatch) {
+        batchInput.value = maxBatch;
+      }
+      
+      // If no QR codes remaining, disable batch mode
+      if (remaining <= 0) {
+        batchInput.disabled = true;
+        batchInput.placeholder = 'No QR codes remaining - please upgrade';
       }
     }
   </script>

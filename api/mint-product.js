@@ -3,7 +3,6 @@ const axios = require('axios');
 const { Pool } = require('pg');
 const QRCode = require('qrcode');
 const archiver = require('archiver');
-const { Readable } = require('stream');
 
 // Database connection
 const pool = new Pool({
@@ -12,7 +11,6 @@ const pool = new Pool({
 });
 
 module.exports = async (req, res) => {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -31,21 +29,14 @@ module.exports = async (req, res) => {
       batchQuantity 
     } = req.body;
 
-    // Validate required fields
     if (!productName) {
       return res.status(400).json({ error: 'Product name is required' });
     }
 
-    // Validate batch order parameters
     if (isBatchOrder) {
       if (!batchQuantity || batchQuantity < 1 || batchQuantity > 100) {
         return res.status(400).json({ 
           error: 'Batch quantity must be between 1 and 100' 
-        });
-      }
-      if (!sku) {
-        return res.status(400).json({ 
-          error: 'SKU prefix is required for batch orders' 
         });
       }
     }
@@ -54,7 +45,12 @@ module.exports = async (req, res) => {
     const products = [];
     const qrCodeBuffers = [];
 
-    // Step 1: Upload shared photos to IPFS (if provided)
+    // Generate auto SKU prefix for batch orders if not provided
+    const skuPrefix = isBatchOrder && !sku 
+      ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
+      : sku;
+
+    // Step 1: Upload shared photos to IPFS
     let photoHashes = [];
     if (photos && photos.length > 0) {
       console.log(`Uploading ${photos.length} shared photos to IPFS...`);
@@ -86,7 +82,7 @@ module.exports = async (req, res) => {
       }
     }
 
-    // Step 2: Connect to XRPL once for all transactions
+    // Step 2: Connect to XRPL
     console.log('Connecting to XRPL...');
     client = new Client('wss://xrplcluster.com');
     await client.connect();
@@ -94,21 +90,19 @@ module.exports = async (req, res) => {
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
-    // Step 3: Process each product in the batch
+    // Step 3: Process each product
     for (let i = 0; i < quantity; i++) {
       const itemNumber = i + 1;
       console.log(`\n--- Processing item ${itemNumber} of ${quantity} ---`);
 
-      // Generate unique product ID
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Generate SKU with incremental suffix for batch orders
+      // Auto-generate SKU for batch orders
       const productSku = isBatchOrder 
-        ? `${sku}-${String(itemNumber).padStart(3, '0')}`
+        ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
         : (sku || null);
 
-      // Generate QR Code as PNG buffer
       console.log(`Generating QR code for ${productSku || productId}...`);
       const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
         width: 300,
@@ -119,13 +113,11 @@ module.exports = async (req, res) => {
         }
       });
 
-      // Store QR buffer for ZIP file
       qrCodeBuffers.push({
         buffer: qrCodeBuffer,
         filename: `${productSku || productId}-QR.png`
       });
 
-      // Upload QR code to IPFS
       console.log('Uploading QR code to IPFS...');
       const FormData = require('form-data');
       const qrFormData = new FormData();
@@ -148,7 +140,6 @@ module.exports = async (req, res) => {
       const qrIpfsHash = qrPinataResponse.data.IpfsHash;
       console.log('QR Code IPFS Hash:', qrIpfsHash);
 
-      // Prepare product data for IPFS
       const productData = {
         productId,
         productName,
@@ -168,8 +159,6 @@ module.exports = async (req, res) => {
       };
 
       console.log('Uploading product data to IPFS...');
-
-      // Upload product data to IPFS via Pinata
       const pinataResponse = await axios.post(
         'https://api.pinata.cloud/pinning/pinJSONToIPFS',
         {
@@ -189,10 +178,7 @@ module.exports = async (req, res) => {
       const ipfsHash = pinataResponse.data.IpfsHash;
       console.log('Product Data IPFS Hash:', ipfsHash);
 
-      // Write IPFS hash to XRPL using AccountSet
       console.log('Writing to XRPL...');
-
-      // Prepare AccountSet transaction with memo containing IPFS hash
       const tx = {
         TransactionType: 'AccountSet',
         Account: wallet.address,
@@ -215,7 +201,6 @@ module.exports = async (req, res) => {
       console.log('Autofilling transaction...');
       const prepared = await client.autofill(tx);
 
-      // Sign and submit
       console.log('Signing and submitting...');
       const signed = wallet.sign(prepared);
       const submitResult = await client.submit(signed.tx_blob);
@@ -226,14 +211,11 @@ module.exports = async (req, res) => {
       console.log('Transaction hash:', txHash);
       console.log('Engine result:', engineResult);
 
-      // Check if submission was successful
       if (engineResult !== 'tesSUCCESS' && engineResult !== 'terQUEUED') {
         throw new Error(`Transaction submission failed for item ${itemNumber}: ${engineResult}`);
       }
 
-      // Save to database
       console.log('Saving to database...');
-      
       await pool.query(
         `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -242,20 +224,21 @@ module.exports = async (req, res) => {
 
       console.log(`Item ${itemNumber} saved successfully!`);
 
-      // Store product info
       products.push({
         productId,
+        productName,
         sku: productSku,
+        batchNumber,
         ipfsHash,
         qrCodeIpfsHash: qrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
         qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${qrIpfsHash}`,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
-        ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`
+        ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
+        timestamp: new Date().toISOString()
       });
 
-      // Small delay between transactions to avoid rate limiting
       if (i < quantity - 1) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
@@ -263,32 +246,25 @@ module.exports = async (req, res) => {
 
     await client.disconnect();
 
-    // Step 4: For batch orders, create ZIP file with all QR codes
+    // Step 4: For batch orders, return JSON with products + base64 ZIP
     if (isBatchOrder && qrCodeBuffers.length > 1) {
-      console.log('\nCreating ZIP file with all QR codes...');
+      console.log('\nCreating ZIP file in memory...');
       
-      // Create ZIP archive
       const archive = archiver('zip', {
         zlib: { level: 9 }
       });
 
-      // Set response headers for ZIP download
-      res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename=BizTrack-QRCodes-${sku}-${Date.now()}.zip`);
+      const chunks = [];
+      archive.on('data', (chunk) => chunks.push(chunk));
 
-      // Pipe archive to response
-      archive.pipe(res);
-
-      // Add each QR code to the ZIP
       for (const qrData of qrCodeBuffers) {
         archive.append(qrData.buffer, { name: qrData.filename });
       }
 
-      // Add a summary text file
       const summaryText = `BizTrack Batch Order Summary
 =====================================
 Product Name: ${productName}
-SKU Prefix: ${sku}
+SKU Prefix: ${skuPrefix}
 Batch Number: ${batchNumber || 'N/A'}
 Total Items: ${quantity}
 Created: ${new Date().toISOString()}
@@ -301,20 +277,41 @@ ${products.map((p, idx) => `${idx + 1}. ${p.sku}
 `).join('\n')}
 
 Total Cost: ${(0.000012 * quantity).toFixed(6)} XRP
-Estimated USD: $${(0.000012 * quantity * 2.5).toFixed(6)}
 `;
 
       archive.append(summaryText, { name: 'BATCH_SUMMARY.txt' });
 
-      // Finalize the archive
       await archive.finalize();
 
-      console.log('ZIP file created and sent!');
+      await new Promise((resolve, reject) => {
+        archive.on('end', resolve);
+        archive.on('error', reject);
+      });
+
+      const zipBuffer = Buffer.concat(chunks);
+      const zipBase64 = zipBuffer.toString('base64');
+
+      console.log('ZIP created successfully!');
+
+      return res.status(200).json({
+        success: true,
+        isBatch: true,
+        batchInfo: {
+          productName,
+          skuPrefix,
+          batchNumber,
+          quantity,
+          timestamp: new Date().toISOString()
+        },
+        products: products,
+        zipFile: {
+          filename: `BizTrack-QRCodes-${skuPrefix}-${Date.now()}.zip`,
+          data: zipBase64
+        }
+      });
     } else {
-      // Single product response (original format)
+      // Single product
       const product = products[0];
-      const estimatedFee = '0.000012';
-      const estimatedFeeDrops = '12';
 
       return res.status(200).json({
         success: true,
@@ -322,17 +319,10 @@ Estimated USD: $${(0.000012 * quantity * 2.5).toFixed(6)}
         ipfsHash: product.ipfsHash,
         qrCodeIpfsHash: product.qrCodeIpfsHash,
         xrplTxHash: product.xrplTxHash,
-        actualCost: {
-          fee: estimatedFee,
-          feeInDrops: estimatedFeeDrops,
-          currency: 'XRP',
-          feeInUSD: (parseFloat(estimatedFee) * 2.5).toFixed(6)
-        },
         verificationUrl: product.verificationUrl,
         qrCodeUrl: product.qrCodeUrl,
         blockchainExplorer: product.blockchainExplorer,
-        ipfsGateway: product.ipfsGateway,
-        note: 'Transaction submitted successfully. Validation will complete in ~5 seconds.'
+        ipfsGateway: product.ipfsGateway
       });
     }
 
@@ -341,9 +331,7 @@ Estimated USD: $${(0.000012 * quantity * 2.5).toFixed(6)}
     if (client) {
       try {
         await client.disconnect();
-      } catch (e) {
-        // Ignore disconnect errors
-      }
+      } catch (e) {}
     }
     return res.status(500).json({
       error: 'Minting failed',

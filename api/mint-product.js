@@ -146,6 +146,7 @@ module.exports = async (req, res) => {
         batchNumber: batchNumber || null,
         metadata: metadata || {},
         photoHashes: photoHashes.length > 0 ? photoHashes : null,
+        location: location || null,
         qrCodeIpfsHash: qrIpfsHash,
         verificationUrl,
         createdAt: new Date().toISOString(),

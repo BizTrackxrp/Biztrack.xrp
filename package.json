@@ -1,13 +1,22 @@
 {
-  "name": "biztrack-xrp",
+  "name": "biztrack",
   "version": "1.0.0",
+  "description": "Supply chain tracking on blockchain",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "vercel dev"
+  },
   "dependencies": {
     "xrpl": "^3.0.0",
     "axios": "^1.6.0",
     "pg": "^8.11.0",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
     "qrcode": "^1.5.3",
+    "archiver": "^7.0.1",
     "form-data": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -1,149 +1,1133 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard – BizTrack.xrp</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: white;
+      border-right: 1px solid #E2E8F0;
+      padding: 2rem 0;
+      z-index: 100;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .sidebar-logo {
+      padding: 0 2rem 2rem;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-logo img {
+      max-width: 160px;
+      height: auto;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 2rem;
+      color: #64748B;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background: #F8FAFC;
+      color: #4F46E5;
+    }
+
+    .sidebar-nav a.active {
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
+      color: #4F46E5;
+      border-left: 3px solid #4F46E5;
+    }
+
+    .sidebar-nav a i {
+      margin-right: 0.75rem;
+      width: 20px;
+    }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    .dashboard-header {
+      margin-bottom: 3rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+      font-size: 1.125rem;
+      color: #64748B;
+    }
+
+    .usage-counter {
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .usage-counter h4 {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .usage-counter-numbers {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .usage-counter-numbers small {
+      font-size: 1.25rem;
+      opacity: 0.8;
+    }
+
+    .usage-counter-upgrade {
+      background: white;
+      color: #4F46E5;
+      border: none;
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .usage-counter-upgrade:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+      margin-bottom: 2rem;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card h3 i {
+      color: #4F46E5;
+    }
+
+    .batch-toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #E2E8F0;
+    }
+
+    .batch-toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .batch-toggle-label i {
+      color: #4F46E5;
+      font-size: 1.125rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+      background: #CBD5E1;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: #4F46E5;
+    }
+
+    .toggle-switch-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-switch.active .toggle-switch-slider {
+      transform: translateX(28px);
+    }
+
+    .batch-quantity-section {
+      display: none;
+      padding: 1.5rem;
+      background: #FEF3C7;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #FDE047;
+    }
+
+    .batch-quantity-section.show {
+      display: block;
+    }
+
+    .batch-quantity-section h4 {
+      color: #92400E;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .batch-info {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: white;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #92400E;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+
+    .form-group input:disabled,
+    .form-group textarea:disabled {
+      background: #F1F5F9;
+      color: #94A3B8;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .form-group input:focus:not(:disabled),
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+      box-shadow: none;
+      padding: 0.75rem 1.5rem;
+      width: auto;
+    }
+
+    .btn-secondary:hover {
+      background: #F8FAFC;
+      transform: none;
+    }
+
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .message.success {
+      background: #F0FDF4;
+      color: #16A34A;
+      border: 1px solid #BBF7D0;
+    }
+
+    .message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    .message.warning {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE047;
+    }
+
+    .message.info {
+      background: #EFF6FF;
+      color: #2563EB;
+      border: 1px solid #BFDBFE;
+    }
+
+    .product-list {
+      list-style: none;
+    }
+
+    .product-list li {
+      padding: 1.5rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid #E2E8F0;
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .batch-items {
+      display: none;
+      width: 100%;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid #E2E8F0;
+    }
+
+    .batch-items.show {
+      display: block;
+    }
+
+    .batch-item {
+      background: white;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94A3B8;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .batch-badge {
+      background: #4F46E5;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+
+      .batch-toggle-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .product-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
   <nav class="sidebar">
-  <div class="sidebar-logo">
-    <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
-  </div>
-  <ul class="sidebar-nav">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="verify.html">Verify Product</a></li>
-    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-    <li><a href="settings.html">Settings</a></li>
-    <li><a href="#" id="connectWalletLink">Connect Wallet</a></li>
-  </ul>
-</nav>
-<<div class="main-with-sidebar">
-    <div class="dashboard-container">
-      <h2>Welcome to your dashboard</h2>
-      <p>Manage your product batches and view history.</p>
+    <div class="sidebar-logo">
+      <img src="assets/8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack Logo" />
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Pricing & Plans</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+  </nav>
 
-      <div class="batch-form">
-        <h3>Create a new batch</h3>
-        <div class="form-group">
-          <label for="dashProdName">Product Name</label>
-          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
-        </div>
-        <div class="form-group">
-          <label for="dashSku">SKU</label>
-          <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
-        </div>
-        <div class="form-group">
-          <label for="dashBatch">Batch Number</label>
-          <input id="dashBatch" type="text" placeholder="e.g. 001" />
-        </div>
-        <div class="form-group">
-          <label for="dashMetadata">Metadata (optional)</label>
-          <input id="dashMetadata" type="text" placeholder="e.g. Harvest date" />
-   
-</div>
-<button class="btn" id="dashCreateBtn">Create Batch</button>
-
-        
-             
-          
-        <p id="dashMsg" style="color:#c00; margin-top:0.5rem;"></p>
-        <div id="dashQrOutput" class="qr-code" style="display:none;"></div>
-      </div>
-
-      <div class="history-box">
-        <h3>Your latest batch entries</h3>
-        <ul id="batchList">
-        </ul>
-      </div>
+  <div class="main-with-sidebar">
+    <div class="dashboard-header">
+      <h1>Welcome to your dashboard</h1>
+      <p>Manage your products and mint to blockchain.</p>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/wallet.js"></script>
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        // Ensure user is authenticated
-        if (!Auth.isLoggedIn()) {
-          window.location.href = 'login.html';
-          return;
+    <!-- Usage Counter -->
+    <div class="usage-counter">
+      <div class="usage-counter-info">
+        <h4>QR Codes Used This Month</h4>
+        <div class="usage-counter-numbers">
+          <span id="qrUsedCount">0</span> <small>/ <span id="qrLimitCount">100</span></small>
+        </div>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;" id="tierName">Free Plan</p>
+      </div>
+      <button class="usage-counter-upgrade" onclick="window.location.href='pricing.html'">
+        <i class="fas fa-arrow-up"></i> Upgrade Plan
+      </button>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Mint New Product</h3>
+      
+      <!-- Batch Toggle -->
+      <div class="batch-toggle-container">
+        <div class="batch-toggle-label">
+          <i class="fas fa-layer-group"></i>
+          <span id="batchToggleText">Single Product Mode</span>
+        </div>
+        <div class="toggle-switch" id="batchToggle" onclick="toggleBatchMode()">
+          <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <!-- Batch Quantity Section -->
+      <div class="batch-quantity-section" id="batchQuantitySection">
+        <h4><i class="fas fa-boxes"></i> Batch Order Settings</h4>
+        <div class="form-group">
+          <label for="batchQuantity">
+            Quantity (1-<span id="maxBatchQuantity">100</span>)
+            <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
+          </label>
+          <input 
+            id="batchQuantity" 
+            type="number" 
+            min="1" 
+            max="100" 
+            value="10" 
+            placeholder="How many products to mint?"
+          />
+        </div>
+        <div class="batch-info">
+          <strong>Note:</strong> SKUs will be auto-generated (e.g., ORG1234-001, ORG1234-002, ...). All products share the same data, photos, and metadata.
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="dashProdName">Product Name *</label>
+        <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashSku" id="skuLabel">SKU</label>
+        <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashBatch">Batch Number</label>
+        <input id="dashBatch" type="text" placeholder="e.g. 001" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashMetadata">Additional Info (optional)</label>
+        <textarea id="dashMetadata" placeholder="e.g. Harvest date, origin, certifications" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Photos (optional - shared across all items in batch)</label>
+        <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">
+            <i class="fas fa-camera"></i> Take Photo
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
+            <i class="fas fa-images"></i> Choose from Gallery
+          </button>
+          <button type="button" class="btn btn-secondary" id="captureLocationBtn">
+            <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Capture Location</span>
+          </button>
+        </div>
+        <div id="photoPreview" style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;"></div>
+        <p id="locationDisplay" style="margin-top: 0.75rem; color: #10B981; font-size: 0.875rem; display: none;">
+          <i class="fas fa-check-circle"></i> Location captured!
+        </p>
+      </div>
+      
+      <button class="btn" id="dashCreateBtn">
+        <i class="fas fa-rocket"></i>
+        <span id="mintButtonText">Mint to Blockchain</span>
+      </button>
+      
+      <div id="dashMsg"></div>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-box"></i> Your Minted Products</h3>
+      <ul id="batchList" class="product-list"></ul>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Require authentication
+    requireAuth();
+
+    let isBatchMode = false;
+    let selectedPhotos = [];
+    let capturedLocation = null;
+    let qrUsedThisMonth = 0;
+    let qrLimit = 100;
+    let currentTier = 'free';
+
+    // Load subscription limits from backend
+    async function loadSubscriptionLimits() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        
+        if (data.success) {
+          qrUsedThisMonth = data.subscription.qrCodesUsed;
+          qrLimit = data.subscription.qrCodesLimit;
+          currentTier = data.subscription.tier;
+          
+          // Update UI
+          document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
+          document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
+          document.getElementById('tierName').textContent = data.subscription.tierName + ' Plan';
+          
+          // Update max batch quantity to remaining QR codes
+          const remaining = qrLimit - qrUsedThisMonth;
+          const maxBatch = Math.min(100, remaining);
+          document.getElementById('maxBatchQuantity').textContent = maxBatch;
+          document.getElementById('batchQuantity').max = maxBatch;
+          
+          // Show upgrade prompt if near limit
+          if (data.limits.shouldUpgrade && data.limits.nextTier) {
+            showUpgradePrompt(data.subscription, data.limits);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load subscription limits:', error);
+        // Fallback to localStorage if API fails
+        const savedUsage = localStorage.getItem('biztrack-qr-usage');
+        if (savedUsage) {
+          qrUsedThisMonth = parseInt(savedUsage);
+          document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
+        }
+      }
+    }
+
+    function showUpgradePrompt(subscription, limits) {
+      const promptHTML = `
+        <div style="padding: 1.5rem; background: linear-gradient(135deg, #FEF3C7, #FDE047); border-radius: 12px; margin-bottom: 2rem; border: 2px solid #F59E0B;">
+          <h3 style="margin: 0 0 0.5rem 0; color: #92400E;">
+            <i class="fas fa-exclamation-triangle"></i> You're running low on QR codes!
+          </h3>
+          <p style="margin: 0 0 1rem 0; color: #92400E;">
+            You've used ${subscription.percentUsed}% of your monthly limit (${subscription.qrCodesUsed.toLocaleString()} / ${subscription.qrCodesLimit.toLocaleString()}). 
+            Upgrade to <strong>${limits.nextTierConfig.name}</strong> for ${limits.nextTierConfig.qrLimit.toLocaleString()} QR codes per month.
+          </p>
+          <a href="pricing.html" style="padding: 0.75rem 1.5rem; background: #F59E0B; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+            <i class="fas fa-arrow-up"></i> Upgrade Now - $${limits.nextTierConfig.price}/mo
+          </a>
+        </div>
+      `;
+      
+      document.querySelector('.dashboard-header').insertAdjacentHTML('afterend', promptHTML);
+    }
+
+    function toggleBatchMode() {
+      isBatchMode = !isBatchMode;
+      const toggle = document.getElementById('batchToggle');
+      const section = document.getElementById('batchQuantitySection');
+      const toggleText = document.getElementById('batchToggleText');
+      const mintText = document.getElementById('mintButtonText');
+      const skuLabel = document.getElementById('skuLabel');
+      const skuInput = document.getElementById('dashSku');
+      
+      if (isBatchMode) {
+        toggle.classList.add('active');
+        section.classList.add('show');
+        toggleText.textContent = 'Batch Order Mode';
+        mintText.textContent = 'Mint Batch to Blockchain';
+        skuLabel.innerHTML = 'SKU Prefix <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
+        
+        // DISABLE SKU INPUT IN BATCH MODE
+        skuInput.disabled = true;
+        skuInput.value = '';
+        skuInput.placeholder = 'Auto-generated (e.g., ORG1234-001, ORG1234-002...)';
+        
+        // Update remaining QRs display
+        const remaining = qrLimit - qrUsedThisMonth;
+        document.getElementById('remainingQRs').textContent = `(${remaining} available)`;
+      } else {
+        toggle.classList.remove('active');
+        section.classList.remove('show');
+        toggleText.textContent = 'Single Product Mode';
+        mintText.textContent = 'Mint to Blockchain';
+        skuLabel.textContent = 'SKU';
+        
+        // RE-ENABLE SKU INPUT IN SINGLE MODE
+        skuInput.disabled = false;
+        skuInput.placeholder = 'e.g. HNY1234';
+        
+        document.getElementById('remainingQRs').textContent = '';
+      }
+    }
+
+    // Photo handling
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 1200;
+            
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('photoInput').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        if (selectedPhotos.length >= 5) {
+          alert('Maximum 5 photos allowed');
+          break;
+        }
+        const compressed = await compressImage(file);
+        selectedPhotos.push(compressed);
+        displayPhotoPreview();
+      }
+      e.target.value = '';
+    });
+
+    document.getElementById('cameraInput').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        if (selectedPhotos.length >= 5) {
+          alert('Maximum 5 photos allowed');
+          break;
+        }
+        const compressed = await compressImage(file);
+        selectedPhotos.push(compressed);
+        displayPhotoPreview();
+      }
+      e.target.value = '';
+    });
+
+    function displayPhotoPreview() {
+      const preview = document.getElementById('photoPreview');
+      preview.innerHTML = '';
+      selectedPhotos.forEach((photo, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'position: relative; width: 100px; height: 100px;';
+        div.innerHTML = `
+          <img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 2px solid #E2E8F0;" />
+          <button onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #DC2626; color: white; border: none; cursor: pointer; font-size: 12px;">✕</button>
+        `;
+        preview.appendChild(div);
+      });
+    }
+
+    window.removePhoto = (index) => {
+      selectedPhotos.splice(index, 1);
+      displayPhotoPreview();
+    };
+
+    // Location capture
+    document.getElementById('captureLocationBtn').addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+      }
+
+      const btn = document.getElementById('captureLocationBtn');
+      btn.disabled = true;
+      document.getElementById('locationBtnText').textContent = 'Getting location...';
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          capturedLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+          document.getElementById('locationDisplay').style.display = 'block';
+          document.getElementById('locationDisplay').innerHTML = 
+            `<i class="fas fa-check-circle"></i> Location captured! (${capturedLocation.latitude.toFixed(4)}, ${capturedLocation.longitude.toFixed(4)})`;
+          btn.disabled = false;
+          document.getElementById('locationBtnText').textContent = 'Update Location';
+        },
+        (error) => {
+          alert('Unable to get location: ' + error.message);
+          btn.disabled = false;
+          document.getElementById('locationBtnText').textContent = 'Capture Location';
+        }
+      );
+    });
+
+    // Download ZIP with QR codes
+    window.downloadBatchZip = async (batchGroupId) => {
+      const btn = event.target;
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating ZIP...';
+
+      try {
+        const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+        const batch = batches.find(b => b.batchGroupId === batchGroupId);
+        
+        if (!batch || !batch.products) {
+          throw new Error('Batch not found');
         }
 
-        const batchList = document.getElementById('batchList');
-        const populateBatches = () => {
-          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-          batchList.innerHTML = '';
-          if (!batches.length) {
-            batchList.innerHTML = '<li>No batch entries yet. Use the form above to create one.</li>';
-          } else {
-            batches.forEach((b, idx) => {
-              const li = document.createElement('li');
-              const link = document.createElement('a');
-              link.href = '#';
-              link.textContent = `Batch ${idx + 1}: ${b.name}`;
-              link.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert(`Opening details for ${b.name}`);
-                // In a real app, you would navigate to a detailed page.
-              });
-              li.appendChild(link);
-              batchList.appendChild(li);
-            });
-          }
-        };
+        const zip = new JSZip();
+        
+        // Add QR codes
+        for (const product of batch.products) {
+          const response = await fetch(product.qrCodeUrl);
+          const blob = await response.blob();
+          zip.file(`${product.sku}-QR.png`, blob);
+        }
 
-        // Populate list on load
-        populateBatches();
+        // Add summary
+        const summary = `BizTrack Batch Order Summary
+============================
+Product: ${batch.productName}
+Batch Number: ${batch.batchNumber || 'N/A'}
+Total Items: ${batch.quantity}
+Created: ${batch.timestamp}
 
-        // Handle batch creation
-        const createBtn = document.getElementById('dashCreateBtn');
-        createBtn.addEventListener('click', () => {
-          const name = document.getElementById('dashProdName').value.trim();
-          const sku = document.getElementById('dashSku').value.trim();
-          const batch = document.getElementById('dashBatch').value.trim();
-          const meta = document.getElementById('dashMetadata').value.trim();
-          const msgEl = document.getElementById('dashMsg');
-          const qrOutput = document.getElementById('dashQrOutput');
-          msgEl.textContent = '';
+Products:
+${batch.products.map((p, i) => `${i+1}. ${p.sku}
+   Product ID: ${p.productId}
+   Verify: ${p.verificationUrl}
+   TX: ${p.xrplTxHash}
+`).join('\n')}`;
 
-          if (!name || !sku || !batch) {
-            msgEl.textContent = 'Please fill in product name, SKU and batch number.';
+        zip.file('BATCH_SUMMARY.txt', summary);
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const url = window.URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        const sanitizedName = batch.productName.replace(/[^a-z0-9]/gi, '_');
+        const batchNum = batch.batchNumber || 'N/A';
+        a.download = `${sanitizedName}_Batch_${batchNum}_(${batch.quantity}_items).zip`;
+        
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      } catch (error) {
+        alert('Error creating ZIP: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
+    };
+
+    function populateBatches() {
+      const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+      const batchList = document.getElementById('batchList');
+      batchList.innerHTML = '';
+      
+      if (!batches.length) {
+        batchList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>No products minted yet.</p>
+            <p style="margin-top: 0.5rem;">Use the form above to mint your first product.</p>
+          </div>
+        `;
+        return;
+      }
+
+      batches.slice().reverse().forEach((batch) => {
+        const li = document.createElement('li');
+        
+        if (batch.isBatchGroup && batch.products) {
+          // Batch order
+          const itemsId = `items-${batch.batchGroupId}`;
+          li.innerHTML = `
+            <div class="product-header">
+              <div>
+                <strong>${batch.productName}</strong>
+                <span class="batch-badge">BATCH ${batch.quantity} ITEMS</span>
+                <br><small>Batch: ${batch.batchNumber || 'N/A'} • ${new Date(batch.timestamp).toLocaleString()}</small>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="toggleBatchItems('${itemsId}', this)">
+                  <i class="fas fa-chevron-down"></i> View Items
+                </button>
+                <button class="btn btn-secondary" onclick="downloadBatchZip('${batch.batchGroupId}')">
+                  <i class="fas fa-download"></i> Download ZIP
+                </button>
+              </div>
+            </div>
+            <div id="${itemsId}" class="batch-items">
+              ${batch.products.map(p => `
+                <div class="batch-item">
+                  <div>
+                    <strong>${p.sku}</strong>
+                    <br><small>${p.productId}</small>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <a href="${p.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                      <i class="fas fa-qrcode"></i> View
+                    </a>
+                    <a href="${p.qrCodeUrl}" download="${p.sku}-QR.png" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                      <i class="fas fa-download"></i> QR
+                    </a>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          // Single product
+          li.innerHTML = `
+            <div class="product-header">
+              <div>
+                <strong>${batch.productName}</strong>
+                <br><small>SKU: ${batch.sku} • Batch: ${batch.batchNumber || 'N/A'}</small>
+                <br><small>Product ID: ${batch.productId}</small>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="${batch.verificationUrl || `https://www.biztrack.io/verify.html?id=${batch.productId}`}" target="_blank" class="btn btn-secondary">
+                  <i class="fas fa-qrcode"></i> View QR
+                </a>
+                <a href="${batch.qrCodeUrl || `https://gateway.pinata.cloud/ipfs/${batch.qrCodeIpfsHash}`}" download="BizTrack-QR-${batch.productId}.png" class="btn btn-secondary">
+                  <i class="fas fa-download"></i> Download
+                </a>
+                <a href="https://livenet.xrpl.org/transactions/${batch.xrplTxHash}" target="_blank" class="btn btn-secondary">
+                  <i class="fas fa-external-link-alt"></i> View TX
+                </a>
+              </div>
+            </div>
+          `;
+        }
+        
+        batchList.appendChild(li);
+      });
+    }
+
+    window.toggleBatchItems = (itemsId, button) => {
+      const items = document.getElementById(itemsId);
+      const icon = button.querySelector('i');
+      
+      if (items.classList.contains('show')) {
+        items.classList.remove('show');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+        button.innerHTML = '<i class="fas fa-chevron-down"></i> View Items';
+      } else {
+        items.classList.add('show');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+        button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Items';
+      }
+    };
+
+    // Mint product
+    document.getElementById('dashCreateBtn').addEventListener('click', async () => {
+      const productName = document.getElementById('dashProdName').value.trim();
+      const sku = document.getElementById('dashSku').value.trim();
+      const batchNumber = document.getElementById('dashBatch').value.trim();
+      const metadata = document.getElementById('dashMetadata').value.trim();
+      const batchQuantity = isBatchMode ? parseInt(document.getElementById('batchQuantity').value) : 1;
+      const msgEl = document.getElementById('dashMsg');
+      const createBtn = document.getElementById('dashCreateBtn');
+      
+      msgEl.innerHTML = '';
+
+      if (!productName) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please fill in product name.</div>';
+        return;
+      }
+
+      if (!isBatchMode && !sku) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please fill in SKU.</div>';
+        return;
+      }
+
+      const maxAllowed = Math.min(100, qrLimit - qrUsedThisMonth);
+      if (isBatchMode && (!batchQuantity || batchQuantity < 1 || batchQuantity > maxAllowed)) {
+        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Batch quantity must be between 1 and ${maxAllowed} (you have ${maxAllowed} QR codes remaining).</div>`;
+        return;
+      }
+
+      createBtn.disabled = true;
+      const originalText = createBtn.innerHTML;
+      createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting...';
+      msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to IPFS and blockchain...</div>';
+
+      try {
+        const response = await fetch('/api/mint-product', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
+          body: JSON.stringify({
+            productName,
+            sku: isBatchMode ? undefined : sku,
+            batchNumber,
+            metadata: metadata ? { notes: metadata } : {},
+            photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+            location: capturedLocation,
+            isBatchOrder: isBatchMode,
+            batchQuantity: batchQuantity
+          })
+        });
+
+        const result = await response.json();
+
+        // Handle limit exceeded error
+        if (!response.ok) {
+          if (response.status === 403 && result.upgrade) {
+            const nextTier = result.upgrade.nextTierName || 'higher tier';
+            msgEl.innerHTML = `<div class="message error">
+              <i class="fas fa-exclamation-circle"></i> 
+              <div>
+                <strong>QR Code Limit Exceeded!</strong><br>
+                You need ${result.limits.requested} QR codes but only have ${result.limits.remaining} remaining.
+                ${result.upgrade.available ? `<br><br><a href="pricing.html" style="color: #DC2626; font-weight: 700; text-decoration: underline;">Upgrade to ${nextTier} for ${result.upgrade.nextTierLimit.toLocaleString()} QR codes/month →</a>` : ''}
+              </div>
+            </div>`;
+            createBtn.disabled = false;
+            createBtn.innerHTML = originalText;
             return;
           }
+          throw new Error(result.details || result.error || 'Minting failed');
+        }
 
-          // Create a record object
-          const record = {
-            name,
-            sku,
-            batch,
-            metadata: meta,
-            id: crypto.randomUUID(),
-          };
+        if (result.isBatch) {
+          // Batch order
+          msgEl.innerHTML = `<div class="message success">
+            <i class="fas fa-check-circle"></i> 
+            Successfully minted ${result.batchInfo.quantity} products! View below to download QR codes.
+          </div>`;
 
-          // Save to localStorage
           const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-          batches.push(record);
+          const batchGroupId = `batch-${Date.now()}`;
+          
+          batches.push({
+            isBatchGroup: true,
+            batchGroupId: batchGroupId,
+            productName: result.batchInfo.productName,
+            batchNumber: result.batchInfo.batchNumber,
+            quantity: result.batchInfo.quantity,
+            products: result.products,
+            timestamp: result.batchInfo.timestamp
+          });
+          
           localStorage.setItem('biztrack-batches', JSON.stringify(batches));
+          
+          // Reload subscription limits
+          await loadSubscriptionLimits();
+        } else {
+          // Single product
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Product successfully minted to blockchain!</div>`;
 
-          // Generate QR code (use encodeURIComponent)
-          const url = encodeURIComponent(`https://biztrack-xrp.vercel.app/verify.html?id=${record.id}`);
-          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}`;
-          qrOutput.innerHTML = `<img src="${qrUrl}" alt="QR Code for product" /><p>Scan to verify</p>`;
-          qrOutput.style.display = 'block';
+          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
+          batches.push({
+            productName,
+            sku,
+            batchNumber,
+            productId: result.productId,
+            ipfsHash: result.ipfsHash,
+            qrCodeIpfsHash: result.qrCodeIpfsHash,
+            xrplTxHash: result.xrplTxHash,
+            verificationUrl: result.verificationUrl,
+            qrCodeUrl: result.qrCodeUrl,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('biztrack-batches', JSON.stringify(batches));
+          
+          // Reload subscription limits
+          await loadSubscriptionLimits();
+        }
 
-          // Clear inputs
-          document.getElementById('dashProdName').value =
-            document.getElementById('dashSku').value =
-            document.getElementById('dashBatch').value =
-            document.getElementById('dashMetadata').value =
-              '';
+        // Clear form
+        document.getElementById('dashProdName').value = '';
+        document.getElementById('dashSku').value = '';
+        document.getElementById('dashBatch').value = '';
+        document.getElementById('dashMetadata').value = '';
+        selectedPhotos = [];
+        capturedLocation = null;
+        document.getElementById('photoPreview').innerHTML = '';
+        document.getElementById('locationDisplay').style.display = 'none';
+        document.getElementById('locationBtnText').textContent = 'Capture Location';
 
-          // Refresh list
-          populateBatches();
-        });
-      });
-    </script>
-</div>
+        populateBatches();
+
+      } catch (error) {
+        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
+        console.error('Minting error:', error);
+      } finally {
+        createBtn.disabled = false;
+        createBtn.innerHTML = originalText;
+      }
+    });
+
+    // Initialize
+    loadSubscriptionLimits();
+    populateBatches();
+  </script>
 </body>
-  </html>
 </html>

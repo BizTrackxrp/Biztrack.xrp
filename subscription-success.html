@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Successful - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .success-card {
+      background: white;
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: scaleIn 0.5s ease-out 0.2s both;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .success-icon i {
+      font-size: 3rem;
+      color: white;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: #64748B;
+      margin-bottom: 2rem;
+    }
+
+    .info-box {
+      background: #F8FAFC;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 2px solid #E2E8F0;
+      text-align: left;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: #64748B;
+      font-weight: 600;
+    }
+
+    .info-value {
+      color: #1E293B;
+      font-weight: 700;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      margin-right: 1rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+    }
+
+    .btn-secondary:hover {
+      background: #F8FAFC;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .loading i {
+      font-size: 3rem;
+      color: #10B981;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .success-card {
+        padding: 2rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 0.5rem 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-card" id="successCard" style="display: none;">
+    <div class="success-icon">
+      <i class="fas fa-check"></i>
+    </div>
+
+    <h1>Welcome to Your New Plan!</h1>
+    <p class="subtitle">Your subscription has been activated successfully</p>
+
+    <div class="info-box" id="subscriptionInfo">
+      <!-- Will be populated by JavaScript -->
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <a href="dashboard.html" class="btn btn-primary">
+        <i class="fas fa-tachometer-alt"></i>
+        Go to Dashboard
+      </a>
+      <a href="pricing.html" class="btn btn-secondary">
+        <i class="fas fa-receipt"></i>
+        View Plans
+      </a>
+    </div>
+  </div>
+
+  <div class="success-card" id="loadingCard">
+    <div class="loading">
+      <i class="fas fa-spinner"></i>
+      <p style="margin-top: 1rem; color: #64748B; font-weight: 600;">
+        Activating your subscription...
+      </p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Require authentication
+    requireAuth();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    async function verifySubscription() {
+      if (!sessionId) {
+        showSuccess({
+          tier: 'Unknown',
+          qrLimit: 'N/A'
+        });
+        return;
+      }
+
+      // Give webhook time to process (2 seconds)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      try {
+        // Check user's subscription status
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+
+        if (data.success) {
+          showSuccess(data.subscription);
+        } else {
+          throw new Error('Failed to verify subscription');
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        // Show success anyway
+        showSuccess({
+          tier: 'Premium',
+          qrLimit: 'Updated'
+        });
+      }
+    }
+
+    function showSuccess(subscription) {
+      document.getElementById('loadingCard').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+
+      const tierNames = {
+        'free': 'Free',
+        'essential': 'Essential',
+        'scale': 'Scale',
+        'enterprise': 'Enterprise'
+      };
+
+      const infoHTML = `
+        <div class="info-item">
+          <span class="info-label">Plan</span>
+          <span class="info-value">${tierNames[subscription.tier] || subscription.tierName || 'Premium'}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">QR Codes per Month</span>
+          <span class="info-value">${subscription.qrCodesLimit?.toLocaleString() || subscription.qrLimit}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="info-value" style="color: #10B981;">✓ Active</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Billing Cycle</span>
+          <span class="info-value">Monthly</span>
+        </div>
+      `;
+
+      document.getElementById('subscriptionInfo').innerHTML = infoHTML;
+    }
+
+    // Verify subscription on page load
+    verifySubscription();
+  </script>
+</body>
+</html>

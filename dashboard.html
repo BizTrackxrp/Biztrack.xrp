@@ -281,7 +281,15 @@
       background: #F8FAFC;
     }
 
-    .form-group input:focus,
+    .form-group input:disabled,
+    .form-group textarea:disabled {
+      background: #F1F5F9;
+      color: #94A3B8;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .form-group input:focus:not(:disabled),
     .form-group textarea:focus {
       outline: none;
       border-color: #4F46E5;
@@ -659,6 +667,7 @@
       const toggleText = document.getElementById('batchToggleText');
       const mintText = document.getElementById('mintButtonText');
       const skuLabel = document.getElementById('skuLabel');
+      const skuInput = document.getElementById('dashSku');
       
       if (isBatchMode) {
         toggle.classList.add('active');
@@ -666,6 +675,11 @@
         toggleText.textContent = 'Batch Order Mode';
         mintText.textContent = 'Mint Batch to Blockchain';
         skuLabel.innerHTML = 'SKU Prefix <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
+        
+        // DISABLE SKU INPUT IN BATCH MODE
+        skuInput.disabled = true;
+        skuInput.value = '';
+        skuInput.placeholder = 'Auto-generated (e.g., ORG1234-001, ORG1234-002...)';
         
         // Update remaining QRs display
         const remaining = qrLimit - qrUsedThisMonth;
@@ -676,6 +690,11 @@
         toggleText.textContent = 'Single Product Mode';
         mintText.textContent = 'Mint to Blockchain';
         skuLabel.textContent = 'SKU';
+        
+        // RE-ENABLE SKU INPUT IN SINGLE MODE
+        skuInput.disabled = false;
+        skuInput.placeholder = 'e.g. HNY1234';
+        
         document.getElementById('remainingQRs').textContent = '';
       }
     }
@@ -1001,7 +1020,7 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAuthToken()}` // ← AUTH HEADER
+            'Authorization': `Bearer ${getAuthToken()}`
           },
           body: JSON.stringify({
             productName,

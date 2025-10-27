@@ -2,6 +2,10 @@ const { Client, Wallet } = require('xrpl');
 const axios = require('axios');
 const { Pool } = require('pg');
 const QRCode = require('qrcode');
+const archiver = require('archiver');
+const { Readable } = require('stream');
+const jwt = require('jsonwebtoken');
+const stripeConfig = require('../stripe-config');
 
 // Database connection
 const pool = new Pool({
@@ -9,7 +13,10 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+
 module.exports = async (req, res) => {
+  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -17,6 +24,27 @@ module.exports = async (req, res) => {
   let client;
 
   try {
+    // Authenticate user
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized - Please login' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // Get user from database with subscription info
+    const userResult = await pool.query(
+      'SELECT * FROM users WHERE id = $1',
+      [decoded.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+
     const { 
       productName, 
       sku, 
@@ -28,28 +56,80 @@ module.exports = async (req, res) => {
       batchQuantity 
     } = req.body;
 
+    // Validate required fields
     if (!productName) {
       return res.status(400).json({ error: 'Product name is required' });
     }
 
+    // Validate batch order parameters
     if (isBatchOrder) {
       if (!batchQuantity || batchQuantity < 1 || batchQuantity > 100) {
         return res.status(400).json({ 
           error: 'Batch quantity must be between 1 and 100' 
         });
       }
+      if (!sku) {
+        return res.status(400).json({ 
+          error: 'SKU prefix is required for batch orders' 
+        });
+      }
     }
 
     const quantity = isBatchOrder ? parseInt(batchQuantity) : 1;
+
+    // CHECK QR CODE LIMITS
+    const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
+    const remaining = user.qr_codes_limit - user.qr_codes_used;
+
+    // Check if billing cycle needs reset (30 days)
+    const now = new Date();
+    const billingStart = new Date(user.billing_cycle_start);
+    const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
+
+    if (daysSinceStart >= 30) {
+      // Reset counter
+      await pool.query(
+        `UPDATE users 
+         SET qr_codes_used = 0,
+             billing_cycle_start = NOW()
+         WHERE id = $1`,
+        [user.id]
+      );
+      user.qr_codes_used = 0;
+    }
+
+    // Re-calculate remaining after potential reset
+    const updatedRemaining = user.qr_codes_limit - user.qr_codes_used;
+
+    // Check if user has enough QR codes
+    if (quantity > updatedRemaining) {
+      const nextTier = stripeConfig.getNextTier(user.subscription_tier);
+      const nextTierConfig = nextTier ? stripeConfig.getTierConfig(nextTier) : null;
+
+      return res.status(403).json({ 
+        error: 'QR code limit exceeded',
+        message: `You need ${quantity} QR codes but only have ${updatedRemaining} remaining.`,
+        limits: {
+          tier: user.subscription_tier,
+          used: user.qr_codes_used,
+          limit: user.qr_codes_limit,
+          remaining: updatedRemaining,
+          requested: quantity
+        },
+        upgrade: {
+          available: !!nextTier,
+          nextTier: nextTier,
+          nextTierName: nextTierConfig?.name,
+          nextTierLimit: nextTierConfig?.qrLimit,
+          nextTierPrice: nextTierConfig?.price
+        }
+      });
+    }
+
     const products = [];
     const qrCodeBuffers = [];
 
-    // Generate auto SKU prefix for batch orders if not provided
-    const skuPrefix = isBatchOrder && !sku 
-      ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
-      : sku;
-
-    // Step 1: Upload shared photos to IPFS
+    // Step 1: Upload shared photos to IPFS (if provided)
     let photoHashes = [];
     if (photos && photos.length > 0) {
       console.log(`Uploading ${photos.length} shared photos to IPFS...`);
@@ -81,7 +161,7 @@ module.exports = async (req, res) => {
       }
     }
 
-    // Step 2: Connect to XRPL
+    // Step 2: Connect to XRPL once for all transactions
     console.log('Connecting to XRPL...');
     client = new Client('wss://xrplcluster.com');
     await client.connect();
@@ -89,19 +169,21 @@ module.exports = async (req, res) => {
 
     const wallet = Wallet.fromSeed(process.env.XRPL_SERVICE_WALLET_SECRET);
 
-    // Step 3: Process each product
+    // Step 3: Process each product in the batch
     for (let i = 0; i < quantity; i++) {
       const itemNumber = i + 1;
       console.log(`\n--- Processing item ${itemNumber} of ${quantity} ---`);
 
+      // Generate unique product ID
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Auto-generate SKU for batch orders
+      // Generate SKU with incremental suffix for batch orders
       const productSku = isBatchOrder 
-        ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
+        ? `${sku}-${String(itemNumber).padStart(3, '0')}`
         : (sku || null);
 
+      // Generate QR Code as PNG buffer
       console.log(`Generating QR code for ${productSku || productId}...`);
       const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
         width: 300,
@@ -112,11 +194,13 @@ module.exports = async (req, res) => {
         }
       });
 
+      // Store QR buffer for ZIP file
       qrCodeBuffers.push({
         buffer: qrCodeBuffer,
         filename: `${productSku || productId}-QR.png`
       });
 
+      // Upload QR code to IPFS
       console.log('Uploading QR code to IPFS...');
       const FormData = require('form-data');
       const qrFormData = new FormData();
@@ -139,6 +223,7 @@ module.exports = async (req, res) => {
       const qrIpfsHash = qrPinataResponse.data.IpfsHash;
       console.log('QR Code IPFS Hash:', qrIpfsHash);
 
+      // Prepare product data for IPFS
       const productData = {
         productId,
         productName,
@@ -146,7 +231,6 @@ module.exports = async (req, res) => {
         batchNumber: batchNumber || null,
         metadata: metadata || {},
         photoHashes: photoHashes.length > 0 ? photoHashes : null,
-        location: location || null,
         qrCodeIpfsHash: qrIpfsHash,
         verificationUrl,
         createdAt: new Date().toISOString(),
@@ -159,6 +243,8 @@ module.exports = async (req, res) => {
       };
 
       console.log('Uploading product data to IPFS...');
+
+      // Upload product data to IPFS via Pinata
       const pinataResponse = await axios.post(
         'https://api.pinata.cloud/pinning/pinJSONToIPFS',
         {
@@ -178,7 +264,10 @@ module.exports = async (req, res) => {
       const ipfsHash = pinataResponse.data.IpfsHash;
       console.log('Product Data IPFS Hash:', ipfsHash);
 
+      // Write IPFS hash to XRPL using AccountSet
       console.log('Writing to XRPL...');
+
+      // Prepare AccountSet transaction with memo containing IPFS hash
       const tx = {
         TransactionType: 'AccountSet',
         Account: wallet.address,
@@ -201,6 +290,7 @@ module.exports = async (req, res) => {
       console.log('Autofilling transaction...');
       const prepared = await client.autofill(tx);
 
+      // Sign and submit
       console.log('Signing and submitting...');
       const signed = wallet.sign(prepared);
       const submitResult = await client.submit(signed.tx_blob);
@@ -211,11 +301,14 @@ module.exports = async (req, res) => {
       console.log('Transaction hash:', txHash);
       console.log('Engine result:', engineResult);
 
+      // Check if submission was successful
       if (engineResult !== 'tesSUCCESS' && engineResult !== 'terQUEUED') {
         throw new Error(`Transaction submission failed for item ${itemNumber}: ${engineResult}`);
       }
 
+      // Save to database
       console.log('Saving to database...');
+      
       await pool.query(
         `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -224,21 +317,20 @@ module.exports = async (req, res) => {
 
       console.log(`Item ${itemNumber} saved successfully!`);
 
+      // Store product info
       products.push({
         productId,
-        productName,
         sku: productSku,
-        batchNumber,
         ipfsHash,
         qrCodeIpfsHash: qrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
         qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${qrIpfsHash}`,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
-        ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
-        timestamp: new Date().toISOString()
+        ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`
       });
 
+      // Small delay between transactions to avoid rate limiting
       if (i < quantity - 1) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
@@ -246,29 +338,65 @@ module.exports = async (req, res) => {
 
     await client.disconnect();
 
-    // Step 4: For batch orders, return product data (no ZIP creation)
-    if (isBatchOrder && products.length > 1) {
-      console.log('\nBatch order complete - returning product data');
+    // UPDATE QR CODE COUNTER
+    await pool.query(
+      'UPDATE users SET qr_codes_used = qr_codes_used + $1 WHERE id = $2',
+      [quantity, user.id]
+    );
+    console.log(`Updated QR counter: +${quantity} for user ${user.id}`);
 
-      return res.status(200).json({
-        success: true,
-        isBatch: true,
-        batchInfo: {
-          productName,
-          skuPrefix,
-          batchNumber,
-          quantity,
-          timestamp: new Date().toISOString()
-        },
-        products: products,
-        totalCost: {
-          xrp: (0.000012 * quantity).toFixed(6),
-          usd: (0.000012 * quantity * 2.5).toFixed(6)
-        }
+    // Step 4: For batch orders, create ZIP file with all QR codes
+    if (isBatchOrder && qrCodeBuffers.length > 1) {
+      console.log('\nCreating ZIP file with all QR codes...');
+      
+      // Create ZIP archive
+      const archive = archiver('zip', {
+        zlib: { level: 9 }
       });
+
+      // Set response headers for ZIP download
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename=BizTrack-QRCodes-${sku}-${Date.now()}.zip`);
+
+      // Pipe archive to response
+      archive.pipe(res);
+
+      // Add each QR code to the ZIP
+      for (const qrData of qrCodeBuffers) {
+        archive.append(qrData.buffer, { name: qrData.filename });
+      }
+
+      // Add a summary text file
+      const summaryText = `BizTrack Batch Order Summary
+=====================================
+Product Name: ${productName}
+SKU Prefix: ${sku}
+Batch Number: ${batchNumber || 'N/A'}
+Total Items: ${quantity}
+Created: ${new Date().toISOString()}
+
+Products Created:
+${products.map((p, idx) => `${idx + 1}. ${p.sku}
+   Product ID: ${p.productId}
+   Verification URL: ${p.verificationUrl}
+   XRPL TX: ${p.xrplTxHash}
+`).join('\n')}
+
+Total Cost: ${(0.000012 * quantity).toFixed(6)} XRP
+Estimated USD: $${(0.000012 * quantity * 2.5).toFixed(6)}
+`;
+
+      archive.append(summaryText, { name: 'BATCH_SUMMARY.txt' });
+
+      // Finalize the archive
+      await archive.finalize();
+
+      console.log('ZIP file created and sent!');
     } else {
-      // Single product
+      // Single product response (original format)
       const product = products[0];
+      const estimatedFee = '0.000012';
+      const estimatedFeeDrops = '12';
 
       return res.status(200).json({
         success: true,
@@ -276,10 +404,17 @@ module.exports = async (req, res) => {
         ipfsHash: product.ipfsHash,
         qrCodeIpfsHash: product.qrCodeIpfsHash,
         xrplTxHash: product.xrplTxHash,
+        actualCost: {
+          fee: estimatedFee,
+          feeInDrops: estimatedFeeDrops,
+          currency: 'XRP',
+          feeInUSD: (parseFloat(estimatedFee) * 2.5).toFixed(6)
+        },
         verificationUrl: product.verificationUrl,
         qrCodeUrl: product.qrCodeUrl,
         blockchainExplorer: product.blockchainExplorer,
-        ipfsGateway: product.ipfsGateway
+        ipfsGateway: product.ipfsGateway,
+        note: 'Transaction submitted successfully. Validation will complete in ~5 seconds.'
       });
     }
 
@@ -288,7 +423,9 @@ module.exports = async (req, res) => {
     if (client) {
       try {
         await client.disconnect();
-      } catch (e) {}
+      } catch (e) {
+        // Ignore disconnect errors
+      }
     }
     return res.status(500).json({
       error: 'Minting failed',

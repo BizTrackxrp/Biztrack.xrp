@@ -1,10 +1,14 @@
-
 {
   "name": "biztrack-xrp",
   "version": "1.0.0",
   "dependencies": {
-    "xrpl": "^3.0.0",
+    "archiver": "^7.0.1",
     "axios": "^1.6.0",
-    "pg": "^8.11.0"
+    "form-data": "^4.0.4",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.0",
+    "qrcode": "^1.5.4",
+    "stripe": "^19.1.0",
+    "xrpl": "^3.0.0"
   }
 }

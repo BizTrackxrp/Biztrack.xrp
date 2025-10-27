@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://js.stripe.com/v3/"></script>
   <style>
     * {
       margin: 0;
@@ -26,8 +25,23 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #4F46E5;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      transform: translateX(-4px);
     }
 
     .header {
@@ -62,6 +76,8 @@
       border: 2px solid #E2E8F0;
       transition: all 0.3s;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .pricing-card:hover {
@@ -109,46 +125,45 @@
     .tier-price span {
       font-size: 1.25rem;
       color: #64748B;
-      font-weight: 600;
+      font-weight: 500;
     }
 
     .tier-description {
       color: #64748B;
       margin-bottom: 2rem;
-      min-height: 48px;
+      font-size: 0.95rem;
     }
 
     .features-list {
       list-style: none;
       margin-bottom: 2rem;
+      flex-grow: 1;
     }
 
     .features-list li {
       padding: 0.75rem 0;
-      border-bottom: 1px solid #E2E8F0;
-      color: #475569;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.75rem;
+      color: #334155;
     }
 
-    .features-list li:last-child {
-      border-bottom: none;
-    }
-
-    .features-list i {
+    .features-list li i {
       color: #10B981;
-      font-size: 1.125rem;
+      margin-top: 0.25rem;
+      flex-shrink: 0;
     }
 
-    .btn {
+    .upgrade-btn {
       width: 100%;
-      padding: 1rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      border: none;
       border-radius: 12px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      border: none;
       transition: all 0.2s;
       display: flex;
       align-items: center;
@@ -156,49 +171,145 @@
       gap: 0.5rem;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      color: white;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
-
-    .btn-primary:hover:not(:disabled) {
+    .upgrade-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
     }
 
-    .btn-secondary {
+    .upgrade-btn:disabled {
+      background: #E2E8F0;
+      color: #94A3B8;
+      cursor: not-allowed;
+    }
+
+    .upgrade-btn.secondary {
       background: white;
       color: #4F46E5;
       border: 2px solid #4F46E5;
     }
 
-    .btn-secondary:hover {
+    .upgrade-btn.secondary:hover {
       background: #F8FAFC;
     }
 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    /* Add-on Section */
+    .addon-section {
+      margin-top: 4rem;
+      padding-top: 4rem;
+      border-top: 2px solid #E2E8F0;
     }
 
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #4F46E5;
-      text-decoration: none;
-      font-weight: 600;
+    .addon-header {
+      text-align: center;
       margin-bottom: 2rem;
-      padding: 0.75rem 1.25rem;
-      background: white;
-      border-radius: 8px;
-      transition: all 0.2s;
     }
 
-    .back-btn:hover {
-      transform: translateX(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .addon-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+
+    .addon-header p {
+      color: #64748B;
+      font-size: 1.125rem;
+    }
+
+    .addon-card {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE047 100%);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 3px solid #F59E0B;
+      box-shadow: 0 10px 40px -10px rgba(245, 158, 11, 0.4);
+    }
+
+    .addon-card h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #92400E;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .addon-card h3 i {
+      color: #F59E0B;
+    }
+
+    .addon-price {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #92400E;
+      margin-bottom: 1rem;
+    }
+
+    .addon-price span {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .addon-description {
+      color: #92400E;
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .addon-benefits {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .addon-benefits ul {
+      list-style: none;
+    }
+
+    .addon-benefits li {
+      padding: 0.75rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #92400E;
+      font-weight: 600;
+    }
+
+    .addon-benefits li i {
+      color: #F59E0B;
+    }
+
+    .addon-btn {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      background: #92400E;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .addon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(146, 64, 14, 0.4);
+      background: #78350F;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #64748B;
     }
 
     @media (max-width: 768px) {
@@ -214,9 +325,8 @@
 </head>
 <body>
   <div class="container">
-    <a href="dashboard.html" class="back-btn">
-      <i class="fas fa-arrow-left"></i>
-      Back to Dashboard
+    <a href="dashboard.html" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
 
     <div class="header">
@@ -224,55 +334,92 @@
       <p>Flexible pricing for businesses of all sizes</p>
     </div>
 
-    <div class="pricing-grid" id="pricingGrid">
-      <!-- Will be populated by JavaScript -->
+    <div id="loadingState" class="loading">
+      <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+      <p style="margin-top: 1rem;">Loading pricing...</p>
+    </div>
+
+    <div id="pricingContent" style="display: none;">
+      <div class="pricing-grid" id="pricingGrid">
+        <!-- Pricing cards will be inserted here -->
+      </div>
+
+      <!-- Add-on Section -->
+      <div class="addon-section">
+        <div class="addon-header">
+          <h2>Need More QR Codes?</h2>
+          <p>Top up your account without changing your subscription</p>
+        </div>
+
+        <div class="addon-card">
+          <h3>
+            <i class="fas fa-plus-circle"></i>
+            QR Code Top-Up
+          </h3>
+          <div class="addon-price">
+            $15 <span>one-time</span>
+          </div>
+          <p class="addon-description">
+            Add 1,000 extra QR codes to your account instantly. Perfect for occasional high-volume needs without upgrading your plan.
+          </p>
+          <div class="addon-benefits">
+            <ul>
+              <li><i class="fas fa-check-circle"></i> 1,000 additional QR codes</li>
+              <li><i class="fas fa-check-circle"></i> Never expires</li>
+              <li><i class="fas fa-check-circle"></i> Stack multiple top-ups</li>
+              <li><i class="fas fa-check-circle"></i> Instant activation</li>
+            </ul>
+          </div>
+          <button class="addon-btn" onclick="purchaseTopUp()">
+            <i class="fas fa-bolt"></i>
+            Buy 1,000 QR Codes Now
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="js/auth.js"></script>
   <script>
-    // Require authentication
-    requireAuth();
-
-    const stripe = Stripe(process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key_here');
-    let currentUserTier = 'free';
-
-    // Pricing tiers
     const tiers = {
       free: {
         name: 'Free',
         price: 0,
         qrLimit: 100,
-        description: 'Perfect for trying out BizTrack',
+        description: 'Perfect for testing and small projects',
         features: [
           '100 QR codes per month',
-          'Basic product tracking',
-          'Blockchain verification',
-          'Community support'
+          'Basic blockchain verification',
+          'Community support',
+          'Single user access'
         ]
       },
       essential: {
         name: 'Essential',
         price: 49.99,
+        priceId: 'YOUR_ESSENTIAL_PRICE_ID', // Will be loaded from backend
         qrLimit: 5000,
-        description: 'Perfect for small businesses and startups',
+        description: 'Great for small businesses',
         features: [
           '5,000 QR codes per month',
-          'Product authentication',
-          'Supply chain tracking',
-          'Customer verification pages',
-          'Email support'
-        ]
+          'Full blockchain verification',
+          'Priority email support',
+          'Multi-user access (up to 3)',
+          'Basic analytics'
+        ],
+        featured: true
       },
       scale: {
         name: 'Scale',
         price: 149.99,
+        priceId: 'YOUR_SCALE_PRICE_ID',
         qrLimit: 25000,
-        description: 'For growing businesses with higher volume',
+        description: 'For growing businesses',
         features: [
           '25,000 QR codes per month',
-          'All Essential features',
+          'Full blockchain verification',
           'Priority support',
+          'Multi-user access (up to 10)',
           'Advanced analytics',
           'Custom branding'
         ]
@@ -280,32 +427,60 @@
       enterprise: {
         name: 'Enterprise',
         price: 399.99,
+        priceId: 'YOUR_ENTERPRISE_PRICE_ID',
         qrLimit: 100000,
-        description: 'Built for large-scale operations',
+        description: 'For large organizations',
         features: [
           '100,000 QR codes per month',
-          'All Scale features',
-          'Dedicated account manager',
-          'Custom integrations',
-          'White-label options',
-          'SLA guarantee'
+          'Full blockchain verification',
+          '24/7 phone & email support',
+          'Unlimited users',
+          'Advanced analytics',
+          'Custom branding',
+          'API access',
+          'Dedicated account manager'
         ]
       }
     };
 
+    let currentTier = 'free';
+    let stripe = null;
+
     async function loadPricing() {
       try {
-        // Get user's current subscription
+        // Initialize Stripe
+        stripe = Stripe('pk_test_51QJY41P9KPY9G1OW4kXHdm6yw4YqMVDBBg4QxP9dg9VoKXOqhKKQgqwKhkN9e03sGXHw5RzqUAZkxoJNT3tHYBz900QMLs7Ykh');
+
+        // Get current user's tier
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
-
+        
         if (data.success) {
-          currentUserTier = data.subscription.tier;
-          renderPricingCards();
+          currentTier = data.subscription.tier;
         }
-      } catch (error) {
-        console.error('Error loading subscription:', error);
+
+        // Load actual price IDs from environment
+        // In production, these should come from your backend
+        const envResponse = await fetch('/api/get-stripe-config');
+        if (envResponse.ok) {
+          const config = await envResponse.json();
+          if (config.priceIds) {
+            tiers.essential.priceId = config.priceIds.essential;
+            tiers.scale.priceId = config.priceIds.scale;
+            tiers.enterprise.priceId = config.priceIds.enterprise;
+          }
+        }
+
         renderPricingCards();
+        
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('pricingContent').style.display = 'block';
+      } catch (error) {
+        console.error('Error loading pricing:', error);
+        document.getElementById('loadingState').innerHTML = `
+          <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #DC2626;"></i>
+          <p style="margin-top: 1rem; color: #DC2626;">Error loading pricing. Please try again.</p>
+        `;
       }
     }
 
@@ -313,71 +488,111 @@
       const grid = document.getElementById('pricingGrid');
       grid.innerHTML = '';
 
-      Object.entries(tiers).forEach(([tierKey, tier]) => {
-        const isCurrent = tierKey === currentUserTier;
-        const isFeatured = tierKey === 'scale';
-
+      Object.entries(tiers).forEach(([key, tier]) => {
+        const isCurrent = key === currentTier;
+        const isUpgrade = getTierLevel(key) > getTierLevel(currentTier);
+        
         const card = document.createElement('div');
-        card.className = `pricing-card ${isFeatured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`;
+        card.className = `pricing-card ${tier.featured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`;
         
         card.innerHTML = `
           ${isCurrent ? '<div class="current-badge">Current Plan</div>' : ''}
           <div class="tier-name">${tier.name}</div>
           <div class="tier-price">
-            ${tier.price === 0 ? 'Free' : `$${tier.price}`}
+            $${tier.price}
             ${tier.price > 0 ? '<span>/month</span>' : ''}
           </div>
           <div class="tier-description">${tier.description}</div>
           <ul class="features-list">
-            ${tier.features.map(f => `<li><i class="fas fa-check-circle"></i>${f}</li>`).join('')}
+            ${tier.features.map(feature => `
+              <li><i class="fas fa-check-circle"></i> ${feature}</li>
+            `).join('')}
           </ul>
           <button 
-            class="btn ${isCurrent ? 'btn-secondary' : 'btn-primary'}" 
-            onclick="selectPlan('${tierKey}')"
-            ${isCurrent ? 'disabled' : ''}
+            class="upgrade-btn ${isCurrent ? 'secondary' : ''}" 
+            ${isCurrent || !isUpgrade ? 'disabled' : ''}
+            onclick="upgradeTo('${key}', '${tier.priceId}')"
           >
-            ${isCurrent ? '<i class="fas fa-check"></i> Current Plan' : `<i class="fas fa-rocket"></i> ${tier.price === 0 ? 'Get Started' : 'Upgrade Now'}`}
+            ${isCurrent ? '<i class="fas fa-check"></i> Current Plan' : 
+              isUpgrade ? `<i class="fas fa-arrow-up"></i> Upgrade to ${tier.name}` :
+              '<i class="fas fa-lock"></i> Lower Tier'}
           </button>
         `;
-
+        
         grid.appendChild(card);
       });
     }
 
-    async function selectPlan(tier) {
-      if (tier === 'free') {
-        alert('You are already on the free plan!');
-        return;
-      }
+    function getTierLevel(tier) {
+      const levels = { free: 0, essential: 1, scale: 2, enterprise: 3 };
+      return levels[tier] || 0;
+    }
 
-      if (tier === currentUserTier) {
-        return;
-      }
-
-      const btn = event.target;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    async function upgradeTo(tier, priceId) {
+      if (!priceId || tier === currentTier) return;
 
       try {
-        // Create checkout session
+        const button = event.target;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
         const response = await authenticatedFetch('/api/create-checkout-session', {
           method: 'POST',
-          body: JSON.stringify({ tier })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priceId, tier })
         });
 
         const data = await response.json();
 
-        if (data.success) {
-          // Redirect to Stripe Checkout
-          window.location.href = data.checkoutUrl;
+        if (data.sessionId) {
+          const result = await stripe.redirectToCheckout({
+            sessionId: data.sessionId
+          });
+
+          if (result.error) {
+            throw new Error(result.error.message);
+          }
         } else {
           throw new Error(data.error || 'Failed to create checkout session');
         }
       } catch (error) {
-        console.error('Upgrade error:', error);
-        alert('Failed to start upgrade process. Please try again.');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-rocket"></i> Upgrade Now';
+        alert('Error: ' + error.message);
+        button.disabled = false;
+        button.innerHTML = `<i class="fas fa-arrow-up"></i> Upgrade to ${tiers[tier].name}`;
+      }
+    }
+
+    async function purchaseTopUp() {
+      try {
+        const button = event.target;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        // For now, show coming soon
+        // TODO: Create top-up product in Stripe and implement checkout
+        alert('🚀 QR Code Top-Up feature coming soon! Contact support to add extra QR codes to your account.');
+        
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-bolt"></i> Buy 1,000 QR Codes Now';
+
+        // Future implementation:
+        /*
+        const response = await authenticatedFetch('/api/create-topup-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: 1000 })
+        });
+
+        const data = await response.json();
+        if (data.sessionId) {
+          await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        }
+        */
+      } catch (error) {
+        alert('Error: ' + error.message);
+        const button = event.target;
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-bolt"></i> Buy 1,000 QR Codes Now';
       }
     }
 

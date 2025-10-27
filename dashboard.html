@@ -1005,8 +1005,9 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
         return;
       }
 
-      if (isBatchMode && (!batchQuantity || batchQuantity < 1 || batchQuantity > 100)) {
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Batch quantity must be between 1 and 100.</div>';
+      const maxAllowed = Math.min(100, qrLimit - qrUsedThisMonth);
+      if (isBatchMode && (!batchQuantity || batchQuantity < 1 || batchQuantity > maxAllowed)) {
+        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Batch quantity must be between 1 and ${maxAllowed} (you have ${maxAllowed} QR codes remaining).</div>`;
         return;
       }
 

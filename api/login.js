@@ -1,6 +1,6 @@
-const { Pool } = require('pg');
-const bcrypt = require('bcryptjs');
+// api/refresh-token.js - Refresh JWT Token
 const jwt = require('jsonwebtoken');
+const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -8,6 +8,7 @@ const pool = new Pool({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+const TOKEN_EXPIRY = '7d'; // 7 days
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -15,57 +16,65 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { email, password } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    // Get current token from header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' });
     }
 
-    // Find user
+    const oldToken = authHeader.split(' ')[1];
+
+    // Verify old token (even if expired, we can still decode it)
+    let decoded;
+    try {
+      decoded = jwt.verify(oldToken, JWT_SECRET);
+    } catch (error) {
+      // If token is expired, try to decode without verification
+      if (error.name === 'TokenExpiredError') {
+        decoded = jwt.decode(oldToken);
+      } else {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+    }
+
+    if (!decoded || !decoded.userId) {
+      return res.status(401).json({ error: 'Invalid token payload' });
+    }
+
+    // Verify user still exists in database
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email.toLowerCase()]
+      'SELECT id, email FROM users WHERE id = $1',
+      [decoded.userId]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     const user = result.rows[0];
 
-    // Verify password
-    const validPassword = await bcrypt.compare(password, user.password_hash);
-
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
+    // Generate new token with fresh expiry
+    const newToken = jwt.sign(
       {
         userId: user.id,
         email: user.email
       },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: TOKEN_EXPIRY }
     );
+
+    console.log(`Token refreshed for user ${user.email}`);
 
     return res.status(200).json({
       success: true,
-      message: 'Login successful',
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        companyName: user.company_name
-      }
+      token: newToken,
+      expiresIn: TOKEN_EXPIRY
     });
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Token refresh error:', error);
     return res.status(500).json({
-      error: 'Login failed',
+      error: 'Token refresh failed',
       details: error.message
     });
   }

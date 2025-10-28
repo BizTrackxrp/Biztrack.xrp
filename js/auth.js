@@ -1,200 +1,190 @@
-// auth.js - Authentication handling for BizTrack
-const API_BASE_URL = '/api';
+// js/auth.js - Authentication helper with auto token refresh
 
-// Get storage (localStorage or sessionStorage)
-function getStorage() {
-  // Check both storages to find where token is stored
-  if (localStorage.getItem('authToken')) {
-    return localStorage;
-  }
-  if (sessionStorage.getItem('authToken')) {
-    return sessionStorage;
-  }
-  // Default to localStorage if nothing found
-  return localStorage;
-}
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
-// Check if user is already logged in
-function checkAuth() {
-  const storage = getStorage();
-  const token = storage.getItem('authToken');
-  const user = storage.getItem('user');
-  
-  if (token && user) {
-    return {
-      isAuthenticated: true,
-      token,
-      user: JSON.parse(user)
-    };
-  }
-  
-  return {
-    isAuthenticated: false,
-    token: null,
-    user: null
-  };
-}
-
-// Login function
-async function login(email, password, rememberMe = true) {
+// Check if token is expired or about to expire (within 5 minutes)
+function isTokenExpiringSoon(token) {
   try {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expiresAt = payload.exp * 1000; // Convert to milliseconds
+    const now = Date.now();
+    const fiveMinutes = 5 * 60 * 1000;
+    
+    // Return true if expired or expiring within 5 minutes
+    return expiresAt - now < fiveMinutes;
+  } catch (e) {
+    return true; // If we can't parse, assume expired
+  }
+}
+
+// Refresh the token
+async function refreshToken() {
+  const currentToken = localStorage.getItem('biztrack-auth-token');
+  
+  if (!currentToken) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api/refresh-token`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email.toLowerCase().trim(),
-        password: password
-      })
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`
+      }
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Login failed');
-    }
-
-    // Choose storage based on "Remember Me" checkbox
-    const storage = rememberMe ? localStorage : sessionStorage;
-    
-    // Clear any existing auth data from both storages
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('user');
-    
-    // Store token and user info in chosen storage
-    storage.setItem('authToken', data.token);
-    storage.setItem('user', JSON.stringify(data.user));
-
-    return {
-      success: true,
-      message: data.message,
-      user: data.user
-    };
-  } catch (error) {
-    console.error('Login error:', error);
-    return {
-      success: false,
-      error: error.message || 'Login failed. Please try again.'
-    };
-  }
-}
-
-// Register/Signup function
-async function register(companyName, email, password, rememberMe = true) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        companyName: companyName.trim(),
-        email: email.toLowerCase().trim(),
-        password: password
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Registration failed');
-    }
-
-    // After successful registration, automatically log in
-    if (data.success) {
-      // Now login with the credentials (passing rememberMe preference)
-      const loginResult = await login(email, password, rememberMe);
-      if (loginResult.success) {
-        return {
-          success: true,
-          message: 'Account created and logged in successfully!',
-          user: loginResult.user
-        };
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('biztrack-auth-token', data.token);
+        console.log('Token refreshed successfully');
+        return data.token;
       }
     }
-
-    return {
-      success: true,
-      message: data.message || 'Account created successfully',
-      needsLogin: true
-    };
+    
+    // If refresh fails, clear token and redirect to login
+    console.log('Token refresh failed');
+    logout();
+    return null;
+    
   } catch (error) {
-    console.error('Registration error:', error);
-    return {
-      success: false,
-      error: error.message || 'Registration failed. Please try again.'
-    };
+    console.error('Error refreshing token:', error);
+    logout();
+    return null;
   }
 }
 
-// Logout function
-function logout() {
-  // Clear from both storages
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('user');
-  sessionStorage.removeItem('authToken');
-  sessionStorage.removeItem('user');
-  window.location.href = '/login.html';
-}
-
-// Get auth token for API requests
-function getAuthToken() {
-  const storage = getStorage();
-  return storage.getItem('authToken');
-}
-
-// Get current user
-function getCurrentUser() {
-  const storage = getStorage();
-  const userStr = storage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
-}
-
-// Make authenticated API request
-async function authenticatedFetch(url, options = {}) {
-  const token = getAuthToken();
+// Get auth token with auto-refresh
+async function getAuthToken() {
+  let token = localStorage.getItem('biztrack-auth-token');
   
   if (!token) {
+    return null;
+  }
+
+  // Check if token is expiring soon
+  if (isTokenExpiringSoon(token)) {
+    console.log('Token expiring soon, refreshing...');
+    token = await refreshToken();
+  }
+
+  return token;
+}
+
+// Enhanced authenticated fetch with auto token refresh
+async function authenticatedFetch(url, options = {}) {
+  const token = await getAuthToken();
+  
+  if (!token) {
+    window.location.href = '/login.html';
     throw new Error('Not authenticated');
   }
 
   const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
-    ...options.headers
+    ...options.headers,
+    'Authorization': `Bearer ${token}`
   };
 
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${url}`, {
     ...options,
     headers
   });
 
-  // If unauthorized, redirect to login
+  // If we get 401, token might be expired - try refresh once
   if (response.status === 401) {
-    logout();
-    throw new Error('Session expired. Please login again.');
+    console.log('Got 401, attempting token refresh...');
+    const newToken = await refreshToken();
+    
+    if (newToken) {
+      // Retry request with new token
+      headers['Authorization'] = `Bearer ${newToken}`;
+      return fetch(`${API_BASE}${url}`, {
+        ...options,
+        headers
+      });
+    } else {
+      // Refresh failed, redirect to login
+      window.location.href = '/login.html';
+      throw new Error('Session expired');
+    }
   }
 
   return response;
 }
 
-// Redirect to dashboard if already logged in (for login page)
-function redirectIfAuthenticated() {
-  const auth = checkAuth();
-  if (auth.isAuthenticated) {
-    window.location.href = '/dashboard.html';
+// Check if user is authenticated
+function isAuthenticated() {
+  const token = localStorage.getItem('biztrack-auth-token');
+  
+  if (!token) {
+    return false;
+  }
+
+  // Check if token is expired
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expiresAt = payload.exp * 1000;
+    return Date.now() < expiresAt;
+  } catch (e) {
+    return false;
   }
 }
 
-// Protect page - redirect to login if not authenticated (for dashboard/protected pages)
+// Require authentication (redirect if not authenticated)
 function requireAuth() {
-  const auth = checkAuth();
-  if (!auth.isAuthenticated) {
+  if (!isAuthenticated()) {
     window.location.href = '/login.html';
-    return false;
   }
-  return true;
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem('biztrack-auth-token');
+  localStorage.removeItem('biztrack-user-email');
+  window.location.href = '/login.html';
+}
+
+// Get user info from token
+function getUserFromToken() {
+  const token = localStorage.getItem('biztrack-auth-token');
+  
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      userId: payload.userId,
+      email: payload.email
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+// Set up automatic token refresh check (every 4 minutes)
+let refreshInterval;
+
+function startTokenRefreshTimer() {
+  // Clear any existing interval
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+  }
+
+  // Check token every 4 minutes and refresh if needed
+  refreshInterval = setInterval(async () => {
+    const token = localStorage.getItem('biztrack-auth-token');
+    
+    if (token && isTokenExpiringSoon(token)) {
+      console.log('Auto-refreshing token...');
+      await refreshToken();
+    }
+  }, 4 * 60 * 1000); // 4 minutes
+}
+
+// Start timer when page loads
+if (isAuthenticated()) {
+  startTokenRefreshTimer();
 }

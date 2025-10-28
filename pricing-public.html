@@ -135,6 +135,8 @@
       border: 2px solid #E2E8F0;
       transition: all 0.3s;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .pricing-card:hover {
@@ -188,6 +190,7 @@
     .features-list {
       list-style: none;
       margin-bottom: 2rem;
+      flex-grow: 1;
     }
 
     .features-list li {
@@ -202,6 +205,14 @@
     .features-list i {
       color: #10B981;
       font-size: 1.25rem;
+    }
+
+    .features-list li.disabled {
+      color: #94A3B8;
+    }
+
+    .features-list li.disabled i {
+      color: #EF4444;
     }
 
     .cta-button {
@@ -220,6 +231,7 @@
       justify-content: center;
       gap: 0.5rem;
       text-decoration: none;
+      margin-top: auto;
     }
 
     .cta-button:hover {
@@ -311,6 +323,9 @@
           <li><i class="fas fa-check-circle"></i> IPFS storage</li>
           <li><i class="fas fa-check-circle"></i> Email support</li>
           <li><i class="fas fa-check-circle"></i> Community access</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Priority verification</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Analytics</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> API access</li>
         </ul>
         <a href="register.html" class="cta-button">
           <i class="fas fa-rocket"></i> Start Free
@@ -333,6 +348,9 @@
           <li><i class="fas fa-check-circle"></i> Priority email support</li>
           <li><i class="fas fa-check-circle"></i> Basic analytics</li>
           <li><i class="fas fa-check-circle"></i> API access</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Advanced blockchain features</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> 24/7 priority support</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Custom integrations</li>
         </ul>
         <a href="register.html" class="cta-button">
           <i class="fas fa-arrow-up"></i> Upgrade to Essential
@@ -355,6 +373,9 @@
           <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
           <li><i class="fas fa-check-circle"></i> Full API access</li>
           <li><i class="fas fa-check-circle"></i> Custom integrations</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Dedicated account manager</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> White-label options</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> SLA guarantees</li>
         </ul>
         <a href="register.html" class="cta-button">
           <i class="fas fa-arrow-up"></i> Upgrade to Scale

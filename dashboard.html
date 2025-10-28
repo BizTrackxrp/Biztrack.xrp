@@ -619,9 +619,11 @@
           document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
           document.getElementById('tierName').textContent = data.subscription.tierName + ' Plan';
           
-          // Update max batch quantity to remaining QR codes
+          // Update max batch quantity based on tier and remaining QR codes
           const remaining = qrLimit - qrUsedThisMonth;
-          const maxBatch = Math.min(100, remaining);
+          const tierMaxBatch = data.subscription.maxBatchSize || 100;
+          const maxBatch = Math.min(tierMaxBatch, remaining);
+          
           document.getElementById('maxBatchQuantity').textContent = maxBatch;
           document.getElementById('batchQuantity').max = maxBatch;
           
@@ -1014,7 +1016,23 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
       createBtn.disabled = true;
       const originalText = createBtn.innerHTML;
       createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting...';
-      msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to IPFS and blockchain...</div>';
+      
+      if (isBatchMode && batchQuantity > 1) {
+        msgEl.innerHTML = `<div class="message info" style="font-size: 1rem; background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border: 2px solid #3B82F6;">
+          <i class="fas fa-rocket" style="font-size: 1.5rem; color: #3B82F6;"></i> 
+          <div>
+            <strong style="font-size: 1.125rem; color: #1E40AF;">Minting ${batchQuantity} products to the blockchain...</strong><br><br>
+            <strong>✅ Everything is working correctly!</strong><br>
+            We're generating QR codes, uploading to IPFS, and writing to the XRPL blockchain.<br>
+            <strong>This process takes time - please be patient.</strong><br><br>
+            ⚠️ <strong style="color: #DC2626;">DO NOT refresh or close this page!</strong><br>
+            You'll see a success message when all products are minted.<br><br>
+            <small style="opacity: 0.8;">Large batches may take several minutes to complete.</small>
+          </div>
+        </div>`;
+      } else {
+        msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to IPFS and blockchain...</div>';
+      }
 
       try {
         const response = await fetch('/api/mint-product', {

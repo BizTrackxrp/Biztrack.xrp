@@ -286,9 +286,9 @@ module.exports = async (req, res) => {
 
       console.log('Saving to database...');
       await pool.query(
-        `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [productId, productName, productSku, batchNumber, ipfsHash, txHash, qrIpfsHash, metadata]
+        `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata, user_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [productId, productName, productSku, batchNumber, ipfsHash, txHash, qrIpfsHash, metadata, user.id]
       );
 
       console.log(`Item ${itemNumber} saved successfully!`);

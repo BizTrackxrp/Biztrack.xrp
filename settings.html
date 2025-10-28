@@ -82,6 +82,34 @@
       width: 20px;
     }
 
+    .sidebar-logout {
+      position: absolute;
+      bottom: 2rem;
+      width: 100%;
+      padding: 0 2rem;
+    }
+
+    .sidebar-logout button {
+      width: 100%;
+      padding: 0.875rem;
+      background: #FEE2E2;
+      color: #DC2626;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-logout button:hover {
+      background: #FCA5A5;
+      transform: translateY(-2px);
+    }
+
     /* Main content */
     .main-with-sidebar {
       margin-left: 280px;
@@ -430,8 +458,13 @@
       <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
       <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
       <li><a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
-      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
+    <div class="sidebar-logout">
+      <button id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout This Device
+      </button>
+    </div>
   </nav>
 
   <div class="main-with-sidebar">
@@ -616,16 +649,27 @@
   <script src="js/wallet.js"></script>
   <script>
     // Ensure user is authenticated
-    if (!requireAuth || !requireAuth()) {
-      window.location.href = 'login.html';
-    }
+    requireAuth();
 
-    // Load user data
-    const user = getCurrentUser();
+    // Get user info from token
+    const user = getUserFromToken();
     if (user) {
       document.getElementById('accountEmail').value = user.email || '';
-      document.getElementById('companyName').value = user.companyName || '';
     }
+
+    // Try to get company name from API
+    async function loadUserData() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        if (data.success && data.user) {
+          document.getElementById('companyName').value = data.user.companyName || '';
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    }
+    loadUserData();
 
     // Load preferences from localStorage
     const prefs = JSON.parse(localStorage.getItem('biztrack-preferences') || '{}');

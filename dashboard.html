@@ -596,6 +596,11 @@
     // Require authentication
     requireAuth();
 
+    // Helper to get token directly
+    function getToken() {
+      return localStorage.getItem('biztrack-auth-token');
+    }
+
     let isBatchMode = false;
     let selectedPhotos = [];
     let capturedLocation = null;
@@ -1035,11 +1040,18 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
       }
 
       try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        if (!token) {
+          msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Session expired. Please login again.</div>';
+          setTimeout(() => window.location.href = '/login.html', 2000);
+          return;
+        }
+
         const response = await fetch('/api/mint-product', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAuthToken()}`
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             productName,

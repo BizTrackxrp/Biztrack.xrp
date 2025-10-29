@@ -633,18 +633,12 @@
           document.getElementById('batchQuantity').max = maxBatch;
           
           // Show upgrade prompt if near limit
-          if (data.limits.shouldUpgrade && data.limits.nextTier) {
+          if (data.limits && data.limits.shouldUpgrade && data.limits.nextTier) {
             showUpgradePrompt(data.subscription, data.limits);
           }
         }
       } catch (error) {
         console.error('Failed to load subscription limits:', error);
-        // Fallback to localStorage if API fails
-        const savedUsage = localStorage.getItem('biztrack-qr-usage');
-        if (savedUsage) {
-          qrUsedThisMonth = parseInt(savedUsage);
-          document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
-        }
       }
     }
 
@@ -683,12 +677,10 @@
         mintText.textContent = 'Mint Batch to Blockchain';
         skuLabel.innerHTML = 'SKU Prefix <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
         
-        // DISABLE SKU INPUT IN BATCH MODE
         skuInput.disabled = true;
         skuInput.value = '';
         skuInput.placeholder = 'Auto-generated (e.g., ORG1234-001, ORG1234-002...)';
         
-        // Update remaining QRs display
         const remaining = qrLimit - qrUsedThisMonth;
         document.getElementById('remainingQRs').textContent = `(${remaining} available)`;
       } else {
@@ -698,7 +690,6 @@
         mintText.textContent = 'Mint to Blockchain';
         skuLabel.textContent = 'SKU';
         
-        // RE-ENABLE SKU INPUT IN SINGLE MODE
         skuInput.disabled = false;
         skuInput.placeholder = 'e.g. HNY1234';
         
@@ -824,7 +815,7 @@
       );
     });
 
-    // Download ZIP with QR codes
+    // Download ZIP with QR codes - FIXED: Fetch from API instead of localStorage
     window.downloadBatchZip = async (batchGroupId) => {
       const btn = event.target;
       const originalHTML = btn.innerHTML;
@@ -832,8 +823,11 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating ZIP...';
 
       try {
-        const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-        const batch = batches.find(b => b.batchGroupId === batchGroupId);
+        // Fetch from API instead of localStorage
+        const response = await authenticatedFetch('/api/list-products');
+        const data = await response.json();
+        
+        const batch = data.products.find(b => b.batchGroupId === batchGroupId);
         
         if (!batch || !batch.products) {
           throw new Error('Batch not found');
@@ -888,89 +882,107 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
       }
     };
 
+    // FIXED: Fetch products from API instead of localStorage
     function populateBatches() {
-      const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
       const batchList = document.getElementById('batchList');
-      batchList.innerHTML = '';
+      batchList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading products...</p></div>';
       
-      if (!batches.length) {
-        batchList.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-box-open"></i>
-            <p>No products minted yet.</p>
-            <p style="margin-top: 0.5rem;">Use the form above to mint your first product.</p>
-          </div>
-        `;
-        return;
-      }
+      // Fetch from API instead of localStorage
+      authenticatedFetch('/api/list-products')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success || !data.products || data.products.length === 0) {
+            batchList.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <p>No products minted yet.</p>
+                <p style="margin-top: 0.5rem;">Use the form above to mint your first product.</p>
+              </div>
+            `;
+            return;
+          }
 
-      batches.slice().reverse().forEach((batch) => {
-        const li = document.createElement('li');
-        
-        if (batch.isBatchGroup && batch.products) {
-          // Batch order
-          const itemsId = `items-${batch.batchGroupId}`;
-          li.innerHTML = `
-            <div class="product-header">
-              <div>
-                <strong>${batch.productName}</strong>
-                <span class="batch-badge">BATCH ${batch.quantity} ITEMS</span>
-                <br><small>Batch: ${batch.batchNumber || 'N/A'} • ${new Date(batch.timestamp).toLocaleString()}</small>
-              </div>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="toggleBatchItems('${itemsId}', this)">
-                  <i class="fas fa-chevron-down"></i> View Items
-                </button>
-                <button class="btn btn-secondary" onclick="downloadBatchZip('${batch.batchGroupId}')">
-                  <i class="fas fa-download"></i> Download ZIP
-                </button>
-              </div>
-            </div>
-            <div id="${itemsId}" class="batch-items">
-              ${batch.products.map(p => `
-                <div class="batch-item">
+          const batches = data.products;
+          batchList.innerHTML = '';
+
+          batches.forEach((batch) => {
+            const li = document.createElement('li');
+            
+            if (batch.isBatchGroup && batch.products) {
+              // Batch order
+              const itemsId = `items-${batch.batchGroupId}`;
+              li.innerHTML = `
+                <div class="product-header">
                   <div>
-                    <strong>${p.sku}</strong>
-                    <br><small>${p.productId}</small>
+                    <strong>${batch.productName}</strong>
+                    <span class="batch-badge">BATCH ${batch.quantity} ITEMS</span>
+                    <br><small>Batch: ${batch.batchNumber || 'N/A'} • ${new Date(batch.timestamp).toLocaleString()}</small>
                   </div>
-                  <div style="display: flex; gap: 0.5rem;">
-                    <a href="${p.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                      <i class="fas fa-qrcode"></i> View
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="toggleBatchItems('${itemsId}', this)">
+                      <i class="fas fa-chevron-down"></i> View Items
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadBatchZip('${batch.batchGroupId}')">
+                      <i class="fas fa-download"></i> Download ZIP
+                    </button>
+                  </div>
+                </div>
+                <div id="${itemsId}" class="batch-items">
+                  ${batch.products.map(p => `
+                    <div class="batch-item">
+                      <div>
+                        <strong>${p.sku}</strong>
+                        <br><small>${p.productId}</small>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <a href="${p.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                          <i class="fas fa-qrcode"></i> View
+                        </a>
+                        <a href="${p.qrCodeUrl}" download="${p.sku}-QR.png" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                          <i class="fas fa-download"></i> QR
+                        </a>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            } else {
+              // Single product
+              li.innerHTML = `
+                <div class="product-header">
+                  <div>
+                    <strong>${batch.productName}</strong>
+                    <br><small>SKU: ${batch.sku} • Batch: ${batch.batchNumber || 'N/A'}</small>
+                    <br><small>Product ID: ${batch.productId}</small>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="${batch.verificationUrl}" target="_blank" class="btn btn-secondary">
+                      <i class="fas fa-qrcode"></i> View QR
                     </a>
-                    <a href="${p.qrCodeUrl}" download="${p.sku}-QR.png" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                      <i class="fas fa-download"></i> QR
+                    <a href="${batch.qrCodeUrl}" download="BizTrack-QR-${batch.productId}.png" class="btn btn-secondary">
+                      <i class="fas fa-download"></i> Download
+                    </a>
+                    <a href="https://livenet.xrpl.org/transactions/${batch.xrplTxHash}" target="_blank" class="btn btn-secondary">
+                      <i class="fas fa-external-link-alt"></i> View TX
                     </a>
                   </div>
                 </div>
-              `).join('')}
+              `;
+            }
+            
+            batchList.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Failed to load products:', error);
+          batchList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Failed to load products</p>
+              <p style="margin-top: 0.5rem;">${error.message}</p>
             </div>
           `;
-        } else {
-          // Single product
-          li.innerHTML = `
-            <div class="product-header">
-              <div>
-                <strong>${batch.productName}</strong>
-                <br><small>SKU: ${batch.sku} • Batch: ${batch.batchNumber || 'N/A'}</small>
-                <br><small>Product ID: ${batch.productId}</small>
-              </div>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <a href="${batch.verificationUrl || `https://www.biztrack.io/verify.html?id=${batch.productId}`}" target="_blank" class="btn btn-secondary">
-                  <i class="fas fa-qrcode"></i> View QR
-                </a>
-                <a href="${batch.qrCodeUrl || `https://gateway.pinata.cloud/ipfs/${batch.qrCodeIpfsHash}`}" download="BizTrack-QR-${batch.productId}.png" class="btn btn-secondary">
-                  <i class="fas fa-download"></i> Download
-                </a>
-                <a href="https://livenet.xrpl.org/transactions/${batch.xrplTxHash}" target="_blank" class="btn btn-secondary">
-                  <i class="fas fa-external-link-alt"></i> View TX
-                </a>
-              </div>
-            </div>
-          `;
-        }
-        
-        batchList.appendChild(li);
-      });
+        });
     }
 
     window.toggleBatchItems = (itemsId, button) => {
@@ -1087,50 +1099,12 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
         }
 
         if (result.isBatch) {
-          // Batch order
           msgEl.innerHTML = `<div class="message success">
             <i class="fas fa-check-circle"></i> 
             Successfully minted ${result.batchInfo.quantity} products! View below to download QR codes.
           </div>`;
-
-          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-          const batchGroupId = `batch-${Date.now()}`;
-          
-          batches.push({
-            isBatchGroup: true,
-            batchGroupId: batchGroupId,
-            productName: result.batchInfo.productName,
-            batchNumber: result.batchInfo.batchNumber,
-            quantity: result.batchInfo.quantity,
-            products: result.products,
-            timestamp: result.batchInfo.timestamp
-          });
-          
-          localStorage.setItem('biztrack-batches', JSON.stringify(batches));
-          
-          // Reload subscription limits
-          await loadSubscriptionLimits();
         } else {
-          // Single product
           msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Product successfully minted to blockchain!</div>`;
-
-          const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-          batches.push({
-            productName,
-            sku,
-            batchNumber,
-            productId: result.productId,
-            ipfsHash: result.ipfsHash,
-            qrCodeIpfsHash: result.qrCodeIpfsHash,
-            xrplTxHash: result.xrplTxHash,
-            verificationUrl: result.verificationUrl,
-            qrCodeUrl: result.qrCodeUrl,
-            timestamp: new Date().toISOString()
-          });
-          localStorage.setItem('biztrack-batches', JSON.stringify(batches));
-          
-          // Reload subscription limits
-          await loadSubscriptionLimits();
         }
 
         // Clear form
@@ -1144,6 +1118,8 @@ ${batch.products.map((p, i) => `${i+1}. ${p.sku}
         document.getElementById('locationDisplay').style.display = 'none';
         document.getElementById('locationBtnText').textContent = 'Capture Location';
 
+        // Reload from database
+        await loadSubscriptionLimits();
         populateBatches();
 
       } catch (error) {

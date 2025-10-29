@@ -122,9 +122,12 @@
 
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(3, minmax(300px, 1fr));
       gap: 2rem;
       margin-bottom: 3rem;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .pricing-card {
@@ -274,6 +277,13 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 1100px) and (min-width: 769px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -328,6 +338,7 @@
           <li class="disabled"><i class="fas fa-times-circle"></i> Advanced blockchain features</li>
           <li class="disabled"><i class="fas fa-times-circle"></i> 24/7 priority support</li>
           <li class="disabled"><i class="fas fa-times-circle"></i> Custom integrations</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Dedicated account manager</li>
         </ul>
         <a href="register.html" class="cta-button">
           <i class="fas fa-arrow-up"></i> Upgrade to Essential
@@ -374,6 +385,8 @@
           <li><i class="fas fa-check-circle"></i> White-label options</li>
           <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
           <li><i class="fas fa-check-circle"></i> Custom contracts</li>
+          <li><i class="fas fa-check-circle"></i> Priority onboarding</li>
+          <li><i class="fas fa-check-circle"></i> Training & consultation</li>
         </ul>
         <a href="mailto:sales@biztrack.io" class="cta-button">
           <i class="fas fa-phone"></i> Contact Sales

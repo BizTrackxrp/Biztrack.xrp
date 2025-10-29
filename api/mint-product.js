@@ -123,6 +123,9 @@ module.exports = async (req, res) => {
       ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
       : sku;
 
+    // Generate batch group ID for batch orders
+    const batchGroupId = isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null;
+
     // Step 1: Upload shared photos to IPFS
     let photoHashes = [];
     if (photos && photos.length > 0) {
@@ -223,7 +226,8 @@ module.exports = async (req, res) => {
         batchInfo: isBatchOrder ? {
           isBatchOrder: true,
           itemNumber: itemNumber,
-          totalInBatch: quantity
+          totalInBatch: quantity,
+          batchGroupId: batchGroupId
         } : null
       };
 
@@ -260,7 +264,7 @@ module.exports = async (req, res) => {
                 ipfsHash,
                 qrCodeIpfsHash: qrIpfsHash,
                 timestamp: new Date().toISOString(),
-                batchInfo: isBatchOrder ? { itemNumber, totalInBatch: quantity } : null
+                batchInfo: isBatchOrder ? { itemNumber, totalInBatch: quantity, batchGroupId } : null
               })).toString('hex').toUpperCase()
             }
           }
@@ -285,10 +289,37 @@ module.exports = async (req, res) => {
       }
 
       console.log('Saving to database...');
+      // FIXED: Added batch tracking columns
       await pool.query(
-        `INSERT INTO products (product_id, product_name, sku, batch_number, ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, metadata, user_id)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [productId, productName, productSku, batchNumber, ipfsHash, txHash, qrIpfsHash, metadata, user.id]
+        `INSERT INTO products (
+          product_id, 
+          product_name, 
+          sku, 
+          batch_number, 
+          ipfs_hash, 
+          xrpl_tx_hash, 
+          qr_code_ipfs_hash, 
+          metadata, 
+          user_id,
+          is_batch_group,
+          batch_group_id,
+          batch_quantity
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+        [
+          productId, 
+          productName, 
+          productSku, 
+          batchNumber, 
+          ipfsHash, 
+          txHash, 
+          qrIpfsHash, 
+          metadata, 
+          user.id,
+          isBatchOrder && itemNumber === 1, // Only first item is marked as batch group
+          batchGroupId,
+          isBatchOrder ? quantity : null
+        ]
       );
 
       console.log(`Item ${itemNumber} saved successfully!`);
@@ -334,6 +365,7 @@ module.exports = async (req, res) => {
           skuPrefix,
           batchNumber,
           quantity,
+          batchGroupId,
           timestamp: new Date().toISOString()
         },
         products: products,

@@ -283,7 +283,9 @@
 
     // Change tier
     async function changeTier(tier) {
-      if (!confirm(`Switch to ${tier.toUpperCase()} tier? This is for TESTING ONLY.`)) {
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      
+      if (!confirm(`Switch to ${tierName} tier?\n\nNote: Your QR code counter will be RESET TO ZERO, giving you a fresh start with the new tier's full limit. Your existing products will NOT be deleted.`)) {
         return;
       }
 
@@ -297,7 +299,7 @@
         const data = await response.json();
 
         if (data.success) {
-          alert(`Successfully switched to ${tier.toUpperCase()} tier!`);
+          alert(`✅ ${data.message}\n\nOld usage: ${data.previousUsage}\nNew usage: 0\nNew limit: ${data.newLimit.toLocaleString()}`);
           loadCurrentTier();
         } else {
           alert('Error changing tier: ' + data.error);

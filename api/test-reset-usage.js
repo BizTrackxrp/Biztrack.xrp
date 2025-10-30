@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
 
     // Reset QR code usage to 0
     await pool.query(
-      'UPDATE users SET qr_codes_used_this_month = 0, updated_at = NOW() WHERE id = $1',
+      'UPDATE users SET qr_codes_used_this_month = 0 WHERE id = $1',
       [decoded.userId]
     );
 

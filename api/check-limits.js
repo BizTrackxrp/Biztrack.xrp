@@ -1,14 +1,31 @@
 // api/check-limits.js - Check User QR Code Limits (FIXED VERSION)
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
-const stripeConfig = require('../stripe-config');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+
+// Tier configurations (hardcoded since stripe-config might not be available)
+const TIER_CONFIG = {
+  free: { name: 'Free', price: 0, qrLimit: 100, maxBatchSize: 10 },
+  essential: { name: 'Essential', price: 49, qrLimit: 5000, maxBatchSize: 50 },
+  scale: { name: 'Scale', price: 149, qrLimit: 25000, maxBatchSize: 100 },
+  enterprise: { name: 'Enterprise', price: 399, qrLimit: 100000, maxBatchSize: 1000 }
+};
+
+function getTierConfig(tier) {
+  return TIER_CONFIG[tier] || TIER_CONFIG.free;
+}
+
+function getNextTier(currentTier) {
+  const tiers = ['free', 'essential', 'scale', 'enterprise'];
+  const currentIndex = tiers.indexOf(currentTier);
+  return currentIndex < tiers.length - 1 ? tiers[currentIndex + 1] : null;
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -25,9 +42,9 @@ module.exports = async (req, res) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // Get user from database
+    // Get user from database - only select columns that actually exist
     const userResult = await pool.query(
-      'SELECT id, email, company_name, subscription_tier, qr_codes_limit, billing_cycle_start, created_at FROM users WHERE id = $1',
+      'SELECT id, email, company_name, subscription_tier, billing_cycle_start, created_at FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -36,21 +53,20 @@ module.exports = async (req, res) => {
     }
 
     const user = userResult.rows[0];
+    const tier = user.subscription_tier || 'free';
 
     // Check if billing cycle needs reset (30 days)
     const now = new Date();
     const billingStart = user.billing_cycle_start ? new Date(user.billing_cycle_start) : new Date(user.created_at);
     const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
-
+    
     let actualBillingStart = billingStart;
     let needsReset = false;
 
     if (daysSinceStart >= 30) {
       // Reset billing cycle
       await pool.query(
-        `UPDATE users 
-         SET billing_cycle_start = NOW()
-         WHERE id = $1`,
+        'UPDATE users SET billing_cycle_start = NOW() WHERE id = $1',
         [user.id]
       );
       actualBillingStart = now;
@@ -69,20 +85,20 @@ module.exports = async (req, res) => {
 
     const actualQrCodesUsed = parseInt(countResult.rows[0].product_count) || 0;
 
-    // Update the stored value to match reality (for future reference)
+    // Update the stored value to match reality (using correct column name)
     await pool.query(
-      'UPDATE users SET qr_codes_used = $1 WHERE id = $2',
+      'UPDATE users SET qr_codes_used_this_month = $1 WHERE id = $2',
       [actualQrCodesUsed, user.id]
     );
 
-    const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
-    const qrLimit = user.qr_codes_limit || tierConfig.qrLimit;
+    const tierConfig = getTierConfig(tier);
+    const qrLimit = tierConfig.qrLimit;
     const remaining = qrLimit - actualQrCodesUsed;
-    const percentUsed = Math.round((actualQrCodesUsed / qrLimit) * 100);
+    const percentUsed = qrLimit > 0 ? Math.round((actualQrCodesUsed / qrLimit) * 100) : 0;
 
     // Determine if upgrade is suggested
     const shouldUpgrade = percentUsed >= 80; // Suggest upgrade at 80%
-    const nextTier = stripeConfig.getNextTier(user.subscription_tier);
+    const nextTier = getNextTier(tier);
 
     return res.status(200).json({
       success: true,
@@ -92,24 +108,29 @@ module.exports = async (req, res) => {
         companyName: user.company_name
       },
       subscription: {
-        tier: user.subscription_tier,
+        tier: tier,
         tierName: tierConfig.name,
         price: tierConfig.price,
+        status: 'active'
+      },
+      limits: {
+        qrLimit: qrLimit,
+        maxBatchSize: tierConfig.maxBatchSize
+      },
+      usage: {
         qrCodesUsed: actualQrCodesUsed,
-        qrCodesLimit: qrLimit,
         qrCodesRemaining: remaining,
         percentUsed: percentUsed,
         billingCycleStart: actualBillingStart,
         daysInCycle: daysSinceStart,
-        needsReset: needsReset,
-        maxBatchSize: Math.min(qrLimit, 100) // Max 100 per batch, or tier limit if lower
+        needsReset: needsReset
       },
-      limits: {
-        canMint: remaining > 0,
-        shouldUpgrade: shouldUpgrade,
-        nextTier: nextTier,
-        nextTierConfig: nextTier ? stripeConfig.getTierConfig(nextTier) : null
-      }
+      canMint: remaining > 0,
+      shouldUpgrade: shouldUpgrade,
+      nextTier: nextTier ? {
+        tier: nextTier,
+        config: getTierConfig(nextTier)
+      } : null
     });
 
   } catch (error) {
@@ -118,5 +139,7 @@ module.exports = async (req, res) => {
       error: 'Failed to check limits',
       details: error.message
     });
+  } finally {
+    await pool.end();
   }
 };

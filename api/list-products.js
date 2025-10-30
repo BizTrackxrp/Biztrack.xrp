@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env === 'production' ? { rejectUnauthorized: false } : false
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
       [userId]
     );
 
-    const products = result.rows.map(row => ({
+    const allProducts = result.rows.map(row => ({
       productId: row.product_id,
       productName: row.product_name,
       sku: row.sku,
@@ -66,38 +66,54 @@ module.exports = async (req, res) => {
     }));
 
     // Group batch products together
-    const batches = [];
-    const batchGroups = {};
+    const displayList = [];
+    const processedBatchGroups = new Set();
     
-    products.forEach(product => {
-      if (product.isBatchGroup && product.batchGroupId) {
-        // Add to batch group
-        if (!batchGroups[product.batchGroupId]) {
-          batchGroups[product.batchGroupId] = {
-            isBatchGroup: true,
-            batchGroupId: product.batchGroupId,
-            productName: product.productName,
-            batchNumber: product.batchNumber,
-            quantity: product.batchQuantity,
-            products: [],
-            timestamp: product.timestamp
-          };
+    allProducts.forEach(product => {
+      // If this product belongs to a batch
+      if (product.batchGroupId) {
+        // Skip if we've already processed this batch group
+        if (processedBatchGroups.has(product.batchGroupId)) {
+          return;
         }
-        batchGroups[product.batchGroupId].products.push(product);
-      } else {
-        // Single product
-        batches.push(product);
-      }
-    });
 
-    // Add batch groups to the list
-    Object.values(batchGroups).forEach(group => {
-      batches.push(group);
+        // Find ALL products in this batch (including the current one)
+        const batchItems = allProducts.filter(p => p.batchGroupId === product.batchGroupId);
+        
+        // Find the batch group leader (the one with is_batch_group = true)
+        const batchLeader = batchItems.find(p => p.isBatchGroup) || batchItems[0];
+
+        // Create batch group object
+        displayList.push({
+          type: 'batch',
+          isBatchGroup: true,
+          batchGroupId: product.batchGroupId,
+          productName: batchLeader.productName,
+          batchNumber: batchLeader.batchNumber,
+          quantity: batchLeader.batchQuantity || batchItems.length,
+          timestamp: batchLeader.timestamp,
+          items: batchItems.sort((a, b) => {
+            // Sort by SKU if available (handles BATCH-001, BATCH-002, etc)
+            if (a.sku && b.sku) {
+              return a.sku.localeCompare(b.sku);
+            }
+            return 0;
+          })
+        });
+
+        processedBatchGroups.add(product.batchGroupId);
+      } else {
+        // Single product (not part of a batch)
+        displayList.push({
+          type: 'single',
+          ...product
+        });
+      }
     });
 
     return res.status(200).json({
       success: true,
-      products: batches
+      products: displayList
     });
 
   } catch (error) {

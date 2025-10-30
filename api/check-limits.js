@@ -1,10 +1,9 @@
-// api/check-limits.js - SIMPLE VERSION FOR DEBUGGING
+// api/check-limits.js - FIXED WITH CORRECT COLUMN NAMES
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// Tier limits
 const LIMITS = {
   free: 100,
   essential: 5000,
@@ -32,9 +31,9 @@ module.exports = async (req, res) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // Get user
+    // Get user - USING CORRECT COLUMN NAMES
     const result = await pool.query(
-      'SELECT subscription_tier, qr_codes_used_this_month FROM users WHERE id = $1',
+      'SELECT id, email, subscription_tier, qr_codes_used, qr_codes_limit FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -44,8 +43,10 @@ module.exports = async (req, res) => {
 
     const user = result.rows[0];
     const tier = user.subscription_tier || 'free';
-    const qrLimit = LIMITS[tier] || 100;
-    const qrCodesUsed = user.qr_codes_used_this_month || 0;
+    
+    // Use qr_codes_limit from DB if set, otherwise use tier default
+    const qrLimit = user.qr_codes_limit || LIMITS[tier] || 100;
+    const qrCodesUsed = user.qr_codes_used || 0;
 
     return res.status(200).json({
       success: true,
@@ -55,7 +56,7 @@ module.exports = async (req, res) => {
       },
       limits: {
         qrLimit: qrLimit,
-        maxBatchSize: 100
+        maxBatchSize: tier === 'enterprise' ? 1000 : tier === 'scale' ? 100 : tier === 'essential' ? 50 : 10
       },
       usage: {
         qrCodesUsed: qrCodesUsed,

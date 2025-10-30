@@ -269,7 +269,7 @@
       gap: 0.5rem;
     }
 
-    .cta-button:hover {
+    .cta-button:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
     }
@@ -282,6 +282,144 @@
 
     .cta-button.current-plan {
       background: #10B981;
+    }
+
+    /* Contact Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #64748B;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #DC2626;
+    }
+
+    .modal h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.75rem;
+      color: #1E293B;
+    }
+
+    .modal-description {
+      margin: 0 0 1.5rem 0;
+      color: #64748B;
+    }
+
+    .contact-info {
+      background: #F8FAFC;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      background: #4F46E5;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .contact-icon.phone {
+      background: #10B981;
+    }
+
+    .contact-icon.clock {
+      background: #F59E0B;
+    }
+
+    .contact-details {
+      flex-grow: 1;
+    }
+
+    .contact-label {
+      margin: 0;
+      font-size: 0.875rem;
+      color: #64748B;
+    }
+
+    .contact-value {
+      margin: 0;
+      font-weight: 600;
+      color: #1E293B;
+    }
+
+    .contact-value a {
+      color: #4F46E5;
+      text-decoration: none;
+    }
+
+    .contact-value a:hover {
+      text-decoration: underline;
+    }
+
+    .modal-footer {
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      color: #64748B;
+      text-align: center;
     }
 
     @media (max-width: 768px) {
@@ -299,6 +437,10 @@
 
       .discount-input-group input {
         min-width: 100%;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
       }
     }
   </style>
@@ -336,7 +478,54 @@
 
     <div style="text-align: center; margin-top: 3rem; color: #64748B;">
       <p>All plans include IPFS storage, XRPL blockchain verification, and QR code generation.</p>
-      <p style="margin-top: 0.5rem;">Need help choosing? <a href="mailto:support@biztrack.io" style="color: #4F46E5;">Contact us</a></p>
+      <p style="margin-top: 0.5rem;">Need help choosing? <a onclick="openContactModal()" style="color: #4F46E5; cursor: pointer;">Contact us</a></p>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeContactModal()">&times;</button>
+      
+      <h2>Contact Sales</h2>
+      <p class="modal-description">Get in touch with our team for Enterprise pricing and custom solutions.</p>
+      
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">
+            📧
+          </div>
+          <div class="contact-details">
+            <p class="contact-label">Email</p>
+            <p class="contact-value"><a href="mailto:Biztrack.xrp@proton.me">Biztrack.xrp@proton.me</a></p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <div class="contact-icon phone">
+            📞
+          </div>
+          <div class="contact-details">
+            <p class="contact-label">Phone</p>
+            <p class="contact-value"><a href="tel:3606700852">(360) 670-0852</a></p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <div class="contact-icon clock">
+            🕐
+          </div>
+          <div class="contact-details">
+            <p class="contact-label">Business Hours</p>
+            <p class="contact-value">7 AM - 5 PM (Pacific Time)</p>
+            <p class="contact-label">Monday - Friday</p>
+          </div>
+        </div>
+      </div>
+      
+      <p class="modal-footer">
+        We typically respond within 1 business day
+      </p>
     </div>
   </div>
 
@@ -387,7 +576,7 @@
       },
       enterprise: {
         name: 'Enterprise',
-        price: 499,
+        price: 399,
         qrLimit: 100000,
         features: [
           '100,000+ QR codes per month',
@@ -413,6 +602,31 @@
       // Redirect to login with return URL
       window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
+
+    // Contact Modal Functions
+    function openContactModal() {
+      document.getElementById('contactModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeContactModal() {
+      document.getElementById('contactModal').classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('contactModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeContactModal();
+      }
+    });
+
+    // ESC key to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeContactModal();
+      }
+    });
 
     // Load current tier
     async function loadCurrentTier() {
@@ -448,6 +662,7 @@
         const tierLevel = getTierLevel(key);
         const isDowngrade = tierLevel < currentLevel;
         const isUpgrade = tierLevel > currentLevel;
+        const isEnterprise = key === 'enterprise';
 
         const discountedPrice = appliedDiscount 
           ? calculateDiscountedPrice(tier.price, appliedDiscount)
@@ -477,11 +692,12 @@
           </ul>
           <button 
             class="cta-button ${isCurrent ? 'current-plan' : ''}" 
-            onclick="handleUpgrade('${key}')"
+            onclick="${isEnterprise && !isCurrent ? 'openContactModal()' : `handleUpgrade('${key}')`}"
             ${isCurrent || isDowngrade ? 'disabled' : ''}
           >
             ${isCurrent ? '<i class="fas fa-check"></i> Current Plan' : 
               isDowngrade ? '<i class="fas fa-lock"></i> Unavailable' :
+              isEnterprise ? '<i class="fas fa-phone"></i> Contact Sales' :
               isUpgrade ? '<i class="fas fa-arrow-up"></i> Upgrade' :
               '<i class="fas fa-rocket"></i> Get Started'}
           </button>
@@ -560,7 +776,7 @@
 
       if (confirm(confirmMsg)) {
         try {
-          const response = await authenticatedFetch('/api/create-checkout', {
+          const response = await authenticatedFetch('/api/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -571,8 +787,8 @@
 
           const data = await response.json();
 
-          if (data.checkoutUrl) {
-            window.location.href = data.checkoutUrl;
+          if (data.url) {
+            window.location.href = data.url;
           } else {
             alert('Error creating checkout session. Please try again.');
           }

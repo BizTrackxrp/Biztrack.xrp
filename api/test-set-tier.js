@@ -13,13 +13,8 @@ const pool = new Pool({
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 module.exports = async (req, res) => {
-  // ⚠️ ONLY ALLOW IN TEST MODE ⚠️
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({ 
-      error: 'Test endpoints disabled in production' 
-    });
-  }
-
+  // ⚠️ TEST ENDPOINT - DELETE BEFORE LAUNCH ⚠️
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

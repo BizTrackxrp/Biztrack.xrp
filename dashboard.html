@@ -608,33 +608,38 @@
     let qrLimit = 100;
     let currentTier = 'free';
 
-    // Load subscription limits from backend
+    // ✅ FIXED: Load subscription limits from backend
     async function loadSubscriptionLimits() {
       try {
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
         
         if (data.success) {
-          qrUsedThisMonth = data.subscription.qrCodesUsed;
-          qrLimit = data.subscription.qrCodesLimit;
+          // ✅ FIXED: Use correct field names from API response
+          qrUsedThisMonth = data.usage.qrCodesUsed;       // was: data.subscription.qrCodesUsed
+          qrLimit = data.limits.qrLimit;                  // was: data.subscription.qrCodesLimit
           currentTier = data.subscription.tier;
           
           // Update UI
           document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
           document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
-          document.getElementById('tierName').textContent = data.subscription.tierName + ' Plan';
+          
+          // ✅ FIXED: Build tier name from tier field
+          const tierName = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
+          document.getElementById('tierName').textContent = tierName;
           
           // Update max batch quantity based on tier and remaining QR codes
           const remaining = qrLimit - qrUsedThisMonth;
-          const tierMaxBatch = data.subscription.maxBatchSize || 100;
+          const tierMaxBatch = data.limits.maxBatchSize || 100;
           const maxBatch = Math.min(tierMaxBatch, remaining);
           
           document.getElementById('maxBatchQuantity').textContent = maxBatch;
           document.getElementById('batchQuantity').max = maxBatch;
           
-          // Show upgrade prompt if near limit
-          if (data.limits && data.limits.shouldUpgrade && data.limits.nextTier) {
-            showUpgradePrompt(data.subscription, data.limits);
+          // Show upgrade prompt if near limit (80%+)
+          const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
+          if (percentUsed >= 80 && currentTier !== 'enterprise') {
+            showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
           }
         }
       } catch (error) {
@@ -642,18 +647,28 @@
       }
     }
 
-    function showUpgradePrompt(subscription, limits) {
+    // ✅ FIXED: showUpgradePrompt with simpler parameters
+    function showUpgradePrompt(percentUsed, used, limit, tier) {
+      const tierUpgrades = {
+        free: { next: 'essential', name: 'Essential', price: 49, limit: 5000 },
+        essential: { next: 'scale', name: 'Scale', price: 149, limit: 25000 },
+        scale: { next: 'enterprise', name: 'Enterprise', price: 399, limit: 100000 }
+      };
+      
+      const upgrade = tierUpgrades[tier];
+      if (!upgrade) return;
+      
       const promptHTML = `
         <div style="padding: 1.5rem; background: linear-gradient(135deg, #FEF3C7, #FDE047); border-radius: 12px; margin-bottom: 2rem; border: 2px solid #F59E0B;">
           <h3 style="margin: 0 0 0.5rem 0; color: #92400E;">
             <i class="fas fa-exclamation-triangle"></i> You're running low on QR codes!
           </h3>
           <p style="margin: 0 0 1rem 0; color: #92400E;">
-            You've used ${subscription.percentUsed}% of your monthly limit (${subscription.qrCodesUsed.toLocaleString()} / ${subscription.qrCodesLimit.toLocaleString()}). 
-            Upgrade to <strong>${limits.nextTierConfig.name}</strong> for ${limits.nextTierConfig.qrLimit.toLocaleString()} QR codes per month.
+            You've used ${percentUsed}% of your monthly limit (${used.toLocaleString()} / ${limit.toLocaleString()}). 
+            Upgrade to <strong>${upgrade.name}</strong> for ${upgrade.limit.toLocaleString()} QR codes per month.
           </p>
           <a href="pricing.html" style="padding: 0.75rem 1.5rem; background: #F59E0B; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-            <i class="fas fa-arrow-up"></i> Upgrade Now - $${limits.nextTierConfig.price}/mo
+            <i class="fas fa-arrow-up"></i> Upgrade Now - $${upgrade.price}/mo
           </a>
         </div>
       `;

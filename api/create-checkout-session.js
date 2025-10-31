@@ -1,9 +1,7 @@
-// api/create-checkout-session.js - Create Stripe Checkout Session
+// api/create-checkout-session.js
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
-const stripeConfig = require('../stripe-config');
-
-const stripe = require('stripe')(stripeConfig.stripeSecretKey);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -12,13 +10,20 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
+// Stripe Price IDs from your Stripe dashboard
+const STRIPE_PRICES = {
+  essential: 'price_YOUR_ESSENTIAL_PRICE_ID',  // Replace with actual Stripe price ID
+  scale: 'price_YOUR_SCALE_PRICE_ID',          // Replace with actual Stripe price ID
+  enterprise: 'price_YOUR_ENTERPRISE_PRICE_ID' // Replace with actual Stripe price ID
+};
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Get auth token
+    // Authenticate user
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -38,57 +43,34 @@ module.exports = async (req, res) => {
     }
 
     const user = userResult.rows[0];
-    const { tier } = req.body; // 'essential', 'scale', or 'enterprise'
+    const { tier } = req.body;
 
-    // Validate tier
-    if (!['essential', 'scale', 'enterprise'].includes(tier)) {
-      return res.status(400).json({ error: 'Invalid subscription tier' });
+    if (!tier || !['essential', 'scale', 'enterprise'].includes(tier)) {
+      return res.status(400).json({ error: 'Invalid tier' });
     }
 
-    const tierConfig = stripeConfig.getTierConfig(tier);
-    
-    if (!tierConfig.priceId) {
-      return res.status(400).json({ error: 'Price ID not configured for this tier' });
-    }
+    // Get Stripe price ID for the tier
+    const priceId = STRIPE_PRICES[tier];
 
-    // Create or retrieve Stripe customer
-    let customerId = user.stripe_customer_id;
-
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          userId: user.id.toString(),
-          companyName: user.company_name || ''
-        }
-      });
-      customerId = customer.id;
-
-      // Save customer ID to database
-      await pool.query(
-        'UPDATE users SET stripe_customer_id = $1 WHERE id = $2',
-        [customerId, user.id]
-      );
-    }
-
-    // Create Checkout Session
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: 'subscription',
-      payment_method_types: ['card'],
+      customer_email: user.email,
+      client_reference_id: user.id.toString(),
       line_items: [
         {
-          price: tierConfig.priceId,
+          price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin || 'https://www.biztrack.io'}/subscription-success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin || 'https://www.biztrack.io'}/dashboard.html?upgrade=cancelled`,
+      mode: 'subscription',
+      success_url: `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`,
       metadata: {
         userId: user.id.toString(),
         tier: tier
       },
       subscription_data: {
+        proration_behavior: 'create_prorations',  // ✅ Enable automatic proration
         metadata: {
           userId: user.id.toString(),
           tier: tier
@@ -97,13 +79,12 @@ module.exports = async (req, res) => {
     });
 
     return res.status(200).json({
-      success: true,
-      sessionId: session.id,
-      checkoutUrl: session.url
+      url: session.url,
+      sessionId: session.id
     });
 
   } catch (error) {
-    console.error('Checkout session error:', error);
+    console.error('Checkout session creation error:', error);
     return res.status(500).json({
       error: 'Failed to create checkout session',
       details: error.message

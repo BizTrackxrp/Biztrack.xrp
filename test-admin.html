@@ -284,8 +284,14 @@
     // Change tier
     async function changeTier(tier) {
       const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      const tierLimits = {
+        free: 100,
+        essential: 5000,
+        scale: 25000,
+        enterprise: 100000
+      };
       
-      if (!confirm(`Switch to ${tierName} tier?\n\nNote: Your QR code counter will be RESET TO ZERO, giving you a fresh start with the new tier's full limit. Your existing products will NOT be deleted.`)) {
+      if (!confirm(`Switch to ${tierName} tier?\n\n✓ Your QR code counter will reset to 0\n✓ You'll get ${tierLimits[tier].toLocaleString()} fresh QR codes\n✓ Your existing products stay safe\n\nContinue?`)) {
         return;
       }
 
@@ -299,8 +305,12 @@
         const data = await response.json();
 
         if (data.success) {
-          alert(`✅ ${data.message}\n\nOld usage: ${data.previousUsage}\nNew usage: 0\nNew limit: ${data.newLimit.toLocaleString()}`);
-          loadCurrentTier();
+          alert(`✅ Success! Your QR code counter has been reset.\n\nYou now have ${data.newLimit.toLocaleString()} QR codes for this billing cycle.`);
+          
+          // Wait a moment for DB to update, then reload
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } else {
           alert('Error changing tier: ' + data.error);
         }

@@ -17,9 +17,9 @@ const TIER_CONFIG = {
 
 // Map Stripe Price IDs to tiers
 const PRICE_TO_TIER = {
-  'price_1QQ0KuRqEoyB6yY7HbuNQ9Pa': 'essential',  // Essential $49
-  'price_1QQ0L9RqEoyB6yY7rJSs3h99': 'scale',      // Scale $149
-  'price_1QQ0LJRqEoyB6yY7sImF1VgL': 'enterprise'  // Enterprise $399
+  'price_1SPSCoRzdZsHMZRF5IBmTG6s': 'essential',  // Essential $49
+  'price_1SPSC3RzdZsHMZRFraOq6siQ': 'scale',      // Scale $149
+  'price_1SPSBRRzdZsHMZRFyFx0E3Ez': 'enterprise'  // Enterprise $399
 };
 
 module.exports = async (req, res) => {

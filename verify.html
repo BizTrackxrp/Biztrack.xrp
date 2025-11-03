@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Product - BizTrack</title>
+  <title>Product Verification - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     * {
       margin: 0;
@@ -21,242 +22,487 @@
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 2rem 1rem;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
-    .back-btn {
+    .back-button {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
       color: #4F46E5;
       text-decoration: none;
       font-weight: 600;
-      margin-bottom: 2rem;
-      padding: 0.75rem 1.25rem;
+      padding: 0.75rem 1.5rem;
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       transition: all 0.2s;
     }
 
-    .back-btn:hover {
+    .back-button:hover {
       transform: translateX(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 2.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 3rem;
-    }
-
-    .loading i {
-      font-size: 3rem;
-      color: #4F46E5;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .error {
-      text-align: center;
-      padding: 3rem;
-    }
-
-    .error i {
-      font-size: 4rem;
-      color: #DC2626;
-      margin-bottom: 1rem;
-    }
-
-    .error h2 {
-      color: #DC2626;
-      margin-bottom: 1rem;
-    }
-
-    .verification-badge {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
+    .verified-badge {
       background: linear-gradient(135deg, #10B981 0%, #059669 100%);
       color: white;
-      border-radius: 12px;
+      padding: 2rem;
+      border-radius: 20px;
       margin-bottom: 2rem;
-      animation: fadeIn 0.5s;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      animation: slideIn 0.5s ease-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .verification-badge i {
-      font-size: 2rem;
+    .verified-badge i {
+      font-size: 3rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 1rem;
+      border-radius: 16px;
     }
 
-    .verification-badge h2 {
-      margin: 0;
-      font-size: 1.5rem;
+    .verified-badge h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .verified-badge p {
+      opacity: 0.95;
+      font-size: 1rem;
     }
 
     .product-header {
-      border-bottom: 2px solid #E2E8F0;
-      padding-bottom: 1.5rem;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
       margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
     }
 
-    .product-header h1 {
-      font-size: 2rem;
+    .product-name {
+      font-size: 2.5rem;
+      font-weight: 800;
       color: #1E293B;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
     }
 
-    .product-header .product-id {
+    .product-id {
+      font-size: 0.875rem;
       color: #64748B;
-      font-size: 0.95rem;
-      font-family: monospace;
+      font-family: 'Courier New', monospace;
+      background: #F8FAFC;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
     }
 
+    /* Photo Gallery */
+    .photo-gallery {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .photo-gallery h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #1E293B;
+    }
+
+    .photo-gallery h3 i {
+      color: #4F46E5;
+    }
+
+    .photo-carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #F8FAFC;
+      margin-bottom: 1rem;
+    }
+
+    .photo-track {
+      display: flex;
+      transition: transform 0.3s ease-out;
+    }
+
+    .photo-slide {
+      min-width: 100%;
+      aspect-ratio: 16/9;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .photo-slide:hover img {
+      transform: scale(1.05);
+    }
+
+    .carousel-controls {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .carousel-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: all;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .carousel-btn:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dot.active {
+      background: #4F46E5;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .lightbox-close:hover {
+      transform: rotate(90deg);
+    }
+
+    /* Info Cards */
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
 
-    .info-item {
-      padding: 1rem;
-      background: #F8FAFC;
-      border-radius: 12px;
+    .info-card {
+      background: white;
+      padding: 1.75rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
+      transition: all 0.2s;
     }
 
-    .info-item label {
-      display: block;
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-card-label {
       font-size: 0.875rem;
       font-weight: 600;
       color: #64748B;
-      margin-bottom: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
     }
 
-    .info-item .value {
-      font-size: 1.125rem;
-      color: #1E293B;
-      font-weight: 600;
-    }
-
-    .section-title {
-      font-size: 1.25rem;
+    .info-card-value {
+      font-size: 1.5rem;
       font-weight: 700;
       color: #1E293B;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
     }
 
-    .section-title i {
-      color: #4F46E5;
-    }
-
-    .metadata-list {
-      list-style: none;
-      padding: 1rem;
-      background: #F8FAFC;
-      border-radius: 12px;
+    /* Map Section */
+    .map-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
     }
 
-    .metadata-list li {
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #E2E8F0;
+    .map-section h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #1E293B;
     }
 
-    .metadata-list li:last-child {
-      border-bottom: none;
+    .map-section h3 i {
+      color: #10B981;
     }
 
-    .metadata-list strong {
-      color: #475569;
-      display: inline-block;
-      min-width: 150px;
+    .map-container {
+      border-radius: 16px;
+      overflow: hidden;
+      height: 400px;
+      background: #F8FAFC;
+      margin-bottom: 1rem;
     }
 
-    .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
 
-    .link-card {
+    .map-coords {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 1.25rem;
-      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-      color: white;
-      text-decoration: none;
+      padding: 1rem;
+      background: #F8FAFC;
       border-radius: 12px;
-      transition: all 0.2s;
-      font-weight: 600;
+      margin-top: 1rem;
     }
 
-    .link-card:hover {
+    .map-coords i {
+      color: #10B981;
+      font-size: 1.5rem;
+    }
+
+    .map-coords-text {
+      flex: 1;
+    }
+
+    .map-coords-label {
+      font-size: 0.875rem;
+      color: #64748B;
+      margin-bottom: 0.25rem;
+    }
+
+    .map-coords-value {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: #1E293B;
+    }
+
+    /* Metadata Section */
+    .metadata-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .metadata-section h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #1E293B;
+    }
+
+    .metadata-section h3 i {
+      color: #7C3AED;
+    }
+
+    .metadata-item {
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metadata-key {
+      font-weight: 600;
+      color: #64748B;
+    }
+
+    .metadata-value {
+      color: #1E293B;
+      font-weight: 500;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-btn {
+      padding: 1.25rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn-primary {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+    }
+
+    .action-btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
     }
 
-    .link-card i {
-      font-size: 1.5rem;
-    }
-
-    .link-card.secondary {
+    .action-btn-secondary {
       background: white;
       color: #4F46E5;
       border: 2px solid #4F46E5;
     }
 
-    .timestamp {
-      text-align: center;
-      padding: 1rem;
-      color: #64748B;
-      font-size: 0.875rem;
-      border-top: 1px solid #E2E8F0;
-      margin-top: 2rem;
+    .action-btn-secondary:hover {
+      background: #F8FAFC;
+      transform: translateY(-2px);
     }
 
-    @media (max-width: 640px) {
+    /* Footer */
+    .verify-footer {
+      text-align: center;
+      color: #64748B;
+      font-size: 0.875rem;
+      padding: 2rem 0;
+    }
+
+    .verify-footer i {
+      color: #10B981;
+    }
+
+    @media (max-width: 768px) {
       body {
         padding: 1rem;
       }
 
-      .card {
-        padding: 1.5rem;
+      .product-name {
+        font-size: 1.75rem;
       }
 
-      .product-header h1 {
-        font-size: 1.5rem;
+      .verified-badge {
+        flex-direction: column;
+        text-align: center;
       }
 
-      .info-grid {
+      .map-container {
+        height: 300px;
+      }
+
+      .action-buttons {
         grid-template-columns: 1fr;
       }
     }
@@ -264,276 +510,278 @@
 </head>
 <body>
   <div class="container">
-    <a href="index.html" class="back-btn">
+    <a href="index.html" class="back-button">
       <i class="fas fa-arrow-left"></i>
       Back to Home
     </a>
 
-    <!-- Search Form (shown when no ID in URL) -->
-    <div class="card" id="searchCard" style="display: none;">
-      <h2 style="margin-bottom: 1.5rem; color: #1E293B;">
-        <i class="fas fa-search" style="color: #4F46E5; margin-right: 0.5rem;"></i>
-        Verify Product Authenticity
-      </h2>
-      <p style="color: #64748B; margin-bottom: 2rem;">
-        Enter a product ID or scan a QR code to verify authenticity on the blockchain.
-      </p>
-      
-      <form id="searchForm" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-        <input 
-          type="text" 
-          id="searchInput" 
-          placeholder="Enter Product ID (e.g., BT-1234567890-abc123)" 
-          style="flex: 1; padding: 0.875rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem; font-family: 'Inter', sans-serif;"
-          required
-        />
-        <button 
-          type="submit" 
-          style="padding: 0.875rem 2rem; background: linear-gradient(135deg, #4F46E5, #7C3AED); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;"
-        >
-          <i class="fas fa-search"></i> Verify
-        </button>
-      </form>
-      
-      <p style="text-align: center; color: #94A3B8; font-size: 0.875rem; margin-top: 1.5rem;">
-        <i class="fas fa-qrcode"></i> Or scan a QR code with your phone camera
-      </p>
-    </div>
-
-    <div class="card" id="loadingCard" style="display: none;">
-      <div class="loading">
-        <i class="fas fa-spinner"></i>
-        <p style="margin-top: 1rem; color: #64748B; font-weight: 600;">Verifying product on blockchain...</p>
-        <p style="margin-top: 0.5rem; color: #94A3B8; font-size: 0.875rem;" id="loadingSubtext">Fetching data from IPFS and XRPL...</p>
+    <!-- Verified Badge -->
+    <div class="verified-badge">
+      <i class="fas fa-shield-check"></i>
+      <div>
+        <h1>✓ Verified on Blockchain</h1>
+        <p>This product is authentic and verified on XRPL</p>
       </div>
     </div>
 
-    <div class="card" id="errorCard" style="display: none;">
-      <div class="error">
-        <i class="fas fa-exclamation-circle"></i>
-        <h2>Product Not Found</h2>
-        <p id="errorMessage" style="color: #64748B;"></p>
+    <!-- Product Header -->
+    <div class="product-header">
+      <h2 class="product-name" id="productName">Loading...</h2>
+      <span class="product-id" id="productId">Product ID: ...</span>
+    </div>
+
+    <!-- Photo Gallery -->
+    <div class="photo-gallery" id="photoGallery" style="display: none;">
+      <h3><i class="fas fa-images"></i> Product Photos</h3>
+      <div class="photo-carousel">
+        <div class="photo-track" id="photoTrack"></div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="prevBtn">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn" id="nextBtn">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-label">SKU</div>
+        <div class="info-card-value" id="sku">-</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Batch Number</div>
+        <div class="info-card-value" id="batchNumber">-</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Minted On</div>
+        <div class="info-card-value" id="mintedOn">-</div>
       </div>
     </div>
 
-    <div id="productCard" style="display: none;">
-      <div class="card">
-        <div class="verification-badge">
-          <i class="fas fa-check-circle"></i>
-          <div>
-            <h2>✓ Verified on Blockchain</h2>
-            <p style="opacity: 0.9; margin: 0;">This product is authentic and verified on XRPL</p>
-          </div>
+    <!-- Map Section -->
+    <div class="map-section" id="mapSection" style="display: none;">
+      <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
+      <div class="map-container" id="mapContainer"></div>
+      <div class="map-coords">
+        <i class="fas fa-location-dot"></i>
+        <div class="map-coords-text">
+          <div class="map-coords-label">Coordinates:</div>
+          <div class="map-coords-value" id="coordinates">-</div>
         </div>
-
-        <div class="product-header">
-          <h1 id="productName"></h1>
-          <p class="product-id">Product ID: <span id="productId"></span></p>
-        </div>
-
-        <div class="info-grid">
-          <div class="info-item">
-            <label>SKU</label>
-            <div class="value" id="productSku">-</div>
-          </div>
-          <div class="info-item">
-            <label>Batch Number</label>
-            <div class="value" id="productBatch">-</div>
-          </div>
-          <div class="info-item">
-            <label>Minted On</label>
-            <div class="value" id="productDate">-</div>
-          </div>
-        </div>
-
-        <div id="metadataSection" style="display: none;">
-          <h3 class="section-title">
-            <i class="fas fa-info-circle"></i>
-            Additional Information
-          </h3>
-          <ul class="metadata-list" id="metadataList"></ul>
-        </div>
-
-        <div id="photosSection" style="display: none; margin-top: 2rem;">
-          <h3 class="section-title">
-            <i class="fas fa-images"></i>
-            Product Photos
-          </h3>
-          <div id="photoGallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;"></div>
-        </div>
-
-        <div id="locationSection" style="display: none; margin-top: 2rem;">
-          <h3 class="section-title">
-            <i class="fas fa-map-marker-alt"></i>
-            Location
-          </h3>
-          <div style="padding: 1rem; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0;">
-            <p id="locationCoords" style="margin-bottom: 0.5rem;"></p>
-            <a id="mapLink" href="#" target="_blank" style="color: #4F46E5; text-decoration: none; font-weight: 600;">
-              <i class="fas fa-external-link-alt"></i> View on Google Maps
-            </a>
-          </div>
-        </div>
-
-        <div class="links-grid">
-          <a id="blockchainLink" href="#" target="_blank" class="link-card">
-            <i class="fas fa-cube"></i>
-            <span>View on Blockchain</span>
-          </a>
-          <a id="ipfsLink" href="#" target="_blank" class="link-card secondary">
-            <i class="fas fa-database"></i>
-            <span>View on IPFS</span>
-          </a>
-        </div>
-
-        <div class="timestamp">
-          <i class="fas fa-clock"></i> Verified at <span id="verifyTime"></span>
-        </div>
+        <a href="#" id="viewOnGoogleMaps" target="_blank" class="action-btn-secondary" style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.875rem;">
+          <i class="fas fa-external-link-alt"></i> View on Google Maps
+        </a>
       </div>
+    </div>
+
+    <!-- Metadata Section -->
+    <div class="metadata-section" id="metadataSection" style="display: none;">
+      <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+      <div id="metadataContent"></div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="#" id="blockchainLink" target="_blank" class="action-btn action-btn-primary">
+        <i class="fas fa-cube"></i> View on Blockchain
+      </a>
+      <a href="#" id="ipfsLink" target="_blank" class="action-btn action-btn-secondary">
+        <i class="fas fa-database"></i> View on IPFS
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="verify-footer">
+      <i class="fas fa-shield-check"></i> Verified at <span id="verifiedTime">...</span>
     </div>
   </div>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">
+      <i class="fas fa-times"></i>
+    </button>
+    <img id="lightboxImg" src="" alt="Product Photo">
+  </div>
+
   <script>
+    let currentPhotoIndex = 0;
+    let photos = [];
+
     // Get product ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    let productId = urlParams.get('id');
+    const productId = urlParams.get('id');
 
-    // Elements
-    const searchCard = document.getElementById('searchCard');
-    const loadingCard = document.getElementById('loadingCard');
-    const errorCard = document.getElementById('errorCard');
-    const productCard = document.getElementById('productCard');
-    const errorMessage = document.getElementById('errorMessage');
-
-    // If no product ID in URL, show search form
     if (!productId) {
-      searchCard.style.display = 'block';
-      
-      // Handle search form submission
-      document.getElementById('searchForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const searchInput = document.getElementById('searchInput').value.trim();
-        if (searchInput) {
-          // Reload page with product ID
-          window.location.href = `/verify.html?id=${encodeURIComponent(searchInput)}`;
-        }
-      });
+      document.getElementById('productName').textContent = 'Invalid Product ID';
+      document.body.innerHTML = '<div style="text-align: center; padding: 4rem;"><h1>⚠️ No Product ID Provided</h1><p>Please scan a valid QR code.</p></div>';
     } else {
-      // Product ID in URL, start verification
-      verifyProduct();
+      loadProduct(productId);
     }
 
-    async function verifyProduct() {
-      searchCard.style.display = 'none';
-      loadingCard.style.display = 'block';
-      
-      const loadingSubtext = document.getElementById('loadingSubtext');
-
+    async function loadProduct(id) {
       try {
-        // Update loading message
-        loadingSubtext.textContent = 'Connecting to database...';
-        
-        const response = await fetch(`/api/get-product?id=${encodeURIComponent(productId)}`);
-        
-        // Update loading message
-        loadingSubtext.textContent = 'Retrieving product data from IPFS...';
-        
+        const response = await fetch(`/api/verify-product?id=${id}`);
         const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.message || data.error || 'Product not found');
+        if (!data.success) {
+          throw new Error(data.error || 'Product not found');
         }
 
-        // Update loading message
-        loadingSubtext.textContent = 'Verifying blockchain transaction...';
-        
-        // Small delay to show the final message
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const product = data.product;
 
-        // Display product information
-        displayProduct(data.product);
+        // Set product info
+        document.getElementById('productName').textContent = product.productName;
+        document.getElementById('productId').textContent = `Product ID: ${product.productId}`;
+        document.getElementById('sku').textContent = product.sku || 'N/A';
+        document.getElementById('batchNumber').textContent = product.batchNumber || 'N/A';
+        document.getElementById('mintedOn').textContent = new Date(product.timestamp).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+
+        // Set blockchain links
+        document.getElementById('blockchainLink').href = `https://livenet.xrpl.org/transactions/${product.xrplTxHash}`;
+        document.getElementById('ipfsLink').href = product.ipfsUrl;
+
+        // Set verified time
+        document.getElementById('verifiedTime').textContent = new Date().toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+
+        // Load photos if available
+        if (product.photos && product.photos.length > 0) {
+          photos = product.photos;
+          loadPhotoGallery();
+        }
+
+        // Load map if location available
+        if (product.location) {
+          loadMap(product.location);
+        }
+
+        // Load metadata
+        if (product.metadata && Object.keys(product.metadata).length > 0) {
+          loadMetadata(product.metadata);
+        }
 
       } catch (error) {
-        console.error('Verification error:', error);
-        showError(error.message || 'Unable to verify this product. Please try again.');
+        console.error('Error loading product:', error);
+        document.getElementById('productName').textContent = 'Product Not Found';
+        alert('Error: ' + error.message);
       }
     }
 
-    function displayProduct(product) {
-      // Hide loading, show product
-      loadingCard.style.display = 'none';
-      productCard.style.display = 'block';
+    function loadPhotoGallery() {
+      const gallery = document.getElementById('photoGallery');
+      const track = document.getElementById('photoTrack');
+      const dots = document.getElementById('carouselDots');
 
-      // Basic info
-      document.getElementById('productName').textContent = product.productName;
-      document.getElementById('productId').textContent = product.productId;
-      document.getElementById('productSku').textContent = product.sku || '-';
-      document.getElementById('productBatch').textContent = product.batchNumber || '-';
+      gallery.style.display = 'block';
 
-      // Format date
-      const date = new Date(product.createdAt);
-      document.getElementById('productDate').textContent = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      // Create slides
+      photos.forEach((photo, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'photo-slide';
+        slide.innerHTML = `<img src="${photo}" alt="Product photo ${index + 1}">`;
+        slide.addEventListener('click', () => openLightbox(index));
+        track.appendChild(slide);
+
+        // Create dot
+        const dot = document.createElement('div');
+        dot.className = index === 0 ? 'dot active' : 'dot';
+        dot.addEventListener('click', () => goToSlide(index));
+        dots.appendChild(dot);
       });
 
-      // Metadata
-      if (product.metadata && Object.keys(product.metadata).length > 0) {
-        const metadataSection = document.getElementById('metadataSection');
-        const metadataList = document.getElementById('metadataList');
-        metadataSection.style.display = 'block';
+      // Setup carousel controls
+      document.getElementById('prevBtn').addEventListener('click', () => {
+        currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+        updateCarousel();
+      });
 
-        for (const [key, value] of Object.entries(product.metadata)) {
-          const li = document.createElement('li');
-          li.innerHTML = `<strong>${key}:</strong> ${value}`;
-          metadataList.appendChild(li);
-        }
-      }
-
-      // Photos from IPFS data
-      if (product.ipfsData && product.ipfsData.photos && product.ipfsData.photos.length > 0) {
-        const photosSection = document.getElementById('photosSection');
-        const photoGallery = document.getElementById('photoGallery');
-        photosSection.style.display = 'block';
-
-        product.ipfsData.photos.forEach(photoHash => {
-          const img = document.createElement('img');
-          img.src = `https://gateway.pinata.cloud/ipfs/${photoHash}`;
-          img.style.cssText = 'width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #E2E8F0; cursor: pointer;';
-          img.onclick = () => window.open(img.src, '_blank');
-          photoGallery.appendChild(img);
-        });
-      }
-
-      // Location from IPFS data
-      if (product.ipfsData && product.ipfsData.location) {
-        const locationSection = document.getElementById('locationSection');
-        const locationCoords = document.getElementById('locationCoords');
-        const mapLink = document.getElementById('mapLink');
-        locationSection.style.display = 'block';
-
-        const { latitude, longitude, accuracy } = product.ipfsData.location;
-        locationCoords.innerHTML = `
-          <strong>Coordinates:</strong> ${latitude.toFixed(6)}, ${longitude.toFixed(6)}<br>
-          ${accuracy ? `<small style="color: #64748B;">Accuracy: ±${Math.round(accuracy)}m</small>` : ''}
-        `;
-        mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      }
-
-      // Links
-      document.getElementById('blockchainLink').href = product.blockchainUrl;
-      document.getElementById('ipfsLink').href = product.ipfsUrl;
-
-      // Verify timestamp
-      document.getElementById('verifyTime').textContent = new Date().toLocaleTimeString();
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+        updateCarousel();
+      });
     }
 
-    function showError(message) {
-      loadingCard.style.display = 'none';
-      searchCard.style.display = 'none';
-      errorCard.style.display = 'block';
-      errorMessage.textContent = message;
+    function updateCarousel() {
+      const track = document.getElementById('photoTrack');
+      const dots = document.querySelectorAll('.dot');
+
+      track.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
+
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentPhotoIndex);
+      });
+    }
+
+    function goToSlide(index) {
+      currentPhotoIndex = index;
+      updateCarousel();
+    }
+
+    function openLightbox(index) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightboxImg');
+
+      lightboxImg.src = photos[index];
+      lightbox.classList.add('active');
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', () => {
+      document.getElementById('lightbox').classList.remove('active');
+    });
+
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        document.getElementById('lightbox').classList.remove('active');
+      }
+    });
+
+    function loadMap(location) {
+      const mapSection = document.getElementById('mapSection');
+      const mapContainer = document.getElementById('mapContainer');
+      const coords = document.getElementById('coordinates');
+      const mapsLink = document.getElementById('viewOnGoogleMaps');
+
+      mapSection.style.display = 'block';
+
+      // Set coordinates
+      coords.textContent = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+
+      // Create Google Maps embed
+      const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${location.latitude},${location.longitude}&zoom=15`;
+      mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
+
+      // Set Google Maps link
+      mapsLink.href = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+    }
+
+    function loadMetadata(metadata) {
+      const section = document.getElementById('metadataSection');
+      const content = document.getElementById('metadataContent');
+
+      section.style.display = 'block';
+
+      Object.entries(metadata).forEach(([key, value]) => {
+        const item = document.createElement('div');
+        item.className = 'metadata-item';
+        item.innerHTML = `
+          <span class="metadata-key">${key}:</span>
+          <span class="metadata-value">${value}</span>
+        `;
+        content.appendChild(item);
+      });
     }
   </script>
 </body>

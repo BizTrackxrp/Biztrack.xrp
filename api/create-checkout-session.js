@@ -10,11 +10,11 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// Stripe Price IDs from your Stripe dashboard
+// Stripe Price IDs from your Stripe dashboard (TEST MODE)
 const STRIPE_PRICES = {
-  essential: 'price_1SPSCoRzdZsHMZRF5IBmTG6s',  // Essential $49
-  scale: 'price_1SPSC3RzdZsHMZRFraOq6siQ',      // Scale $149
-  enterprise: 'price_1SPSBRRzdZsHMZRFyFx0E3Ez'  // Enterprise $399
+  essential: 'price_1SLwgr2Octf3b3PtKdeaw5kk',  // Essential $49 (TEST)
+  scale: 'price_1SLwkL2Octf3b3Pt29yFLCkI',      // Scale $149 (TEST)
+  enterprise: 'price_1SLwm82Octf3b3Pt09oWF4Jj'  // Enterprise $399 (TEST)
 };
 
 module.exports = async (req, res) => {

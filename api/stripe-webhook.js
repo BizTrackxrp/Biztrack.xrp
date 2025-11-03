@@ -1,6 +1,24 @@
 // api/stripe-webhook.js
+
+// Vercel configuration - CRITICAL for Stripe webhooks
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Pool } = require('pg');
+
+// Helper to get raw body as buffer
+const buffer = (req) => {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+};
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -33,8 +51,12 @@ module.exports = async (req, res) => {
   let event;
 
   try {
+    // Get raw body as buffer for Stripe signature verification
+    const buf = await buffer(req);
+    const body = buf.toString('utf8');
+    
     // Verify webhook signature
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     console.error('⚠️  Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);

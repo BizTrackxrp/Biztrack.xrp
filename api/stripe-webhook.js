@@ -15,11 +15,11 @@ const TIER_CONFIG = {
   enterprise: { qrLimit: 100000, maxBatchSize: 500 }
 };
 
-// Map Stripe Price IDs to tiers
+// Map Stripe Price IDs to tiers (TEST MODE)
 const PRICE_TO_TIER = {
-  'price_1SPSCoRzdZsHMZRF5IBmTG6s': 'essential',  // Essential $49
-  'price_1SPSC3RzdZsHMZRFraOq6siQ': 'scale',      // Scale $149
-  'price_1SPSBRRzdZsHMZRFyFx0E3Ez': 'enterprise'  // Enterprise $399
+  'price_1SLwgr2Octf3b3PtKdeaw5kk': 'essential',  // Essential $49 (TEST)
+  'price_1SLwkL2Octf3b3Pt29yFLCkI': 'scale',      // Scale $149 (TEST)
+  'price_1SLwm82Octf3b3Pt09oWF4Jj': 'enterprise'  // Enterprise $399 (TEST)
 };
 
 module.exports = async (req, res) => {

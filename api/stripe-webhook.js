@@ -1,14 +1,15 @@
 // api/stripe-webhook.js
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { Pool } = require('pg');
+
 // Vercel configuration - CRITICAL for Stripe webhooks
-export const config = {
+// This tells Vercel not to parse the body so we can verify Stripe signatures
+module.exports.config = {
   api: {
     bodyParser: false,
   },
 };
-
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { Pool } = require('pg');
 
 // Helper to get raw body as buffer
 const buffer = (req) => {
@@ -48,15 +49,35 @@ module.exports = async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  if (!webhookSecret) {
+    console.error('⚠️  STRIPE_WEBHOOK_SECRET is not set!');
+    return res.status(500).json({ error: 'Webhook secret not configured' });
+  }
+
   let event;
 
   try {
     // Get raw body as buffer for Stripe signature verification
-    const buf = await buffer(req);
-    const body = buf.toString('utf8');
+    let body;
+    
+    if (req.body && typeof req.body === 'string') {
+      // Body is already a string
+      body = req.body;
+    } else if (Buffer.isBuffer(req.body)) {
+      // Body is a buffer
+      body = req.body.toString('utf8');
+    } else {
+      // Need to read from stream
+      const buf = await buffer(req);
+      body = buf.toString('utf8');
+    }
+    
+    console.log('[WEBHOOK] Received signature:', sig ? 'present' : 'missing');
+    console.log('[WEBHOOK] Body length:', body.length);
     
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    console.log('[WEBHOOK] Signature verified successfully');
   } catch (err) {
     console.error('⚠️  Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);

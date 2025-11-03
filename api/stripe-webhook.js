@@ -1,25 +1,7 @@
 // api/stripe-webhook.js
-
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Pool } = require('pg');
-
-// Vercel configuration - CRITICAL for Stripe webhooks
-// This tells Vercel not to parse the body so we can verify Stripe signatures
-module.exports.config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-// Helper to get raw body as buffer
-const buffer = (req) => {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on('data', (chunk) => chunks.push(chunk));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
-    req.on('error', reject);
-  });
-};
+const getRawBody = require('raw-body');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -41,7 +23,14 @@ const PRICE_TO_TIER = {
   'price_1SLwm82Octf3b3Pt09oWF4Jj': 'enterprise'  // Enterprise $399 (TEST)
 };
 
-module.exports = async (req, res) => {
+// Disable body parsing - CRITICAL for Stripe webhooks
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -57,27 +46,17 @@ module.exports = async (req, res) => {
   let event;
 
   try {
-    // Get raw body as buffer for Stripe signature verification
-    let body;
+    // Get raw body
+    const rawBody = await getRawBody(req);
+    const bodyString = rawBody.toString('utf8');
     
-    if (req.body && typeof req.body === 'string') {
-      // Body is already a string
-      body = req.body;
-    } else if (Buffer.isBuffer(req.body)) {
-      // Body is a buffer
-      body = req.body.toString('utf8');
-    } else {
-      // Need to read from stream
-      const buf = await buffer(req);
-      body = buf.toString('utf8');
-    }
-    
-    console.log('[WEBHOOK] Received signature:', sig ? 'present' : 'missing');
-    console.log('[WEBHOOK] Body length:', body.length);
+    console.log('[WEBHOOK] Signature present:', !!sig);
+    console.log('[WEBHOOK] Body length:', bodyString.length);
+    console.log('[WEBHOOK] Secret configured:', !!webhookSecret);
     
     // Verify webhook signature
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    console.log('[WEBHOOK] Signature verified successfully');
+    event = stripe.webhooks.constructEvent(bodyString, sig, webhookSecret);
+    console.log(`[WEBHOOK] ✅ Signature verified! Event type: ${event.type}`);
   } catch (err) {
     console.error('⚠️  Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -117,7 +96,7 @@ module.exports = async (req, res) => {
     console.error('[WEBHOOK] Error processing event:', error);
     return res.status(500).json({ error: 'Webhook processing failed' });
   }
-};
+}
 
 // Handle successful checkout
 async function handleCheckoutCompleted(session) {
@@ -131,11 +110,9 @@ async function handleCheckoutCompleted(session) {
     return;
   }
 
-  // Get the subscription
   const subscriptionId = session.subscription;
   const customerId = session.customer;
 
-  // Get subscription details to find the price ID
   let newTier = tier;
   if (!newTier && subscriptionId) {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
@@ -147,7 +124,6 @@ async function handleCheckoutCompleted(session) {
 
   console.log(`[WEBHOOK] Upgrading user ${userId} to ${newTier} tier`);
 
-  // Update user in database
   await pool.query(
     `UPDATE users 
      SET subscription_tier = $1,
@@ -164,7 +140,7 @@ async function handleCheckoutCompleted(session) {
   console.log(`[WEBHOOK] ✅ User ${userId} upgraded to ${newTier}! Counter reset to 0/${tierConfig.qrLimit}`);
 }
 
-// Handle subscription updates (plan changes, renewals, cancellation scheduled)
+// Handle subscription updates
 async function handleSubscriptionUpdated(subscription) {
   console.log('[WEBHOOK] Processing customer.subscription.updated');
 
@@ -173,7 +149,6 @@ async function handleSubscriptionUpdated(subscription) {
   const status = subscription.status;
   const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
-  // Find user by customer ID
   const userResult = await pool.query(
     'SELECT id, subscription_tier FROM users WHERE stripe_customer_id = $1',
     [customerId]
@@ -186,8 +161,6 @@ async function handleSubscriptionUpdated(subscription) {
 
   const user = userResult.rows[0];
   
-  // If user scheduled cancellation (cancel_at_period_end = true)
-  // Keep their current tier and limits until period ends
   if (cancelAtPeriodEnd) {
     console.log(`[WEBHOOK] User ${user.id} scheduled cancellation. Keeping tier until period end.`);
     await pool.query(
@@ -197,7 +170,7 @@ async function handleSubscriptionUpdated(subscription) {
        WHERE id = $1`,
       [user.id]
     );
-    return; // Don't change tier yet
+    return;
   }
 
   const newTier = PRICE_TO_TIER[priceId] || user.subscription_tier;
@@ -205,11 +178,9 @@ async function handleSubscriptionUpdated(subscription) {
 
   console.log(`[WEBHOOK] Updating user ${user.id} to ${newTier} tier (status: ${status})`);
 
-  // Check if tier changed (upgrade/downgrade)
   const tierChanged = user.subscription_tier !== newTier;
 
   if (tierChanged) {
-    // Reset counter on tier change
     await pool.query(
       `UPDATE users 
        SET subscription_tier = $1,
@@ -222,7 +193,6 @@ async function handleSubscriptionUpdated(subscription) {
     );
     console.log(`[WEBHOOK] ✅ User ${user.id} tier changed to ${newTier}! Counter reset to 0/${tierConfig.qrLimit}`);
   } else {
-    // Just update status
     await pool.query(
       `UPDATE users 
        SET subscription_status = $1,
@@ -239,11 +209,9 @@ async function handleSubscriptionDeleted(subscription) {
   console.log('[WEBHOOK] Processing customer.subscription.deleted');
 
   const customerId = subscription.customer;
-  const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
-  // Find user by customer ID
   const userResult = await pool.query(
-    'SELECT id, subscription_tier, qr_codes_limit FROM users WHERE stripe_customer_id = $1',
+    'SELECT id, qr_codes_used FROM users WHERE stripe_customer_id = $1',
     [customerId]
   );
 
@@ -254,18 +222,7 @@ async function handleSubscriptionDeleted(subscription) {
 
   const user = userResult.rows[0];
 
-  // Only downgrade when subscription actually ends (not when they click "cancel")
-  // This gives them access until the end of their paid period
   console.log(`[WEBHOOK] Subscription ended for user ${user.id}, downgrading to free tier`);
-
-  // Downgrade to free tier but DON'T reset counter
-  // Let them keep their current usage, just limit to free tier going forward
-  const currentUsage = await pool.query(
-    'SELECT qr_codes_used FROM users WHERE id = $1',
-    [user.id]
-  );
-  
-  const qrUsed = currentUsage.rows[0]?.qr_codes_used || 0;
 
   await pool.query(
     `UPDATE users 
@@ -278,17 +235,15 @@ async function handleSubscriptionDeleted(subscription) {
     [TIER_CONFIG.free.qrLimit, user.id]
   );
 
-  console.log(`[WEBHOOK] ✅ User ${user.id} downgraded to free tier. Usage: ${qrUsed}/${TIER_CONFIG.free.qrLimit}`);
+  console.log(`[WEBHOOK] ✅ User ${user.id} downgraded to free tier`);
 }
 
-// Handle successful recurring payment
+// Handle successful payment
 async function handlePaymentSucceeded(invoice) {
   console.log('[WEBHOOK] Processing invoice.payment_succeeded');
 
   const customerId = invoice.customer;
-  const subscriptionId = invoice.subscription;
 
-  // Update subscription status to active
   await pool.query(
     `UPDATE users 
      SET subscription_status = 'active',
@@ -306,7 +261,6 @@ async function handlePaymentFailed(invoice) {
 
   const customerId = invoice.customer;
 
-  // Update subscription status to past_due
   await pool.query(
     `UPDATE users 
      SET subscription_status = 'past_due',

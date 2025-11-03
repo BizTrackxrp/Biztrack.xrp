@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  
   <style>
     * {
       margin: 0;
@@ -21,32 +23,37 @@
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 2rem 1rem;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    .back-link {
+    .back-button {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
       color: #4F46E5;
       text-decoration: none;
       font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      border-radius: 12px;
       margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       transition: all 0.2s;
     }
 
-    .back-link:hover {
+    .back-button:hover {
       transform: translateX(-4px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
 
     .header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 4rem;
     }
 
     .header h1 {
@@ -61,87 +68,9 @@
       color: #64748B;
     }
 
-    /* Discount Code Banner */
-    .discount-banner {
-      background: linear-gradient(135deg, #FEF3C7 0%, #FDE047 100%);
-      border: 2px solid #F59E0B;
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .discount-banner h3 {
-      color: #92400E;
-      margin-bottom: 1rem;
-      font-size: 1.25rem;
-    }
-
-    .discount-input-group {
-      display: flex;
-      gap: 1rem;
-      max-width: 500px;
-      margin: 0 auto;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .discount-input-group input {
-      flex: 1;
-      min-width: 200px;
-      padding: 0.875rem 1rem;
-      border: 2px solid #D97706;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-family: 'Inter', sans-serif;
-      text-transform: uppercase;
-    }
-
-    .discount-input-group input:focus {
-      outline: none;
-      border-color: #92400E;
-      box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
-    }
-
-    .discount-input-group button {
-      padding: 0.875rem 1.75rem;
-      background: #92400E;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .discount-input-group button:hover {
-      background: #78350F;
-      transform: translateY(-2px);
-    }
-
-    .discount-message {
-      margin-top: 1rem;
-      padding: 0.875rem;
-      border-radius: 8px;
-      font-weight: 600;
-      display: none;
-    }
-
-    .discount-message.success {
-      background: #D1FAE5;
-      color: #065F46;
-      border: 1px solid #6EE7B7;
-    }
-
-    .discount-message.error {
-      background: #FEE2E2;
-      color: #991B1B;
-      border: 1px solid #FCA5A5;
-    }
-
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
       margin-bottom: 3rem;
     }
@@ -149,305 +78,150 @@
     .pricing-card {
       background: white;
       border-radius: 20px;
-      padding: 2.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
       border: 2px solid #E2E8F0;
       transition: all 0.3s;
       position: relative;
-      display: flex;
-      flex-direction: column;
     }
 
     .pricing-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     }
 
-    .pricing-card.featured {
+    .pricing-card.popular {
       border-color: #4F46E5;
-      box-shadow: 0 10px 40px -10px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.2);
     }
 
-    .pricing-card.current {
-      border-color: #10B981;
-      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-    }
-
-    .current-badge {
+    .popular-badge {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #10B981;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
       color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.5rem 1.5rem;
+      border-radius: 24px;
       font-size: 0.875rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .tier-name {
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-size: 1.75rem;
+      font-weight: 800;
       color: #1E293B;
       margin-bottom: 1rem;
     }
 
     .tier-price {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #4F46E5;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
       margin-bottom: 0.5rem;
     }
 
-    .tier-price span {
-      font-size: 1.25rem;
+    .price-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #4F46E5;
+    }
+
+    .price-period {
+      font-size: 1.125rem;
       color: #64748B;
-      font-weight: 500;
-    }
-
-    .tier-price.discounted {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-    }
-
-    .original-price {
-      font-size: 1.75rem;
-      color: #94A3B8;
-      text-decoration: line-through;
-      font-weight: 600;
-    }
-
-    .discount-badge {
-      background: #DC2626;
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 700;
     }
 
     .tier-description {
+      font-size: 1rem;
       color: #64748B;
       margin-bottom: 2rem;
-      font-size: 1rem;
     }
 
     .features-list {
       list-style: none;
       margin-bottom: 2rem;
-      flex-grow: 1;
     }
 
     .features-list li {
       padding: 0.75rem 0;
-      color: #334155;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.75rem;
+      font-size: 0.95rem;
+      color: #334155;
     }
 
     .features-list i {
       color: #10B981;
       font-size: 1.125rem;
+      margin-top: 0.125rem;
+      flex-shrink: 0;
     }
 
     .cta-button {
       width: 100%;
-      padding: 1rem;
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      color: white;
-      border: none;
+      padding: 1.125rem 2rem;
       border-radius: 12px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
     }
 
-    .cta-button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
-    }
-
-    .cta-button:disabled {
-      background: #CBD5E1;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .cta-button.current-plan {
-      background: #10B981;
-    }
-
-    /* Contact Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 500px;
-      width: 100%;
-      position: relative;
-      animation: slideIn 0.3s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #64748B;
-      transition: color 0.2s;
-    }
-
-    .modal-close:hover {
-      color: #DC2626;
-    }
-
-    .modal h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.75rem;
-      color: #1E293B;
-    }
-
-    .modal-description {
-      margin: 0 0 1.5rem 0;
-      color: #64748B;
-    }
-
-    .contact-info {
-      background: #F8FAFC;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-    }
-
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .contact-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .contact-icon {
-      width: 40px;
-      height: 40px;
-      background: #4F46E5;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .cta-primary {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
       color: white;
-      font-size: 1.25rem;
-      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
 
-    .contact-icon.phone {
-      background: #10B981;
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
     }
 
-    .contact-icon.clock {
-      background: #F59E0B;
-    }
-
-    .contact-details {
-      flex-grow: 1;
-    }
-
-    .contact-label {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #64748B;
-    }
-
-    .contact-value {
-      margin: 0;
-      font-weight: 600;
-      color: #1E293B;
-    }
-
-    .contact-value a {
+    .cta-secondary {
+      background: white;
       color: #4F46E5;
-      text-decoration: none;
+      border: 2px solid #4F46E5;
     }
 
-    .contact-value a:hover {
-      text-decoration: underline;
+    .cta-secondary:hover {
+      background: #F8FAFC;
     }
 
-    .modal-footer {
-      margin-top: 1.5rem;
-      font-size: 0.875rem;
-      color: #64748B;
-      text-align: center;
+    .cta-current {
+      background: #10B981;
+      color: white;
+      cursor: default;
+    }
+
+    .cta-current:hover {
+      transform: none;
     }
 
     @media (max-width: 768px) {
       .header h1 {
         font-size: 2rem;
       }
-      
+
       .pricing-grid {
         grid-template-columns: 1fr;
-      }
-
-      .discount-input-group {
-        flex-direction: column;
-      }
-
-      .discount-input-group input {
-        min-width: 100%;
-      }
-
-      .modal-content {
-        padding: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="dashboard.html" class="back-link">
+    <a href="dashboard.html" class="back-button">
       <i class="fas fa-arrow-left"></i>
       Back to Dashboard
     </a>
@@ -457,350 +231,146 @@
       <p>Flexible pricing for businesses of all sizes</p>
     </div>
 
-    <div id="pricingGrid" class="pricing-grid"></div>
-
-    <!-- Discount Code Section - Moved to Bottom -->
-    <div class="discount-banner">
-      <h3><i class="fas fa-tag"></i> Have a discount code?</h3>
-      <div class="discount-input-group">
-        <input 
-          type="text" 
-          id="discountCode" 
-          placeholder="Enter code (e.g. UPGRADE50)"
-          maxlength="20"
-        />
-        <button id="applyDiscountBtn">
-          <i class="fas fa-check"></i> Apply
+    <div class="pricing-grid">
+      <!-- Free Tier -->
+      <div class="pricing-card">
+        <h3 class="tier-name">Free</h3>
+        <div class="tier-price">
+          <span class="price-amount">$0</span>
+          <span class="price-period">/month</span>
+        </div>
+        <p class="tier-description">100 QR codes per month</p>
+        
+        <ul class="features-list">
+          <li><i class="fas fa-check-circle"></i> 100 QR codes per month</li>
+          <li><i class="fas fa-check-circle"></i> Blockchain verification</li>
+          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
+          <li><i class="fas fa-check-circle"></i> Email support</li>
+          <li><i class="fas fa-check-circle"></i> Community access</li>
+        </ul>
+        
+        <button class="cta-button cta-secondary" disabled style="opacity: 0.5; cursor: not-allowed;">
+          <i class="fas fa-lock"></i> Unavailable
         </button>
       </div>
-      <div id="discountMessage" class="discount-message"></div>
-    </div>
 
-    <div style="text-align: center; margin-top: 3rem; color: #64748B;">
-      <p>All plans include IPFS storage, XRPL blockchain verification, and QR code generation.</p>
-      <p style="margin-top: 0.5rem;">Need help choosing? <a onclick="openContactModal()" style="color: #4F46E5; cursor: pointer;">Contact us</a></p>
-    </div>
-  </div>
-
-  <!-- Contact Modal -->
-  <div id="contactModal" class="modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeContactModal()">&times;</button>
-      
-      <h2>Contact Sales</h2>
-      <p class="modal-description">Get in touch with our team for Enterprise pricing and custom solutions.</p>
-      
-      <div class="contact-info">
-        <div class="contact-item">
-          <div class="contact-icon">
-            📧
-          </div>
-          <div class="contact-details">
-            <p class="contact-label">Email</p>
-            <p class="contact-value"><a href="mailto:Biztrack.xrp@proton.me">Biztrack.xrp@proton.me</a></p>
-          </div>
+      <!-- Essential Tier -->
+      <div class="pricing-card popular">
+        <div class="popular-badge">Most Popular</div>
+        <h3 class="tier-name">Essential</h3>
+        <div class="tier-price">
+          <span class="price-amount">$49</span>
+          <span class="price-period">/month</span>
         </div>
+        <p class="tier-description">5,000 QR codes per month</p>
         
-        <div class="contact-item">
-          <div class="contact-icon phone">
-            📞
-          </div>
-          <div class="contact-details">
-            <p class="contact-label">Phone</p>
-            <p class="contact-value"><a href="tel:3606700852">(360) 670-0852</a></p>
-          </div>
-        </div>
+        <ul class="features-list">
+          <li><i class="fas fa-check-circle"></i> 5,000 QR codes per month</li>
+          <li><i class="fas fa-check-circle"></i> Priority blockchain verification</li>
+          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
+          <li><i class="fas fa-check-circle"></i> Priority email support</li>
+          <li><i class="fas fa-check-circle"></i> Basic analytics</li>
+          <li><i class="fas fa-check-circle"></i> API access</li>
+        </ul>
         
-        <div class="contact-item">
-          <div class="contact-icon clock">
-            🕐
-          </div>
-          <div class="contact-details">
-            <p class="contact-label">Business Hours</p>
-            <p class="contact-value">7 AM - 5 PM (Pacific Time)</p>
-            <p class="contact-label">Monday - Friday</p>
-          </div>
-        </div>
+        <button class="cta-button cta-primary" onclick="upgradeTier('essential')">
+          <i class="fas fa-rocket"></i> Get Started
+        </button>
       </div>
-      
-      <p class="modal-footer">
-        We typically respond within 1 business day
-      </p>
+
+      <!-- Scale Tier -->
+      <div class="pricing-card">
+        <h3 class="tier-name">Scale</h3>
+        <div class="tier-price">
+          <span class="price-amount">$149</span>
+          <span class="price-period">/month</span>
+        </div>
+        <p class="tier-description">25,000 QR codes per month</p>
+        
+        <ul class="features-list">
+          <li><i class="fas fa-check-circle"></i> 25,000 QR codes per month</li>
+          <li><i class="fas fa-check-circle"></i> Advanced blockchain features</li>
+          <li><i class="fas fa-check-circle"></i> Dedicated IPFS storage</li>
+          <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
+          <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
+          <li><i class="fas fa-check-circle"></i> Full API access</li>
+          <li><i class="fas fa-check-circle"></i> Custom integrations</li>
+        </ul>
+        
+        <button class="cta-button cta-primary" onclick="upgradeTier('scale')">
+          <i class="fas fa-rocket"></i> Get Started
+        </button>
+      </div>
+
+      <!-- Enterprise Tier -->
+      <div class="pricing-card">
+        <h3 class="tier-name">Enterprise</h3>
+        <div class="tier-price">
+          <span class="price-amount">$399</span>
+          <span class="price-period">/month</span>
+        </div>
+        <p class="tier-description">100,000 QR codes per month</p>
+        
+        <ul class="features-list">
+          <li><i class="fas fa-check-circle"></i> 100,000+ QR codes per month</li>
+          <li><i class="fas fa-check-circle"></i> Enterprise blockchain features</li>
+          <li><i class="fas fa-check-circle"></i> Dedicated infrastructure</li>
+          <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
+          <li><i class="fas fa-check-circle"></i> Custom analytics</li>
+          <li><i class="fas fa-check-circle"></i> White-label options</li>
+          <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
+          <li><i class="fas fa-check-circle"></i> Custom contracts</li>
+        </ul>
+        
+        <button class="cta-button cta-primary" onclick="upgradeTier('enterprise')">
+          <i class="fas fa-rocket"></i> Get Started
+        </button>
+      </div>
     </div>
   </div>
 
   <script src="js/auth.js"></script>
   <script>
-    const tiers = {
-      free: {
-        name: 'Free',
-        price: 0,
-        qrLimit: 100,
-        features: [
-          '100 QR codes per month',
-          'Basic blockchain verification',
-          'IPFS storage',
-          'Email support',
-          'Community access'
-        ],
-        featured: false
-      },
-      essential: {
-        name: 'Essential',
-        price: 49,
-        qrLimit: 5000,
-        features: [
-          '5,000 QR codes per month',
-          'Priority blockchain verification',
-          'IPFS storage',
-          'Priority email support',
-          'Basic analytics',
-          'API access'
-        ],
-        featured: true
-      },
-      scale: {
-        name: 'Scale',
-        price: 149,
-        qrLimit: 25000,
-        features: [
-          '25,000 QR codes per month',
-          'Advanced blockchain features',
-          'Dedicated IPFS storage',
-          '24/7 priority support',
-          'Advanced analytics',
-          'Full API access',
-          'Custom integrations'
-        ],
-        featured: false
-      },
-      enterprise: {
-        name: 'Enterprise',
-        price: 399,
-        qrLimit: 100000,
-        features: [
-          '100,000+ QR codes per month',
-          'Enterprise blockchain features',
-          'Dedicated infrastructure',
-          'Dedicated account manager',
-          'Custom analytics',
-          'White-label options',
-          'SLA guarantees',
-          'Custom contracts'
-        ],
-        featured: false
-      }
-    };
+    // Initialize Stripe
+    const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU'); // Replace with your key
 
-    let currentTier = 'free';
-    let appliedDiscount = null;
-
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('biztrack-auth-token');
-    
-    if (!isLoggedIn) {
-      // Redirect to login with return URL
-      window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
-    }
-
-    // Contact Modal Functions
-    function openContactModal() {
-      document.getElementById('contactModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeContactModal() {
-      document.getElementById('contactModal').classList.remove('show');
-      document.body.style.overflow = 'auto';
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('contactModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeContactModal();
-      }
-    });
-
-    // ESC key to close
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeContactModal();
-      }
-    });
-
-    // Load current tier
-    async function loadCurrentTier() {
-      try {
-        const response = await authenticatedFetch('/api/check-limits');
-        const data = await response.json();
-        if (data.success) {
-          currentTier = data.subscription.tier;
-        }
-      } catch (error) {
-        console.error('Error loading current tier:', error);
-      }
-      renderPricingCards();
-    }
-
-    function getTierLevel(tier) {
-      const levels = { free: 0, essential: 1, scale: 2, enterprise: 3 };
-      return levels[tier] || 0;
-    }
-
-    function calculateDiscountedPrice(originalPrice, discount) {
-      if (!discount || originalPrice === 0) return originalPrice;
-      return Math.round(originalPrice * (1 - discount.percentage / 100));
-    }
-
-    function renderPricingCards() {
-      const grid = document.getElementById('pricingGrid');
-      grid.innerHTML = '';
-
-      Object.entries(tiers).forEach(([key, tier]) => {
-        const isCurrent = key === currentTier;
-        const currentLevel = getTierLevel(currentTier);
-        const tierLevel = getTierLevel(key);
-        const isDowngrade = tierLevel < currentLevel;
-        const isUpgrade = tierLevel > currentLevel;
-        const isEnterprise = key === 'enterprise';
-
-        const discountedPrice = appliedDiscount 
-          ? calculateDiscountedPrice(tier.price, appliedDiscount)
-          : tier.price;
-
-        const card = document.createElement('div');
-        card.className = `pricing-card ${tier.featured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`;
-        
-        card.innerHTML = `
-          ${isCurrent ? '<div class="current-badge">Current Plan</div>' : ''}
-          <div class="tier-name">${tier.name}</div>
-          <div class="tier-price ${appliedDiscount && tier.price > 0 ? 'discounted' : ''}">
-            ${appliedDiscount && tier.price > 0 ? `
-              <span class="original-price">$${tier.price}</span>
-              <span>$${discountedPrice}</span>
-              <span class="discount-badge">-${appliedDiscount.percentage}%</span>
-            ` : `
-              $${tier.price}
-            `}
-            ${tier.price > 0 ? '<span>/month</span>' : ''}
-          </div>
-          <div class="tier-description">${tier.qrLimit.toLocaleString()} QR codes per month</div>
-          <ul class="features-list">
-            ${tier.features.map(feature => `
-              <li><i class="fas fa-check-circle"></i> ${feature}</li>
-            `).join('')}
-          </ul>
-          <button 
-            class="cta-button ${isCurrent ? 'current-plan' : ''}" 
-            onclick="${isEnterprise && !isCurrent ? 'openContactModal()' : `handleUpgrade('${key}')`}"
-            ${isCurrent || isDowngrade ? 'disabled' : ''}
-          >
-            ${isCurrent ? '<i class="fas fa-check"></i> Current Plan' : 
-              isDowngrade ? '<i class="fas fa-lock"></i> Unavailable' :
-              isEnterprise ? '<i class="fas fa-phone"></i> Contact Sales' :
-              isUpgrade ? '<i class="fas fa-arrow-up"></i> Upgrade' :
-              '<i class="fas fa-rocket"></i> Get Started'}
-          </button>
-        `;
-        
-        grid.appendChild(card);
-      });
-    }
-
-    // Apply discount code
-    document.getElementById('applyDiscountBtn').addEventListener('click', async () => {
-      const code = document.getElementById('discountCode').value.trim().toUpperCase();
-      const messageEl = document.getElementById('discountMessage');
-      const btn = document.getElementById('applyDiscountBtn');
-
-      if (!code) {
-        messageEl.className = 'discount-message error';
-        messageEl.textContent = 'Please enter a discount code';
-        messageEl.style.display = 'block';
+    async function upgradeTier(tier) {
+      const token = localStorage.getItem('biztrack-auth-token');
+      
+      if (!token) {
+        window.location.href = '/login.html';
         return;
       }
 
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
-
       try {
-        const response = await authenticatedFetch('/api/validate-discount', {
+        const response = await fetch('/api/create-checkout-session', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ tier })
         });
 
         const data = await response.json();
 
-        if (response.ok && data.valid) {
-          appliedDiscount = {
-            code: code,
-            percentage: data.discount.percentage,
-            description: data.discount.description
-          };
-
-          messageEl.className = 'discount-message success';
-          messageEl.innerHTML = `
-            <i class="fas fa-check-circle"></i> 
-            ${data.discount.description} (${data.discount.percentage}% off)
-          `;
-          messageEl.style.display = 'block';
-
-          renderPricingCards();
+        if (data.url) {
+          // Redirect to Stripe Checkout
+          window.location.href = data.url;
         } else {
-          messageEl.className = 'discount-message error';
-          messageEl.innerHTML = '<i class="fas fa-times-circle"></i> Invalid or expired discount code';
-          messageEl.style.display = 'block';
-          appliedDiscount = null;
+          alert('Error: ' + (data.error || 'Failed to create checkout session'));
         }
       } catch (error) {
-        console.error('Error validating discount:', error);
-        messageEl.className = 'discount-message error';
-        messageEl.textContent = 'Error validating code. Please try again.';
-        messageEl.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check"></i> Apply';
-      }
-    });
-
-    async function handleUpgrade(tier) {
-      const tierInfo = tiers[tier];
-      const discountedPrice = appliedDiscount 
-        ? calculateDiscountedPrice(tierInfo.price, appliedDiscount)
-        : tierInfo.price;
-
-      const confirmMsg = appliedDiscount
-        ? `Upgrade to ${tierInfo.name} plan for $${discountedPrice}/month (${appliedDiscount.percentage}% off)?`
-        : `Upgrade to ${tierInfo.name} plan for $${tierInfo.price}/month?`;
-
-      if (confirm(confirmMsg)) {
-        try {
-          const response = await authenticatedFetch('/api/create-checkout-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              tier,
-              discountCode: appliedDiscount?.code
-            })
-          });
-
-          const data = await response.json();
-
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            alert('Error creating checkout session. Please try again.');
-          }
-        } catch (error) {
-          console.error('Upgrade error:', error);
-          alert('Error processing upgrade. Please try again.');
-        }
+        console.error('Upgrade error:', error);
+        alert('Error creating checkout session. Please try again.');
       }
     }
 
-    // Load on page load
-    loadCurrentTier();
+    // Check if user just canceled
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('canceled') === 'true') {
+      alert('Checkout canceled. You can upgrade anytime!');
+    }
   </script>
 </body>
 </html>

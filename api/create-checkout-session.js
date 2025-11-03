@@ -70,7 +70,8 @@ module.exports = async (req, res) => {
         tier: tier
       },
       subscription_data: {
-        proration_behavior: 'create_prorations',  // ✅ Enable automatic proration
+        // Proration happens automatically when users change plans
+        // Not applicable for new subscriptions
         metadata: {
           userId: user.id.toString(),
           tier: tier

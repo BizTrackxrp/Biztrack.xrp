@@ -12,9 +12,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-pro
 
 // Stripe Price IDs from your Stripe dashboard
 const STRIPE_PRICES = {
-  essential: 'price_YOUR_ESSENTIAL_PRICE_ID',  // Replace with actual Stripe price ID
-  scale: 'price_YOUR_SCALE_PRICE_ID',          // Replace with actual Stripe price ID
-  enterprise: 'price_YOUR_ENTERPRISE_PRICE_ID' // Replace with actual Stripe price ID
+  essential: 'price_1SPSCoRzdZsHMZRF5IBmTG6s',  // Essential $49
+  scale: 'price_1SPSC3RzdZsHMZRFraOq6siQ',      // Scale $149
+  enterprise: 'price_1SPSBRRzdZsHMZRFyFx0E3Ez'  // Enterprise $399
 };
 
 module.exports = async (req, res) => {

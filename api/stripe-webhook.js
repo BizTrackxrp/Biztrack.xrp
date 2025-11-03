@@ -121,13 +121,14 @@ async function handleCheckoutCompleted(session) {
   console.log(`[WEBHOOK] ✅ User ${userId} upgraded to ${newTier}! Counter reset to 0/${tierConfig.qrLimit}`);
 }
 
-// Handle subscription updates (plan changes, renewals)
+// Handle subscription updates (plan changes, renewals, cancellation scheduled)
 async function handleSubscriptionUpdated(subscription) {
   console.log('[WEBHOOK] Processing customer.subscription.updated');
 
   const customerId = subscription.customer;
   const priceId = subscription.items.data[0]?.price.id;
   const status = subscription.status;
+  const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
   // Find user by customer ID
   const userResult = await pool.query(
@@ -141,7 +142,22 @@ async function handleSubscriptionUpdated(subscription) {
   }
 
   const user = userResult.rows[0];
-  const newTier = PRICE_TO_TIER[priceId] || 'free';
+  
+  // If user scheduled cancellation (cancel_at_period_end = true)
+  // Keep their current tier and limits until period ends
+  if (cancelAtPeriodEnd) {
+    console.log(`[WEBHOOK] User ${user.id} scheduled cancellation. Keeping tier until period end.`);
+    await pool.query(
+      `UPDATE users 
+       SET subscription_status = 'canceling',
+           updated_at = NOW()
+       WHERE id = $1`,
+      [user.id]
+    );
+    return; // Don't change tier yet
+  }
+
+  const newTier = PRICE_TO_TIER[priceId] || user.subscription_tier;
   const tierConfig = TIER_CONFIG[newTier] || TIER_CONFIG.free;
 
   console.log(`[WEBHOOK] Updating user ${user.id} to ${newTier} tier (status: ${status})`);
@@ -180,10 +196,11 @@ async function handleSubscriptionDeleted(subscription) {
   console.log('[WEBHOOK] Processing customer.subscription.deleted');
 
   const customerId = subscription.customer;
+  const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
   // Find user by customer ID
   const userResult = await pool.query(
-    'SELECT id FROM users WHERE stripe_customer_id = $1',
+    'SELECT id, subscription_tier, qr_codes_limit FROM users WHERE stripe_customer_id = $1',
     [customerId]
   );
 
@@ -194,9 +211,19 @@ async function handleSubscriptionDeleted(subscription) {
 
   const user = userResult.rows[0];
 
-  console.log(`[WEBHOOK] Downgrading user ${user.id} to free tier`);
+  // Only downgrade when subscription actually ends (not when they click "cancel")
+  // This gives them access until the end of their paid period
+  console.log(`[WEBHOOK] Subscription ended for user ${user.id}, downgrading to free tier`);
 
-  // Downgrade to free tier but DON'T reset counter (let them keep current usage)
+  // Downgrade to free tier but DON'T reset counter
+  // Let them keep their current usage, just limit to free tier going forward
+  const currentUsage = await pool.query(
+    'SELECT qr_codes_used FROM users WHERE id = $1',
+    [user.id]
+  );
+  
+  const qrUsed = currentUsage.rows[0]?.qr_codes_used || 0;
+
   await pool.query(
     `UPDATE users 
      SET subscription_tier = 'free',
@@ -208,7 +235,7 @@ async function handleSubscriptionDeleted(subscription) {
     [TIER_CONFIG.free.qrLimit, user.id]
   );
 
-  console.log(`[WEBHOOK] ✅ User ${user.id} downgraded to free tier`);
+  console.log(`[WEBHOOK] ✅ User ${user.id} downgraded to free tier. Usage: ${qrUsed}/${TIER_CONFIG.free.qrLimit}`);
 }
 
 // Handle successful recurring payment

@@ -1,4 +1,4 @@
-// api/stripe-webhook.js
+// pages/api/stripe-webhook.js
 import { buffer } from 'micro';
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Pool } = require('pg');
@@ -7,13 +7,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false }
 });
-
-// Disable body parsing
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 // Tier configuration
 const TIER_CONFIG = {
@@ -46,14 +39,15 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    // Get raw body using micro's buffer function
+    // Get raw body buffer - CRITICAL: Don't convert to string!
     const buf = await buffer(req);
     
     console.log('[WEBHOOK] Signature present:', !!sig);
     console.log('[WEBHOOK] Buffer length:', buf.length);
     
-    // Verify webhook signature
+    // THE FIX: Pass buf directly, NOT buf.toString()
     event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+    
     console.log(`[WEBHOOK] ✅ Verified! Event: ${event.type}`);
   } catch (err) {
     console.error('⚠️  Webhook verification failed:', err.message);
@@ -91,13 +85,13 @@ export default async function handler(req, res) {
 }
 
 async function handleCheckoutCompleted(session) {
-  console.log('[WEBHOOK] checkout.session.completed');
+  console.log('[WEBHOOK] 💰 checkout.session.completed');
   
   const userId = session.metadata?.userId || session.client_reference_id;
   const tier = session.metadata?.tier;
 
   if (!userId) {
-    console.error('[WEBHOOK] No userId!');
+    console.error('[WEBHOOK] ❌ No userId in session!');
     return;
   }
 
@@ -105,131 +99,178 @@ async function handleCheckoutCompleted(session) {
   const customerId = session.customer;
 
   let newTier = tier;
+  
+  // If no tier in metadata, get it from the subscription
   if (!newTier && subscriptionId) {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const priceId = subscription.items.data[0]?.price.id;
-    newTier = PRICE_TO_TIER[priceId] || 'free';
+    try {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const priceId = subscription.items.data[0]?.price.id;
+      newTier = PRICE_TO_TIER[priceId] || 'free';
+      console.log(`[WEBHOOK] Determined tier from price: ${priceId} → ${newTier}`);
+    } catch (error) {
+      console.error('[WEBHOOK] Error fetching subscription:', error);
+      newTier = 'free';
+    }
   }
 
   const tierConfig = TIER_CONFIG[newTier] || TIER_CONFIG.free;
 
   console.log(`[WEBHOOK] Upgrading user ${userId} to ${newTier}`);
 
-  await pool.query(
-    `UPDATE users 
-     SET subscription_tier = $1,
-         qr_codes_limit = $2,
-         qr_codes_used = 0,
-         stripe_customer_id = $3,
-         stripe_subscription_id = $4,
-         subscription_status = 'active',
-         updated_at = NOW()
-     WHERE id = $5`,
-    [newTier, tierConfig.qrLimit, customerId, subscriptionId, userId]
-  );
+  try {
+    await pool.query(
+      `UPDATE users 
+       SET subscription_tier = $1,
+           qr_codes_limit = $2,
+           qr_codes_used = 0,
+           stripe_customer_id = $3,
+           stripe_subscription_id = $4,
+           subscription_status = 'active',
+           updated_at = NOW()
+       WHERE id = $5`,
+      [newTier, tierConfig.qrLimit, customerId, subscriptionId, userId]
+    );
 
-  console.log(`[WEBHOOK] ✅ User ${userId} → ${newTier}! 0/${tierConfig.qrLimit}`);
+    console.log(`[WEBHOOK] ✅ SUCCESS! User ${userId} → ${newTier} (0/${tierConfig.qrLimit} QR codes)`);
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Database error:', error);
+    throw error;
+  }
 }
 
 async function handleSubscriptionUpdated(subscription) {
-  console.log('[WEBHOOK] customer.subscription.updated');
+  console.log('[WEBHOOK] 🔄 customer.subscription.updated');
 
   const customerId = subscription.customer;
   const priceId = subscription.items.data[0]?.price.id;
   const status = subscription.status;
   const cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
-  const userResult = await pool.query(
-    'SELECT id, subscription_tier FROM users WHERE stripe_customer_id = $1',
-    [customerId]
-  );
-
-  if (userResult.rows.length === 0) {
-    console.error('[WEBHOOK] User not found:', customerId);
-    return;
-  }
-
-  const user = userResult.rows[0];
-  
-  if (cancelAtPeriodEnd) {
-    console.log(`[WEBHOOK] User ${user.id} canceling at period end`);
-    await pool.query(
-      `UPDATE users SET subscription_status = 'canceling', updated_at = NOW() WHERE id = $1`,
-      [user.id]
+  try {
+    const userResult = await pool.query(
+      'SELECT id, subscription_tier FROM users WHERE stripe_customer_id = $1',
+      [customerId]
     );
-    return;
-  }
 
-  const newTier = PRICE_TO_TIER[priceId] || user.subscription_tier;
-  const tierConfig = TIER_CONFIG[newTier] || TIER_CONFIG.free;
-  const tierChanged = user.subscription_tier !== newTier;
+    if (userResult.rows.length === 0) {
+      console.error('[WEBHOOK] ❌ User not found for customer:', customerId);
+      return;
+    }
 
-  if (tierChanged) {
-    await pool.query(
-      `UPDATE users 
-       SET subscription_tier = $1, qr_codes_limit = $2, qr_codes_used = 0,
-           subscription_status = $3, updated_at = NOW()
-       WHERE id = $4`,
-      [newTier, tierConfig.qrLimit, status, user.id]
-    );
-    console.log(`[WEBHOOK] ✅ User ${user.id} → ${newTier}!`);
-  } else {
-    await pool.query(
-      `UPDATE users SET subscription_status = $1, updated_at = NOW() WHERE id = $2`,
-      [status, user.id]
-    );
-    console.log(`[WEBHOOK] ✅ Status → ${status}`);
+    const user = userResult.rows[0];
+    
+    if (cancelAtPeriodEnd) {
+      console.log(`[WEBHOOK] ⚠️ User ${user.id} set to cancel at period end`);
+      await pool.query(
+        `UPDATE users SET subscription_status = 'canceling', updated_at = NOW() WHERE id = $1`,
+        [user.id]
+      );
+      return;
+    }
+
+    const newTier = PRICE_TO_TIER[priceId] || user.subscription_tier;
+    const tierConfig = TIER_CONFIG[newTier] || TIER_CONFIG.free;
+    const tierChanged = user.subscription_tier !== newTier;
+
+    if (tierChanged) {
+      console.log(`[WEBHOOK] Tier change: ${user.subscription_tier} → ${newTier}`);
+      await pool.query(
+        `UPDATE users 
+         SET subscription_tier = $1, 
+             qr_codes_limit = $2, 
+             qr_codes_used = 0,
+             subscription_status = $3, 
+             updated_at = NOW()
+         WHERE id = $4`,
+        [newTier, tierConfig.qrLimit, status, user.id]
+      );
+      console.log(`[WEBHOOK] ✅ User ${user.id} upgraded to ${newTier}!`);
+    } else {
+      await pool.query(
+        `UPDATE users SET subscription_status = $1, updated_at = NOW() WHERE id = $2`,
+        [status, user.id]
+      );
+      console.log(`[WEBHOOK] ✅ Status updated to: ${status}`);
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Error updating subscription:', error);
+    throw error;
   }
 }
 
 async function handleSubscriptionDeleted(subscription) {
-  console.log('[WEBHOOK] customer.subscription.deleted');
+  console.log('[WEBHOOK] ❌ customer.subscription.deleted');
 
   const customerId = subscription.customer;
-  const userResult = await pool.query(
-    'SELECT id FROM users WHERE stripe_customer_id = $1',
-    [customerId]
-  );
 
-  if (userResult.rows.length === 0) {
-    console.error('[WEBHOOK] User not found:', customerId);
-    return;
+  try {
+    const userResult = await pool.query(
+      'SELECT id, subscription_tier FROM users WHERE stripe_customer_id = $1',
+      [customerId]
+    );
+
+    if (userResult.rows.length === 0) {
+      console.error('[WEBHOOK] ❌ User not found for customer:', customerId);
+      return;
+    }
+
+    const user = userResult.rows[0];
+
+    await pool.query(
+      `UPDATE users 
+       SET subscription_tier = 'free', 
+           qr_codes_limit = $1,
+           subscription_status = 'canceled', 
+           stripe_subscription_id = NULL,
+           updated_at = NOW()
+       WHERE id = $2`,
+      [TIER_CONFIG.free.qrLimit, user.id]
+    );
+
+    console.log(`[WEBHOOK] ✅ User ${user.id} reverted to free tier (was: ${user.subscription_tier})`);
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Error deleting subscription:', error);
+    throw error;
   }
-
-  const user = userResult.rows[0];
-
-  await pool.query(
-    `UPDATE users 
-     SET subscription_tier = 'free', qr_codes_limit = $1,
-         subscription_status = 'canceled', stripe_subscription_id = NULL,
-         updated_at = NOW()
-     WHERE id = $2`,
-    [TIER_CONFIG.free.qrLimit, user.id]
-  );
-
-  console.log(`[WEBHOOK] ✅ User ${user.id} → free`);
 }
 
 async function handlePaymentSucceeded(invoice) {
-  console.log('[WEBHOOK] invoice.payment_succeeded');
+  console.log('[WEBHOOK] 💵 invoice.payment_succeeded');
   const customerId = invoice.customer;
 
-  await pool.query(
-    `UPDATE users SET subscription_status = 'active', updated_at = NOW() WHERE stripe_customer_id = $1`,
-    [customerId]
-  );
+  try {
+    await pool.query(
+      `UPDATE users SET subscription_status = 'active', updated_at = NOW() WHERE stripe_customer_id = $1`,
+      [customerId]
+    );
 
-  console.log(`[WEBHOOK] ✅ Payment OK: ${customerId}`);
+    console.log(`[WEBHOOK] ✅ Payment succeeded for customer: ${customerId}`);
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Error updating payment status:', error);
+    throw error;
+  }
 }
 
 async function handlePaymentFailed(invoice) {
-  console.log('[WEBHOOK] invoice.payment_failed');
+  console.log('[WEBHOOK] ⚠️ invoice.payment_failed');
   const customerId = invoice.customer;
 
-  await pool.query(
-    `UPDATE users SET subscription_status = 'past_due', updated_at = NOW() WHERE stripe_customer_id = $1`,
-    [customerId]
-  );
+  try {
+    await pool.query(
+      `UPDATE users SET subscription_status = 'past_due', updated_at = NOW() WHERE stripe_customer_id = $1`,
+      [customerId]
+    );
 
-  console.log(`[WEBHOOK] ⚠️ Payment failed: ${customerId}`);
+    console.log(`[WEBHOOK] ⚠️ Payment failed for customer: ${customerId}`);
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Error updating failed payment:', error);
+    throw error;
+  }
 }
+
+// CRITICAL: Disable Next.js body parsing!
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

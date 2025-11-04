@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const pool = new Pool({
-  connectionString: process.STRIPE_WEBHOOK_SECRET_URL || process.env.POSTGRES_URL,
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false },
 });
 
@@ -28,9 +28,8 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  if (req.method !== 'POST') return res.status(400).end();
 
-  // READ RAW BODY
   let rawBody;
   try {
     const buffers = [];
@@ -42,11 +41,9 @@ export default async function handler(req, res) {
 
   let event;
   try {
-    // BYPASS SIGNATURE (TEST MODE ONLY)
     event = JSON.parse(rawBody.toString());
     console.log(`[WEBHOOK] BYPASSED SIG: ${event.type}`);
   } catch (err) {
-    console.error('[PARSE FAIL]:', err.message);
     return res.status(400).send('Invalid JSON');
   }
 
@@ -68,12 +65,12 @@ export default async function handler(req, res) {
 
     try {
       await pool.query(
-        `UPDATE users SET subscription_tier = $1, qr_codes_limit = $2, subscription_status = 'active' WHERE id = $3`,
+        `UPDATE users SET subscription_tier = $1, qr_codes_limit = $2 WHERE id = $3`,
         [tier, qrLimit, userId]
       );
       console.log(`[UPGRADED] User ${userId} → ${tier} (${qrLimit} QRs)`);
     } catch (err) {
-      console.error('[DB ERROR]:', err);
+      console.error('[DB ERROR]:', err.message);
     }
   }
 

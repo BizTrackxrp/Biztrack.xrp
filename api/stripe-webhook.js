@@ -31,26 +31,67 @@ export default async function handler(req, res) {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // DIAGNOSTIC INFO
+  console.log('==================== WEBHOOK DEBUG ====================');
+  console.log('[DEBUG] Webhook secret exists:', !!webhookSecret);
+  console.log('[DEBUG] Webhook secret starts with whsec_:', webhookSecret?.startsWith('whsec_'));
+  console.log('[DEBUG] Webhook secret length:', webhookSecret?.length);
+  console.log('[DEBUG] Signature exists:', !!sig);
+  console.log('[DEBUG] Signature preview:', sig?.substring(0, 20) + '...');
+
   if (!webhookSecret) {
     console.error('⚠️  STRIPE_WEBHOOK_SECRET not set!');
     return res.status(500).json({ error: 'Webhook secret not configured' });
   }
 
   let event;
+  let buf;
 
   try {
-    // Get raw body buffer - CRITICAL: Don't convert to string!
-    const buf = await buffer(req);
+    // Get raw body buffer
+    buf = await buffer(req);
     
-    console.log('[WEBHOOK] Signature present:', !!sig);
-    console.log('[WEBHOOK] Buffer length:', buf.length);
+    console.log('[DEBUG] Buffer length:', buf.length);
+    console.log('[DEBUG] Buffer type:', buf.constructor.name);
+    console.log('[DEBUG] First 50 chars of buffer:', buf.toString('utf8').substring(0, 50));
     
-    // THE FIX: Pass buf directly, NOT buf.toString()
-    event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+    // Try multiple approaches to see which works
+    console.log('[DEBUG] Attempting method 1: Direct buffer...');
+    try {
+      event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+      console.log('[DEBUG] ✅ Method 1 SUCCESS!');
+    } catch (err1) {
+      console.log('[DEBUG] ❌ Method 1 failed:', err1.message);
+      
+      console.log('[DEBUG] Attempting method 2: Buffer as string...');
+      try {
+        event = stripe.webhooks.constructEvent(buf.toString('utf8'), sig, webhookSecret);
+        console.log('[DEBUG] ✅ Method 2 SUCCESS!');
+      } catch (err2) {
+        console.log('[DEBUG] ❌ Method 2 failed:', err2.message);
+        
+        console.log('[DEBUG] Attempting method 3: Raw string...');
+        try {
+          const rawBody = buf.toString();
+          event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+          console.log('[DEBUG] ✅ Method 3 SUCCESS!');
+        } catch (err3) {
+          console.log('[DEBUG] ❌ Method 3 failed:', err3.message);
+          console.log('[DEBUG] All methods failed!');
+          throw err1; // Throw the first error
+        }
+      }
+    }
     
-    console.log(`[WEBHOOK] ✅ Verified! Event: ${event.type}`);
+    console.log('[WEBHOOK] ✅ Verified! Event:', event.type);
+    
   } catch (err) {
-    console.error('⚠️  Webhook verification failed:', err.message);
+    console.error('==================== VERIFICATION FAILED ====================');
+    console.error('[ERROR] Message:', err.message);
+    console.error('[ERROR] Type:', err.type);
+    console.error('[ERROR] Signature used:', sig?.substring(0, 50) + '...');
+    console.error('[ERROR] Secret used (first 10 chars):', webhookSecret?.substring(0, 10) + '...');
+    console.error('=============================================================');
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -100,7 +141,6 @@ async function handleCheckoutCompleted(session) {
 
   let newTier = tier;
   
-  // If no tier in metadata, get it from the subscription
   if (!newTier && subscriptionId) {
     try {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);

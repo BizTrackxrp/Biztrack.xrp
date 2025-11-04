@@ -22,7 +22,7 @@ const PRICE_TO_TIER = {
   'price_1SLwm82Octf3b3Pt09oWF4Jj': 'enterprise'
 };
 
-// Custom buffer function that ACTUALLY returns a Buffer
+// Custom buffer function
 const getRawBody = (req) => {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -40,6 +40,10 @@ const getRawBody = (req) => {
 };
 
 export default async function handler(req, res) {
+  console.log('==================== FULL DEBUG ====================');
+  console.log('[DEBUG] Method:', req.method);
+  console.log('[DEBUG] Headers:', JSON.stringify(req.headers, null, 2));
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -47,7 +51,12 @@ export default async function handler(req, res) {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  console.log('[WEBHOOK] Starting verification...');
+  console.log('[DEBUG] Environment check:');
+  console.log('  - STRIPE_SECRET_KEY exists:', !!process.env.STRIPE_SECRET_KEY);
+  console.log('  - STRIPE_SECRET_KEY starts with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
+  console.log('  - STRIPE_WEBHOOK_SECRET exists:', !!webhookSecret);
+  console.log('  - STRIPE_WEBHOOK_SECRET:', webhookSecret);
+  console.log('  - Signature from header:', sig);
 
   if (!webhookSecret) {
     console.error('⚠️  STRIPE_WEBHOOK_SECRET not set!');
@@ -55,25 +64,35 @@ export default async function handler(req, res) {
   }
 
   let event;
+  let buf;
 
   try {
-    // Get REAL buffer using Node.js streams
-    const buf = await getRawBody(req);
+    buf = await getRawBody(req);
     
-    console.log('[WEBHOOK] Signature present:', !!sig);
-    console.log('[WEBHOOK] Buffer length:', buf.length);
-    console.log('[WEBHOOK] Buffer is Buffer?', Buffer.isBuffer(buf));
+    console.log('[DEBUG] Buffer info:');
+    console.log('  - Buffer length:', buf.length);
+    console.log('  - Buffer is Buffer?', Buffer.isBuffer(buf));
+    console.log('  - First 100 chars:', buf.toString('utf8').substring(0, 100));
     
-    // Verify webhook signature with actual Buffer
+    // Try to construct event
+    console.log('[DEBUG] Attempting to verify with Stripe...');
     event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
     
-    console.log(`[WEBHOOK] ✅ VERIFIED! Event: ${event.type}`);
+    console.log('[WEBHOOK] ✅ VERIFIED! Event:', event.type);
   } catch (err) {
-    console.error('⚠️  Webhook verification failed:', err.message);
+    console.error('==================== VERIFICATION FAILED ====================');
+    console.error('[ERROR] Full error:', err);
+    console.error('[ERROR] Error name:', err.name);
+    console.error('[ERROR] Error message:', err.message);
+    console.error('[ERROR] Error type:', err.type);
+    console.error('[ERROR] Error code:', err.code);
+    console.error('=============================================================');
+    
+    // Return the error but keep processing to see logs
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log(`[WEBHOOK] Processing: ${event.type}`);
+  console.log('[WEBHOOK] Event data:', JSON.stringify(event, null, 2));
 
   try {
     switch (event.type) {
@@ -105,9 +124,16 @@ export default async function handler(req, res) {
 
 async function handleCheckoutCompleted(session) {
   console.log('[WEBHOOK] 💰 checkout.session.completed');
+  console.log('[WEBHOOK] Full session object:', JSON.stringify(session, null, 2));
   
   const userId = session.metadata?.userId || session.client_reference_id;
   const tier = session.metadata?.tier;
+
+  console.log('[WEBHOOK] Extracted data:');
+  console.log('  - userId:', userId);
+  console.log('  - tier from metadata:', tier);
+  console.log('  - metadata:', session.metadata);
+  console.log('  - client_reference_id:', session.client_reference_id);
 
   if (!userId) {
     console.error('[WEBHOOK] ❌ No userId in session!');

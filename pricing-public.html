@@ -218,15 +218,6 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
-    .cta-button.secondary {
-      background: white;
-      color: #667eea;
-      border: 2px solid #667eea;
-    }
-    .cta-button.secondary:hover {
-      background: #667eea;
-      color: white;
-    }
     /* Footer Note */
     .footer-note {
       text-align: center;
@@ -244,111 +235,6 @@
       cursor: pointer;
     }
     .footer-note a:hover {
-      text-decoration: underline;
-    }
-    /* Contact Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-    .modal.show {
-      display: flex;
-    }
-    .modal-content {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 500px;
-      width: 100%;
-      position: relative;
-      animation: slideIn 0.3s ease-out;
-    }
-    @keyframes slideIn {
-      from {
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #64748B;
-      transition: color 0.2s;
-    }
-    .modal-close:hover {
-      color: #DC2626;
-    }
-    .modal h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.75rem;
-      color: #0f172a;
-    }
-    .modal-description {
-      margin: 0 0 1.5rem 0;
-      color: #64748B;
-    }
-    .contact-info {
-      background: #F8FAFC;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-    }
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .contact-item:last-child {
-      margin-bottom: 0;
-    }
-    .contact-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-    .contact-details {
-      flex-grow: 1;
-    }
-    .contact-label {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #64748B;
-    }
-    .contact-value {
-      margin: 0;
-      font-weight: 600;
-      color: #0f172a;
-    }
-    .contact-value a {
-      color: #667eea;
-      text-decoration: none;
-    }
-    .contact-value a:hover {
       text-decoration: underline;
     }
     /* Responsive */
@@ -411,8 +297,7 @@
       <div class="pricing-grid">
        
         <!-- Essential Tier -->
-        <div class="pricing-card popular">
-          <div class="popular-badge">Most Popular</div>
+        <div class="pricing-card">
           <div class="tier-name">Essential</div>
           <div class="tier-price">
             $49<span>/month</span>
@@ -431,8 +316,9 @@
           </a>
         </div>
 
-        <!-- Scale Tier -->
-        <div class="pricing-card">
+        <!-- Scale Tier — MOST POPULAR -->
+        <div class="pricing-card popular">
+          <div class="popular-badge">Most Popular</div>
           <div class="tier-name">Scale</div>
           <div class="tier-price">
             $149<span>/month</span>

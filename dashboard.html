@@ -491,7 +491,7 @@
       <div class="usage-counter-info">
         <h4>QR Codes Used This Month</h4>
         <div class="usage-counter-numbers">
-          <span id="qrUsedCount">0</span> <small>/ <span id="qrLimitCount">100</span></small>
+          <span id="qrUsedCount">0</span> <small>/ <span id="qrLimitCount">10</span></small>
         </div>
         <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;" id="tierName">Free Plan</p>
       </div>
@@ -519,15 +519,15 @@
         <h4><i class="fas fa-boxes"></i> Batch Order Settings</h4>
         <div class="form-group">
           <label for="batchQuantity">
-            Quantity (1-<span id="maxBatchQuantity">100</span>)
+            Quantity (1-<span id="maxBatchQuantity">10</span>)
             <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
           </label>
           <input 
             id="batchQuantity" 
             type="number" 
             min="1" 
-            max="100" 
-            value="10" 
+            max="10" 
+            value="5" 
             placeholder="How many products to mint?"
           />
         </div>
@@ -605,7 +605,7 @@
     let selectedPhotos = [];
     let capturedLocation = null;
     let qrUsedThisMonth = 0;
-    let qrLimit = 100;
+    let qrLimit = 10;
     let currentTier = 'free';
 
     // ✅ FIXED: Load subscription limits from backend
@@ -630,7 +630,7 @@
           
           // Update max batch quantity based on tier and remaining QR codes
           const remaining = qrLimit - qrUsedThisMonth;
-          const tierMaxBatch = data.limits.maxBatchSize || 100;
+          const tierMaxBatch = data.limits.maxBatchSize || 10;
           const maxBatch = Math.min(tierMaxBatch, remaining);
           
           document.getElementById('maxBatchQuantity').textContent = maxBatch;
@@ -649,10 +649,10 @@
 
     // ✅ FIXED: showUpgradePrompt with simpler parameters
     function showUpgradePrompt(percentUsed, used, limit, tier) {
-      const tierUpgrades = {
-        free: { next: 'essential', name: 'Essential', price: 49, limit: 5000 },
-        essential: { next: 'scale', name: 'Scale', price: 149, limit: 25000 },
-        scale: { next: 'enterprise', name: 'Enterprise', price: 399, limit: 100000 }
+     const tierUpgrades = {
+        free: { next: 'essential', name: 'Essential', price: 49, limit: 500 },
+        essential: { next: 'scale', name: 'Scale', price: 149, limit: 2500 },
+        scale: { next: 'enterprise', name: 'Enterprise', price: 399, limit: 10000 }
       };
       
       const upgrade = tierUpgrades[tier];
@@ -1048,7 +1048,7 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
         return;
       }
 
-      const maxAllowed = Math.min(100, qrLimit - qrUsedThisMonth);
+      const maxAllowed = Math.min(10, qrLimit - qrUsedThisMonth);
       if (isBatchMode && (!batchQuantity || batchQuantity < 1 || batchQuantity > maxAllowed)) {
         msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Batch quantity must be between 1 and ${maxAllowed} (you have ${maxAllowed} QR codes remaining).</div>`;
         return;

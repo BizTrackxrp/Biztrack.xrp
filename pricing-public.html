@@ -14,7 +14,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Inter', sans-serif;
       background: #f0f4f8;
@@ -22,7 +21,6 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-
     /* Sidebar */
     .sidebar {
       position: fixed;
@@ -36,24 +34,20 @@
       display: flex;
       flex-direction: column;
     }
-
     .sidebar-logo {
       margin-bottom: 3rem;
     }
-
     .sidebar-logo h1 {
       color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
     }
-
     .sidebar-nav {
       list-style: none;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
-
     .sidebar-nav a {
       color: #94a3b8;
       text-decoration: none;
@@ -65,47 +59,39 @@
       font-weight: 500;
       transition: all 0.2s;
     }
-
     .sidebar-nav a:hover,
     .sidebar-nav a.active {
       background: #1e293b;
       color: #3b82f6;
     }
-
     .sidebar-nav i {
       width: 20px;
       font-size: 1.1rem;
     }
-
     /* Main Content */
     .main-content {
       margin-left: 260px;
       min-height: 100vh;
       padding: 3rem 2rem;
     }
-
     .container {
       max-width: 1400px;
       margin: 0 auto;
     }
-
     .header {
       text-align: center;
       margin-bottom: 3rem;
     }
-
     .header h1 {
       font-size: 3rem;
       font-weight: 800;
       color: #0f172a;
       margin-bottom: 0.5rem;
     }
-
     .header p {
       font-size: 1.25rem;
       color: #64748B;
     }
-
     /* Free Tier Banner */
     .free-tier-banner {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -116,18 +102,15 @@
       margin-bottom: 3rem;
       box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
     }
-
     .free-tier-banner h3 {
       font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
     }
-
     .free-tier-banner p {
       font-size: 1.125rem;
       opacity: 0.95;
     }
-
     /* Pricing Grid */
     .pricing-grid {
       display: grid;
@@ -136,7 +119,6 @@
       max-width: 1200px;
       margin: 0 auto 3rem;
     }
-
     .pricing-card {
       background: white;
       border-radius: 20px;
@@ -148,18 +130,15 @@
       display: flex;
       flex-direction: column;
     }
-
     .pricing-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
       border-color: #667eea;
     }
-
     .pricing-card.popular {
       border-color: #667eea;
       box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
     }
-
     .popular-badge {
       position: absolute;
       top: -1rem;
@@ -173,14 +152,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     .tier-name {
       font-size: 1.75rem;
       font-weight: 700;
       color: #0f172a;
       margin-bottom: 1rem;
     }
-
     .tier-price {
       font-size: 3.5rem;
       font-weight: 800;
@@ -190,25 +167,21 @@
       background-clip: text;
       margin-bottom: 0.5rem;
     }
-
     .tier-price span {
       font-size: 1.25rem;
       color: #64748B;
       font-weight: 500;
     }
-
     .tier-description {
       color: #64748B;
       margin-bottom: 2rem;
       font-size: 1rem;
     }
-
     .features-list {
       list-style: none;
       margin-bottom: 2rem;
       flex-grow: 1;
     }
-
     .features-list li {
       padding: 0.75rem 0;
       color: #334155;
@@ -217,14 +190,12 @@
       gap: 0.75rem;
       font-size: 0.95rem;
     }
-
     .features-list i {
       color: #10B981;
       font-size: 1.125rem;
       margin-top: 0.125rem;
       flex-shrink: 0;
     }
-
     .cta-button {
       width: 100%;
       padding: 1.25rem;
@@ -243,23 +214,19 @@
       text-decoration: none;
       margin-top: auto;
     }
-
     .cta-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
-
     .cta-button.secondary {
       background: white;
       color: #667eea;
       border: 2px solid #667eea;
     }
-
     .cta-button.secondary:hover {
       background: #667eea;
       color: white;
     }
-
     /* Footer Note */
     .footer-note {
       text-align: center;
@@ -267,22 +234,18 @@
       color: #64748B;
       font-size: 1rem;
     }
-
     .footer-note p {
       margin-bottom: 0.5rem;
     }
-
     .footer-note a {
       color: #667eea;
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
     }
-
     .footer-note a:hover {
       text-decoration: underline;
     }
-
     /* Contact Modal */
     .modal {
       display: none;
@@ -297,11 +260,9 @@
       justify-content: center;
       padding: 1rem;
     }
-
     .modal.show {
       display: flex;
     }
-
     .modal-content {
       background: white;
       border-radius: 16px;
@@ -311,7 +272,6 @@
       position: relative;
       animation: slideIn 0.3s ease-out;
     }
-
     @keyframes slideIn {
       from {
         transform: translateY(-50px);
@@ -322,7 +282,6 @@
         opacity: 1;
       }
     }
-
     .modal-close {
       position: absolute;
       top: 1rem;
@@ -334,40 +293,33 @@
       color: #64748B;
       transition: color 0.2s;
     }
-
     .modal-close:hover {
       color: #DC2626;
     }
-
     .modal h2 {
       margin: 0 0 0.5rem 0;
       font-size: 1.75rem;
       color: #0f172a;
     }
-
     .modal-description {
       margin: 0 0 1.5rem 0;
       color: #64748B;
     }
-
     .contact-info {
       background: #F8FAFC;
       padding: 1.5rem;
       border-radius: 12px;
       margin-bottom: 1rem;
     }
-
     .contact-item {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 1rem;
     }
-
     .contact-item:last-child {
       margin-bottom: 0;
     }
-
     .contact-icon {
       width: 40px;
       height: 40px;
@@ -379,32 +331,26 @@
       font-size: 1.25rem;
       flex-shrink: 0;
     }
-
     .contact-details {
       flex-grow: 1;
     }
-
     .contact-label {
       margin: 0;
       font-size: 0.875rem;
       color: #64748B;
     }
-
     .contact-value {
       margin: 0;
       font-weight: 600;
       color: #0f172a;
     }
-
     .contact-value a {
       color: #667eea;
       text-decoration: none;
     }
-
     .contact-value a:hover {
       text-decoration: underline;
     }
-
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -413,21 +359,17 @@
         position: relative;
         padding: 1.5rem;
       }
-
       .sidebar-nav {
         flex-direction: row;
         overflow-x: auto;
       }
-
       .main-content {
         margin-left: 0;
         padding: 2rem 1rem;
       }
-
       .header h1 {
         font-size: 2rem;
       }
-
       .pricing-grid {
         grid-template-columns: 1fr;
       }
@@ -438,13 +380,13 @@
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
+      <h1>BizTrack</h1>
     </div>
     <ul class="sidebar-nav">
       <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
       <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
       <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="pricing.html" class="active"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+      <li><a href="pricing-public.html" class="active"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
       <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
     </ul>
   </nav>
@@ -452,7 +394,7 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="container">
-      
+     
       <!-- Header -->
       <div class="header">
         <h1>Choose Your Plan</h1>
@@ -461,13 +403,13 @@
 
       <!-- Free Tier Banner -->
       <div class="free-tier-banner">
-        <h3>🎉 Start Free Today!</h3>
-        <p>We give you <strong>100 free QR codes</strong> when you sign up — no credit card required.</p>
+        <h3>Start Free Today!</h3>
+        <p>We give you <strong>10 free QR codes</strong> when you sign up — no credit card required.</p>
       </div>
 
       <!-- Pricing Grid -->
       <div class="pricing-grid">
-        
+       
         <!-- Essential Tier -->
         <div class="pricing-card popular">
           <div class="popular-badge">Most Popular</div>
@@ -475,16 +417,16 @@
           <div class="tier-price">
             $49<span>/month</span>
           </div>
-          <div class="tier-description">5,000 QR codes per month</div>
+          <div class="tier-description">500 QR codes per month</div>
           <ul class="features-list">
-            <li><i class="fas fa-check-circle"></i> 5,000 QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> 500 QR codes per month</li>
             <li><i class="fas fa-check-circle"></i> Blockchain verification</li>
             <li><i class="fas fa-check-circle"></i> IPFS storage</li>
             <li><i class="fas fa-check-circle"></i> Priority email support</li>
             <li><i class="fas fa-check-circle"></i> Basic analytics</li>
             <li><i class="fas fa-check-circle"></i> API access</li>
           </ul>
-          <a href="register.html?plan=essential" class="cta-button">
+          <a href="login.html?plan=essential" class="cta-button">
             <i class="fas fa-rocket"></i> Get Started
           </a>
         </div>
@@ -495,9 +437,9 @@
           <div class="tier-price">
             $149<span>/month</span>
           </div>
-          <div class="tier-description">25,000 QR codes per month</div>
+          <div class="tier-description">2,500 QR codes per month</div>
           <ul class="features-list">
-            <li><i class="fas fa-check-circle"></i> 25,000 QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> 2,500 QR codes per month</li>
             <li><i class="fas fa-check-circle"></i> Advanced blockchain features</li>
             <li><i class="fas fa-check-circle"></i> Dedicated IPFS storage</li>
             <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
@@ -505,8 +447,8 @@
             <li><i class="fas fa-check-circle"></i> Full API access</li>
             <li><i class="fas fa-check-circle"></i> Custom integrations</li>
           </ul>
-          <a href="register.html?plan=scale" class="cta-button">
-            <i class="fas fa-arrow-up"></i> Upgrade to Scale
+          <a href="login.html?plan=scale" class="cta-button">
+            <i class="fas fa-rocket"></i> Get Started
           </a>
         </div>
 
@@ -516,9 +458,9 @@
           <div class="tier-price">
             $399<span>/month</span>
           </div>
-          <div class="tier-description">100,000+ QR codes per month</div>
+          <div class="tier-description">10,000+ QR codes per month</div>
           <ul class="features-list">
-            <li><i class="fas fa-check-circle"></i> 100,000+ QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> 10,000+ QR codes per month</li>
             <li><i class="fas fa-check-circle"></i> Enterprise blockchain features</li>
             <li><i class="fas fa-check-circle"></i> Dedicated infrastructure</li>
             <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
@@ -527,11 +469,10 @@
             <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
             <li><i class="fas fa-check-circle"></i> Training & consultation</li>
           </ul>
-          <button onclick="openContactModal()" class="cta-button secondary">
-            <i class="fas fa-phone"></i> Contact Sales
-          </button>
+          <a href="login.html?plan=enterprise" class="cta-button">
+            <i class="fas fa-rocket"></i> Get Started
+          </a>
         </div>
-
       </div>
 
       <!-- Footer Note -->
@@ -539,37 +480,36 @@
         <p><strong>All plans include:</strong> Blockchain verification, IPFS storage, and QR code generation</p>
         <p>Questions? <a onclick="openContactModal()">Contact our team</a></p>
       </div>
-
     </div>
   </main>
 
   <!-- Contact Modal -->
   <div id="contactModal" class="modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeContactModal()">&times;</button>
-      
+      <button class="modal-close" onclick="closeContactModal()">×</button>
+     
       <h2>Contact Sales</h2>
       <p class="modal-description">Get in touch for Enterprise pricing and custom solutions.</p>
-      
+     
       <div class="contact-info">
         <div class="contact-item">
-          <div class="contact-icon">📧</div>
+          <div class="contact-icon">Email</div>
           <div class="contact-details">
             <p class="contact-label">Email</p>
             <p class="contact-value"><a href="mailto:Biztrack.xrp@proton.me">Biztrack.xrp@proton.me</a></p>
           </div>
         </div>
-        
+       
         <div class="contact-item">
-          <div class="contact-icon">📞</div>
+          <div class="contact-icon">Phone</div>
           <div class="contact-details">
             <p class="contact-label">Phone</p>
             <p class="contact-value"><a href="tel:3606700852">(360) 670-0852</a></p>
           </div>
         </div>
-        
+       
         <div class="contact-item">
-          <div class="contact-icon">🕐</div>
+          <div class="contact-icon">Clock</div>
           <div class="contact-details">
             <p class="contact-label">Business Hours</p>
             <p class="contact-value">7 AM - 5 PM Pacific</p>
@@ -585,19 +525,16 @@
       document.getElementById('contactModal').classList.add('show');
       document.body.style.overflow = 'hidden';
     }
-
     function closeContactModal() {
       document.getElementById('contactModal').classList.remove('show');
       document.body.style.overflow = 'auto';
     }
-
     // Close modal on outside click
     document.getElementById('contactModal').addEventListener('click', function(e) {
       if (e.target === this) {
         closeContactModal();
       }
     });
-
     // ESC key to close
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {

@@ -57,10 +57,14 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Product name is required' });
     }
 
+    // ✅ UPDATED: Check batch quantity against tier limits
     if (isBatchOrder) {
-      if (!batchQuantity || batchQuantity < 1 || batchQuantity > 100) {
+      const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
+      const maxBatch = tierConfig.maxBatchSize || 10;
+
+      if (!batchQuantity || batchQuantity < 1 || batchQuantity > maxBatch) {
         return res.status(400).json({ 
-          error: 'Batch quantity must be between 1 and 100' 
+          error: `Batch quantity must be between 1 and ${maxBatch} for your ${user.subscription_tier} plan` 
         });
       }
     }
@@ -289,7 +293,6 @@ module.exports = async (req, res) => {
       }
 
       console.log('Saving to database...');
-      // FIXED: Added batch tracking columns
       await pool.query(
         `INSERT INTO products (
           product_id, 
@@ -316,7 +319,7 @@ module.exports = async (req, res) => {
           qrIpfsHash, 
           metadata, 
           user.id,
-          isBatchOrder && itemNumber === 1, // Only first item is marked as batch group
+          isBatchOrder && itemNumber === 1,
           batchGroupId,
           isBatchOrder ? quantity : null
         ]
@@ -353,7 +356,7 @@ module.exports = async (req, res) => {
     );
     console.log(`Updated QR counter: +${quantity} for user ${user.id}`);
 
-    // Step 4: Return JSON (frontend will create ZIP if needed)
+    // Step 4: Return JSON
     if (isBatchOrder && products.length > 1) {
       console.log('\nBatch order complete - returning product data');
 
@@ -375,7 +378,6 @@ module.exports = async (req, res) => {
         }
       });
     } else {
-      // Single product
       const product = products[0];
 
       return res.status(200).json({

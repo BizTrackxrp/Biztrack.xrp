@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Verification - BizTrack</title>
+  <title>Verify Product - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,16 +18,189 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      background: #f0f4f8;
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
-      padding: 2rem 1rem;
     }
 
-    .container {
-      max-width: 900px;
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Landing State (No Product) */
+    .verify-landing {
+      max-width: 800px;
       margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .camera-icon-large {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      font-size: 4rem;
+      color: white;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .verify-landing h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .verify-landing p {
+      font-size: 1.25rem;
+      color: #475569;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .scan-instructions {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border: 2px solid #e2e8f0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .scan-instructions h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .scan-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .scan-step-number {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .scan-step-content h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .scan-step-content p {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .biztrack-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      margin-top: 2rem;
+    }
+
+    /* Product View State */
+    .product-view {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
     .back-button {
@@ -118,6 +291,43 @@
       display: inline-block;
     }
 
+    /* Info Cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: white;
+      padding: 1.75rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-card-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+    }
+
     /* Photo Gallery */
     .photo-gallery {
       background: white;
@@ -136,10 +346,6 @@
       align-items: center;
       gap: 0.75rem;
       color: #1E293B;
-    }
-
-    .photo-gallery h3 i {
-      color: #4F46E5;
     }
 
     .photo-carousel {
@@ -229,91 +435,6 @@
       border-radius: 4px;
     }
 
-    /* Lightbox */
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-    }
-
-    .lightbox.active {
-      display: flex;
-    }
-
-    .lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
-      background: white;
-      border: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.5rem;
-      color: #1E293B;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .lightbox-close:hover {
-      transform: rotate(90deg);
-    }
-
-    /* Info Cards */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .info-card {
-      background: white;
-      padding: 1.75rem;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      border: 1px solid #E2E8F0;
-      transition: all 0.2s;
-    }
-
-    .info-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    .info-card-label {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: #64748B;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
-    }
-
-    .info-card-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1E293B;
-    }
-
     /* Map Section */
     .map-section {
       background: white;
@@ -332,10 +453,6 @@
       align-items: center;
       gap: 0.75rem;
       color: #1E293B;
-    }
-
-    .map-section h3 i {
-      color: #10B981;
     }
 
     .map-container {
@@ -360,6 +477,7 @@
       background: #F8FAFC;
       border-radius: 12px;
       margin-top: 1rem;
+      flex-wrap: wrap;
     }
 
     .map-coords i {
@@ -401,10 +519,6 @@
       align-items: center;
       gap: 0.75rem;
       color: #1E293B;
-    }
-
-    .metadata-section h3 i {
-      color: #7C3AED;
     }
 
     .metadata-item {
@@ -480,13 +594,84 @@
       padding: 2rem 0;
     }
 
-    .verify-footer i {
-      color: #10B981;
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
     }
 
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .lightbox-close:hover {
+      transform: rotate(90deg);
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      body {
-        padding: 1rem;
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .verify-landing {
+        padding: 2rem 1rem;
+      }
+
+      .camera-icon-large {
+        width: 120px;
+        height: 120px;
+        font-size: 3rem;
+      }
+
+      .verify-landing h1 {
+        font-size: 2rem;
       }
 
       .product-name {
@@ -509,97 +694,159 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="index.html" class="back-button">
-      <i class="fas fa-arrow-left"></i>
-      Back to Home
-    </a>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🚚 BizTrack</h1>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="pricing.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
+    </ul>
+  </nav>
 
-    <!-- Verified Badge -->
-    <div class="verified-badge">
-      <i class="fas fa-shield-check"></i>
-      <div>
-        <h1>✓ Verified on Blockchain</h1>
-        <p>This product is authentic and verified on XRPL</p>
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Landing State (No Product ID) -->
+    <div id="landingState" class="verify-landing" style="display: none;">
+      <div class="camera-icon-large">
+        📸
       </div>
-    </div>
+      
+      <h1>Check Your Product's Authenticity</h1>
+      <p>Verify any BizTrack-enabled product with instant blockchain proof.</p>
 
-    <!-- Product Header -->
-    <div class="product-header">
-      <h2 class="product-name" id="productName">Loading...</h2>
-      <span class="product-id" id="productId">Product ID: ...</span>
-    </div>
+      <div class="scan-instructions">
+        <h3><i class="fas fa-qrcode"></i> How to Verify</h3>
+        
+        <div class="scan-step">
+          <div class="scan-step-number">1</div>
+          <div class="scan-step-content">
+            <h4>Find the QR Code</h4>
+            <p>Look for the BizTrack QR code on your product packaging</p>
+          </div>
+        </div>
 
-    <!-- Photo Gallery -->
-    <div class="photo-gallery" id="photoGallery" style="display: none;">
-      <h3><i class="fas fa-images"></i> Product Photos</h3>
-      <div class="photo-carousel">
-        <div class="photo-track" id="photoTrack"></div>
-        <div class="carousel-controls">
-          <button class="carousel-btn" id="prevBtn">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="carousel-btn" id="nextBtn">
-            <i class="fas fa-chevron-right"></i>
-          </button>
+        <div class="scan-step">
+          <div class="scan-step-number">2</div>
+          <div class="scan-step-content">
+            <h4>Scan with Your Phone</h4>
+            <p>Use your phone's camera to scan the QR code</p>
+          </div>
+        </div>
+
+        <div class="scan-step">
+          <div class="scan-step-number">3</div>
+          <div class="scan-step-content">
+            <h4>View Verification</h4>
+            <p>Instantly see your product's complete verified history</p>
+          </div>
+        </div>
+
+        <div class="biztrack-badge">
+          🚚 Powered by BizTrack
         </div>
       </div>
-      <div class="carousel-dots" id="carouselDots"></div>
     </div>
 
-    <!-- Info Cards -->
-    <div class="info-grid">
-      <div class="info-card">
-        <div class="info-card-label">SKU</div>
-        <div class="info-card-value" id="sku">-</div>
-      </div>
-      <div class="info-card">
-        <div class="info-card-label">Batch Number</div>
-        <div class="info-card-value" id="batchNumber">-</div>
-      </div>
-      <div class="info-card">
-        <div class="info-card-label">Minted On</div>
-        <div class="info-card-value" id="mintedOn">-</div>
-      </div>
-    </div>
+    <!-- Product View State (Has Product ID) -->
+    <div id="productState" class="product-view" style="display: none;">
+      <a href="verify.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Verify
+      </a>
 
-    <!-- Map Section -->
-    <div class="map-section" id="mapSection" style="display: none;">
-      <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
-      <div class="map-container" id="mapContainer"></div>
-      <div class="map-coords">
-        <i class="fas fa-location-dot"></i>
-        <div class="map-coords-text">
-          <div class="map-coords-label">Coordinates:</div>
-          <div class="map-coords-value" id="coordinates">-</div>
+      <!-- Verified Badge -->
+      <div class="verified-badge">
+        <i class="fas fa-shield-check"></i>
+        <div>
+          <h1>✓ Verified on Blockchain</h1>
+          <p>This product is authentic and verified on XRPL</p>
         </div>
-        <a href="#" id="viewOnGoogleMaps" target="_blank" class="action-btn-secondary" style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.875rem;">
-          <i class="fas fa-external-link-alt"></i> View on Google Maps
+      </div>
+
+      <!-- Product Header -->
+      <div class="product-header">
+        <h2 class="product-name" id="productName">Loading...</h2>
+        <span class="product-id" id="productId">Product ID: ...</span>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">SKU</div>
+          <div class="info-card-value" id="sku">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Batch Number</div>
+          <div class="info-card-value" id="batchNumber">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Minted On</div>
+          <div class="info-card-value" id="mintedOn">-</div>
+        </div>
+      </div>
+
+      <!-- Photo Gallery -->
+      <div class="photo-gallery" id="photoGallery" style="display: none;">
+        <h3>📸 Product Photos</h3>
+        <div class="photo-carousel">
+          <div class="photo-track" id="photoTrack"></div>
+          <div class="carousel-controls">
+            <button class="carousel-btn" id="prevBtn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn" id="nextBtn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+      </div>
+
+      <!-- Map Section -->
+      <div class="map-section" id="mapSection" style="display: none;">
+        <h3>📍 Location</h3>
+        <div class="map-container" id="mapContainer"></div>
+        <div class="map-coords">
+          <i class="fas fa-location-dot"></i>
+          <div class="map-coords-text">
+            <div class="map-coords-label">Coordinates:</div>
+            <div class="map-coords-value" id="coordinates">-</div>
+          </div>
+          <a href="#" id="viewOnGoogleMaps" target="_blank" class="action-btn-secondary" style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.875rem;">
+            <i class="fas fa-external-link-alt"></i> View on Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- Metadata Section -->
+      <div class="metadata-section" id="metadataSection" style="display: none;">
+        <h3>ℹ️ Additional Information</h3>
+        <div id="metadataContent"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <a href="#" id="blockchainLink" target="_blank" class="action-btn action-btn-primary">
+          <i class="fas fa-cube"></i> View on Blockchain
+        </a>
+        <a href="#" id="ipfsLink" target="_blank" class="action-btn action-btn-secondary">
+          <i class="fas fa-database"></i> View on IPFS
         </a>
       </div>
+
+      <!-- Footer -->
+      <div class="verify-footer">
+        <i class="fas fa-shield-check"></i> Verified at <span id="verifiedTime">...</span>
+      </div>
     </div>
 
-    <!-- Metadata Section -->
-    <div class="metadata-section" id="metadataSection" style="display: none;">
-      <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
-      <div id="metadataContent"></div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <a href="#" id="blockchainLink" target="_blank" class="action-btn action-btn-primary">
-        <i class="fas fa-cube"></i> View on Blockchain
-      </a>
-      <a href="#" id="ipfsLink" target="_blank" class="action-btn action-btn-secondary">
-        <i class="fas fa-database"></i> View on IPFS
-      </a>
-    </div>
-
-    <!-- Footer -->
-    <div class="verify-footer">
-      <i class="fas fa-shield-check"></i> Verified at <span id="verifiedTime">...</span>
-    </div>
-  </div>
+  </main>
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
@@ -618,9 +865,11 @@
     const productId = urlParams.get('id');
 
     if (!productId) {
-      document.getElementById('productName').textContent = 'Invalid Product ID';
-      document.body.innerHTML = '<div style="text-align: center; padding: 4rem;"><h1>⚠️ No Product ID Provided</h1><p>Please scan a valid QR code.</p></div>';
+      // Show landing state
+      document.getElementById('landingState').style.display = 'block';
     } else {
+      // Show product state and load product
+      document.getElementById('productState').style.display = 'block';
       loadProduct(productId);
     }
 

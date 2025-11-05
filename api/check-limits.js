@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 const LIMITS = {
-  free: 100,
-  essential: 5000,
-  scale: 25000,
-  enterprise: 100000
+  free: 10,
+  essential: 500,
+  scale: 2500,
+  enterprise: 10000
 };
 
 module.exports = async (req, res) => {
@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
     const tier = user.subscription_tier || 'free';
     
     // Use qr_codes_limit from DB if set, otherwise use tier default
-    const qrLimit = user.qr_codes_limit || LIMITS[tier] || 100;
+    const qrLimit = user.qr_codes_limit || LIMITS[tier] || 10;
     const qrCodesUsed = user.qr_codes_used || 0;
 
     return res.status(200).json({
@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
       },
       limits: {
         qrLimit: qrLimit,
-        maxBatchSize: tier === 'enterprise' ? 1000 : tier === 'scale' ? 100 : tier === 'essential' ? 50 : 10
+        maxBatchSize: tier === 'enterprise' ? 1000 : tier === 'scale' ? 500 : tier === 'essential' ? 100 : 10
       },
       usage: {
         qrCodesUsed: qrCodesUsed,

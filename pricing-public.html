@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pricing - BizTrack Supply Chain Tracking</title>
+  <title>Pricing - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,126 +17,131 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      background: #f0f4f8;
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
     }
 
-    /* Navigation */
-    nav {
-      background: white;
-      padding: 1.5rem 3rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
     }
 
-    .logo {
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
-      color: #4F46E5;
     }
 
-    .nav-links {
+    .sidebar-nav {
+      list-style: none;
       display: flex;
-      gap: 2rem;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
       align-items: center;
-    }
-
-    .nav-links a {
-      color: #64748B;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: #4F46E5;
-    }
-
-    .btn-primary {
-      padding: 0.75rem 1.5rem;
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      color: #FFFFFF !important;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
+      gap: 0.75rem;
+      font-weight: 500;
       transition: all 0.2s;
-      display: inline-block;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
     }
 
     /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+      padding: 3rem 2rem;
+    }
+
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 4rem 2rem;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 4rem;
+      margin-bottom: 3rem;
     }
 
     .header h1 {
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: 800;
-      color: #1E293B;
-      margin-bottom: 1rem;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
     }
 
     .header p {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       color: #64748B;
-      margin-bottom: 2rem;
     }
 
-    .cta-group {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-secondary {
-      padding: 0.875rem 1.75rem;
-      background: white;
-      color: #4F46E5;
-      border: 2px solid #4F46E5;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: 2px solid #4F46E5;
-    }
-
-    .btn-secondary:hover {
-      background: #4F46E5;
+    /* Free Tier Banner */
+    .free-tier-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
     }
 
+    .free-tier-banner h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .free-tier-banner p {
+      font-size: 1.125rem;
+      opacity: 0.95;
+    }
+
+    /* Pricing Grid */
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
-      margin-bottom: 3rem;
       max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto 3rem;
     }
 
     .pricing-card {
       background: white;
       border-radius: 20px;
       padding: 2.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       border: 2px solid #E2E8F0;
       transition: all 0.3s;
       position: relative;
@@ -146,32 +151,43 @@
 
     .pricing-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      border-color: #667eea;
+    }
+
+    .pricing-card.popular {
+      border-color: #667eea;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
     }
 
     .popular-badge {
       position: absolute;
       top: -1rem;
       right: 2rem;
-      background: #4F46E5;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 0.875rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .tier-name {
       font-size: 1.75rem;
       font-weight: 700;
-      color: #1E293B;
+      color: #0f172a;
       margin-bottom: 1rem;
     }
 
     .tier-price {
       font-size: 3.5rem;
       font-weight: 800;
-      color: #4F46E5;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 0.5rem;
     }
 
@@ -184,7 +200,7 @@
     .tier-description {
       color: #64748B;
       margin-bottom: 2rem;
-      font-size: 1.125rem;
+      font-size: 1rem;
     }
 
     .features-list {
@@ -194,31 +210,25 @@
     }
 
     .features-list li {
-      padding: 0.875rem 0;
+      padding: 0.75rem 0;
       color: #334155;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.75rem;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
     .features-list i {
       color: #10B981;
-      font-size: 1.25rem;
-    }
-
-    .features-list li.disabled {
-      color: #94A3B8;
-    }
-
-    .features-list li.disabled i {
-      color: #EF4444;
+      font-size: 1.125rem;
+      margin-top: 0.125rem;
+      flex-shrink: 0;
     }
 
     .cta-button {
       width: 100%;
       padding: 1.25rem;
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
       border-radius: 12px;
@@ -236,14 +246,26 @@
 
     .cta-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
 
+    .cta-button.secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .cta-button.secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    /* Footer Note */
     .footer-note {
       text-align: center;
-      margin-top: 4rem;
+      margin-top: 3rem;
       color: #64748B;
-      font-size: 1.125rem;
+      font-size: 1rem;
     }
 
     .footer-note p {
@@ -251,7 +273,7 @@
     }
 
     .footer-note a {
-      color: #4F46E5;
+      color: #667eea;
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
@@ -320,7 +342,7 @@
     .modal h2 {
       margin: 0 0 0.5rem 0;
       font-size: 1.75rem;
-      color: #1E293B;
+      color: #0f172a;
     }
 
     .modal-description {
@@ -349,22 +371,13 @@
     .contact-icon {
       width: 40px;
       height: 40px;
-      background: #4F46E5;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
       font-size: 1.25rem;
       flex-shrink: 0;
-    }
-
-    .contact-icon.phone {
-      background: #10B981;
-    }
-
-    .contact-icon.clock {
-      background: #F59E0B;
     }
 
     .contact-details {
@@ -380,11 +393,11 @@
     .contact-value {
       margin: 0;
       font-weight: 600;
-      color: #1E293B;
+      color: #0f172a;
     }
 
     .contact-value a {
-      color: #4F46E5;
+      color: #667eea;
       text-decoration: none;
     }
 
@@ -392,161 +405,143 @@
       text-decoration: underline;
     }
 
-    .modal-footer {
-      margin-top: 1.5rem;
-      font-size: 0.875rem;
-      color: #64748B;
-      text-align: center;
-    }
-
+    /* Responsive */
     @media (max-width: 768px) {
-      nav {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 2rem 1rem;
       }
 
       .header h1 {
-        font-size: 2.5rem;
-      }
-
-      .header p {
-        font-size: 1.125rem;
+        font-size: 2rem;
       }
 
       .pricing-grid {
         grid-template-columns: 1fr;
-      }
-
-      .modal-content {
-        padding: 1.5rem;
-      }
-    }
-
-    @media (max-width: 1100px) and (min-width: 769px) {
-      .pricing-grid {
-        grid-template-columns: 1fr;
-        max-width: 400px;
       }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">
-      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack" style="height: 50px; vertical-align: middle;">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🚚 BizTrack</h1>
     </div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="pricing-public.html">Pricing</a>
-      <a href="login.html">Login</a>
-      <a href="register.html?redirect=pricing" class="btn-primary">Sign Up Free</a>
-    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="pricing.html" class="active"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
+    </ul>
   </nav>
 
-  <div class="container">
-    <div class="header">
-      <h1>Simple, Transparent Pricing</h1>
-      <p>Choose the plan that's right for your business</p>
-      <div class="cta-group">
-        <a href="register.html?redirect=pricing" class="btn-primary">
-          <i class="fas fa-rocket"></i> Get Started Free
-        </a>
-        <button onclick="openContactModal()" class="btn-secondary">
-          <i class="fas fa-phone"></i> Contact Sales
-        </button>
-      </div>
-    </div>
-
-    <div class="pricing-grid">
-      <!-- Free Tier Blurb -->
-      <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-        <p style="font-size: 1.25rem; color: #64748B; margin: 0;">
-          <strong style="color: #4F46E5;">New to BizTrack?</strong> We give you <strong>100 QR codes for free</strong> to test out the platform — no credit card required!
-        </p>
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Header -->
+      <div class="header">
+        <h1>Choose Your Plan</h1>
+        <p>Flexible pricing for businesses of all sizes</p>
       </div>
 
-      <!-- Essential Tier -->
-      <div class="pricing-card">
-        <div class="tier-name">Essential</div>
-        <div class="tier-price">
-          $49<span>/month</span>
+      <!-- Free Tier Banner -->
+      <div class="free-tier-banner">
+        <h3>🎉 Start Free Today!</h3>
+        <p>We give you <strong>100 free QR codes</strong> when you sign up — no credit card required.</p>
+      </div>
+
+      <!-- Pricing Grid -->
+      <div class="pricing-grid">
+        
+        <!-- Essential Tier -->
+        <div class="pricing-card popular">
+          <div class="popular-badge">Most Popular</div>
+          <div class="tier-name">Essential</div>
+          <div class="tier-price">
+            $49<span>/month</span>
+          </div>
+          <div class="tier-description">5,000 QR codes per month</div>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> 5,000 QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> Blockchain verification</li>
+            <li><i class="fas fa-check-circle"></i> IPFS storage</li>
+            <li><i class="fas fa-check-circle"></i> Priority email support</li>
+            <li><i class="fas fa-check-circle"></i> Basic analytics</li>
+            <li><i class="fas fa-check-circle"></i> API access</li>
+          </ul>
+          <a href="register.html?plan=essential" class="cta-button">
+            <i class="fas fa-rocket"></i> Get Started
+          </a>
         </div>
-        <div class="tier-description">For growing businesses</div>
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> <strong>5,000 QR codes</strong> per month</li>
-          <li><i class="fas fa-check-circle"></i> Priority verification</li>
-          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
-          <li><i class="fas fa-check-circle"></i> Priority email support</li>
-          <li><i class="fas fa-check-circle"></i> Basic analytics</li>
-          <li><i class="fas fa-check-circle"></i> API access</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> Advanced blockchain features</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> 24/7 priority support</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> Custom integrations</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> Dedicated account manager</li>
-        </ul>
-        <a href="register.html?plan=essential&price=49" class="cta-button">
-          <i class="fas fa-arrow-up"></i> Upgrade to Essential
-        </a>
-      </div>
 
-      <!-- Scale Tier -->
-      <div class="pricing-card">
-        <div class="tier-name">Scale</div>
-        <div class="tier-price">
-          $149<span>/month</span>
+        <!-- Scale Tier -->
+        <div class="pricing-card">
+          <div class="tier-name">Scale</div>
+          <div class="tier-price">
+            $149<span>/month</span>
+          </div>
+          <div class="tier-description">25,000 QR codes per month</div>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> 25,000 QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> Advanced blockchain features</li>
+            <li><i class="fas fa-check-circle"></i> Dedicated IPFS storage</li>
+            <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
+            <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
+            <li><i class="fas fa-check-circle"></i> Full API access</li>
+            <li><i class="fas fa-check-circle"></i> Custom integrations</li>
+          </ul>
+          <a href="register.html?plan=scale" class="cta-button">
+            <i class="fas fa-arrow-up"></i> Upgrade to Scale
+          </a>
         </div>
-        <div class="tier-description">For established companies</div>
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> <strong>25,000 QR codes</strong> per month</li>
-          <li><i class="fas fa-check-circle"></i> Advanced blockchain features</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated IPFS storage</li>
-          <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
-          <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
-          <li><i class="fas fa-check-circle"></i> Full API access</li>
-          <li><i class="fas fa-check-circle"></i> Custom integrations</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> Dedicated account manager</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> White-label options</li>
-          <li class="disabled"><i class="fas fa-times-circle"></i> SLA guarantees</li>
-        </ul>
-        <a href="register.html?plan=scale&price=149" class="cta-button">
-          <i class="fas fa-arrow-up"></i> Upgrade to Scale
-        </a>
-      </div>
 
-      <!-- Enterprise Tier -->
-      <div class="pricing-card">
-        <div class="tier-name">Enterprise</div>
-        <div class="tier-price">
-          $399<span>/month</span>
+        <!-- Enterprise Tier -->
+        <div class="pricing-card">
+          <div class="tier-name">Enterprise</div>
+          <div class="tier-price">
+            $399<span>/month</span>
+          </div>
+          <div class="tier-description">100,000+ QR codes per month</div>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> 100,000+ QR codes per month</li>
+            <li><i class="fas fa-check-circle"></i> Enterprise blockchain features</li>
+            <li><i class="fas fa-check-circle"></i> Dedicated infrastructure</li>
+            <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
+            <li><i class="fas fa-check-circle"></i> Custom analytics</li>
+            <li><i class="fas fa-check-circle"></i> White-label options</li>
+            <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
+            <li><i class="fas fa-check-circle"></i> Training & consultation</li>
+          </ul>
+          <button onclick="openContactModal()" class="cta-button secondary">
+            <i class="fas fa-phone"></i> Contact Sales
+          </button>
         </div>
-        <div class="tier-description">For large organizations</div>
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> <strong>100,000+ QR codes</strong> per month</li>
-          <li><i class="fas fa-check-circle"></i> Enterprise blockchain features</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated infrastructure</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
-          <li><i class="fas fa-check-circle"></i> Custom analytics</li>
-          <li><i class="fas fa-check-circle"></i> White-label options</li>
-          <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
-          <li><i class="fas fa-check-circle"></i> Custom contracts</li>
-          <li><i class="fas fa-check-circle"></i> Priority onboarding</li>
-          <li><i class="fas fa-check-circle"></i> Training & consultation</li>
-        </ul>
-        <button onclick="openContactModal()" class="cta-button">
-          <i class="fas fa-phone"></i> Contact Sales
-        </button>
-      </div>
-    </div>
 
-    <div class="footer-note">
-      <p><strong>All plans include:</strong> IPFS storage, XRPL blockchain verification, and QR code generation</p>
-      <p>Need help choosing? <a onclick="openContactModal()">Contact our team</a></p>
-      <p style="margin-top: 2rem; font-size: 1rem; color: #64748B;">
-        Start with our Free plan today — upgrade anytime as your business grows
-      </p>
+      </div>
+
+      <!-- Footer Note -->
+      <div class="footer-note">
+        <p><strong>All plans include:</strong> Blockchain verification, IPFS storage, and QR code generation</p>
+        <p>Questions? <a onclick="openContactModal()">Contact our team</a></p>
+      </div>
+
     </div>
-  </div>
+  </main>
 
   <!-- Contact Modal -->
   <div id="contactModal" class="modal">
@@ -554,13 +549,11 @@
       <button class="modal-close" onclick="closeContactModal()">&times;</button>
       
       <h2>Contact Sales</h2>
-      <p class="modal-description">Get in touch with our team for Enterprise pricing and custom solutions.</p>
+      <p class="modal-description">Get in touch for Enterprise pricing and custom solutions.</p>
       
       <div class="contact-info">
         <div class="contact-item">
-          <div class="contact-icon">
-            📧
-          </div>
+          <div class="contact-icon">📧</div>
           <div class="contact-details">
             <p class="contact-label">Email</p>
             <p class="contact-value"><a href="mailto:Biztrack.xrp@proton.me">Biztrack.xrp@proton.me</a></p>
@@ -568,9 +561,7 @@
         </div>
         
         <div class="contact-item">
-          <div class="contact-icon phone">
-            📞
-          </div>
+          <div class="contact-icon">📞</div>
           <div class="contact-details">
             <p class="contact-label">Phone</p>
             <p class="contact-value"><a href="tel:3606700852">(360) 670-0852</a></p>
@@ -578,20 +569,14 @@
         </div>
         
         <div class="contact-item">
-          <div class="contact-icon clock">
-            🕐
-          </div>
+          <div class="contact-icon">🕐</div>
           <div class="contact-details">
             <p class="contact-label">Business Hours</p>
-            <p class="contact-value">7 AM - 5 PM (Pacific Time)</p>
+            <p class="contact-value">7 AM - 5 PM Pacific</p>
             <p class="contact-label">Monday - Friday</p>
           </div>
         </div>
       </div>
-      
-      <p class="modal-footer">
-        We typically respond within 1 business day
-      </p>
     </div>
   </div>
 
@@ -606,7 +591,7 @@
       document.body.style.overflow = 'auto';
     }
 
-    // Close modal when clicking outside
+    // Close modal on outside click
     document.getElementById('contactModal').addEventListener('click', function(e) {
       if (e.target === this) {
         closeContactModal();

@@ -40,16 +40,10 @@
       margin-bottom: 3rem;
     }
 
-    .sidebar-logo img {
-      height: 50px;
-      width: auto;
-    }
-
     .sidebar-logo h1 {
       color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
-      margin-top: 0.5rem;
     }
 
     .sidebar-nav {
@@ -92,20 +86,21 @@
     .page-header {
       background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
       color: white;
-      padding: 3rem 2rem;
+      padding: 4rem 2rem;
       text-align: center;
     }
 
     .page-header h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 800;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
     }
 
     .page-header p {
-      font-size: 1.125rem;
+      font-size: 1.25rem;
       opacity: 0.95;
-      max-width: 700px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -116,120 +111,159 @@
       padding: 3rem 2rem;
     }
 
-    .workflow-section {
+    /* Section */
+    .section {
       background: white;
       border-radius: 16px;
-      padding: 2.5rem;
+      padding: 3rem;
       margin-bottom: 2rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .workflow-section h2 {
-      font-size: 1.875rem;
+    .section h2 {
+      font-size: 2rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
       color: #0f172a;
     }
 
-    .steps {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+    .section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1e40af;
     }
 
-    .step-item {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
+    /* Product Journey Visual */
+    .journey-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
     }
 
-    .step-number {
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
+    .journey-step {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      border: 2px solid #3b82f6;
+      position: relative;
+    }
+
+    .journey-step::after {
+      content: '→';
+      position: absolute;
+      right: -2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: #3b82f6;
+      font-weight: 700;
+    }
+
+    .journey-step:last-child::after {
+      display: none;
+    }
+
+    .journey-icon {
+      width: 60px;
+      height: 60px;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 1.125rem;
+      margin: 0 auto 1rem;
+      font-size: 2rem;
     }
 
-    .step-content h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
+    .journey-step h4 {
+      font-size: 1.125rem;
+      font-weight: 700;
       margin-bottom: 0.5rem;
       color: #0f172a;
     }
 
-    .step-content p {
+    .journey-step p {
+      color: #475569;
+      font-size: 0.95rem;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .feature-card p {
       color: #475569;
       line-height: 1.7;
     }
 
-    /* Form Section */
-    .form-section {
-      background: white;
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 3rem;
       border-radius: 16px;
-      padding: 2.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin: 3rem 0;
     }
 
-    .form-section h2 {
-      font-size: 1.875rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: #0f172a;
+    .cta-section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: white;
     }
 
-    .form-description {
-      color: #64748b;
+    .cta-section p {
+      font-size: 1.125rem;
       margin-bottom: 2rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #334155;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 100px;
+      opacity: 0.95;
     }
 
     .btn {
-      padding: 0.875rem 1.75rem;
+      padding: 1rem 2rem;
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1.125rem;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
@@ -238,35 +272,42 @@
       border: none;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white;
+    .btn-white {
+      background: white;
+      color: #1e40af;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
-    .btn-primary:hover {
+    .btn-white:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
     }
 
-    .qr-preview {
-      margin-top: 2rem;
-      padding: 2rem;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 2px dashed #cbd5e1;
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
       text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
     }
 
-    .qr-preview img {
-      max-width: 300px;
-      margin: 0 auto;
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 0.5rem;
     }
 
-    .qr-placeholder {
-      color: #94a3b8;
+    .stat-label {
+      color: #475569;
       font-size: 1rem;
-      padding: 3rem;
     }
 
     /* Footer */
@@ -303,30 +344,6 @@
       color: #3b82f6;
     }
 
-    .social-icons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-    }
-
-    .social-icons a {
-      width: 40px;
-      height: 40px;
-      background: #1e293b;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #94a3b8;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .social-icons a:hover {
-      background: #3b82f6;
-      color: white;
-    }
-
     .footer-copyright {
       text-align: center;
       padding-top: 2rem;
@@ -357,9 +374,16 @@
         font-size: 2rem;
       }
 
-      .workflow-section,
-      .form-section {
-        padding: 1.5rem;
+      .journey-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-step::after {
+        display: none;
+      }
+
+      .section {
+        padding: 2rem 1.5rem;
       }
     }
   </style>
@@ -374,6 +398,7 @@
       <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
       <li><a href="business.html" class="active"><i class="fas fa-briefcase"></i> For Businesses</a></li>
       <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="pricing.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
       <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
     </ul>
   </nav>
@@ -382,138 +407,187 @@
   <main class="main-content">
     <!-- Page Header -->
     <header class="page-header">
-      <h1>Empower Your Supply Chain</h1>
-      <p>BizTrack enables any business to issue on-chain product IDs, generate QR codes and record supply chain events—without a centralized SaaS provider or onboarding process.</p>
+      <h1>Prove Your Products Are Real</h1>
+      <p>Give your customers instant proof of authenticity. Build trust that increases your product's value—for just pennies per item.</p>
     </header>
 
     <!-- Content -->
     <div class="content-section">
-      <!-- Getting Started Info -->
-      <section class="workflow-section" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #3b82f6;">
-        <h2>Getting Started is Easy!</h2>
-        <p style="font-size: 1.125rem; color: #334155; margin-bottom: 1.5rem;">No blockchain experience needed. BizTrack handles all the technical complexity for you.</p>
-        
-        <div style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
-          <h3 style="color: #1e40af; margin-bottom: 1rem; font-size: 1.25rem;">What We Do Behind the Scenes:</h3>
-          <ul style="list-style: none; padding-left: 0;">
-            <li style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
-              <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5rem; margin-top: 0.25rem;"></i>
-              <div>
-                <strong>Mint Your Product Data as NFTs</strong> - We create unique blockchain tokens for each of your products on the XRP Ledger
-              </div>
-            </li>
-            <li style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
-              <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5rem; margin-top: 0.25rem;"></i>
-              <div>
-                <strong>Handle All Blockchain Transactions</strong> - No need for you to manage wallets, gas fees, or technical details
-              </div>
-            </li>
-            <li style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
-              <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5rem; margin-top: 0.25rem;"></i>
-              <div>
-                <strong>Store Everything Securely</strong> - Your product data is permanently recorded on the immutable blockchain
-              </div>
-            </li>
-            <li style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
-              <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.5rem; margin-top: 0.25rem;"></i>
-              <div>
-                <strong>Generate QR Codes Instantly</strong> - Ready-to-print codes that link directly to your blockchain records
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-          <p style="color: #92400e; font-weight: 600; margin: 0;">
-            <i class="fas fa-bolt" style="margin-right: 0.5rem;"></i>
-            Much faster than doing it yourself! We streamline the entire blockchain process so you can focus on your business.
+      
+      <!-- Value Proposition -->
+      <section class="section" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 2px solid #e2e8f0;">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+          <h2 style="font-size: 2.25rem; margin-bottom: 1.5rem; color: #0f172a;">
+            Make Your Products More Valuable by Making Them Verifiable
+          </h2>
+          
+          <p style="font-size: 1.25rem; color: #475569; line-height: 1.8; margin: 0;">
+            Every BizTrack QR code gives customers verifiable proof your product is authentic. 
+            Show them the full journey—from creation to their hands—with photos, locations, and timestamps 
+            that can't be faked or altered.
           </p>
         </div>
+      </section>
 
-        <div style="text-align: center;">
-          <p style="font-size: 1.125rem; margin-bottom: 1rem; color: #334155;"><strong>Ready to get started?</strong></p>
-          <a href="login.html" class="btn btn-primary" style="display: inline-flex; width: auto; padding: 1rem 2rem; font-size: 1.125rem;">
-            <i class="fas fa-user-plus"></i>
-            Create Your Account
-          </a>
-          <p style="margin-top: 1rem; color: #64748b; font-size: 0.95rem;">Sign up now and start creating product IDs in minutes</p>
+      <!-- Product Journey -->
+      <section class="section">
+        <h2>The Complete Product Journey</h2>
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
+          Your customers see every step of your product's story. This transparency builds trust and proves authenticity.
+        </p>
+
+        <div class="journey-steps">
+          <div class="journey-step">
+            <div class="journey-icon">🏭</div>
+            <h4>Manufacturing</h4>
+            <p>Product created with photo, location, and timestamp</p>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-icon">📦</div>
+            <h4>Warehousing</h4>
+            <p>Storage location and conditions verified</p>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-icon">🚚</div>
+            <h4>Distribution</h4>
+            <p>Shipment tracking with location updates</p>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-icon">✅</div>
+            <h4>Customer</h4>
+            <p>Scan QR code to see complete verified history</p>
+          </div>
         </div>
+      </section>
+
+      <!-- What Customers See -->
+      <section class="section">
+        <h2>What Your Customers See When They Scan</h2>
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
+          A beautiful verification page that proves your product is authentic and shows its complete journey.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📸</div>
+            <h4>Photo Verification</h4>
+            <p>Actual photos of the product at each stage of production and shipping. Visual proof it's real.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h4>Location History</h4>
+            <p>GPS coordinates and timestamps showing exactly where the product has been throughout its journey.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h4>Tamper-Proof Records</h4>
+            <p>Every piece of data is stored on the blockchain. It can't be changed, deleted, or faked—ever.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">⏱️</div>
+            <h4>Complete Timeline</h4>
+            <p>See exactly when each event happened, from manufacturing to delivery. Full transparency.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📜</div>
+            <h4>Certifications</h4>
+            <p>Display relevant certifications, origin information, and quality guarantees right on the verification page.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h4>Mobile-Friendly</h4>
+            <p>Works perfectly on any smartphone. Your customers just scan and see—no app required.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Why It Matters -->
+      <section class="section" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #3b82f6;">
+        <h2>Why Immutable Data Matters</h2>
+        <p style="font-size: 1.125rem; color: #334155; margin-bottom: 2rem;">
+          Traditional tracking systems can be hacked, altered, or deleted. BizTrack uses blockchain technology 
+          (XRPL) to ensure your product data is <strong>permanently recorded and impossible to change</strong>.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Tamper-Proof</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Permanent Storage</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">$0.01</div>
+            <div class="stat-label">Cost Per QR Code</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">⚡</div>
+            <div class="stat-label">Instant Verification</div>
+          </div>
+        </div>
+
+        <p style="font-size: 1rem; color: #475569; margin-top: 2rem; text-align: center;">
+          <strong>The bottom line:</strong> Your customers get unquestionable proof. Your products gain value through verified authenticity.
+        </p>
       </section>
 
       <!-- How It Works -->
-      <section class="workflow-section">
-        <h2>How It Works (Once You're Signed Up)</h2>
-        <ol class="steps">
-          <li class="step-item">
-            <div class="step-number">1</div>
-            <div class="step-content">
-              <h3>Enter Product Details</h3>
-              <p>Simply provide the product name, SKU and batch number, plus optional metadata like origin or certifications.</p>
-            </div>
-          </li>
-          <li class="step-item">
-            <div class="step-number">2</div>
-            <div class="step-content">
-              <h3>We Handle the Blockchain</h3>
-              <p>BizTrack automatically mints a unique on-chain ID (NFT or token) representing your physical item. No wallet required!</p>
-            </div>
-          </li>
-          <li class="step-item">
-            <div class="step-number">3</div>
-            <div class="step-content">
-              <h3>Download QR Code</h3>
-              <p>Instantly get your QR code to print or embed on product packaging - it links customers to the blockchain record.</p>
-            </div>
-          </li>
-          <li class="step-item">
-            <div class="step-number">4</div>
-            <div class="step-content">
-              <h3>Track Your Supply Chain</h3>
-              <p>Add updates, track shipments, and maintain a complete verified history - all stored securely on the blockchain.</p>
-            </div>
-          </li>
-        </ol>
-      </section>
+      <section class="section">
+        <h2>Getting Started Is Easy</h2>
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
+          No blockchain experience needed. We handle all the technical complexity so you can focus on your business.
+        </p>
 
-      <!-- QR Code Form -->
-      <section class="form-section">
-        <h2>Generate a QR Code</h2>
-        <p class="form-description">This demo form illustrates the product creation workflow.</p>
-        
-        <form id="qrForm">
-          <div class="form-group">
-            <label for="productName">Product Name</label>
-            <input type="text" id="productName" placeholder="e.g., Organic Coffee Beans" required>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 2rem 0;">
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">1</div>
+            <div>
+              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sign Up</h4>
+              <p style="color: #475569;">Create your account in minutes. No wallet required.</p>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="sku">SKU</label>
-            <input type="text" id="sku" placeholder="e.g., OCB-2024-001" required>
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">2</div>
+            <div>
+              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Enter Product Info</h4>
+              <p style="color: #475569;">Add product details, photos, and location. We mint it to the blockchain.</p>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="batchNumber">Batch Number</label>
-            <input type="text" id="batchNumber" placeholder="e.g., BATCH-12345">
-          </div>
-
-          <div class="form-group">
-            <label for="metadata">Optional Metadata</label>
-            <textarea id="metadata" placeholder="Additional information like origin, certifications, etc."></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-qrcode"></i>
-            Generate QR
-          </button>
-        </form>
-
-        <div class="qr-preview" id="qrPreview">
-          <div class="qr-placeholder">
-            <i class="fas fa-qrcode" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
-            <p>QR code will appear here after generation</p>
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">3</div>
+            <div>
+              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Download QR Codes</h4>
+              <p style="color: #475569;">Print and attach to your products. That's it!</p>
+            </div>
           </div>
         </div>
       </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2>Ready to Prove Your Products Are Real?</h2>
+        <p>Join businesses building customer trust with verified product authenticity.</p>
+        <a href="login.html" class="btn btn-white">
+          <i class="fas fa-rocket"></i>
+          Start Free Trial
+        </a>
+        <p style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.9;">
+          100 free QR codes to get started • No credit card required
+        </p>
+      </section>
+
     </div>
   </main>
 
@@ -526,42 +600,11 @@
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
       </div>
-      <div class="social-icons">
-        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-      </div>
       <div class="footer-copyright">
-        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+        <p>&copy; 2025 BizTrack - Blockchain-Powered Product Authentication</p>
       </div>
     </div>
   </footer>
 
-  <script>
-    // Simple QR generation demo (placeholder)
-    document.getElementById('qrForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const productName = document.getElementById('productName').value;
-      const sku = document.getElementById('sku').value;
-      const batchNumber = document.getElementById('batchNumber').value;
-      
-      // Create a placeholder QR code
-      const qrData = `${productName}-${sku}-${batchNumber}`;
-      const qrPreview = document.getElementById('qrPreview');
-      
-      qrPreview.innerHTML = `
-        <div style="padding: 2rem;">
-          <h3 style="color: #0f172a; margin-bottom: 1rem;">QR Code Generated!</h3>
-          <div style="background: white; padding: 2rem; border-radius: 12px; display: inline-block;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}" alt="QR Code">
-          </div>
-          <p style="margin-top: 1rem; color: #64748b;">Product: ${productName}</p>
-          <p style="color: #64748b;">SKU: ${sku}</p>
-          ${batchNumber ? `<p style="color: #64748b;">Batch: ${batchNumber}</p>` : ''}
-        </div>
-      `;
-    });
-  </script>
 </body>
 </html>

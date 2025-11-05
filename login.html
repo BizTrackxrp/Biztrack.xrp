@@ -23,6 +23,30 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      position: relative;
+    }
+
+    .back-home {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      transition: all 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .back-home:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-4px);
     }
 
     .login-container {
@@ -39,9 +63,10 @@
       margin-bottom: 2rem;
     }
 
-    .logo img {
-      max-width: 180px;
-      height: auto;
+    .logo h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1E293B;
     }
 
     h1 {
@@ -155,6 +180,13 @@
     }
 
     @media (max-width: 500px) {
+      .back-home {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
       .login-container {
         padding: 2rem;
       }
@@ -166,9 +198,14 @@
   </style>
 </head>
 <body>
+  <a href="index.html" class="back-home">
+    <i class="fas fa-arrow-left"></i>
+    Back to Home
+  </a>
+
   <div class="login-container">
     <div class="logo">
-      <img src="assets/8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack Logo">
+      <h2>🚚 BizTrack</h2>
     </div>
 
     <h1>Welcome Back</h1>

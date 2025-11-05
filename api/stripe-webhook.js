@@ -3,16 +3,18 @@ import Stripe from 'stripe';
 import { Pool } from 'pg';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false },
 });
 
+// ✅ UPDATED: New QR limits
 const TIER_CONFIG = {
-  free: { qrLimit: 100 },
-  essential: { qrLimit: 5000 },
-  scale: { qrLimit: 25000 },
-  enterprise: { qrLimit: 100000 }
+  free: { qrLimit: 10 },
+  essential: { qrLimit: 500 },
+  scale: { qrLimit: 2500 },
+  enterprise: { qrLimit: 10000 }
 };
 
 const PRICE_TO_TIER = {
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const userId = session.metadata?.userId || session.client_reference_id;
+
     if (!userId) {
       console.error('[NO USER ID]');
       return res.status(400).send('No userId');

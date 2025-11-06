@@ -959,12 +959,12 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                         <br><small>ID: ${p.productId}</small>
                       </div>
                       <div style="display: flex; gap: 0.5rem;">
-                        <a href="${p.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                          <i class="fas fa-qrcode"></i> View
-                        </a>
-                        <a href="${p.qrCodeUrl}" download="${p.sku}-QR.png" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                          <i class="fas fa-download"></i> QR
-                        </a>
+                       <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+  <i class="fas fa-shield-check"></i> View
+</a>
+<a href="${p.qrCodeUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+  <i class="fas fa-qrcode"></i> QR
+</a>
                       </div>
                     </div>
                   `).join('')}
@@ -980,15 +980,12 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                     <br><small>Product ID: ${product.productId}</small>
                   </div>
                   <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <a href="${product.verificationUrl}" target="_blank" class="btn btn-secondary">
-                      <i class="fas fa-qrcode"></i> View QR
-                    </a>
-                    <a href="${product.qrCodeUrl}" download="BizTrack-QR-${product.productId}.png" class="btn btn-secondary">
-                      <i class="fas fa-download"></i> Download
-                    </a>
-                    <a href="https://livenet.xrpl.org/transactions/${product.xrplTxHash}" target="_blank" class="btn btn-secondary">
-                      <i class="fas fa-external-link-alt"></i> View TX
-                    </a>
+                    <a href="${product.verificationUrl}" class="btn btn-secondary">
+  <i class="fas fa-shield-check"></i> Verify Product
+</a>
+<a href="${product.qrCodeUrl}" target="_blank" class="btn btn-secondary">
+  <i class="fas fa-qrcode"></i> Download QR
+</a>
                   </div>
                 </div>
               `;

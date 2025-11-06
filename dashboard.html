@@ -1188,6 +1188,13 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
     // Initialize
     loadSubscriptionLimits();
     populateBatches();
+    // Logout button
+document.getElementById('logoutBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (confirm('Are you sure you want to logout?')) {
+    logout();
+  }
+});
   </script>
 </body>
 </html>

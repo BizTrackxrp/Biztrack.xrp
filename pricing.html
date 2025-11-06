@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pricing - BizTrack</title>
+  <title>Subscription - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,52 +19,99 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      background: #f0f4f8;
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
-      padding: 2rem 1rem;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    /* Dark Sidebar - Matching Dashboard */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: #0f172a;
+      border-right: none;
+      padding: 2rem 1.5rem;
+      z-index: 100;
+      box-shadow: none;
     }
 
-    .back-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #4F46E5;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      background: white;
-      border-radius: 12px;
+    .sidebar-logo {
+      padding: 0 0 2rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      transition: all 0.2s;
     }
 
-    .back-button:hover {
-      transform: translateX(-4px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 1rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-radius: 8px;
+      gap: 0.75rem;
+    }
+
+    .sidebar-nav a:hover {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+      border-left: none;
+    }
+
+    .sidebar-nav a i {
+      margin-right: 0;
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 4rem;
+      margin-bottom: 3rem;
     }
 
     .header h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 800;
       color: #1E293B;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
     .header p {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       color: #64748B;
     }
 
@@ -95,12 +142,32 @@
       box-shadow: 0 8px 32px rgba(79, 70, 229, 0.2);
     }
 
+    .pricing-card.current-plan {
+      border-color: #10B981;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+    }
+
     .popular-badge {
       position: absolute;
       top: -12px;
       left: 50%;
       transform: translateX(-50%);
       background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 24px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .current-plan-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #10B981, #059669);
       color: white;
       padding: 0.5rem 1.5rem;
       border-radius: 24px;
@@ -208,7 +275,28 @@
       transform: none;
     }
 
+    .cta-downgrade {
+      background: white;
+      color: #64748B;
+      border: 2px solid #CBD5E1;
+    }
+
+    .cta-downgrade:hover {
+      background: #F8FAFC;
+    }
+
     @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+
       .header h1 {
         font-size: 2rem;
       }
@@ -220,119 +308,167 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="dashboard.html" class="back-button">
-      <i class="fas fa-arrow-left"></i>
-      Back to Dashboard
-    </a>
+  <!-- Dark Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🚚 BizTrack</h1>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="pricing.html" class="active"><i class="fas fa-credit-card"></i> Subscription</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+  </nav>
 
+  <!-- Main Content -->
+  <div class="main-with-sidebar">
     <div class="header">
       <h1>Choose Your Plan</h1>
       <p>Flexible pricing for businesses of all sizes</p>
     </div>
 
-    <div class="pricing-grid">
-      <!-- Free Tier -->
-      <div class="pricing-card">
-        <h3 class="tier-name">Free</h3>
-        <div class="tier-price">
-          <span class="price-amount">$0</span>
-          <span class="price-period">/month</span>
-        </div>
-        <p class="tier-description">100 QR codes per month</p>
-        
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> 100 QR codes per month</li>
-          <li><i class="fas fa-check-circle"></i> Blockchain verification</li>
-          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
-          <li><i class="fas fa-check-circle"></i> Email support</li>
-          <li><i class="fas fa-check-circle"></i> Community access</li>
-        </ul>
-        
-        <button class="cta-button cta-secondary" disabled style="opacity: 0.5; cursor: not-allowed;">
-          <i class="fas fa-lock"></i> Unavailable
-        </button>
-      </div>
-
-      <!-- Essential Tier -->
-      <div class="pricing-card popular">
-        <div class="popular-badge">Most Popular</div>
-        <h3 class="tier-name">Essential</h3>
-        <div class="tier-price">
-          <span class="price-amount">$49</span>
-          <span class="price-period">/month</span>
-        </div>
-        <p class="tier-description">5,000 QR codes per month</p>
-        
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> 5,000 QR codes per month</li>
-          <li><i class="fas fa-check-circle"></i> Priority blockchain verification</li>
-          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
-          <li><i class="fas fa-check-circle"></i> Priority email support</li>
-          <li><i class="fas fa-check-circle"></i> Basic analytics</li>
-          <li><i class="fas fa-check-circle"></i> API access</li>
-        </ul>
-        
-        <button class="cta-button cta-primary" onclick="upgradeTier('essential')">
-          <i class="fas fa-rocket"></i> Get Started
-        </button>
-      </div>
-
-      <!-- Scale Tier -->
-      <div class="pricing-card">
-        <h3 class="tier-name">Scale</h3>
-        <div class="tier-price">
-          <span class="price-amount">$149</span>
-          <span class="price-period">/month</span>
-        </div>
-        <p class="tier-description">25,000 QR codes per month</p>
-        
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> 25,000 QR codes per month</li>
-          <li><i class="fas fa-check-circle"></i> Advanced blockchain features</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated IPFS storage</li>
-          <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
-          <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
-          <li><i class="fas fa-check-circle"></i> Full API access</li>
-          <li><i class="fas fa-check-circle"></i> Custom integrations</li>
-        </ul>
-        
-        <button class="cta-button cta-primary" onclick="upgradeTier('scale')">
-          <i class="fas fa-rocket"></i> Get Started
-        </button>
-      </div>
-
-      <!-- Enterprise Tier -->
-      <div class="pricing-card">
-        <h3 class="tier-name">Enterprise</h3>
-        <div class="tier-price">
-          <span class="price-amount">$399</span>
-          <span class="price-period">/month</span>
-        </div>
-        <p class="tier-description">100,000 QR codes per month</p>
-        
-        <ul class="features-list">
-          <li><i class="fas fa-check-circle"></i> 100,000+ QR codes per month</li>
-          <li><i class="fas fa-check-circle"></i> Enterprise blockchain features</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated infrastructure</li>
-          <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
-          <li><i class="fas fa-check-circle"></i> Custom analytics</li>
-          <li><i class="fas fa-check-circle"></i> White-label options</li>
-          <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
-          <li><i class="fas fa-check-circle"></i> Custom contracts</li>
-        </ul>
-        
-        <button class="cta-button cta-primary" onclick="upgradeTier('enterprise')">
-          <i class="fas fa-rocket"></i> Get Started
-        </button>
-      </div>
+    <div class="pricing-grid" id="pricingGrid">
+      <!-- Pricing cards will be dynamically generated here -->
     </div>
   </div>
 
   <script src="js/auth.js"></script>
   <script>
+    // Require authentication
+    requireAuth();
+
     // Initialize Stripe
-    const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU'); // Replace with your key
+    const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU');
+
+    // ✅ NEW TIER LIMITS
+    const TIERS = {
+      free: {
+        name: 'Free',
+        price: 0,
+        qrCodes: 10,
+        features: [
+          '10 QR codes per month',
+          'Blockchain verification',
+          'IPFS storage',
+          'Email support',
+          'Community access'
+        ]
+      },
+      essential: {
+        name: 'Essential',
+        price: 49,
+        qrCodes: 500,
+        popular: true,
+        features: [
+          '500 QR codes per month',
+          'Priority blockchain verification',
+          'IPFS storage',
+          'Priority email support',
+          'Basic analytics',
+          'API access'
+        ]
+      },
+      scale: {
+        name: 'Scale',
+        price: 149,
+        qrCodes: 2500,
+        features: [
+          '2,500 QR codes per month',
+          'Advanced blockchain features',
+          'Dedicated IPFS storage',
+          '24/7 priority support',
+          'Advanced analytics',
+          'Full API access',
+          'Custom integrations'
+        ]
+      },
+      enterprise: {
+        name: 'Enterprise',
+        price: 399,
+        qrCodes: 10000,
+        features: [
+          '10,000+ QR codes per month',
+          'Enterprise blockchain features',
+          'Dedicated infrastructure',
+          'Dedicated account manager',
+          'Custom analytics',
+          'White-label options',
+          'SLA guarantees',
+          'Training & consultation'
+        ]
+      }
+    };
+
+    let currentUserTier = 'free';
+
+    // Load user's current tier
+    async function loadUserTier() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        
+        if (data.success) {
+          currentUserTier = data.subscription.tier;
+          renderPricingCards();
+        }
+      } catch (error) {
+        console.error('Failed to load user tier:', error);
+        renderPricingCards(); // Render with default tier
+      }
+    }
+
+    function renderPricingCards() {
+      const grid = document.getElementById('pricingGrid');
+      grid.innerHTML = '';
+
+      Object.entries(TIERS).forEach(([tierKey, tier]) => {
+        const isCurrentPlan = tierKey === currentUserTier;
+        const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
+        const isDowngrade = getTierLevel(tierKey) < getTierLevel(currentUserTier);
+
+        const card = document.createElement('div');
+        card.className = `pricing-card ${tier.popular ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
+
+        let badge = '';
+        if (isCurrentPlan) {
+          badge = '<div class="current-plan-badge">Current Plan</div>';
+        } else if (tier.popular && !isCurrentPlan) {
+          badge = '<div class="popular-badge">Most Popular</div>';
+        }
+
+        let buttonHTML = '';
+        if (isCurrentPlan) {
+          buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
+        } else if (isUpgrade) {
+          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-arrow-up"></i> Upgrade to ${tier.name}</button>`;
+        } else if (isDowngrade) {
+          buttonHTML = `<button class="cta-button cta-downgrade" onclick="downgradeTier('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
+        }
+
+        card.innerHTML = `
+          ${badge}
+          <h3 class="tier-name">${tier.name}</h3>
+          <div class="tier-price">
+            <span class="price-amount">$${tier.price}</span>
+            <span class="price-period">/month</span>
+          </div>
+          <p class="tier-description">${tier.qrCodes.toLocaleString()} QR codes per month</p>
+          
+          <ul class="features-list">
+            ${tier.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}
+          </ul>
+          
+          ${buttonHTML}
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function getTierLevel(tier) {
+      const levels = { free: 0, essential: 1, scale: 2, enterprise: 3 };
+      return levels[tier] || 0;
+    }
 
     async function upgradeTier(tier) {
       const token = localStorage.getItem('biztrack-auth-token');
@@ -355,7 +491,6 @@
         const data = await response.json();
 
         if (data.url) {
-          // Redirect to Stripe Checkout
           window.location.href = data.url;
         } else {
           alert('Error: ' + (data.error || 'Failed to create checkout session'));
@@ -366,11 +501,22 @@
       }
     }
 
+    async function downgradeTier(tier) {
+      if (!confirm(`Are you sure you want to downgrade to ${TIERS[tier].name}? This will take effect at the end of your current billing cycle.`)) {
+        return;
+      }
+
+      alert('Downgrade functionality coming soon! Please contact support@biztrack.io to downgrade your plan.');
+    }
+
     // Check if user just canceled
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('canceled') === 'true') {
       alert('Checkout canceled. You can upgrade anytime!');
     }
+
+    // Initialize
+    loadUserTier();
   </script>
 </body>
 </html>

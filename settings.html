@@ -17,85 +17,85 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      background: #f0f4f8;
       color: #1E293B;
       line-height: 1.6;
       min-height: 100vh;
     }
 
-    /* Sidebar */
+    /* Dark Sidebar */
     .sidebar {
       position: fixed;
       left: 0;
       top: 0;
       width: 280px;
       height: 100vh;
-      background: white;
-      border-right: 1px solid #E2E8F0;
-      padding: 2rem 0;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
       z-index: 100;
-      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar-logo {
-      padding: 0 2rem 2rem;
-      border-bottom: 1px solid #E2E8F0;
+      padding: 0 0 2rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 2rem;
     }
 
-    .sidebar-logo img {
-      max-width: 160px;
-      height: auto;
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
     }
 
     .sidebar-nav {
       list-style: none;
-    }
-
-    .sidebar-nav li {
-      margin-bottom: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
     }
 
     .sidebar-nav a {
       display: flex;
       align-items: center;
-      padding: 0.875rem 2rem;
-      color: #64748B;
+      padding: 0.875rem 1rem;
+      color: #94a3b8;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
       transition: all 0.2s;
+      border-radius: 8px;
+      gap: 0.75rem;
     }
 
     .sidebar-nav a:hover {
-      background: #F8FAFC;
-      color: #4F46E5;
+      background: #1e293b;
+      color: #3b82f6;
     }
 
     .sidebar-nav a.active {
-      background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
-      color: #4F46E5;
-      border-left: 3px solid #4F46E5;
+      background: #1e293b;
+      color: #3b82f6;
     }
 
     .sidebar-nav a i {
-      margin-right: 0.75rem;
       width: 20px;
+      font-size: 1.1rem;
     }
 
     .sidebar-logout {
-      position: absolute;
-      bottom: 2rem;
-      width: 100%;
-      padding: 0 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .sidebar-logout button {
       width: 100%;
-      padding: 0.875rem;
-      background: #FEE2E2;
-      color: #DC2626;
-      border: none;
-      border-radius: 12px;
+      padding: 0.875rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -103,10 +103,11 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      font-size: 0.95rem;
     }
 
     .sidebar-logout button:hover {
-      background: #FCA5A5;
+      background: rgba(239, 68, 68, 0.2);
       transform: translateY(-2px);
     }
 
@@ -137,9 +138,9 @@
     /* Settings Sections */
     .settings-section {
       background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
       margin-bottom: 2rem;
     }
@@ -161,7 +162,15 @@
     .settings-section .section-description {
       color: #64748B;
       margin-bottom: 2rem;
-      font-size: 0.95rem;
+      font-size: 1rem;
+    }
+
+    .settings-section h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #334155;
+      padding-top: 1rem;
     }
 
     /* Form Groups */
@@ -180,7 +189,7 @@
     .form-group input,
     .form-group select {
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
       padding: 0.875rem 1rem;
       border: 2px solid #E2E8F0;
       border-radius: 12px;
@@ -210,11 +219,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem;
+      padding: 1.25rem;
       background: #F8FAFC;
       border-radius: 12px;
       margin-bottom: 1rem;
-      max-width: 500px;
+      max-width: 600px;
+      border: 1px solid #E2E8F0;
     }
 
     .toggle-label {
@@ -225,11 +235,13 @@
     .toggle-label strong {
       color: #1E293B;
       font-weight: 600;
+      font-size: 1rem;
     }
 
     .toggle-label small {
       color: #64748B;
       font-size: 0.875rem;
+      margin-top: 0.25rem;
     }
 
     .toggle-switch {
@@ -278,12 +290,12 @@
 
     /* Buttons */
     .btn {
-      padding: 0.875rem 1.75rem;
+      padding: 1rem 2rem;
       background: linear-gradient(135deg, #4F46E5, #7C3AED);
       color: white;
       border: none;
       border-radius: 12px;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
@@ -301,22 +313,6 @@
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: #4F46E5;
-      border: 2px solid #4F46E5;
-      box-shadow: none;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #DC2626, #EF4444);
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-    }
-
-    .btn-danger:hover {
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
     }
 
     /* Messages */
@@ -340,6 +336,12 @@
       background: #FEF2F2;
       color: #DC2626;
       border: 1px solid #FECACA;
+    }
+
+    .message.info {
+      background: #EFF6FF;
+      color: #2563EB;
+      border: 1px solid #BFDBFE;
     }
 
     /* 2FA Setup */
@@ -376,71 +378,34 @@
       color: #4F46E5;
     }
 
-    /* Danger Zone */
-    .danger-zone {
-      border: 2px solid #FCA5A5;
-      background: #FEF2F2;
-    }
-
-    .danger-zone h2 {
-      color: #DC2626;
-    }
-
-    .danger-zone h2 i {
-      color: #DC2626;
-    }
-
-    /* Stats Card */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .stat-card {
-      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-      padding: 1.5rem;
-      border-radius: 12px;
-      color: white;
-    }
-
-    .stat-card .stat-value {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-card .stat-label {
-      font-size: 0.875rem;
-      opacity: 0.9;
+    /* Section Divider */
+    .section-divider {
+      margin: 2.5rem 0;
+      border: none;
+      border-top: 2px solid #E2E8F0;
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: 240px;
-      }
-      .main-with-sidebar {
-        margin-left: 240px;
-        padding: 2rem;
-      }
-    }
-
     @media (max-width: 768px) {
       .sidebar {
-        transform: translateX(-100%);
+        width: 100%;
+        height: auto;
+        position: relative;
       }
+
       .main-with-sidebar {
         margin-left: 0;
         padding: 1.5rem;
       }
+
       .settings-header h1 {
         font-size: 2rem;
       }
+
       .toggle-container {
         max-width: 100%;
       }
+
       .form-group input,
       .form-group select {
         max-width: 100%;
@@ -449,24 +414,25 @@
   </style>
 </head>
 <body>
+  <!-- Dark Sidebar -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
+      <h1>🚚 BizTrack</h1>
     </div>
     <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
       <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
       <li><a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
     <div class="sidebar-logout">
       <button id="logoutBtn">
         <i class="fas fa-sign-out-alt"></i>
-        Logout This Device
+        Logout
       </button>
     </div>
   </nav>
 
+  <!-- Main Content -->
   <div class="main-with-sidebar">
     <div class="settings-header">
       <h1>Account Settings</h1>
@@ -479,7 +445,7 @@
       <p class="section-description">Keep your account secure with these settings.</p>
 
       <!-- Change Password -->
-      <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: #334155;">Change Password</h3>
+      <h3>Change Password</h3>
       <form id="changePasswordForm">
         <div class="form-group">
           <label for="currentPassword">Current Password</label>
@@ -501,10 +467,10 @@
         <div id="passwordMsg"></div>
       </form>
 
-      <hr style="margin: 2rem 0; border: none; border-top: 1px solid #E2E8F0;">
+      <hr class="section-divider">
 
       <!-- 2FA Toggle -->
-      <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: #334155;">Two-Factor Authentication</h3>
+      <h3>Two-Factor Authentication</h3>
       <div class="toggle-container">
         <div class="toggle-label">
           <strong>Enable 2FA</strong>
@@ -606,47 +572,9 @@
       </form>
     </div>
 
-    <!-- Usage Statistics -->
-    <div class="settings-section">
-      <h2><i class="fas fa-chart-bar"></i> Usage Statistics</h2>
-      <p class="section-description">Track your BizTrack activity.</p>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" id="totalProducts">0</div>
-          <div class="stat-label">Total Products Minted</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="thisMonth">0</div>
-          <div class="stat-label">This Month</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalScans">0</div>
-          <div class="stat-label">QR Code Scans</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Danger Zone -->
-    <div class="settings-section danger-zone">
-      <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
-      <p class="section-description">These actions cannot be undone.</p>
-
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button class="btn btn-danger" id="logoutAllBtn">
-          <i class="fas fa-sign-out-alt"></i>
-          Logout from All Devices
-        </button>
-        <button class="btn btn-danger" id="deleteAccountBtn">
-          <i class="fas fa-trash"></i>
-          Delete Account
-        </button>
-      </div>
-    </div>
   </div>
 
   <script src="js/auth.js"></script>
-  <script src="js/wallet.js"></script>
   <script>
     // Ensure user is authenticated
     requireAuth();
@@ -676,17 +604,6 @@
     if (prefs.language) document.getElementById('language').value = prefs.language;
     if (prefs.timezone) document.getElementById('timezone').value = prefs.timezone;
     if (prefs.darkMode) document.getElementById('darkMode').checked = prefs.darkMode;
-
-    // Load usage statistics
-    const batches = JSON.parse(localStorage.getItem('biztrack-batches') || '[]');
-    document.getElementById('totalProducts').textContent = batches.length;
-    
-    const thisMonth = batches.filter(b => {
-      const batchDate = new Date(b.timestamp);
-      const now = new Date();
-      return batchDate.getMonth() === now.getMonth() && batchDate.getFullYear() === now.getFullYear();
-    }).length;
-    document.getElementById('thisMonth').textContent = thisMonth;
 
     // Change Password
     document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
@@ -768,22 +685,6 @@
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
       if (confirm('Are you sure you want to logout?')) {
-        logout();
-      }
-    });
-
-    // Logout All Devices
-    document.getElementById('logoutAllBtn').addEventListener('click', () => {
-      if (confirm('This will logout all devices. Continue?')) {
-        // TODO: Call API to invalidate all sessions
-        logout();
-      }
-    });
-
-    // Delete Account
-    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-      if (confirm('⚠️ WARNING: This will permanently delete your account and all data. This cannot be undone. Are you absolutely sure?')) {
-        // TODO: Call API to delete account
         logout();
       }
     });

@@ -83,7 +83,7 @@ module.exports = async (req, res) => {
         // Find the batch group leader (the one with is_batch_group = true)
         const batchLeader = batchItems.find(p => p.isBatchGroup) || batchItems[0];
 
-        // Create batch group object - frontend expects 'products' array
+        // ✅ FIXED: Changed 'products' to 'items' to match frontend expectation
         displayList.push({
           isBatchGroup: true,
           batchGroupId: product.batchGroupId,
@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
           batchNumber: batchLeader.batchNumber,
           quantity: batchLeader.batchQuantity || batchItems.length,
           timestamp: batchLeader.timestamp,
-          products: batchItems.sort((a, b) => {
+          items: batchItems.sort((a, b) => {  // Changed from 'products' to 'items'
             // Sort by SKU if available (handles BATCH-001, BATCH-002, etc)
             if (a.sku && b.sku) {
               return a.sku.localeCompare(b.sku);

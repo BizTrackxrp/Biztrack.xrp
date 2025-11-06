@@ -81,6 +81,33 @@ box-shadow: none;
       margin-right: 0.75rem;
       width: 20px;
     }
+    .sidebar-logout {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logout button {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.sidebar-logout button:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+}
 
     .main-with-sidebar {
       margin-left: 280px;
@@ -478,6 +505,12 @@ box-shadow: none;
       <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
       <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
+      <div class="sidebar-logout">
+      <button id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </button>
+    </div>
   </nav>
 
   <div class="main-with-sidebar">

@@ -143,48 +143,26 @@
       color: #64748B;
     }
 
-    /* Current Subscription Banner */
-    .current-subscription-banner {
+    /* Current Plan Badge */
+    .current-plan-indicator {
       background: linear-gradient(135deg, #10B981, #059669);
       color: white;
-      padding: 2rem;
-      border-radius: 16px;
-      margin-bottom: 2rem;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .subscription-info h3 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .subscription-info p {
-      opacity: 0.95;
-    }
-
-    .cancel-subscription-btn {
-      padding: 0.875rem 1.75rem;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 1rem 2rem;
       border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      text-align: center;
     }
 
-    .cancel-subscription-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
+    .current-plan-indicator h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .current-plan-indicator p {
+      opacity: 0.95;
+      font-size: 1rem;
     }
 
     /* Free Trial Banner */
@@ -196,6 +174,11 @@
       text-align: center;
       margin-bottom: 3rem;
       box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+      display: none;
+    }
+
+    .free-trial-banner.show {
+      display: block;
     }
 
     .free-trial-banner h2 {
@@ -382,6 +365,54 @@
       border-color: #94A3B8;
     }
 
+    /* Cancel Subscription Section (At Bottom) */
+    .cancel-section {
+      background: #FEF2F2;
+      border: 2px solid #FCA5A5;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .cancel-section.show {
+      display: block;
+    }
+
+    .cancel-section h3 {
+      color: #DC2626;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .cancel-section p {
+      color: #991B1B;
+      margin-bottom: 1.5rem;
+    }
+
+    .cancel-subscription-btn {
+      padding: 0.875rem 1.75rem;
+      background: #DC2626;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .cancel-subscription-btn:hover {
+      background: #B91C1C;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    }
+
     /* Footer */
     .pricing-footer {
       text-align: center;
@@ -419,11 +450,6 @@
       .pricing-grid {
         grid-template-columns: 1fr;
       }
-
-      .current-subscription-banner {
-        flex-direction: column;
-        text-align: center;
-      }
     }
   </style>
 </head>
@@ -455,12 +481,27 @@
         <p>Flexible pricing for businesses of all sizes</p>
       </div>
 
-      <!-- Current Subscription Banner (shown only if user has active paid plan) -->
-      <div id="currentSubscriptionBanner" style="display: none;"></div>
+      <!-- Current Plan Indicator (shown only if paid plan) -->
+      <div id="currentPlanIndicator" style="display: none;"></div>
 
+      <!-- Free Trial Banner (shown only for free users) -->
+      <div class="free-trial-banner" id="freeTrialBanner">
+        <h2>Start Free Today!</h2>
+        <p>We give you <strong>10 free QR codes</strong> when you sign up — no credit card required.</p>
+      </div>
 
       <!-- Pricing Cards -->
       <div class="pricing-grid" id="pricingGrid"></div>
+
+      <!-- Cancel Subscription Section (At Bottom, shown only for paid users) -->
+      <div class="cancel-section" id="cancelSection">
+        <h3><i class="fas fa-exclamation-triangle"></i> Cancel Subscription</h3>
+        <p>Need to cancel? Your subscription will remain active until the end of your billing period.</p>
+        <button class="cancel-subscription-btn" onclick="cancelSubscription()">
+          <i class="fas fa-times-circle"></i>
+          Cancel Subscription
+        </button>
+      </div>
 
       <!-- Footer -->
       <div class="pricing-footer">
@@ -488,35 +529,67 @@
       try {
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
+        
         if (data.success) {
           currentUserTier = data.subscription.tier;
-          if (currentUserTier !== 'free') showCurrentSubscriptionBanner();
+          
+          // Show appropriate content based on tier
+          if (currentUserTier === 'free') {
+            // Free user: show free trial banner
+            document.getElementById('freeTrialBanner').classList.add('show');
+            document.getElementById('cancelSection').classList.remove('show');
+          } else {
+            // Paid user: show current plan indicator and cancel section
+            showCurrentPlanIndicator();
+            document.getElementById('freeTrialBanner').classList.remove('show');
+            document.getElementById('cancelSection').classList.add('show');
+          }
+          
           renderPricingCards();
         }
       } catch (error) {
         console.error('Failed to load user tier:', error);
+        document.getElementById('freeTrialBanner').classList.add('show');
         renderPricingCards();
       }
     }
 
-    function showCurrentSubscriptionBanner() {
-      const banner = document.getElementById('currentSubscriptionBanner');
+    function showCurrentPlanIndicator() {
+      const indicator = document.getElementById('currentPlanIndicator');
       const tierInfo = TIERS[currentUserTier];
+      
       if (!tierInfo) return;
-      banner.innerHTML = `<div class="current-subscription-banner"><div class="subscription-info"><h3>Current Plan: ${tierInfo.name}</h3><p>${tierInfo.qrCodes.toLocaleString()} QR codes per month • $${tierInfo.price}/month</p></div><button class="cancel-subscription-btn" onclick="cancelSubscription()"><i class="fas fa-times-circle"></i> Cancel Subscription</button></div>`;
-      banner.style.display = 'block';
+      
+      indicator.innerHTML = `
+        <div class="current-plan-indicator">
+          <h3>Current Plan: ${tierInfo.name}</h3>
+          <p>${tierInfo.qrCodes.toLocaleString()} QR codes per month • $${tierInfo.price}/month</p>
+        </div>
+      `;
+      indicator.style.display = 'block';
     }
 
     async function cancelSubscription() {
       if (!confirm('⚠️ Are you sure you want to cancel your subscription?\n\nYour subscription will remain active until the end of your current billing period, then you\'ll be moved to the Free plan with 10 QR codes per month.\n\nYou can always resubscribe later!')) return;
+      
       try {
         const token = localStorage.getItem('biztrack-auth-token');
-        const response = await fetch('/api/cancel-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
+        const response = await fetch('/api/cancel-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
         const data = await response.json();
+        
         if (data.success) {
           alert('😢 Sorry to see you go!\n\nYour subscription has been cancelled and will remain active until the end of your billing period.\n\nAfter that, you\'ll be back on our Free plan with 10 QR codes per month.\n\n💙 We hope to see you back soon! Feel free to reach out if you have any feedback.');
           window.location.reload();
-        } else throw new Error(data.error || 'Failed to cancel subscription');
+        } else {
+          throw new Error(data.error || 'Failed to cancel subscription');
+        }
       } catch (error) {
         console.error('Cancel subscription error:', error);
         alert('Error cancelling subscription: ' + error.message + '\n\nPlease contact support@biztrack.io for assistance.');
@@ -526,20 +599,38 @@
     function renderPricingCards() {
       const grid = document.getElementById('pricingGrid');
       grid.innerHTML = '';
+      
       Object.entries(TIERS).forEach(([tierKey, tier]) => {
         const isCurrentPlan = tierKey === currentUserTier;
         const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
         const isDowngrade = getTierLevel(tierKey) < getTierLevel(currentUserTier);
+        
         const card = document.createElement('div');
         card.className = `pricing-card ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
+        
         let badge = '';
         if (isCurrentPlan) badge = '<div class="current-plan-badge">Current Plan</div>';
         else if (tier.popular && !isCurrentPlan) badge = '<div class="popular-badge">Most Popular</div>';
+        
         let buttonHTML = '';
         if (isCurrentPlan) buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
         else if (isUpgrade) buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Get Started</button>`;
         else if (isDowngrade) buttonHTML = `<button class="cta-button cta-downgrade" onclick="downgradeTier('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
-        card.innerHTML = `${badge}<h3 class="tier-name">${tier.name}</h3><div class="tier-price"><span class="price-amount">$${tier.price}</span><span class="price-period">/month</span></div><p class="tier-description">${tier.qrCodes.toLocaleString()} QR codes per month</p><ul class="features-list">${tier.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}</ul>${buttonHTML}`;
+        
+        card.innerHTML = `
+          ${badge}
+          <h3 class="tier-name">${tier.name}</h3>
+          <div class="tier-price">
+            <span class="price-amount">$${tier.price}</span>
+            <span class="price-period">/month</span>
+          </div>
+          <p class="tier-description">${tier.qrCodes.toLocaleString()} QR codes per month</p>
+          <ul class="features-list">
+            ${tier.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}
+          </ul>
+          ${buttonHTML}
+        `;
+        
         grid.appendChild(card);
       });
     }
@@ -551,12 +642,28 @@
 
     async function upgradeTier(tier) {
       const token = localStorage.getItem('biztrack-auth-token');
-      if (!token) { window.location.href = '/login.html'; return; }
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+      
       try {
-        const response = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ tier }) });
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ tier })
+        });
+        
         const data = await response.json();
-        if (data.url) window.location.href = data.url;
-        else alert('Error: ' + (data.error || 'Failed to create checkout session'));
+        
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Error: ' + (data.error || 'Failed to create checkout session'));
+        }
       } catch (error) {
         console.error('Upgrade error:', error);
         alert('Error creating checkout session. Please try again.');
@@ -574,7 +681,9 @@
     });
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('canceled') === 'true') alert('Checkout canceled. You can upgrade anytime!');
+    if (urlParams.get('canceled') === 'true') {
+      alert('Checkout canceled. You can upgrade anytime!');
+    }
 
     loadUserTier();
   </script>

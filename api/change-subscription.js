@@ -99,7 +99,7 @@ module.exports = async (req, res) => {
         message: `Successfully upgraded to ${TIER_INFO[newTier].name}!`,
         tier: newTier,
         immediate: true,
-        info: `You've been charged the prorated difference and now have ${TIER_INFO[newTier].qrCodes.toLocaleString()} QR codes per month.`
+        info: `You've been charged the prorated difference and now have ${TIER_INFO[newTier].qrCodes.toLocaleString()} QR codes per month available immediately!`
       });
 
     } else {

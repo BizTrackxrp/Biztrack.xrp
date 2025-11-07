@@ -3,13 +3,12 @@ import Stripe from 'stripe';
 import { Pool } from 'pg';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false },
 });
 
-// ✅ UPDATED: New QR limits
+// ✅ NEW QR LIMITS
 const TIER_CONFIG = {
   free: { qrLimit: 10 },
   essential: { qrLimit: 500 },
@@ -38,44 +37,130 @@ export default async function handler(req, res) {
     for await (const chunk of req) buffers.push(chunk);
     rawBody = Buffer.concat(buffers);
   } catch (err) {
+    console.error('[WEBHOOK] Failed to read body:', err);
     return res.status(400).send('Failed to read body');
   }
 
   let event;
   try {
     event = JSON.parse(rawBody.toString());
-    console.log(`[WEBHOOK] BYPASSED SIG: ${event.type}`);
+    console.log(`[WEBHOOK] Event received: ${event.type}`);
   } catch (err) {
+    console.error('[WEBHOOK] Invalid JSON:', err);
     return res.status(400).send('Invalid JSON');
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const userId = session.metadata?.userId || session.client_reference_id;
+  try {
+    switch (event.type) {
+      // ✅ NEW SUBSCRIPTION CREATED (checkout completed)
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const userId = session.metadata?.userId || session.client_reference_id;
+        
+        if (!userId) {
+          console.error('[WEBHOOK] No userId in checkout.session.completed');
+          return res.status(400).send('No userId');
+        }
 
-    if (!userId) {
-      console.error('[NO USER ID]');
-      return res.status(400).send('No userId');
+        let tier = session.metadata?.tier;
+        let subscriptionId = session.subscription;
+
+        // If no tier in metadata, fetch from subscription
+        if (!tier && subscriptionId) {
+          const sub = await stripe.subscriptions.retrieve(subscriptionId);
+          tier = PRICE_TO_TIER[sub.items.data[0]?.price.id] || 'free';
+        }
+
+        const { qrLimit } = TIER_CONFIG[tier] || TIER_CONFIG.free;
+
+        await pool.query(
+          `UPDATE users 
+           SET subscription_tier = $1, 
+               qr_codes_limit = $2,
+               stripe_subscription_id = $3,
+               stripe_customer_id = $4,
+               updated_at = NOW()
+           WHERE id = $5`,
+          [tier, qrLimit, subscriptionId, session.customer, userId]
+        );
+
+        console.log(`[WEBHOOK] ✅ User ${userId} upgraded to ${tier} (${qrLimit} QRs)`);
+        break;
+      }
+
+      // ✅ SUBSCRIPTION UPDATED (tier change, renewal)
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
+        const customerId = subscription.customer;
+
+        // Determine new tier from price
+        const priceId = subscription.items.data[0]?.price.id;
+        const tier = PRICE_TO_TIER[priceId] || 'free';
+        const { qrLimit } = TIER_CONFIG[tier];
+
+        await pool.query(
+          `UPDATE users 
+           SET subscription_tier = $1,
+               qr_codes_limit = $2,
+               stripe_subscription_id = $3,
+               updated_at = NOW()
+           WHERE stripe_customer_id = $4`,
+          [tier, qrLimit, subscription.id, customerId]
+        );
+
+        console.log(`[WEBHOOK] ✅ Subscription updated for customer ${customerId} → ${tier}`);
+        break;
+      }
+
+      // ✅ SUBSCRIPTION CANCELLED/DELETED (downgrade to free)
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        const customerId = subscription.customer;
+
+        // Downgrade to FREE tier
+        const { qrLimit } = TIER_CONFIG.free;
+
+        await pool.query(
+          `UPDATE users 
+           SET subscription_tier = 'free',
+               qr_codes_limit = $1,
+               stripe_subscription_id = NULL,
+               updated_at = NOW()
+           WHERE stripe_customer_id = $2`,
+          [qrLimit, customerId]
+        );
+
+        console.log(`[WEBHOOK] ✅ Subscription cancelled for customer ${customerId} → downgraded to FREE (${qrLimit} QRs)`);
+        break;
+      }
+
+      // ✅ PAYMENT FAILED (optional: notify user, don't downgrade yet)
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        const customerId = invoice.customer;
+
+        console.log(`[WEBHOOK] ⚠️ Payment failed for customer ${customerId}`);
+        // Optional: Send email notification to user
+        // Stripe will retry payment automatically
+        break;
+      }
+
+      // ✅ SUBSCRIPTION TRIAL ENDED
+      case 'customer.subscription.trial_will_end': {
+        const subscription = event.data.object;
+        console.log(`[WEBHOOK] ⏰ Trial ending soon for subscription ${subscription.id}`);
+        // Optional: Send reminder email
+        break;
+      }
+
+      default:
+        console.log(`[WEBHOOK] Unhandled event type: ${event.type}`);
     }
 
-    let tier = session.metadata?.tier;
-    if (!tier && session.subscription) {
-      const sub = await stripe.subscriptions.retrieve(session.subscription);
-      tier = PRICE_TO_TIER[sub.items.data[0]?.price.id] || 'free';
-    }
+    return res.json({ received: true });
 
-    const { qrLimit } = TIER_CONFIG[tier] || TIER_CONFIG.free;
-
-    try {
-      await pool.query(
-        `UPDATE users SET subscription_tier = $1, qr_codes_limit = $2 WHERE id = $3`,
-        [tier, qrLimit, userId]
-      );
-      console.log(`[UPGRADED] User ${userId} → ${tier} (${qrLimit} QRs)`);
-    } catch (err) {
-      console.error('[DB ERROR]:', err.message);
-    }
+  } catch (error) {
+    console.error('[WEBHOOK] Error processing event:', error);
+    return res.status(500).json({ error: 'Webhook processing failed', details: error.message });
   }
-
-  res.json({ received: true });
 }

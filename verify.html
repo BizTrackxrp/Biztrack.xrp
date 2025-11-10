@@ -961,13 +961,26 @@
         dots.appendChild(dot);
       });
 
+      // ✅ FIX #1: Hide carousel controls if only 1 photo
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      if (photos.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        dots.style.display = 'none';
+      } else {
+        prevBtn.style.display = 'flex';
+        nextBtn.style.display = 'flex';
+        dots.style.display = 'flex';
+      }
+
       // Setup carousel controls
-      document.getElementById('prevBtn').addEventListener('click', () => {
+      prevBtn.addEventListener('click', () => {
         currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
         updateCarousel();
       });
 
-      document.getElementById('nextBtn').addEventListener('click', () => {
+      nextBtn.addEventListener('click', () => {
         currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
         updateCarousel();
       });
@@ -1018,9 +1031,28 @@
       // Set coordinates
       coords.textContent = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
 
-      // Create Google Maps embed
-      const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${location.latitude},${location.longitude}&zoom=15`;
-      mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
+      // ✅ FIX #2: Google Maps API - Add your API key here
+      // Get your API key from: https://console.cloud.google.com/google/maps-apis
+      const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY_HERE'; // ⚠️ REPLACE THIS!
+      
+      if (GOOGLE_MAPS_API_KEY === 'YOUR_API_KEY_HERE') {
+        // Fallback: Show static map with link to Google Maps
+        mapContainer.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem;">
+            <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: #64748B;"></i>
+            <p style="color: #64748B; text-align: center; margin: 0;">
+              Google Maps API key not configured.<br>
+              <a href="https://www.google.com/maps?q=${location.latitude},${location.longitude}" target="_blank" style="color: #4F46E5; font-weight: 600;">
+                View location on Google Maps →
+              </a>
+            </p>
+          </div>
+        `;
+      } else {
+        // Create Google Maps embed
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.latitude},${location.longitude}&zoom=15`;
+        mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
+      }
 
       // Set Google Maps link
       mapsLink.href = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;

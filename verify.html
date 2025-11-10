@@ -78,6 +78,34 @@
       font-size: 1.1rem;
     }
 
+    .sidebar-logout {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logout button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .sidebar-logout button:hover {
+      background: rgba(239, 68, 68, 0.2);
+      transform: translateY(-2px);
+    }
+
     /* Main Content */
     .main-content {
       margin-left: 260px;
@@ -702,18 +730,9 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="pricing-public.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
-      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-    </ul>
+  <!-- Sidebar Navigation (Context-Aware) -->
+  <nav class="sidebar" id="sidebar">
+    <!-- Will be populated by JavaScript based on auth state -->
   </nav>
 
   <!-- Main Content -->
@@ -765,9 +784,9 @@
 
     <!-- Product View State (Has Product ID) -->
     <div id="productState" class="product-view" style="display: none;">
-      <a href="verify.html" class="back-button">
+      <a href="#" id="backButton" class="back-button">
         <i class="fas fa-arrow-left"></i>
-        Back to Verify
+        <span id="backButtonText">Back to Verify</span>
       </a>
 
       <!-- Verified Badge -->
@@ -867,6 +886,82 @@
   </div>
 
   <script>
+    // ===== CONTEXT-AWARE NAVIGATION =====
+    let isLoggedIn = false;
+    
+    // Check if user is authenticated
+    function checkAuth() {
+      const token = localStorage.getItem('biztrack-auth-token');
+      return !!token;
+    }
+
+    // Render sidebar based on auth state
+    function renderSidebar() {
+      isLoggedIn = checkAuth();
+      const sidebar = document.getElementById('sidebar');
+      
+      if (isLoggedIn) {
+        // LOGGED-IN USER SIDEBAR
+        sidebar.innerHTML = `
+          <div class="sidebar-logo">
+            <h1>🚚 BizTrack</h1>
+          </div>
+          <ul class="sidebar-nav" style="flex: 1;">
+            <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
+            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+          </ul>
+          <div class="sidebar-logout">
+            <button id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </button>
+          </div>
+        `;
+        
+        // Add logout handler
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('biztrack-auth-token');
+            window.location.href = '/login.html';
+          }
+        });
+      } else {
+        // PUBLIC USER SIDEBAR
+        sidebar.innerHTML = `
+          <div class="sidebar-logo">
+            <h1>🚚 BizTrack</h1>
+          </div>
+          <ul class="sidebar-nav">
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+            <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+            <li><a href="pricing-public.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+            <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
+          </ul>
+        `;
+      }
+    }
+
+    // Set back button destination based on auth state
+    function setupBackButton() {
+      const backButton = document.getElementById('backButton');
+      const backButtonText = document.getElementById('backButtonText');
+      
+      if (isLoggedIn) {
+        backButton.href = 'dashboard.html';
+        backButtonText.textContent = 'Back to Dashboard';
+      } else {
+        backButton.href = 'verify.html';
+        backButtonText.textContent = 'Back to Verify';
+      }
+    }
+
+    // Initialize navigation
+    renderSidebar();
+
     let currentPhotoIndex = 0;
     let photos = [];
 
@@ -880,6 +975,7 @@
     } else {
       // Show product state and load product
       document.getElementById('productState').style.display = 'block';
+      setupBackButton(); // Set correct back button
       loadProduct(productId);
     }
 

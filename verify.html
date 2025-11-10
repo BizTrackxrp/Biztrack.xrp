@@ -901,7 +901,7 @@
       const sidebar = document.getElementById('sidebar');
       
       if (isLoggedIn) {
-        // LOGGED-IN USER SIDEBAR
+        // LOGGED-IN USER SIDEBAR (no Verify link - accessed via QR codes)
         sidebar.innerHTML = `
           <div class="sidebar-logo">
             <h1>🚚 BizTrack</h1>
@@ -910,7 +910,6 @@
             <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
             <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
             <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-            <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
           </ul>
           <div class="sidebar-logout">
             <button id="logoutBtn">

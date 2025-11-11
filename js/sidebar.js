@@ -1,4 +1,6 @@
-// This generates the sidebar HTML
+// BizTrack Sidebar Component - Shared across all pages
+// Usage: Add <div id="sidebar-container" data-page="PAGENAME"></div> to each HTML file
+
 function renderSidebar(activePage) {
   return `
     <nav class="sidebar">
@@ -6,64 +8,147 @@ function renderSidebar(activePage) {
         <h1>🚚 BizTrack</h1>
       </div>
       <ul class="sidebar-nav">
-        <li><a href="/index.html" class="${activePage === 'home' ? 'active' : ''}">
-          <i class="fas fa-home"></i> Home
-        </a></li>
         
-        <li><a href="/business.html" class="${activePage === 'business' ? 'active' : ''}">
-          <i class="fas fa-briefcase"></i> For Businesses
-        </a></li>
+        <!-- Home -->
+        <li>
+          <a href="/index.html" class="${activePage === 'home' ? 'active' : ''}">
+            <i class="fas fa-home"></i> Home
+          </a>
+        </li>
+        
+        <!-- For Businesses -->
+        <li>
+          <a href="/business.html" class="${activePage === 'business' ? 'active' : ''}">
+            <i class="fas fa-briefcase"></i> For Businesses
+          </a>
+        </li>
         
         <!-- Use Cases with Dropdown -->
-        <li class="dropdown">
-          <a href="/use-cases.html" class="${activePage.startsWith('use-cases') ? 'active' : ''}">
-            <i class="fas fa-lightbulb"></i> Use Cases <i class="fas fa-chevron-down"></i>
+        <li class="dropdown ${activePage.startsWith('use-cases') ? 'active-parent' : ''}">
+          <a href="/use-cases.html" class="${activePage === 'use-cases' ? 'active' : ''}">
+            <i class="fas fa-lightbulb"></i> Use Cases
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
           </a>
           <ul class="submenu">
-            <li><a href="/use-cases/pharmaceutical.html">💊 Pharmaceutical</a></li>
-            <li><a href="/use-cases/cannabis.html">🌿 Cannabis</a></li>
-            <li><a href="/use-cases/luxury.html">💎 Luxury Goods</a></li>
-            <li><a href="/use-cases/food.html">🍔 Food & Beverage</a></li>
-            <li><a href="/use-cases/electronics.html">📱 Electronics</a></li>
+            <li>
+              <a href="/use-cases/pharmaceutical.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
+                <span class="submenu-icon">💊</span> Pharmaceutical
+              </a>
+            </li>
+            <li>
+              <a href="/use-cases/cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
+                <span class="submenu-icon">🌿</span> Cannabis
+              </a>
+            </li>
+            <li>
+              <a href="/use-cases/luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
+                <span class="submenu-icon">💎</span> Luxury Goods
+              </a>
+            </li>
+            <li>
+              <a href="/use-cases/food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
+                <span class="submenu-icon">🍔</span> Food & Beverage
+              </a>
+            </li>
+            <li>
+              <a href="/use-cases/electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
+                <span class="submenu-icon">📱</span> Electronics
+              </a>
+            </li>
           </ul>
         </li>
         
-        <li><a href="/verify.html" class="${activePage === 'verify' ? 'active' : ''}">
-          <i class="fas fa-check-circle"></i> Verify Product
-        </a></li>
+        <!-- Verify Product -->
+        <li>
+          <a href="/verify.html" class="${activePage === 'verify' ? 'active' : ''}">
+            <i class="fas fa-check-circle"></i> Verify Product
+          </a>
+        </li>
         
-        <li><a href="/pricing-public.html" class="${activePage === 'pricing' ? 'active' : ''}">
-          <i class="fas fa-dollar-sign"></i> Pricing
-        </a></li>
+        <!-- Pricing -->
+        <li>
+          <a href="/pricing-public.html" class="${activePage === 'pricing' ? 'active' : ''}">
+            <i class="fas fa-dollar-sign"></i> Pricing
+          </a>
+        </li>
         
-        <li><a href="/login.html" class="${activePage === 'login' ? 'active' : ''}">
-          <i class="fas fa-user"></i> Login/Signup
-        </a></li>
+        <!-- Login/Signup -->
+        <li>
+          <a href="/login.html" class="${activePage === 'login' ? 'active' : ''}">
+            <i class="fas fa-user"></i> Login/Signup
+          </a>
+        </li>
+        
       </ul>
     </nav>
   `;
 }
 
-// Auto-inject on page load
+// Initialize sidebar on page load
 document.addEventListener('DOMContentLoaded', function() {
   const sidebarContainer = document.getElementById('sidebar-container');
+  
   if (sidebarContainer) {
+    // Get the active page from data-page attribute
     const activePage = sidebarContainer.dataset.page || '';
+    
+    // Inject sidebar HTML
     sidebarContainer.innerHTML = renderSidebar(activePage);
     
-    // Add dropdown click handler
+    // Initialize dropdown functionality
     initDropdowns();
   }
 });
 
+// Dropdown menu functionality
 function initDropdowns() {
-  const dropdowns = document.querySelectorAll('.dropdown');
+  const dropdowns = document.querySelectorAll('.sidebar .dropdown');
+  
   dropdowns.forEach(dropdown => {
-    dropdown.querySelector('a').addEventListener('click', (e) => {
-      if (window.innerWidth <= 768) { // Mobile only
+    const link = dropdown.querySelector('a');
+    const submenu = dropdown.querySelector('.submenu');
+    
+    // Desktop: Show submenu on hover
+    if (window.innerWidth > 768) {
+      dropdown.addEventListener('mouseenter', () => {
+        submenu.style.display = 'block';
+      });
+      
+      dropdown.addEventListener('mouseleave', () => {
+        submenu.style.display = 'none';
+      });
+    }
+    
+    // Mobile: Toggle submenu on click
+    link.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
         e.preventDefault();
         dropdown.classList.toggle('open');
+        
+        if (dropdown.classList.contains('open')) {
+          submenu.style.display = 'block';
+        } else {
+          submenu.style.display = 'none';
+        }
       }
     });
   });
+  
+  // Auto-expand dropdown if we're on a use case page
+  const activePage = document.getElementById('sidebar-container')?.dataset.page || '';
+  if (activePage.startsWith('use-cases')) {
+    const dropdown = document.querySelector('.sidebar .dropdown');
+    if (dropdown) {
+      dropdown.classList.add('open');
+      const submenu = dropdown.querySelector('.submenu');
+      if (submenu) {
+        submenu.style.display = 'block';
+      }
+    }
+  }
 }
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  initDropdowns();
+});

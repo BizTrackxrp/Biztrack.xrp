@@ -78,13 +78,11 @@ body {
   text-align: center;
   color: #ffffff;
   overflow: hidden;
-  min-height: 400px;  /* Add this line */
-  display: flex;      /* Add this line */
-  align-items: center; /* Add this line */
-  justify-content: center; /* Add this line */
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-
 
 .hero-overlay {
   position: absolute;
@@ -97,13 +95,10 @@ body {
 }
 
 .hero-content {
- position: relative;  /* Change from absolute to relative */
+  position: relative;
   max-width: 800px;
-  padding: 2rem 1rem;  /* Change from 0 1rem */
-  /* Remove top, left, and transform lines */
+  padding: 2rem 1rem;
 }
-
-
 
 .hero-content h1 {
   font-family: 'Montserrat', sans-serif;
@@ -359,9 +354,9 @@ footer {
 /* ===== Left Sidebar (top-left logo + links) ===== */
 .sidebar {
   position: fixed;
-  inset: 0 auto 0 0;       /* top:0; right:auto; bottom:0; left:0 */
+  inset: 0 auto 0 0;
   width: 240px;
-  background: #083a71;     /* navy */
+  background: #083a71;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -373,7 +368,7 @@ footer {
   font-size: 36px;
   font-weight: 900;
   letter-spacing: -0.3px;
-  margin-bottom: 24px;     /* nav sits right under the logo */
+  margin-bottom: 24px;
 }
 
 .sidebar-nav {
@@ -381,20 +376,133 @@ footer {
   margin: 0;
   padding: 0;
 }
+
 .sidebar-nav li {
   margin-bottom: 14px;
 }
+
 .sidebar-nav a {
   color: #fff;
   text-decoration: none;
   font-size: 18px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
+
 .sidebar-nav a:hover {
   text-decoration: underline;
 }
+
 .sidebar-nav a.active {
   text-decoration: underline;
+}
+
+/* ===================================
+   SIDEBAR DROPDOWN STYLES (NEW)
+   =================================== */
+
+/* Dropdown Container */
+.sidebar .dropdown {
+  position: relative;
+}
+
+/* Dropdown Arrow */
+.dropdown-arrow {
+  font-size: 0.7rem;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.dropdown.open .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Submenu */
+.sidebar .submenu {
+  display: none;
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #0a4a7a;
+  margin-left: 1rem;
+  background: rgba(10, 58, 90, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Submenu Items */
+.sidebar .submenu li {
+  margin: 0;
+}
+
+.sidebar .submenu a {
+  padding: 0.75rem 1rem;
+  font-size: 16px;
+  color: #b8d4e8;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+.sidebar .submenu a:hover {
+  background: #0a4a7a;
+  color: #ffffff;
+  padding-left: 1.25rem;
+  text-decoration: none;
+}
+
+.sidebar .submenu a.active {
+  background: #0a4a7a;
+  color: #ffffff;
+  font-weight: 700;
+  border-left: 3px solid #0a65ff;
+  text-decoration: none;
+}
+
+/* Submenu Icons */
+.submenu-icon {
+  font-size: 1.1rem;
+  width: 24px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Active Parent (when on a use case page) */
+.sidebar .dropdown.active-parent > a {
+  color: #0a65ff;
+}
+
+/* Desktop Hover Behavior */
+@media (min-width: 769px) {
+  .sidebar .dropdown:hover .submenu {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+  }
+}
+
+/* Mobile Click Behavior */
+@media (max-width: 768px) {
+  .sidebar .dropdown.open .submenu {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+  }
+}
+
+/* Slide Down Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Push page content to the right of the sidebar */
@@ -406,4 +514,3 @@ footer {
 .navbar {
   display: none !important;
 }
-

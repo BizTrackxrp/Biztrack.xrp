@@ -31,27 +31,27 @@ function renderSidebar(activePage) {
           </a>
           <ul class="submenu">
             <li>
-              <a href="/use-cases/pharmaceutical.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
+              <a href="/pharmaceutical.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
                 <span class="submenu-icon">💊</span> Pharmaceutical
               </a>
             </li>
             <li>
-              <a href="/use-cases/cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
+              <a href="/cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
                 <span class="submenu-icon">🌿</span> Cannabis
               </a>
             </li>
             <li>
-              <a href="/use-cases/luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
+              <a href="/luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
                 <span class="submenu-icon">💎</span> Luxury Goods
               </a>
             </li>
             <li>
-              <a href="/use-cases/food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
+              <a href="/food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
                 <span class="submenu-icon">🍔</span> Food & Beverage
               </a>
             </li>
             <li>
-              <a href="/use-cases/electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
+              <a href="/electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
                 <span class="submenu-icon">📱</span> Electronics
               </a>
             </li>

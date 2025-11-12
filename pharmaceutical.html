@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizTrack - FDA DSCSA Compliance on Blockchain | $400/Month</title>
+  <meta name="description" content="Meet DSCSA requirements in 15 minutes with blockchain-backed pharmaceutical compliance. GS1 serialization, T3 automation, and FDA audit exports for $400/month.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Hero Section - Pharma Focus */
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #0c4a6e 100%);
+      color: white;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+      opacity: 0.4;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.15;
+    }
+
+    .hero .subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.95;
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      padding: 1.125rem 2.5rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #1e40af;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #60a5fa;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Problem Section */
+    .problem-section {
+      padding: 5rem 2rem;
+      background: #fee2e2;
+      border-top: 4px solid #dc2626;
+    }
+
+    .problem-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .problem-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #7f1d1d;
+    }
+
+    .problem-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #991b1b;
+      margin-bottom: 3rem;
+      font-weight: 600;
+    }
+
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .requirement-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid #dc2626;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .requirement-item i {
+      color: #dc2626;
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .requirement-item h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #7f1d1d;
+      margin-bottom: 0.5rem;
+    }
+
+    .requirement-item p {
+      color: #991b1b;
+      font-size: 0.95rem;
+    }
+
+    .penalty-callout {
+      background: #7f1d1d;
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .penalty-callout .big {
+      font-size: 2.5rem;
+      display: block;
+      margin: 0.5rem 0;
+      color: #fca5a5;
+    }
+
+    /* Solution Section */
+    .solution-section {
+      padding: 5rem 2rem;
+      background: white;
+    }
+
+    .solution-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .solution-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .solution-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #475569;
+      margin-bottom: 4rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .solution-highlight {
+      color: #1e40af;
+      font-weight: 700;
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .step:hover {
+      border-color: #3b82f6;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 0 auto 1.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .step p {
+      color: #475569;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 2rem;
+      background: #f8fafc;
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .features-intro {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 4rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      border-color: #3b82f6;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .feature-card p {
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    /* Comparison Section */
+    .comparison {
+      padding: 5rem 2rem;
+      background: white;
+    }
+
+    .comparison-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .comparison h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 3rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .comparison-table {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-header {
+      background: #0f172a;
+      color: white;
+      font-weight: 700;
+    }
+
+    .comparison-cell {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .comparison-cell:not(:last-child) {
+      border-right: 1px solid #e2e8f0;
+    }
+
+    .comparison-highlight {
+      background: #dbeafe;
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    .check {
+      color: #10b981;
+      font-size: 1.5rem;
+    }
+
+    .cross {
+      color: #ef4444;
+      font-size: 1.5rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, #1e40af 0%, #0c4a6e 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-section p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.95;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero .subtitle {
+        font-size: 1.25rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-row {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-cell {
+        border-right: none !important;
+        border-bottom: 1px solid #e2e8f0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div id="sidebar-container" data-page="use-cases-pharma"></div>
+    <div class="sidebar-logo">
+      <h1>🚚 BizTrack</h1>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
+      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
+      <li><a href="pricing-public.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-shield-check"></i> FDA DSCSA Compliant
+        </div>
+        <h1>FDA Compliance, Solved</h1>
+        <p class="subtitle">Meet DSCSA requirements in 15 minutes—not 18 months</p>
+        <p>Pharmaceutical supply chain compliance on blockchain. GS1 serialization, automated T3 documentation, and instant verification for $400/month.</p>
+        
+        <div class="hero-buttons">
+          <a href="register.html" class="btn btn-primary">
+            <i class="fas fa-rocket"></i>
+            Get Compliant Now
+          </a>
+          <a href="#how-it-works" class="btn btn-secondary">
+            <i class="fas fa-play-circle"></i>
+            See How It Works
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-number">80%</div>
+            <div class="stat-label">Faster Verification</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">$250K</div>
+            <div class="stat-label">Avg. Fine Avoided</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">15 min</div>
+            <div class="stat-label">Time to First Shipment</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">99.99%</div>
+            <div class="stat-label">System Uptime</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section">
+      <div class="problem-container">
+        <h2>The FDA's DSCSA Mandate Is Here. Are You Ready?</h2>
+        <p class="problem-intro">Every prescription drug in the US supply chain now requires full electronic traceability</p>
+
+        <div class="requirements-grid">
+          <div class="requirement-item">
+            <i class="fas fa-barcode"></i>
+            <h3>Unit-Level Serialization</h3>
+            <p>GS1-compliant Product Identifiers with NDC, serial number, lot, and expiration</p>
+          </div>
+
+          <div class="requirement-item">
+            <i class="fas fa-file-contract"></i>
+            <h3>Electronic T3 Documentation</h3>
+            <p>Transaction Information, History, and Statements for every handoff</p>
+          </div>
+
+          <div class="requirement-item">
+            <i class="fas fa-clock"></i>
+            <h3>Real-Time Verification</h3>
+            <p>Respond to verification requests in less than 1 second</p>
+          </div>
+
+          <div class="requirement-item">
+            <i class="fas fa-database"></i>
+            <h3>6-Year Audit Trails</h3>
+            <p>Immutable records accessible within 48 hours for FDA inspection</p>
+          </div>
+
+          <div class="requirement-item">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>24-Hour Reporting</h3>
+            <p>Suspect product quarantine and notification protocols</p>
+          </div>
+
+          <div class="requirement-item">
+            <i class="fas fa-user-check"></i>
+            <h3>ATP Validation</h3>
+            <p>Only deal with Authorized Trading Partners verified against FDA databases</p>
+          </div>
+        </div>
+
+        <div class="penalty-callout">
+          <span>The Penalty for Non-Compliance</span>
+          <span class="big">Up to $250,000 per violation</span>
+          <span>Plus product quarantines and supply chain shutdowns</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution-section" id="how-it-works">
+      <div class="solution-container">
+        <h2>BizTrack Enterprise: DSCSA Compliance on Blockchain</h2>
+        <p class="solution-intro">
+          <span class="solution-highlight">$400/month</span> vs. <span class="solution-highlight">$100M+ custom systems.</span>
+          No technical complexity. No hidden fees. Just compliance.
+        </p>
+
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Upload Your Data</h3>
+            <p>CSV, Excel, or API integration. Product info, lot numbers, NDC codes—we accept standard formats.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>We Handle Everything</h3>
+            <p>Auto-generate GS1 barcodes, mint blockchain records, create T3 documentation. All automatic.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Ship With Confidence</h3>
+            <p>Every product traceable, verifiable, audit-ready. One-click FDA exports anytime.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="features-container">
+        <h2>Enterprise Features Built for Pharma</h2>
+        <p class="features-intro">Everything you need to stay compliant, secure, and audit-ready</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-qrcode"></i>
+            </div>
+            <h3>GS1 Serialization</h3>
+            <p>Generate compliant Product Identifiers with NDC, unique serial numbers, lot numbers, and expiration dates. Blockchain-backed and tamper-proof.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-link"></i>
+            </div>
+            <h3>Blockchain Traceability</h3>
+            <p>Every transaction recorded on XRPL—immutable, auditable, and unhackable. Unlike centralized databases, our system never goes down.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <h3>T3 Automation</h3>
+            <p>Automatic generation of Transaction Information, History, and Statements. EPCIS 1.2+ interoperability for seamless supply chain events.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-shield-check"></i>
+            </div>
+            <h3>ATP Verification</h3>
+            <p>Real-time validation against FDA databases. Block non-compliant transactions automatically before they happen.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            <h3>Suspect Product Alerts</h3>
+            <p>Automated quarantine workflows and 24-hour FDA reporting. Collaborate with trading partners on investigations seamlessly.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-download"></i>
+            </div>
+            <h3>FDA Audit Exports</h3>
+            <p>One-click compliance bundles with 6-year immutable records. XML, CSV, and PDF formats ready for inspection within 48 hours.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-thermometer-half"></i>
+            </div>
+            <h3>Cold Chain Monitoring</h3>
+            <p>Track temperature deviations and maintain cold chain integrity. IoT sensor integration available for real-time alerts.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Email support with 4-hour response times. Custom onboarding calls to map your supply chain and ensure smooth integration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison">
+      <div class="comparison-container">
+        <h2>Legacy Systems vs BizTrack Enterprise</h2>
+        
+        <div class="comparison-table">
+          <div class="comparison-row comparison-header">
+            <div class="comparison-cell">Feature</div>
+            <div class="comparison-cell">Legacy Systems</div>
+            <div class="comparison-cell comparison-highlight">BizTrack</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Initial Cost</div>
+            <div class="comparison-cell">$100M+</div>
+            <div class="comparison-cell comparison-highlight">$400/month</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Implementation Time</div>
+            <div class="comparison-cell">18-24 months</div>
+            <div class="comparison-cell comparison-highlight">15 minutes</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Data Security</div>
+            <div class="comparison-cell">Centralized (hackable)</div>
+            <div class="comparison-cell comparison-highlight">Blockchain (impermeable)</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Uptime Guarantee</div>
+            <div class="comparison-cell"><i class="fas fa-times cross"></i></div>
+            <div class="comparison-cell comparison-highlight">99.99%</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">T3 Generation</div>
+            <div class="comparison-cell">Manual</div>
+            <div class="comparison-cell comparison-highlight">Fully Automated</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Per-Transaction Fees</div>
+            <div class="comparison-cell"><i class="fas fa-check check"></i></div>
+            <div class="comparison-cell comparison-highlight">Unlimited Usage</div>
+          </div>
+
+          <div class="comparison-row">
+            <div class="comparison-cell">Technical Expertise Required</div>
+            <div class="comparison-cell"><i class="fas fa-check check"></i></div>
+            <div class="comparison-cell comparison-highlight">Zero</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-container">
+        <h2>Stop Worrying About Audits. Start Shipping Confidently.</h2>
+        <p>Get started in 15 minutes. No credit card required for demo.<br>First month 50% off with code <strong>DSCSA2025</strong></p>
+        
+        <div class="hero-buttons">
+          <a href="register.html" class="btn btn-primary">
+            <i class="fas fa-rocket"></i>
+            Get Compliant Now
+          </a>
+          <a href="mailto:enterprise@biztrack.io" class="btn btn-secondary">
+            <i class="fas fa-envelope"></i>
+            Contact Sales
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="pricing-public.html">Pricing</a>
+        <a href="business.html">For Businesses</a>
+        <a href="verify.html">Verify Product</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL | FDA-Ready Since Day One</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/sidebar.js"></script>
+</body>
+</html>

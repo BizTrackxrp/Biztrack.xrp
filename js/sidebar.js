@@ -14,14 +14,14 @@ function renderSidebar(activePage) {
         
         <!-- Home -->
         <li>
-          <a href="/index.html" class="${activePage === 'home' ? 'active' : ''}">
+          <a href="index.html" class="${activePage === 'home' ? 'active' : ''}">
             <i class="fas fa-home"></i> Home
           </a>
         </li>
         
         <!-- For Businesses -->
         <li>
-          <a href="/business.html" class="${activePage === 'business' ? 'active' : ''}">
+          <a href="business.html" class="${activePage === 'business' ? 'active' : ''}">
             <i class="fas fa-briefcase"></i> For Businesses
           </a>
         </li>
@@ -35,32 +35,32 @@ function renderSidebar(activePage) {
           </a>
           <ul class="submenu" style="display: ${isUseCasePage ? 'block' : 'none'};">
             <li>
-              <a href="/use-cases.html" class="${activePage === 'use-cases' ? 'active' : ''}">
+              <a href="use-cases.html" class="${activePage === 'use-cases' ? 'active' : ''}">
                 <span class="submenu-icon">🎯</span> All Industries
               </a>
             </li>
             <li>
-              <a href="/use-cases-pharma.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
+              <a href="use-cases-pharma.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
                 <span class="submenu-icon">💊</span> Pharmaceutical
               </a>
             </li>
             <li>
-              <a href="/use-cases-cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
+              <a href="use-cases-cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
                 <span class="submenu-icon">🌿</span> Cannabis
               </a>
             </li>
             <li>
-              <a href="/use-cases-luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
+              <a href="use-cases-luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
                 <span class="submenu-icon">💎</span> Luxury Goods
               </a>
             </li>
             <li>
-              <a href="/use-cases-food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
+              <a href="use-cases-food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
                 <span class="submenu-icon">🍔</span> Food & Beverage
               </a>
             </li>
             <li>
-              <a href="/use-cases-electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
+              <a href="use-cases-electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
                 <span class="submenu-icon">📱</span> Electronics
               </a>
             </li>
@@ -69,21 +69,21 @@ function renderSidebar(activePage) {
         
         <!-- Verify Product -->
         <li>
-          <a href="/verify.html" class="${activePage === 'verify' ? 'active' : ''}">
+          <a href="verify.html" class="${activePage === 'verify' ? 'active' : ''}">
             <i class="fas fa-check-circle"></i> Verify Product
           </a>
         </li>
         
         <!-- Pricing -->
         <li>
-          <a href="/pricing-public.html" class="${activePage === 'pricing' ? 'active' : ''}">
+          <a href="pricing-public.html" class="${activePage === 'pricing' ? 'active' : ''}">
             <i class="fas fa-dollar-sign"></i> Pricing
           </a>
         </li>
         
         <!-- Login/Signup -->
         <li>
-          <a href="/login.html" class="${activePage === 'login' ? 'active' : ''}">
+          <a href="login.html" class="${activePage === 'login' ? 'active' : ''}">
             <i class="fas fa-user"></i> Login/Signup
           </a>
         </li>

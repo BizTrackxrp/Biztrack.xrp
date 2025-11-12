@@ -9,209 +9,820 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar - EXACT SAME AS HOMEPAGE */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Hero Section - Cannabis Green Theme */
+    .hero {
+      background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+      color: white;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+      opacity: 0.4;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.15;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.95;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #059669;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #6ee7b7;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Problem Section */
+    .problem-section {
+      padding: 5rem 2rem;
+      background: #fef3c7;
+      border-top: 4px solid #f59e0b;
+    }
+
+    .problem-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .problem-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #78350f;
+    }
+
+    .problem-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #92400e;
+      margin-bottom: 3rem;
+      font-weight: 600;
+    }
+
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .requirement-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid #f59e0b;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .requirement-item i {
+      color: #f59e0b;
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .requirement-item h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #78350f;
+      margin-bottom: 0.5rem;
+    }
+
+    .requirement-item p {
+      color: #92400e;
+      font-size: 0.95rem;
+    }
+
+    .penalty-callout {
+      background: #78350f;
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* Solution Section */
+    .solution-section {
+      padding: 5rem 2rem;
+      background: white;
+    }
+
+    .solution-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .solution-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .solution-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #475569;
+      margin-bottom: 4rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .step:hover {
+      border-color: #059669;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #059669, #065f46);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 0 auto 1.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .step p {
+      color: #475569;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 2rem;
+      background: #f8fafc;
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 4rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      border-color: #059669;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #059669, #065f46);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .feature-card p {
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    /* Comparison Section */
+    .comparison {
+      padding: 5rem 2rem;
+      background: white;
+    }
+
+    .comparison-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .comparison h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 3rem;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .comparison-table {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-header {
+      background: #0f172a;
+      color: white;
+      font-weight: 700;
+    }
+
+    .comparison-cell {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .comparison-cell:not(:last-child) {
+      border-right: 1px solid #e2e8f0;
+    }
+
+    .comparison-highlight {
+      background: #d1fae5;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-section p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.95;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-row {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-cell {
+        border-right: none !important;
+        border-bottom: 1px solid #e2e8f0;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
+  <!-- Sidebar - Using sidebar.js -->
   <div id="sidebar-container" data-page="use-cases-cannabis"></div>
 
   <!-- Main Content -->
-  <main class="main-with-sidebar">
+  <main class="main-content">
     
     <!-- Hero Section -->
-    <section class="hero" style="background: linear-gradient(135deg, #059669 0%, #065f46 100%); padding: 6rem 2rem 4rem; position: relative; overflow: hidden;">
-      <div style="max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; text-align: center; color: white;">
-        <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 0.5rem 1.25rem; border-radius: 50px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1.5rem; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
           🌿 Cannabis Manufacturing & Distribution
         </div>
-        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.15;">Seed-to-Sale Tracking That Actually Works</h1>
-        <p style="font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.95; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <h1>Seed-to-Sale Tracking That Actually Works</h1>
+        <p>
           Meet state compliance requirements with blockchain-backed chain of custody tracking. From cultivation to customer, every plant is traceable, auditable, and Metrc-compatible.
         </p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem;">
-          <a href="/register.html" style="padding: 1.125rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: #059669; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">
-            <i class="fas fa-rocket"></i> Get Started
+        
+        <div class="hero-buttons">
+          <a href="register.html" class="btn btn-primary">
+            <i class="fas fa-rocket"></i>
+            Get Started
           </a>
-          <a href="#features" style="padding: 1.125rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.15); color: white; border: 2px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
-            <i class="fas fa-seedling"></i> See Features
+          <a href="#features" class="btn btn-secondary">
+            <i class="fas fa-seedling"></i>
+            See Features
           </a>
         </div>
 
-        <!-- Stats -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto;">
-          <div style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #6ee7b7;">100%</div>
-            <div style="font-size: 0.95rem; opacity: 0.85;">State Compliance</div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">State Compliance</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #6ee7b7;">Real-Time</div>
-            <div style="font-size: 0.95rem; opacity: 0.85;">Inventory Tracking</div>
+          <div class="stat">
+            <div class="stat-number">Real-Time</div>
+            <div class="stat-label">Inventory Tracking</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #6ee7b7;">Instant</div>
-            <div style="font-size: 0.95rem; opacity: 0.85;">Batch Recalls</div>
+          <div class="stat">
+            <div class="stat-number">Instant</div>
+            <div class="stat-label">Batch Recalls</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #6ee7b7;">Lab-Verified</div>
-            <div style="font-size: 0.95rem; opacity: 0.85;">Test Results</div>
+          <div class="stat">
+            <div class="stat-number">Lab-Verified</div>
+            <div class="stat-label">Test Results</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Problem Section -->
-    <section style="padding: 5rem 2rem; background: #fef3c7; border-top: 4px solid #f59e0b;">
-      <div style="max-width: 1100px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center; color: #78350f;">The Cannabis Compliance Nightmare</h2>
-        <p style="text-align: center; font-size: 1.25rem; color: #92400e; margin-bottom: 3rem; font-weight: 600;">
+    <section class="problem-section">
+      <div class="problem-container">
+        <h2>The Cannabis Compliance Nightmare</h2>
+        <p class="problem-intro">
           State regulations demand complete seed-to-sale tracking—but most systems are expensive, clunky, and fail audits
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-clipboard-check" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Metrc Integration Required</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">Most states mandate Metrc reporting—manual entry is error-prone and time-consuming</p>
+        <div class="requirements-grid">
+          <div class="requirement-item">
+            <i class="fas fa-clipboard-check"></i>
+            <h3>Metrc Integration Required</h3>
+            <p>Most states mandate Metrc reporting—manual entry is error-prone and time-consuming</p>
           </div>
 
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-flask" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Lab Results Tracking</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">COAs get lost, contaminated batches slip through, and recalls become disasters</p>
+          <div class="requirement-item">
+            <i class="fas fa-flask"></i>
+            <h3>Lab Results Tracking</h3>
+            <p>COAs get lost, contaminated batches slip through, and recalls become disasters</p>
           </div>
 
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-warehouse" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Inventory Nightmares</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">Plants disappear, weights don't match, and auditors find discrepancies</p>
+          <div class="requirement-item">
+            <i class="fas fa-warehouse"></i>
+            <h3>Inventory Nightmares</h3>
+            <p>Plants disappear, weights don't match, and auditors find discrepancies</p>
           </div>
 
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-exclamation-triangle" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Diversion Risks</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">Prove you're not selling on the black market—or lose your license</p>
+          <div class="requirement-item">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Diversion Risks</h3>
+            <p>Prove you're not selling on the black market—or lose your license</p>
           </div>
 
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-undo" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Batch Recalls</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">When pesticides are found, can you identify every product from that batch? Instantly?</p>
+          <div class="requirement-item">
+            <i class="fas fa-undo"></i>
+            <h3>Batch Recalls</h3>
+            <p>When pesticides are found, can you identify every product from that batch? Instantly?</p>
           </div>
 
-          <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-            <i class="fas fa-gavel" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #78350f; margin-bottom: 0.5rem;">Failed Audits = Fines</h3>
-            <p style="color: #92400e; font-size: 0.95rem;">Missing documentation can cost you tens of thousands or your entire operation</p>
+          <div class="requirement-item">
+            <i class="fas fa-gavel"></i>
+            <h3>Failed Audits = Fines</h3>
+            <p>Missing documentation can cost you tens of thousands or your entire operation</p>
           </div>
         </div>
 
-        <div style="background: #78350f; color: white; padding: 2rem; border-radius: 16px; text-align: center; font-size: 1.25rem; font-weight: 700;">
+        <div class="penalty-callout">
           One compliance failure = $10K-$100K+ in fines or license suspension
         </div>
       </div>
     </section>
 
     <!-- Solution Section -->
-    <section id="features" style="padding: 5rem 2rem; background: white;">
-      <div style="max-width: 1100px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; text-align: center; color: #0f172a;">BizTrack Cannabis: Bulletproof Compliance</h2>
-        <p style="text-align: center; font-size: 1.25rem; color: #475569; margin-bottom: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <section class="solution-section" id="features">
+      <div class="solution-container">
+        <h2>BizTrack Cannabis: Bulletproof Compliance</h2>
+        <p class="solution-intro">
           Track every plant from seed to sale with blockchain-backed chain of custody. Metrc-compatible, audit-ready, and built for cultivators, processors, and dispensaries.
         </p>
 
-        <!-- 3-Step Process -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
-          <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 800; margin: 0 auto 1.5rem;">1</div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a;">Tag at Cultivation</h3>
-            <p style="color: #475569;">Assign blockchain IDs to plants/batches. QR codes track clones, mothers, and harvests with timestamps and geo-tags.</p>
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Tag at Cultivation</h3>
+            <p>Assign blockchain IDs to plants/batches. QR codes track clones, mothers, and harvests with timestamps and geo-tags.</p>
           </div>
 
-          <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 800; margin: 0 auto 1.5rem;">2</div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a;">Track Processing</h3>
-            <p style="color: #475569;">Log drying, curing, extraction, infusion—every step recorded. Upload lab COAs directly to blockchain.</p>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Track Processing</h3>
+            <p>Log drying, curing, extraction, infusion—every step recorded. Upload lab COAs directly to blockchain.</p>
           </div>
 
-          <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 800; margin: 0 auto 1.5rem;">3</div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a;">Sell with Proof</h3>
-            <p style="color: #475569;">Customers scan QR codes to see strain info, test results, and complete grow history. Compliance built-in.</p>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Sell with Proof</h3>
+            <p>Customers scan QR codes to see strain info, test results, and complete grow history. Compliance built-in.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Features Grid -->
-    <section style="padding: 5rem 2rem; background: #f8fafc;">
-      <div style="max-width: 1200px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 4rem; text-align: center; color: #0f172a;">Complete Cannabis Compliance Toolkit</h2>
+    <section class="features">
+      <div class="features-container">
+        <h2>Complete Cannabis Compliance Toolkit</h2>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <div class="features-grid">
           
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-sync"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Metrc Integration</h3>
-            <p style="color: #475569; line-height: 1.7;">Auto-sync inventory transfers, waste disposal, and sales to Metrc. No manual data entry, zero reporting delays.</p>
+            <h3>Metrc Integration</h3>
+            <p>Auto-sync inventory transfers, waste disposal, and sales to Metrc. No manual data entry, zero reporting delays.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-certificate"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Lab COA Tracking</h3>
-            <p style="color: #475569; line-height: 1.7;">Upload Certificates of Analysis directly to blockchain. Customers see THC/CBD levels, terpenes, and pass/fail status instantly.</p>
+            <h3>Lab COA Tracking</h3>
+            <p>Upload Certificates of Analysis directly to blockchain. Customers see THC/CBD levels, terpenes, and pass/fail status instantly.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-box"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Batch Recall System</h3>
-            <p style="color: #475569; line-height: 1.7;">Contaminated batch? Identify every product from that grow in seconds. Alert dispensaries automatically.</p>
+            <h3>Batch Recall System</h3>
+            <p>Contaminated batch? Identify every product from that grow in seconds. Alert dispensaries automatically.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-cannabis"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Strain Verification</h3>
-            <p style="color: #475569; line-height: 1.7;">Prove genetics with blockchain-backed lineage tracking. Show customers the exact phenotype and grow conditions.</p>
+            <h3>Strain Verification</h3>
+            <p>Prove genetics with blockchain-backed lineage tracking. Show customers the exact phenotype and grow conditions.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-map-marker-alt"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Geo-Tagged Growing</h3>
-            <p style="color: #475569; line-height: 1.7;">Timestamped GPS coordinates prove where plants were grown. Perfect for proving compliance with licensed facilities.</p>
+            <h3>Geo-Tagged Growing</h3>
+            <p>Timestamped GPS coordinates prove where plants were grown. Perfect for proving compliance with licensed facilities.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-camera"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Photo Documentation</h3>
-            <p style="color: #475569; line-height: 1.7;">Capture plant photos at every stage. Immutable visual proof of grow conditions and product quality.</p>
+            <h3>Photo Documentation</h3>
+            <p>Capture plant photos at every stage. Immutable visual proof of grow conditions and product quality.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-file-download"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Audit Exports</h3>
-            <p style="color: #475569; line-height: 1.7;">One-click compliance reports for state inspectors. Every transaction, transfer, and test result—audit-ready instantly.</p>
+            <h3>Audit Exports</h3>
+            <p>One-click compliance reports for state inspectors. Every transaction, transfer, and test result—audit-ready instantly.</p>
           </div>
 
-          <div style="padding: 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #059669, #065f46); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 1.5rem;">
+          <div class="feature-card">
+            <div class="feature-icon">
               <i class="fas fa-shield-alt"></i>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Tamper-Proof Records</h3>
-            <p style="color: #475569; line-height: 1.7;">Blockchain makes data immutable. No one can alter test results, weights, or transfer records—ever.</p>
+            <h3>Tamper-Proof Records</h3>
+            <p>Blockchain makes data immutable. No one can alter test results, weights, or transfer records—ever.</p>
           </div>
 
         </div>
@@ -219,73 +830,91 @@
     </section>
 
     <!-- Comparison -->
-    <section style="padding: 5rem 2rem; background: white;">
-      <div style="max-width: 1000px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 3rem; text-align: center; color: #0f172a;">Manual Tracking vs BizTrack</h2>
+    <section class="comparison">
+      <div class="comparison-container">
+        <h2>Manual Tracking vs BizTrack</h2>
         
-        <div style="background: white; border-radius: 16px; border: 2px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; background: #0f172a; color: white; font-weight: 700; padding: 1.5rem;">
-            <div style="padding: 0 1rem;">Feature</div>
-            <div style="text-align: center;">Manual/Legacy</div>
-            <div style="text-align: center; background: rgba(5, 150, 105, 0.2); padding: 0 1rem; margin: -1.5rem 0; display: flex; align-items: center; justify-content: center;">BizTrack</div>
+        <div class="comparison-table">
+          <div class="comparison-row comparison-header">
+            <div class="comparison-cell">Feature</div>
+            <div class="comparison-cell">Manual/Legacy</div>
+            <div class="comparison-cell comparison-highlight">BizTrack</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; padding: 1.5rem;">
-            <div>Metrc Sync</div>
-            <div style="text-align: center;">Manual entry</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">Automatic</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Metrc Sync</div>
+            <div class="comparison-cell">Manual entry</div>
+            <div class="comparison-cell comparison-highlight">Automatic</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; padding: 1.5rem;">
-            <div>Batch Recalls</div>
-            <div style="text-align: center;">Hours/Days</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">< 1 minute</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Batch Recalls</div>
+            <div class="comparison-cell">Hours/Days</div>
+            <div class="comparison-cell comparison-highlight">&lt; 1 minute</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; padding: 1.5rem;">
-            <div>Lab COA Storage</div>
-            <div style="text-align: center;">Paper/Folders</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">Blockchain</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Lab COA Storage</div>
+            <div class="comparison-cell">Paper/Folders</div>
+            <div class="comparison-cell comparison-highlight">Blockchain</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; padding: 1.5rem;">
-            <div>Data Tampering</div>
-            <div style="text-align: center;">Possible</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">Impossible</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Data Tampering</div>
+            <div class="comparison-cell">Possible</div>
+            <div class="comparison-cell comparison-highlight">Impossible</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; padding: 1.5rem;">
-            <div>Audit Preparation</div>
-            <div style="text-align: center;">Days</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">1-click</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Audit Preparation</div>
+            <div class="comparison-cell">Days</div>
+            <div class="comparison-cell comparison-highlight">1-click</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 1.5rem;">
-            <div>Cost</div>
-            <div style="text-align: center;">$500-2K/mo</div>
-            <div style="text-align: center; background: #d1fae5; font-weight: 600; color: #065f46;">$400/mo</div>
+          <div class="comparison-row">
+            <div class="comparison-cell">Cost</div>
+            <div class="comparison-cell">$500-2K/mo</div>
+            <div class="comparison-cell comparison-highlight">$400/mo</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section style="padding: 5rem 2rem; background: linear-gradient(135deg, #059669 0%, #065f46 100%); color: white; text-align: center;">
-      <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem;">Stop Worrying About State Audits</h2>
-        <p style="font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.95;">
+    <section class="cta-section">
+      <div class="cta-container">
+        <h2>Stop Worrying About State Audits</h2>
+        <p>
           Get started in 15 minutes. Track your first batch today.
         </p>
-        <a href="/register.html" style="padding: 1.25rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: #059669; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">
-          <i class="fas fa-seedling"></i> Start Tracking Now
+        <a href="register.html" class="btn btn-primary">
+          <i class="fas fa-seedling"></i>
+          Start Tracking Now
         </a>
       </div>
     </section>
 
   </main>
 
-  <footer>
-    <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="faq.html">FAQ</a>
+        <a href="pricing-public.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
+      </div>
+    </div>
   </footer>
 
   <script src="/js/sidebar.js"></script>

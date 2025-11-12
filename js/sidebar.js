@@ -134,18 +134,7 @@ function initDropdowns() {
     });
   });
   
-  // Auto-expand dropdown if we're on a use case page
-  const activePage = document.getElementById('sidebar-container')?.dataset.page || '';
-  if (activePage.startsWith('use-cases')) {
-    const dropdown = document.querySelector('.sidebar .dropdown');
-    if (dropdown) {
-      dropdown.classList.add('open');
-      const submenu = dropdown.querySelector('.submenu');
-      if (submenu) {
-        submenu.style.display = 'block';
-      }
-    }
-  }
+  // Dropdown stays collapsed by default - only expands on hover/click
 }
 
 // Handle window resize

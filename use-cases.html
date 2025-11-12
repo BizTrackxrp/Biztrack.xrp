@@ -9,26 +9,476 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar - EXACT SAME AS HOMEPAGE */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+      opacity: 0.4;
+    }
+
+    .hero-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+      line-height: 1.8;
+    }
+
+    .hero-features {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-top: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-features h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .features-list div {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Industry Focus Section */
+    .industry-focus {
+      padding: 3rem 2rem;
+      background: white;
+      text-align: center;
+    }
+
+    .industry-focus-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .industry-focus h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .industry-focus p {
+      font-size: 1.125rem;
+      color: #475569;
+      line-height: 1.8;
+    }
+
+    /* Industry Cards Section */
+    .industries {
+      padding: 4rem 2rem;
+      background: #f8fafc;
+    }
+
+    .industries-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .industries h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .industries-intro {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 3rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .industries-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .industry-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+
+    .industry-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .industry-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .industry-card h3 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .industry-card p {
+      color: #475569;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .industry-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+
+    /* Custom Solution CTA */
+    .cta-section {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-section p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.95;
+    }
+
+    .btn {
+      padding: 1.25rem 2.5rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      border: 2px solid white;
+      background: white;
+      color: #1e40af;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .contact-info {
+      display: none;
+      margin-top: 2rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .contact-link {
+      color: white;
+      text-decoration: none;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .contact-link i {
+      font-size: 1.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .features-list {
+        grid-template-columns: 1fr;
+      }
+
+      .industries-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
+  <!-- Sidebar - Using sidebar.js -->
   <div id="sidebar-container" data-page="use-cases"></div>
 
   <!-- Main Content -->
-  <main class="main-with-sidebar">
+  <main class="main-content">
     
     <!-- Hero Section - Product Focused -->
-    <section class="hero" style="background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); padding: 5rem 2rem;">
-      <div class="hero-content" style="max-width: 1000px; margin: 0 auto; text-align: center; color: white;">
-        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;">Smart QR Codes. Blockchain Authentication. Total Transparency.</h1>
-        <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.95; line-height: 1.8;">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Smart QR Codes. Blockchain Authentication. Total Transparency.</h1>
+        <p>
           BizTrack delivers product authenticity verification through smart QR codes on packaging that link to immutable data stored on the XRPL blockchain. Each product gets geo-tagged manufacturing location, photos, supply chain history, and tamper-proof verification—giving your customers complete confidence in authenticity.
         </p>
-        <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 16px; padding: 2rem; margin-top: 2rem; border: 1px solid rgba(255, 255, 255, 0.2);">
-          <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What You Get:</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: left;">
+        <div class="hero-features">
+          <h3>What You Get:</h3>
+          <div class="features-list">
             <div>✓ Smart QR codes for every product</div>
             <div>✓ Blockchain-backed authentication</div>
             <div>✓ Geo-tagged manufacturing data</div>
@@ -41,97 +491,83 @@
     </section>
 
     <!-- Industry Focus Section -->
-    <section style="padding: 3rem 2rem; background: white; text-align: center;">
-      <div style="max-width: 900px; margin: 0 auto;">
-        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">
-          Built to Benefit These Industries
-        </h2>
-        <p style="font-size: 1.125rem; color: #475569; line-height: 1.8; margin-bottom: 1rem;">
+    <section class="industry-focus">
+      <div class="industry-focus-content">
+        <h2>Built to Benefit These Industries</h2>
+        <p>
           While our platform works for any business fighting counterfeits and ensuring supply chain integrity, we've developed specialized solutions for industries with strict compliance requirements and high-value products.
         </p>
       </div>
     </section>
 
     <!-- Industry Cards Section -->
-    <section style="padding: 4rem 2rem; background: #f8fafc;">
-      <div style="max-width: 1200px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 1rem; color: #0f172a;">
-          Sectors Where We Specialize
-        </h2>
-        <p style="text-align: center; font-size: 1.125rem; color: #64748b; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+    <section class="industries">
+      <div class="industries-container">
+        <h2>Sectors Where We Specialize</h2>
+        <p class="industries-intro">
           Explore our pre-built solutions designed for specific industries—or contact us to build something custom.
         </p>
 
         <!-- Industry Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <div class="industries-grid">
           
           <!-- Pharmaceutical -->
-          <a href="/pharmaceutical.html" style="text-decoration: none; color: inherit;">
-            <div class="industry-card" style="background: white; padding: 2.5rem; border-radius: 16px; border: 2px solid #e2e8f0; transition: all 0.3s; cursor: pointer; height: 100%;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">💊</div>
-              <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Pharmaceutical Compliance</h3>
-              <p style="color: #475569; margin-bottom: 1.5rem; line-height: 1.7;">
-                Meet FDA DSCSA requirements with GS1 serialization, automated T3 documentation, and real-time ATP verification. Full compliance in 15 minutes.
-              </p>
-              <div style="display: flex; align-items: center; gap: 0.5rem; color: #3b82f6; font-weight: 600;">
-                Learn More <i class="fas fa-arrow-right"></i>
-              </div>
+          <a href="use-cases-pharma.html" class="industry-card">
+            <div class="industry-icon">💊</div>
+            <h3>Pharmaceutical Compliance</h3>
+            <p>
+              Meet FDA DSCSA requirements with GS1 serialization, automated T3 documentation, and real-time ATP verification. Full compliance in 15 minutes.
+            </p>
+            <div class="industry-link">
+              Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
           <!-- Cannabis -->
-          <a href="/cannabis.html" style="text-decoration: none; color: inherit;">
-            <div class="industry-card" style="background: white; padding: 2.5rem; border-radius: 16px; border: 2px solid #e2e8f0; transition: all 0.3s; cursor: pointer; height: 100%;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">🌿</div>
-              <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Cannabis Manufacturing</h3>
-              <p style="color: #475569; margin-bottom: 1.5rem; line-height: 1.7;">
-                Seed-to-sale tracking with state compliance (Metrc integration), batch recalls, lab results, and complete supply chain transparency for cultivators and dispensaries.
-              </p>
-              <div style="display: flex; align-items: center; gap: 0.5rem; color: #3b82f6; font-weight: 600;">
-                Learn More <i class="fas fa-arrow-right"></i>
-              </div>
+          <a href="use-cases-cannabis.html" class="industry-card">
+            <div class="industry-icon">🌿</div>
+            <h3>Cannabis Manufacturing</h3>
+            <p>
+              Seed-to-sale tracking with state compliance (Metrc integration), batch recalls, lab results, and complete supply chain transparency for cultivators and dispensaries.
+            </p>
+            <div class="industry-link">
+              Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
           <!-- Luxury Goods -->
-          <a href="/luxury.html" style="text-decoration: none; color: inherit;">
-            <div class="industry-card" style="background: white; padding: 2.5rem; border-radius: 16px; border: 2px solid #e2e8f0; transition: all 0.3s; cursor: pointer; height: 100%;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">💎</div>
-              <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Luxury Goods Authentication</h3>
-              <p style="color: #475569; margin-bottom: 1.5rem; line-height: 1.7;">
-                Fight counterfeits with blockchain-backed certificates of authenticity. Track ownership history and verify genuine products for Rolex, Gucci, Louis Vuitton, and more.
-              </p>
-              <div style="display: flex; align-items: center; gap: 0.5rem; color: #3b82f6; font-weight: 600;">
-                Learn More <i class="fas fa-arrow-right"></i>
-              </div>
+          <a href="use-cases-luxury.html" class="industry-card">
+            <div class="industry-icon">💎</div>
+            <h3>Luxury Goods Authentication</h3>
+            <p>
+              Fight counterfeits with blockchain-backed certificates of authenticity. Track ownership history and verify genuine products for Rolex, Gucci, Louis Vuitton, and more.
+            </p>
+            <div class="industry-link">
+              Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
           <!-- Food & Beverage -->
-          <a href="/food.html" style="text-decoration: none; color: inherit;">
-            <div class="industry-card" style="background: white; padding: 2.5rem; border-radius: 16px; border: 2px solid #e2e8f0; transition: all 0.3s; cursor: pointer; height: 100%;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">🍔</div>
-              <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Food & Beverage Safety</h3>
-              <p style="color: #475569; margin-bottom: 1.5rem; line-height: 1.7;">
-                Farm-to-table traceability with temperature monitoring, recall management, and complete ingredient transparency. Protect consumers and your brand reputation.
-              </p>
-              <div style="display: flex; align-items: center; gap: 0.5rem; color: #3b82f6; font-weight: 600;">
-                Learn More <i class="fas fa-arrow-right"></i>
-              </div>
+          <a href="use-cases-food.html" class="industry-card">
+            <div class="industry-icon">🍔</div>
+            <h3>Food & Beverage Safety</h3>
+            <p>
+              Farm-to-table traceability with temperature monitoring, recall management, and complete ingredient transparency. Protect consumers and your brand reputation.
+            </p>
+            <div class="industry-link">
+              Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
           <!-- Electronics -->
-          <a href="/electronics.html" style="text-decoration: none; color: inherit;">
-            <div class="industry-card" style="background: white; padding: 2.5rem; border-radius: 16px; border: 2px solid #e2e8f0; transition: all 0.3s; cursor: pointer; height: 100%;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">📱</div>
-              <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Electronics Anti-Counterfeiting</h3>
-              <p style="color: #475569; margin-bottom: 1.5rem; line-height: 1.7;">
-                Warranty verification, gray market prevention, and component tracking. Protect authorized dealers and ensure genuine products reach customers.
-              </p>
-              <div style="display: flex; align-items: center; gap: 0.5rem; color: #3b82f6; font-weight: 600;">
-                Learn More <i class="fas fa-arrow-right"></i>
-              </div>
+          <a href="use-cases-electronics.html" class="industry-card">
+            <div class="industry-icon">📱</div>
+            <h3>Electronics Anti-Counterfeiting</h3>
+            <p>
+              Warranty verification, gray market prevention, and component tracking. Protect authorized dealers and ensure genuine products reach customers.
+            </p>
+            <div class="industry-link">
+              Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
@@ -140,27 +576,27 @@
     </section>
 
     <!-- Custom Solution CTA -->
-    <section style="padding: 5rem 2rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; text-align: center;">
-      <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem;">Your Industry Not Listed?</h2>
-        <p style="font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.95;">
+    <section class="cta-section">
+      <div class="cta-container">
+        <h2>Your Industry Not Listed?</h2>
+        <p>
           No problem. We build custom blockchain solutions for any industry. Tell us your challenges and we'll create the perfect system for your business.
         </p>
         
         <!-- Contact Button -->
-        <button id="contactBtn" onclick="toggleContact()" class="btn primary" style="font-size: 1.1rem; padding: 1.25rem 2.5rem; cursor: pointer; background: white; color: #1e40af; border: 2px solid white; transition: all 0.3s;">
+        <button id="contactBtn" onclick="toggleContact()" class="btn">
           <i class="fas fa-envelope"></i> Contact Us
         </button>
         
         <!-- Contact Info (Hidden by default) -->
-        <div id="contactInfo" style="display: none; margin-top: 2rem; padding: 2rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2); animation: slideDown 0.3s ease-out;">
-          <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
-            <a href="mailto:info@biztrack.io" style="color: white; text-decoration: none; font-size: 1.25rem; display: flex; align-items: center; gap: 1rem; padding: 1rem 2rem; background: rgba(255, 255, 255, 0.1); border-radius: 12px; transition: all 0.2s;">
-              <i class="fas fa-envelope" style="font-size: 1.5rem;"></i>
+        <div id="contactInfo" class="contact-info">
+          <div class="contact-links">
+            <a href="mailto:info@biztrack.io" class="contact-link">
+              <i class="fas fa-envelope"></i>
               <span style="font-weight: 600;">info@biztrack.io</span>
             </a>
-            <a href="tel:+13606700852" style="color: white; text-decoration: none; font-size: 1.25rem; display: flex; align-items: center; gap: 1rem; padding: 1rem 2rem; background: rgba(255, 255, 255, 0.1); border-radius: 12px; transition: all 0.2s;">
-              <i class="fas fa-phone" style="font-size: 1.5rem;"></i>
+            <a href="tel:+13606700852" class="contact-link">
+              <i class="fas fa-phone"></i>
               <span style="font-weight: 600;">(360) 670-0852</span>
             </a>
           </div>
@@ -168,36 +604,43 @@
       </div>
     </section>
 
-    <script>
-      function toggleContact() {
-        const contactInfo = document.getElementById('contactInfo');
-        const contactBtn = document.getElementById('contactBtn');
-        
-        if (contactInfo.style.display === 'none') {
-          contactInfo.style.display = 'block';
-          contactBtn.innerHTML = '<i class="fas fa-times"></i> Close';
-        } else {
-          contactInfo.style.display = 'none';
-          contactBtn.innerHTML = '<i class="fas fa-envelope"></i> Contact Us';
-        }
-      }
-    </script>
-
   </main>
 
   <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="faq.html">FAQ</a>
+        <a href="pricing-public.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
+      </div>
+    </div>
   </footer>
 
-  <!-- Hover Effect for Cards -->
-  <style>
-    .industry-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      border-color: #3b82f6;
+  <script>
+    function toggleContact() {
+      const contactInfo = document.getElementById('contactInfo');
+      const contactBtn = document.getElementById('contactBtn');
+      
+      if (contactInfo.style.display === 'none' || contactInfo.style.display === '') {
+        contactInfo.style.display = 'block';
+        contactBtn.innerHTML = '<i class="fas fa-times"></i> Close';
+      } else {
+        contactInfo.style.display = 'none';
+        contactBtn.innerHTML = '<i class="fas fa-envelope"></i> Contact Us';
+      }
     }
-  </style>
+  </script>
 
   <script src="/js/sidebar.js"></script>
 </body>

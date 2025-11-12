@@ -2,6 +2,9 @@
 // Usage: Add <div id="sidebar-container" data-page="PAGENAME"></div> to each HTML file
 
 function renderSidebar(activePage) {
+  // Determine if we should show the submenu (only when on a use-cases page)
+  const isUseCasePage = activePage.startsWith('use-cases');
+  
   return `
     <nav class="sidebar">
       <div class="sidebar-logo">
@@ -24,34 +27,40 @@ function renderSidebar(activePage) {
         </li>
         
         <!-- Use Cases with Dropdown -->
-        <li class="dropdown ${activePage.startsWith('use-cases') ? 'active-parent' : ''}">
-          <a href="/use-cases.html" class="${activePage === 'use-cases' ? 'active' : ''}">
-            <i class="fas fa-lightbulb"></i> Use Cases
+        <li class="dropdown ${isUseCasePage ? 'open active-parent' : ''}">
+          <a href="#" class="dropdown-toggle ${activePage === 'use-cases' ? 'active' : ''}" data-prevent-navigate="true">
+            <i class="fas fa-lightbulb"></i> 
+            <span>Use Cases</span>
             <i class="fas fa-chevron-down dropdown-arrow"></i>
           </a>
-          <ul class="submenu">
+          <ul class="submenu" style="display: ${isUseCasePage ? 'block' : 'none'};">
             <li>
-              <a href="/pharmaceutical.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
+              <a href="/use-cases.html" class="${activePage === 'use-cases' ? 'active' : ''}">
+                <span class="submenu-icon">🎯</span> All Industries
+              </a>
+            </li>
+            <li>
+              <a href="/use-cases-pharma.html" class="${activePage === 'use-cases-pharma' ? 'active' : ''}">
                 <span class="submenu-icon">💊</span> Pharmaceutical
               </a>
             </li>
             <li>
-              <a href="/cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
+              <a href="/use-cases-cannabis.html" class="${activePage === 'use-cases-cannabis' ? 'active' : ''}">
                 <span class="submenu-icon">🌿</span> Cannabis
               </a>
             </li>
             <li>
-              <a href="/luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
+              <a href="/use-cases-luxury.html" class="${activePage === 'use-cases-luxury' ? 'active' : ''}">
                 <span class="submenu-icon">💎</span> Luxury Goods
               </a>
             </li>
             <li>
-              <a href="/food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
+              <a href="/use-cases-food.html" class="${activePage === 'use-cases-food' ? 'active' : ''}">
                 <span class="submenu-icon">🍔</span> Food & Beverage
               </a>
             </li>
             <li>
-              <a href="/electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
+              <a href="/use-cases-electronics.html" class="${activePage === 'use-cases-electronics' ? 'active' : ''}">
                 <span class="submenu-icon">📱</span> Electronics
               </a>
             </li>
@@ -81,6 +90,70 @@ function renderSidebar(activePage) {
         
       </ul>
     </nav>
+    
+    <style>
+      /* Dropdown styles */
+      .sidebar .dropdown {
+        position: relative;
+      }
+
+      .sidebar .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+
+      .sidebar .dropdown-toggle span {
+        flex: 1;
+      }
+
+      .sidebar .dropdown-arrow {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+        margin-left: auto;
+      }
+
+      .sidebar .dropdown.open .dropdown-arrow {
+        transform: rotate(180deg);
+      }
+
+      .sidebar .submenu {
+        list-style: none;
+        padding-left: 0;
+        margin-left: 1.5rem;
+        margin-top: 0.5rem;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .sidebar .submenu li {
+        margin: 0.25rem 0;
+      }
+
+      .sidebar .submenu a {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .sidebar .submenu-icon {
+        font-size: 1rem;
+      }
+
+      .sidebar .submenu a:hover,
+      .sidebar .submenu a.active {
+        background: #1e293b;
+        color: #3b82f6;
+      }
+
+      /* Highlight parent when child is active */
+      .sidebar .dropdown.active-parent > .dropdown-toggle {
+        color: #3b82f6;
+      }
+    </style>
   `;
 }
 
@@ -100,41 +173,34 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Dropdown menu functionality
+// Dropdown menu functionality - CLICK ONLY (no hover)
 function initDropdowns() {
   const dropdowns = document.querySelectorAll('.sidebar .dropdown');
   
   dropdowns.forEach(dropdown => {
-    const link = dropdown.querySelector('a');
+    const toggleLink = dropdown.querySelector('.dropdown-toggle');
     const submenu = dropdown.querySelector('.submenu');
     
-    // Desktop: Show submenu on hover
-    if (window.innerWidth > 768) {
-      dropdown.addEventListener('mouseenter', () => {
-        submenu.style.display = 'block';
-      });
-      
-      dropdown.addEventListener('mouseleave', () => {
-        submenu.style.display = 'none';
-      });
-    }
+    if (!toggleLink || !submenu) return;
     
-    // Mobile: Toggle submenu on click
-    link.addEventListener('click', (e) => {
-      if (window.innerWidth <= 768) {
-        e.preventDefault();
-        dropdown.classList.toggle('open');
-        
-        if (dropdown.classList.contains('open')) {
-          submenu.style.display = 'block';
-        } else {
-          submenu.style.display = 'none';
-        }
+    // Handle click to toggle dropdown
+    toggleLink.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent navigation
+      
+      // Toggle the dropdown
+      const isOpen = dropdown.classList.contains('open');
+      
+      if (isOpen) {
+        // Close it
+        dropdown.classList.remove('open');
+        submenu.style.display = 'none';
+      } else {
+        // Open it
+        dropdown.classList.add('open');
+        submenu.style.display = 'block';
       }
     });
   });
-  
-  // Dropdown stays collapsed by default - only expands on hover/click
 }
 
 // Handle window resize

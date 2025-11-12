@@ -18,12 +18,12 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #ffffff;
+      background: #f0f4f8;
       color: #1e293b;
       line-height: 1.6;
     }
 
-    /* Sidebar */
+    /* Sidebar - EXACT SAME AS HOMEPAGE */
     .sidebar {
       position: fixed;
       left: 0;
@@ -41,10 +41,16 @@
       margin-bottom: 3rem;
     }
 
+    .sidebar-logo img {
+      height: 50px;
+      width: auto;
+    }
+
     .sidebar-logo h1 {
       color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
+      margin-top: 0.5rem;
     }
 
     .sidebar-nav {
@@ -99,7 +105,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
       opacity: 0.4;
     }
 
@@ -155,15 +161,15 @@
     }
 
     .btn {
-      padding: 1.125rem 2.5rem;
+      padding: 1rem 2rem;
       border-radius: 12px;
       text-decoration: none;
-      font-weight: 700;
-      font-size: 1.05rem;
+      font-weight: 600;
+      font-size: 1rem;
       transition: all 0.3s;
       display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       cursor: pointer;
       border: none;
     }
@@ -171,23 +177,23 @@
     .btn-primary {
       background: white;
       color: #1e40af;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
       color: white;
       border: 2px solid rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(10px);
     }
 
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.5);
     }
 
@@ -426,7 +432,7 @@
     .feature-icon {
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -577,6 +583,30 @@
       color: #3b82f6;
     }
 
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: #1e293b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-icons a:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
     .footer-copyright {
       text-align: center;
       padding-top: 2rem;
@@ -615,6 +645,10 @@
         grid-template-columns: 1fr;
       }
 
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
       .comparison-row {
         grid-template-columns: 1fr;
       }
@@ -627,19 +661,8 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
+  <!-- Sidebar Navigation - USING SIDEBAR.JS LIKE HOMEPAGE -->
   <div id="sidebar-container" data-page="use-cases-pharma"></div>
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="pricing-public.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
-      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-    </ul>
-  </nav>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -925,12 +948,16 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
+        <a href="faq.html">FAQ</a>
         <a href="pricing-public.html">Pricing</a>
-        <a href="business.html">For Businesses</a>
-        <a href="verify.html">Verify Product</a>
         <a href="contact.html">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
+      </div>
+      <div class="social-icons">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
       </div>
       <div class="footer-copyright">
         <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL | FDA-Ready Since Day One</p>

@@ -627,11 +627,22 @@
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     function toggleContact() {
       const contactInfo = document.getElementById('contactInfo');
       const contactBtn = document.getElementById('contactBtn');
       
       if (contactInfo.style.display === 'none' || contactInfo.style.display === '') {
         contactInfo.style.display = 'block';
+        contactBtn.innerHTML = '<i class="fas fa-times"></i> Close';
+      } else {
+        contactInfo.style.display = 'none';
+        contactBtn.innerHTML = '<i class="fas fa-envelope"></i> Contact Us';
+      }
+    }
+  </script>
+
+  <script src="js/sidebar.js"></script>
+</body>
+</html>
         contactBtn.innerHTML = '<i class="fas fa-tim

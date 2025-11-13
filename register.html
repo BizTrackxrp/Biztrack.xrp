@@ -92,7 +92,8 @@
       color: #334155;
     }
 
-    .form-group input {
+    .form-group input,
+    .form-group select {
       width: 100%;
       padding: 0.875rem 1rem;
       border: 2px solid #E2E8F0;
@@ -100,12 +101,37 @@
       font-size: 1rem;
       font-family: 'Inter', sans-serif;
       transition: all 0.2s;
+      background-color: white;
     }
 
-    .form-group input:focus {
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #4F46E5;
       box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .business-type-info {
+      font-size: 0.875rem;
+      color: #64748B;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: start;
+      gap: 0.5rem;
+    }
+
+    .business-type-info i {
+      margin-top: 0.125rem;
+      color: #4F46E5;
     }
 
     .password-requirements {
@@ -232,6 +258,19 @@
       </div>
 
       <div class="form-group">
+        <label for="businessType">Business Type <span style="color: #DC2626;">*</span></label>
+        <select id="businessType" required>
+          <option value="">Select your business type</option>
+          <option value="general">General Business</option>
+          <option value="pharma">Pharmaceutical Business</option>
+        </select>
+        <div class="business-type-info">
+          <i class="fas fa-info-circle"></i>
+          <span>This determines your available pricing plans and cannot be changed later.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label for="password">Password</label>
         <input type="password" id="password" required autocomplete="new-password">
         <p class="password-requirements">Must be at least 8 characters</p>
@@ -299,11 +338,17 @@
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const companyName = document.getElementById('companyName').value.trim();
+      const businessType = document.getElementById('businessType').value;
       const registerBtn = document.getElementById('registerBtn');
 
       // Validation
       if (!email || !password) {
         showMessage('Please fill in all required fields', 'error');
+        return;
+      }
+
+      if (!businessType) {
+        showMessage('Please select your business type', 'error');
         return;
       }
 
@@ -322,13 +367,18 @@
 
       try {
         // Step 1: Register the user
-        console.log('Step 1: Registering user...');
+        console.log('Step 1: Registering user with business type:', businessType);
         const registerResponse = await fetch(`${API_BASE}/api/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email, password, companyName: companyName || null })
+          body: JSON.stringify({ 
+            email, 
+            password, 
+            companyName: companyName || null,
+            businessType // NEW: Include business type
+          })
         });
 
         const registerData = await registerResponse.json();
@@ -362,44 +412,16 @@
         localStorage.setItem('biztrack-auth-token', loginData.token);
         localStorage.setItem('biztrack-user-email', email);
 
-        // Step 3: Handle plan selection
-        if (selectedPlan) {
-          showMessage('Redirecting to checkout...', 'info');
-          registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting to checkout...';
-
-          console.log('Step 3: Creating checkout session for plan:', selectedPlan);
-
-          // Create Stripe checkout session
-          const checkoutResponse = await fetch(`${API_BASE}/api/create-checkout-session`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${loginData.token}`
-            },
-            body: JSON.stringify({ tier: selectedPlan })
-          });
-
-          const checkoutData = await checkoutResponse.json();
-          console.log('Checkout response:', checkoutResponse.status, checkoutData);
-
-          if (!checkoutResponse.ok || !checkoutData.success) {
-            throw new Error(checkoutData.error || 'Failed to create checkout session');
-          }
-
-          // Redirect to Stripe checkout
-          console.log('Redirecting to Stripe:', checkoutData.checkoutUrl);
-          window.location.href = checkoutData.checkoutUrl;
-
-        } else {
-          // No plan selected, go to dashboard
-          showMessage('Success! Redirecting to dashboard...', 'success');
-          setTimeout(() => {
-            window.location.href = '/dashboard.html';
-          }, 1000);
-        }
+        // Step 3: CHANGED - Always redirect to pricing page after registration
+        showMessage('Success! Redirecting to pricing...', 'success');
+        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+        
+        setTimeout(() => {
+          window.location.href = '/pricing.html';
+        }, 1000);
 
       } catch (error) {
-        console.error('Registration/Checkout error:', error);
+        console.error('Registration error:', error);
         showMessage(error.message || 'Something went wrong. Please try again.', 'error');
         
         registerBtn.disabled = false;

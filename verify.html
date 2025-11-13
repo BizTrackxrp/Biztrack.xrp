@@ -730,10 +730,8 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation (Context-Aware) -->
-  <nav class="sidebar" id="sidebar">
-    <!-- Will be populated by JavaScript based on auth state -->
-  </nav>
+  <!-- Sidebar Navigation -->
+  <div id="sidebar-container" data-page="verify"></div>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -886,7 +884,7 @@
   </div>
 
   <script>
-    // ===== CONTEXT-AWARE NAVIGATION =====
+    // ===== SIMPLE AUTH CHECK FOR BACK BUTTON =====
     let isLoggedIn = false;
     
     // Check if user is authenticated
@@ -895,51 +893,9 @@
       return !!token;
     }
 
-    // Render sidebar based on auth state
-    function renderSidebar() {
-      isLoggedIn = checkAuth();
-      const sidebar = document.getElementById('sidebar');
-      
-      if (isLoggedIn) {
-        // LOGGED-IN USER SIDEBAR (no Verify link - accessed via QR codes)
-        sidebar.innerHTML = `
-          <div class="sidebar-logo">
-            <h1>🚚 BizTrack</h1>
-          </div>
-          <ul class="sidebar-nav" style="flex: 1;">
-            <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
-            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-          </ul>
-          <div class="sidebar-logout">
-            <button id="logoutBtn">
-              <i class="fas fa-sign-out-alt"></i>
-              Logout
-            </button>
-          </div>
-        `;
-        
-        // Add logout handler
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-          e.preventDefault();
-          if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('biztrack-auth-token');
-            window.location.href = '/login.html';
-          }
-        });
-      } else {
-        // PUBLIC USER SIDEBAR - Use sidebar.js data-page
-        sidebar.outerHTML = '<div id="sidebar-container" data-page="verify"></div>';
-        
-        // Load sidebar.js dynamically
-        const script = document.createElement('script');
-        script.src = 'js/sidebar.js';
-        document.body.appendChild(script);
-      }
-    }
-
     // Set back button destination based on auth state
     function setupBackButton() {
+      isLoggedIn = checkAuth();
       const backButton = document.getElementById('backButton');
       const backButtonText = document.getElementById('backButtonText');
       
@@ -951,9 +907,6 @@
         backButtonText.textContent = 'Back to Verify';
       }
     }
-
-    // Initialize navigation
-    renderSidebar();
 
     let currentPhotoIndex = 0;
     let photos = [];
@@ -1163,5 +1116,6 @@
       });
     }
   </script>
+  <script src="js/sidebar.js"></script>
 </body>
 </html>

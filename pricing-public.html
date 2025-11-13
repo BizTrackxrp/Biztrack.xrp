@@ -264,18 +264,7 @@
 </head>
 <body>
   <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="pricing-public.html" class="active"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
-      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-    </ul>
-  </nav>
+  <div id="sidebar-container" data-page="pricing"></div>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -311,7 +300,7 @@
             <li><i class="fas fa-check-circle"></i> Basic analytics</li>
             <li><i class="fas fa-check-circle"></i> API access</li>
           </ul>
-          <a href="login.html?plan=essential" class="cta-button">
+          <a href="register.html?plan=essential" class="cta-button">
             <i class="fas fa-rocket"></i> Get Started
           </a>
         </div>
@@ -333,7 +322,7 @@
             <li><i class="fas fa-check-circle"></i> Full API access</li>
             <li><i class="fas fa-check-circle"></i> Custom integrations</li>
           </ul>
-          <a href="login.html?plan=scale" class="cta-button">
+          <a href="register.html?plan=scale" class="cta-button">
             <i class="fas fa-rocket"></i> Get Started
           </a>
         </div>
@@ -355,7 +344,7 @@
             <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
             <li><i class="fas fa-check-circle"></i> Training & consultation</li>
           </ul>
-          <a href="login.html?plan=enterprise" class="cta-button">
+          <a href="register.html?plan=enterprise" class="cta-button">
             <i class="fas fa-rocket"></i> Get Started
           </a>
         </div>
@@ -364,69 +353,11 @@
       <!-- Footer Note -->
       <div class="footer-note">
         <p><strong>All plans include:</strong> Blockchain verification, IPFS storage, and QR code generation</p>
-        <p>Questions? <a onclick="openContactModal()">Contact our team</a></p>
+        <p>Questions? <a href="mailto:biztrack.xrp@proton.me">Contact our team</a></p>
       </div>
     </div>
   </main>
 
-  <!-- Contact Modal -->
-  <div id="contactModal" class="modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeContactModal()">×</button>
-     
-      <h2>Contact Sales</h2>
-      <p class="modal-description">Get in touch for Enterprise pricing and custom solutions.</p>
-     
-      <div class="contact-info">
-        <div class="contact-item">
-          <div class="contact-icon">Email</div>
-          <div class="contact-details">
-            <p class="contact-label">Email</p>
-            <p class="contact-value"><a href="mailto:Biztrack.xrp@proton.me">Biztrack.xrp@proton.me</a></p>
-          </div>
-        </div>
-       
-        <div class="contact-item">
-          <div class="contact-icon">Phone</div>
-          <div class="contact-details">
-            <p class="contact-label">Phone</p>
-            <p class="contact-value"><a href="tel:3606700852">(360) 670-0852</a></p>
-          </div>
-        </div>
-       
-        <div class="contact-item">
-          <div class="contact-icon">Clock</div>
-          <div class="contact-details">
-            <p class="contact-label">Business Hours</p>
-            <p class="contact-value">7 AM - 5 PM Pacific</p>
-            <p class="contact-label">Monday - Friday</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function openContactModal() {
-      document.getElementById('contactModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeContactModal() {
-      document.getElementById('contactModal').classList.remove('show');
-      document.body.style.overflow = 'auto';
-    }
-    // Close modal on outside click
-    document.getElementById('contactModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeContactModal();
-      }
-    });
-    // ESC key to close
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeContactModal();
-      }
-    });
-  </script>
+  <script src="js/sidebar.js"></script>
 </body>
 </html>

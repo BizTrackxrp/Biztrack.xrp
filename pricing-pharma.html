@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmaceutical Pricing - DSCSA-Compliant Supply Chain | BizTrack</title>
+  <meta name="description" content="FDA DSCSA-compliant pharmaceutical supply chain verification. From $2,500/month for 10,000 QR codes. Enterprise plans available.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+      padding: 3rem 2rem;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      max-width: 1200px;
+      margin: 0 auto 2rem;
+    }
+
+    .breadcrumb a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .breadcrumb a:hover {
+      color: #2563eb;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .free-banner {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 1.25rem 2rem;
+      border-radius: 16px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Pricing Cards */
+    .pricing-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .pricing-tier {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      border: 3px solid #e2e8f0;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .pricing-tier:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .pricing-tier.popular {
+      border-color: #3b82f6;
+      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -15px;
+      right: 30px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .tier-name {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-price {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-price span {
+      font-size: 1.25rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .tier-volume {
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+
+    .tier-features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .tier-features li {
+      padding: 0.75rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .tier-features i {
+      color: #10b981;
+      font-size: 1.25rem;
+      margin-top: 0.125rem;
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .cta-button.secondary {
+      background: white;
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+    }
+
+    .cta-button.secondary:hover {
+      background: #f0f9ff;
+    }
+
+    /* Includes Section */
+    .includes-section {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .includes-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .includes-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .includes-item i {
+      color: #3b82f6;
+      font-size: 1.25rem;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      max-width: 800px;
+      margin: 3rem auto 0;
+      text-align: center;
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .contact-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover {
+      color: #2563eb;
+      transform: translateX(3px);
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+      margin-top: 4rem;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: relative;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .pricing-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div id="sidebar-container" data-page="pricing"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="pricing-hub.html">
+        <i class="fas fa-arrow-left"></i>
+        Back to Pricing
+      </a>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">💊 For Pharmaceutical Companies</div>
+      <h1>Pharma-Grade Supply Chain Verification</h1>
+      <p>DSCSA-compliant. Immutable. Consumer-facing. Zero IT overhaul.</p>
+      
+      <div class="free-banner">
+        <i class="fas fa-gift"></i>
+        Start Free Today! 10 QR codes — no credit card required
+      </div>
+    </div>
+
+    <!-- Pricing Tiers -->
+    <div class="pricing-container">
+      
+      <!-- Compliance Tier -->
+      <div class="pricing-tier">
+        <h2 class="tier-name">Compliance</h2>
+        <div class="tier-price">$2,500<span> / month</span></div>
+        <div class="tier-volume">10,000 QR codes per month</div>
+        
+        <ul class="tier-features">
+          <li><i class="fas fa-check-circle"></i> 10,000 smart QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> DSCSA-ready serialization & traceability</li>
+          <li><i class="fas fa-check-circle"></i> XRPL blockchain immutability</li>
+          <li><i class="fas fa-check-circle"></i> IPFS for cold chain, temp logs, COAs</li>
+          <li><i class="fas fa-check-circle"></i> Audit-proof event logs</li>
+          <li><i class="fas fa-check-circle"></i> API access (EPCIS-ready)</li>
+          <li><i class="fas fa-check-circle"></i> Dedicated compliance rep</li>
+          <li><i class="fas fa-check-circle"></i> 24/7 priority support</li>
+          <li><i class="fas fa-check-circle"></i> SLA guarantees</li>
+        </ul>
+        
+        <a href="register.html?plan=compliance&price=2500" class="cta-button">
+          Get Started
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Enterprise Tier -->
+      <div class="pricing-tier popular">
+        <div class="popular-badge">MOST POPULAR</div>
+        <h2 class="tier-name">Enterprise</h2>
+        <div class="tier-price">$5,000<span>+ / month</span></div>
+        <div class="tier-volume">50,000+ QR codes per month</div>
+        
+        <ul class="tier-features">
+          <li><i class="fas fa-check-circle"></i> <strong>Everything in Compliance</strong></li>
+          <li><i class="fas fa-check-circle"></i> 50,000+ QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> Custom EPCIS / ERP integrations</li>
+          <li><i class="fas fa-check-circle"></i> White-label consumer scanner app</li>
+          <li><i class="fas fa-check-circle"></i> Dedicated infrastructure & account manager</li>
+          <li><i class="fas fa-check-circle"></i> FDA mock audit prep & training</li>
+          <li><i class="fas fa-check-circle"></i> Custom analytics & recall dashboards</li>
+          <li><i class="fas fa-check-circle"></i> Co-branded patient trust portal</li>
+          <li><i class="fas fa-check-circle"></i> Onboarding & quarterly reviews</li>
+        </ul>
+        
+        <a href="/cdn-cgi/l/email-protection#0c6e6576787e6d6f6722747e7c4c7c7e63786362226169337f796e66696f7831496278697e7c7e657f692c5c606d622c45627d79657e75" class="cta-button">
+          Contact Sales
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Includes Section -->
+    <div class="includes-section">
+      <h2>All Plans Include</h2>
+      <div class="includes-grid">
+        <div class="includes-item">
+          <i class="fas fa-shield-alt"></i>
+          Blockchain verification
+        </div>
+        <div class="includes-item">
+          <i class="fas fa-database"></i>
+          IPFS storage
+        </div>
+        <div class="includes-item">
+          <i class="fas fa-qrcode"></i>
+          QR generation
+        </div>
+        <div class="includes-item">
+          <i class="fas fa-mobile-alt"></i>
+          Consumer scan portal
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+      <h2>Questions?</h2>
+      <p style="color: #64748b; margin-bottom: 0;">Our pharmaceutical compliance experts are here to help</p>
+      
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#95f7fcefe1e7f4f6febbede7e5d5e5e7fae1fafbbbf8f0" class="contact-link">
+          <i class="fas fa-envelope"></i>
+          <span class="__cf_email__" data-cfemail="97f5feede3e5f6f4fcb9efe5e7d7e7e5f8e3f8f9b9faf2">[email&#160;protected]</span>
+        </a>
+        <a href="tel:+13606700852" class="contact-link">
+          <i class="fas fa-phone"></i>
+          (360) 670-0852
+        </a>
+      </div>
+      <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
+        Hours: 7 AM – 5 PM Pacific, Mon–Fri
+      </p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer"

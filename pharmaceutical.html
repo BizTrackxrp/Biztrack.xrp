@@ -89,6 +89,53 @@
       min-height: 100vh;
     }
 
+    /* Breadcrumb Navigation */
+    .breadcrumb {
+      background: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      margin-left: 260px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .breadcrumb-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: #64748b;
+    }
+
+    .breadcrumb-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .breadcrumb-link:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      color: #cbd5e1;
+      margin: 0 0.25rem;
+    }
+
+    .breadcrumb-current {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
     /* Hero Section - Pharma Focus */
     .hero {
       background: linear-gradient(135deg, #1e40af 0%, #0c4a6e 100%);
@@ -667,6 +714,18 @@
   <!-- Main Content -->
   <main class="main-content">
     
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb">
+      <div class="breadcrumb-content">
+        <a href="use-cases.html#industries" class="breadcrumb-link">
+          <i class="fas fa-arrow-left"></i>
+          Use Cases
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Pharmaceutical Compliance</span>
+      </div>
+    </nav>
+    
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-content">
@@ -934,7 +993,7 @@
             <i class="fas fa-rocket"></i>
             Get Compliant Now
           </a>
-          <a href="mailto:enterprise@biztrack.io" class="btn btn-secondary">
+          <a href="/cdn-cgi/l/email-protection#a1c4cfd5c4d3d1d3c8d2c4e1c3c8dbd5d3c0c2ca8fc8ce" class="btn btn-secondary">
             <i class="fas fa-envelope"></i>
             Contact Sales
           </a>
@@ -965,6 +1024,4 @@
     </div>
   </footer>
 
-  <script src="/js/sidebar.js"></script>
-</body>
-</html>
+  <script da

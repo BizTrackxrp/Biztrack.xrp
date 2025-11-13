@@ -39,7 +39,7 @@ function renderSidebar(activePage) {
         
         <!-- Pricing -->
         <li>
-          <a href="pricing-public.html" class="${activePage === 'pricing' ? 'active' : ''}">
+          <a href="pricing-hub.html" class="${activePage === 'pricing' ? 'active' : ''}">
             <i class="fas fa-dollar-sign"></i> Pricing
           </a>
         </li>

@@ -542,7 +542,7 @@ box-shadow: none;
       <div class="batch-toggle-container">
         <div class="batch-toggle-label">
           <i class="fas fa-layer-group"></i>
-          <span id="batchToggleText">Single Product Mode</span>
+         <span id="batchToggleText">Enable Batch Upload</span>
         </div>
         <div class="toggle-switch" id="batchToggle" onclick="toggleBatchMode()">
           <div class="toggle-switch-slider"></div>
@@ -723,7 +723,7 @@ box-shadow: none;
       if (isBatchMode) {
         toggle.classList.add('active');
         section.classList.add('show');
-        toggleText.textContent = 'Batch Order Mode';
+        toggleText.textContent = 'Batch Mode Enabled ✓';
         mintText.textContent = 'Mint Batch to Blockchain';
         skuLabel.innerHTML = 'SKU Prefix <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
         
@@ -736,7 +736,7 @@ box-shadow: none;
       } else {
         toggle.classList.remove('active');
         section.classList.remove('show');
-        toggleText.textContent = 'Single Product Mode';
+        toggleText.textContent = 'Enable Batch Upload';
         mintText.textContent = 'Mint to Blockchain';
         skuLabel.textContent = 'SKU';
         

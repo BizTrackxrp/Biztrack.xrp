@@ -23,24 +23,6 @@
       line-height: 1.6;
     }
 
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 260px;
-      background: #0f172a;
-      padding: 2rem 1.5rem;
-      z-index: 1000;
-    }
-
-    .sidebar-logo h1 {
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
     /* Main Content */
     .main-content {
       margin-left: 260px;
@@ -71,48 +53,31 @@
     /* Hero */
     .hero {
       max-width: 1200px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 4rem;
       text-align: center;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
-      color: white;
-      padding: 0.5rem 1.25rem;
-      border-radius: 50px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(30, 64, 175, 0.3);
     }
 
     .hero h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 1rem;
+      font-size: 4rem;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
     }
 
     .hero p {
-      font-size: 1.25rem;
-      color: #64748b;
-      margin-bottom: 2rem;
-      max-width: 800px;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 0;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
-    }
-
-    .free-banner {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      padding: 1.25rem 2rem;
-      border-radius: 16px;
-      font-size: 1.125rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+      font-weight: 500;
     }
 
     /* Pricing Cards */
@@ -329,14 +294,21 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        position: relative;
-      }
-
       .main-content,
       .footer {
         margin-left: 0;
+      }
+
+      .hero {
+        padding: 3rem 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero p {
+        font-size: 1.125rem;
       }
 
       .hero h1 {
@@ -367,13 +339,19 @@
 
     <!-- Hero -->
     <div class="hero">
-      <div class="hero-badge">💊 For Pharmaceutical Companies</div>
-      <h1>Pharma-Grade Supply Chain Verification</h1>
+      <h1>Pharmaceutical Supply Chain Verification</h1>
       <p>DSCSA-compliant. Immutable. Consumer-facing. Zero IT overhaul.</p>
       
-      <div class="free-banner">
-        <i class="fas fa-gift"></i>
-        Start Free Today! 10 QR codes — no credit card required
+      <div style="display: flex; justify-content: center; gap: 3rem; margin-top: 3rem; flex-wrap: wrap; color: white;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.125rem; font-weight: 600;">
+          <span style="font-size: 2rem;">✓</span> FDA DSCSA Ready
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.125rem; font-weight: 600;">
+          <span style="font-size: 2rem;">✓</span> GS1 Compatible
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.125rem; font-weight: 600;">
+          <span style="font-size: 2rem;">✓</span> 99.99% Uptime SLA
+        </div>
       </div>
     </div>
 

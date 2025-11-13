@@ -6,7 +6,7 @@
   <title>Verify Product - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -928,19 +928,13 @@
           }
         });
       } else {
-        // PUBLIC USER SIDEBAR
-        sidebar.innerHTML = `
-          <div class="sidebar-logo">
-            <h1>🚚 BizTrack</h1>
-          </div>
-          <ul class="sidebar-nav">
-            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-            <li><a href="verify.html" class="active"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-            <li><a href="pricing-public.html"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
-            <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-          </ul>
-        `;
+        // PUBLIC USER SIDEBAR - Use sidebar.js data-page
+        sidebar.outerHTML = '<div id="sidebar-container" data-page="verify"></div>';
+        
+        // Load sidebar.js dynamically
+        const script = document.createElement('script');
+        script.src = 'js/sidebar.js';
+        document.body.appendChild(script);
       }
     }
 
@@ -1056,7 +1050,7 @@
         dots.appendChild(dot);
       });
 
-      // ✅ FIX #1: Hide carousel controls if only 1 photo
+      // Hide carousel controls if only 1 photo
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
       if (photos.length <= 1) {
@@ -1126,7 +1120,7 @@
       // Set coordinates
       coords.textContent = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
 
-      // ✅ Google Maps API Key
+      // Google Maps API Key
       const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
       
       if (GOOGLE_MAPS_API_KEY === 'YOUR_API_KEY_HERE') {

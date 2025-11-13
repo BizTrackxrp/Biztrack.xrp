@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - BizTrack Supply Chain Verification</title>
+  <meta name="description" content="Flexible pricing for every supply chain. Choose between general business plans or pharmaceutical compliance plans.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+      padding: 4rem 2rem;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1000px;
+      margin: 0 auto 4rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+    }
+
+    .free-banner {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 1.25rem 2rem;
+      border-radius: 16px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .free-banner i {
+      font-size: 1.5rem;
+    }
+
+    /* Cards Container */
+    .cards-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .pricing-card {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      border: 3px solid #e2e8f0;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .pricing-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .pricing-card.pharma::before {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    }
+
+    .card-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    }
+
+    .pricing-card.pharma .card-icon {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    }
+
+    .card-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-subtitle {
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .card-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 2rem;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      transition: all 0.2s;
+    }
+
+    .pricing-card:hover .card-cta {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      max-width: 800px;
+      margin: 4rem auto 0;
+      text-align: center;
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .contact-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover {
+      color: #2563eb;
+      transform: translateX(3px);
+    }
+
+    .contact-link i {
+      font-size: 1.25rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 260px;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-copyright {
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1.5rem;
+      }
+
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div id="sidebar-container" data-page="pricing"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1>Choose Your Plan</h1>
+      <p>Flexible pricing for every supply chain</p>
+      
+      <div class="free-banner">
+        <i class="fas fa-gift"></i>
+        Start Free Today! 10 QR codes — no credit card required
+      </div>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="cards-container">
+      
+      <!-- General Business Card -->
+      <a href="pricing-public.html" class="pricing-card">
+        <div class="card-icon">📦</div>
+        <h2 class="card-title">General Business</h2>
+        <p class="card-subtitle">
+          For brands, retailers, and manufacturers who need reliable product tracking
+        </p>
+        <div class="card-price">From $49/month</div>
+        <div class="card-cta">
+          View Plans
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- Pharmaceutical Card -->
+      <a href="pricing-pharma.html" class="pricing-card pharma">
+        <div class="card-icon">💊</div>
+        <h2 class="card-title">Pharmaceutical</h2>
+        <p class="card-subtitle">
+          For wholesalers, distributors, and manufacturers requiring DSCSA compliance
+        </p>
+        <div class="card-price">From $2,500/month</div>
+        <div class="card-cta">
+          View Plans
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+      <h2>Questions? Let's Talk</h2>
+      <p style="color: #64748b; margin-bottom: 0;">Our team is here to help you find the perfect plan for your business</p>
+      
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#8be9e2f1fff9eae8e0a5f3f9fbcbfbf9e4ffe4e5a5e6ee" class="contact-link">
+          <i class="fas fa-envelope"></i>
+          <span class="__cf_email__" data-cfemail="93f1fae9e7e1f2f0f8bdebe1e3d3e3e1fce7fcfdbdfef6">[email&#160;protected]</span>
+        </a>
+        <a href="tel:+13606700852" class="contact-link">
+          <i class="fas fa-phone"></i>
+          (360) 670-0852
+        </a>
+      </div>
+      <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
+        Hours: 7 AM – 5 PM Pacific, Mon–Fri
+      </p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTra

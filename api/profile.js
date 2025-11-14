@@ -1,4 +1,4 @@
-// api/user/profile.js - Returns user profile including business_type
+// api/profile.js - Returns user profile including business_type
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 

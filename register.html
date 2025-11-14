@@ -308,7 +308,9 @@
       const planNames = {
         'essential': 'Essential Plan - $49/month',
         'scale': 'Scale Plan - $149/month',
-        'enterprise': 'Enterprise Plan - $499/month'
+        'enterprise': 'Enterprise Plan - $499/month',
+        'compliance': 'Compliance Plan - $2,500/month',
+        'pharma_enterprise': 'Pharma Enterprise Plan - $5,000+/month'
       };
       
       planName.textContent = planNames[selectedPlan] || `${selectedPlan} Plan - $${planPrice}/month`;
@@ -377,7 +379,7 @@
             email, 
             password, 
             companyName: companyName || null,
-            businessType // NEW: Include business type
+            businessType // Include business type
           })
         });
 
@@ -412,12 +414,17 @@
         localStorage.setItem('biztrack-auth-token', loginData.token);
         localStorage.setItem('biztrack-user-email', email);
 
-        // Step 3: CHANGED - Always redirect to pricing page after registration
+        // Step 3: Redirect to appropriate pricing page based on business type
         showMessage('Success! Redirecting to pricing...', 'success');
         registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
         
         setTimeout(() => {
-          window.location.href = '/pricing.html';
+          // Route based on business type
+          if (businessType === 'pharma') {
+            window.location.href = '/SI-pharma-pricing.html';
+          } else {
+            window.location.href = '/pricing.html';
+          }
         }, 1000);
 
       } catch (error) {

@@ -237,6 +237,149 @@
     .footer-note a:hover {
       text-decoration: underline;
     }
+
+    /* Contact Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #64748B;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-header p {
+      color: #64748B;
+      font-size: 1rem;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .contact-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .contact-details {
+      flex: 1;
+    }
+
+    .contact-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .contact-value a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .contact-value a:hover {
+      color: #667eea;
+    }
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -347,11 +490,69 @@
       <!-- Footer Note -->
       <div class="footer-note">
         <p><strong>All plans include:</strong> Blockchain verification, IPFS storage, and QR code generation</p>
-        <p>Questions? <a href="mailto:zach@biztrack.io">Contact our team</a></p>
+        <p>Questions? <a href="#" onclick="openContactModal(); return false;">Contact our team</a></p>
       </div>
     </div>
   </main>
 
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contactModal" onclick="closeContactModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeContactModal()">&times;</button>
+      
+      <div class="modal-header">
+        <h2>Get in Touch</h2>
+        <p>For a consultation</p>
+      </div>
+
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="contact-details">
+            <div class="contact-label">Email</div>
+            <div class="contact-value">
+              <a href="mailto:info@biztrack.io">info@biztrack.io</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="contact-details">
+            <div class="contact-label">Call</div>
+            <div class="contact-value">
+              <a href="tel:+13606700852">(360) 670-0852</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/sidebar.js"></script>
+  <script>
+    function openContactModal() {
+      document.getElementById('contactModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeContactModal(event) {
+      if (!event || event.target.classList.contains('modal-overlay') || event.target.classList.contains('modal-close')) {
+        document.getElementById('contactModal').classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeContactModal();
+      }
+    });
+  </script>
 </body>
 </html>

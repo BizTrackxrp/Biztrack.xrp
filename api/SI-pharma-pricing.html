@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmaceutical Pricing - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Dark Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      padding: 0 0 2rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 1rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-radius: 8px;
+      gap: 0.75rem;
+    }
+
+    .sidebar-nav a:hover {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav a i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-logout {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logout button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .sidebar-logout button:hover {
+      background: rgba(239, 68, 68, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Main Content */
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    .pricing-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Hero Header */
+    .pricing-hero {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(30, 64, 175, 0.3);
+      color: white;
+    }
+
+    .pricing-hero h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .pricing-hero p {
+      font-size: 1.25rem;
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    .compliance-badges {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .compliance-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+
+    .compliance-badge i {
+      font-size: 1.25rem;
+    }
+
+    /* Current Plan Indicator */
+    .current-plan-indicator {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      padding: 1.5rem 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      text-align: center;
+    }
+
+    .current-plan-indicator h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .current-plan-indicator p {
+      opacity: 0.95;
+      font-size: 1.125rem;
+    }
+
+    /* Free Trial Banner */
+    .free-trial-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+      display: none;
+    }
+
+    .free-trial-banner.show {
+      display: block;
+    }
+
+    .free-trial-banner h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .free-trial-banner p {
+      font-size: 1.125rem;
+      opacity: 0.95;
+    }
+
+    /* Pricing Grid */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .pricing-card {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      border: 3px solid #E2E8F0;
+      transition: all 0.3s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      border-color: #3b82f6;
+    }
+
+    .pricing-card.popular {
+      border-color: #3b82f6;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .pricing-card.current-plan {
+      border-color: #10B981;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .current-plan-badge {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tier-name {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .tier-price {
+      display: flex;
+      align-items: baseline;
+      gap: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .price-amount {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #3b82f6;
+    }
+
+    .price-period {
+      font-size: 1.25rem;
+      color: #64748B;
+      font-weight: 600;
+    }
+
+    .tier-volume {
+      font-size: 1.125rem;
+      color: #64748B;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #E2E8F0;
+      font-weight: 600;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-bottom: 2rem;
+      flex-grow: 1;
+    }
+
+    .features-list li {
+      padding: 0.75rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .features-list li strong {
+      color: #0f172a;
+    }
+
+    .features-list i {
+      color: #10B981;
+      font-size: 1.25rem;
+      margin-top: 0.125rem;
+      flex-shrink: 0;
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+
+    .cta-primary {
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .cta-current {
+      background: #10B981;
+      color: white;
+      cursor: default;
+    }
+
+    .cta-current:hover {
+      transform: none;
+    }
+
+    .cta-contact {
+      background: white;
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+    }
+
+    .cta-contact:hover {
+      background: #f0f9ff;
+      border-color: #2563eb;
+    }
+
+    /* Includes Section */
+    .includes-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      border: 2px solid #E2E8F0;
+    }
+
+    .includes-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .includes-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #334155;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .includes-item i {
+      color: #3b82f6;
+      font-size: 1.25rem;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      border: 2px solid #E2E8F0;
+      text-align: center;
+    }
+
+    .contact-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .contact-section p {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover {
+      color: #2563eb;
+      transform: translateX(3px);
+    }
+
+    /* Cancel Subscription Section */
+    .cancel-section {
+      background: #FEF2F2;
+      border: 2px solid #FCA5A5;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .cancel-section.show {
+      display: block;
+    }
+
+    .cancel-section h3 {
+      color: #DC2626;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .cancel-section p {
+      color: #991B1B;
+      margin-bottom: 1.5rem;
+    }
+
+    .cancel-subscription-btn {
+      padding: 0.875rem 1.75rem;
+      background: #DC2626;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .cancel-subscription-btn:hover {
+      background: #B91C1C;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Footer */
+    .pricing-footer {
+      text-align: center;
+      color: #64748B;
+      font-size: 0.95rem;
+      padding: 2rem 0;
+    }
+
+    .pricing-footer a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .pricing-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+
+      .pricing-hero h1 {
+        font-size: 2rem;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compliance-badges {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- SI-Sidebar (auto-loads from JS) -->
+  
+  <!-- Main Content -->
+  <div class="main-with-sidebar">
+    <div class="pricing-container">
+      
+      <!-- Hero -->
+      <div class="pricing-hero">
+        <h1>Pharmaceutical Supply Chain Verification</h1>
+        <p>DSCSA-compliant. Immutable. Consumer-facing. Zero IT overhaul.</p>
+        
+        <div class="compliance-badges">
+          <div class="compliance-badge">
+            <i class="fas fa-check-circle"></i>
+            FDA DSCSA Ready
+          </div>
+          <div class="compliance-badge">
+            <i class="fas fa-check-circle"></i>
+            GS1 Compatible
+          </div>
+          <div class="compliance-badge">
+            <i class="fas fa-check-circle"></i>
+            99.99% Uptime SLA
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Plan Indicator (shown only if paid plan) -->
+      <div id="currentPlanIndicator" style="display: none;"></div>
+
+      <!-- Free Trial Banner (shown only for free users) -->
+      <div class="free-trial-banner" id="freeTrialBanner">
+        <h2>Start Your Pharmaceutical Compliance Journey</h2>
+        <p>We give you <strong>10 free QR codes</strong> to test our DSCSA-compliant platform — no credit card required.</p>
+      </div>
+
+      <!-- Pricing Cards -->
+      <div class="pricing-grid" id="pricingGrid"></div>
+
+      <!-- Includes Section -->
+      <div class="includes-section">
+        <h2>All Pharmaceutical Plans Include</h2>
+        <div class="includes-grid">
+          <div class="includes-item">
+            <i class="fas fa-shield-alt"></i>
+            XRPL blockchain immutability
+          </div>
+          <div class="includes-item">
+            <i class="fas fa-database"></i>
+            IPFS cold chain storage
+          </div>
+          <div class="includes-item">
+            <i class="fas fa-qrcode"></i>
+            DSCSA-ready serialization
+          </div>
+          <div class="includes-item">
+            <i class="fas fa-mobile-alt"></i>
+            Consumer verification portal
+          </div>
+          <div class="includes-item">
+            <i class="fas fa-file-alt"></i>
+            Audit-proof event logs
+          </div>
+          <div class="includes-item">
+            <i class="fas fa-code"></i>
+            API access (EPCIS-ready)
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="contact-section">
+        <h2>Questions About Compliance?</h2>
+        <p>Our pharmaceutical compliance experts are here to help</p>
+        
+        <div class="contact-links">
+          <a href="mailto:pharma@biztrack.io" class="contact-link">
+            <i class="fas fa-envelope"></i>
+            pharma@biztrack.io
+          </a>
+          <a href="tel:+13606700852" class="contact-link">
+            <i class="fas fa-phone"></i>
+            (360) 670-0852
+          </a>
+        </div>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
+          Hours: 7 AM – 5 PM Pacific, Mon–Fri
+        </p>
+      </div>
+
+      <!-- Cancel Subscription Section (At Bottom, shown only for paid users) -->
+      <div class="cancel-section" id="cancelSection">
+        <h3><i class="fas fa-exclamation-triangle"></i> Cancel Subscription</h3>
+        <p>Need to cancel? Your subscription will remain active until the end of your billing period.</p>
+        <button class="cancel-subscription-btn" onclick="cancelSubscription()">
+          <i class="fas fa-times-circle"></i>
+          Cancel Subscription
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="pricing-footer">
+        FDA DSCSA-compliant blockchain verification for pharmaceutical supply chains<br>
+        Questions? <a href="mailto:pharma@biztrack.io">Contact our compliance team</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script>
+    requireAuth();
+    const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU');
+
+    // Pharma-specific tiers
+    const PHARMA_TIERS = {
+      compliance: {
+        name: 'Compliance',
+        price: 2500,
+        qrCodes: 10000,
+        popular: false,
+        features: [
+          '10,000 smart QR codes / month',
+          'DSCSA-ready serialization & traceability',
+          'XRPL blockchain immutability',
+          'IPFS for cold chain, temp logs, COAs',
+          'Audit-proof event logs',
+          'API access (EPCIS-ready)',
+          'Dedicated compliance rep',
+          '24/7 priority support',
+          'SLA guarantees'
+        ]
+      },
+      pharmaEnterprise: {
+        name: 'Enterprise',
+        price: 5000,
+        qrCodes: 50000,
+        popular: true,
+        isContact: true,
+        features: [
+          '<strong>Everything in Compliance</strong>',
+          '50,000+ QR codes / month',
+          'Custom EPCIS / ERP integrations',
+          'White-label consumer scanner app',
+          'Dedicated infrastructure & account manager',
+          'FDA mock audit prep & training',
+          'Custom analytics & recall dashboards',
+          'Co-branded patient trust portal',
+          'Onboarding & quarterly reviews'
+        ]
+      }
+    };
+
+    let currentUserTier = 'free';
+
+    async function loadUserTier() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        
+        if (data.success) {
+          currentUserTier = data.subscription.tier;
+          
+          // Show appropriate content based on tier
+          if (currentUserTier === 'free') {
+            // Free user: show free trial banner
+            document.getElementById('freeTrialBanner').classList.add('show');
+            document.getElementById('cancelSection').classList.remove('show');
+          } else {
+            // Paid user: show current plan indicator and cancel section
+            showCurrentPlanIndicator();
+            document.getElementById('freeTrialBanner').classList.remove('show');
+            document.getElementById('cancelSection').classList.add('show');
+          }
+          
+          renderPricingCards();
+        }
+      } catch (error) {
+        console.error('Failed to load user tier:', error);
+        document.getElementById('freeTrialBanner').classList.add('show');
+        renderPricingCards();
+      }
+    }
+
+    function showCurrentPlanIndicator() {
+      const indicator = document.getElementById('currentPlanIndicator');
+      const tierInfo = PHARMA_TIERS[currentUserTier];
+      
+      if (!tierInfo) return;
+      
+      indicator.innerHTML = `
+        <div class="current-plan-indicator">
+          <h3>Current Plan: ${tierInfo.name}</h3>
+          <p>${tierInfo.qrCodes.toLocaleString()} QR codes per month • $${tierInfo.price.toLocaleString()}/month</p>
+        </div>
+      `;
+      indicator.style.display = 'block';
+    }
+
+    async function cancelSubscription() {
+      if (!confirm('⚠️ Are you sure you want to cancel your subscription?\n\nYour subscription will remain active until the end of your current billing period, then you\'ll be moved to the Free plan with 10 QR codes per month.\n\nYou can always resubscribe later!')) return;
+      
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        const response = await fetch('/api/cancel-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('😢 Sorry to see you go!\n\nYour subscription has been cancelled and will remain active until the end of your billing period.\n\nAfter that, you\'ll be back on our Free plan with 10 QR codes per month.\n\n💙 We hope to see you back soon! Feel free to reach out if you have any feedback.');
+          window.location.reload();
+        } else {
+          throw new Error(data.error || 'Failed to cancel subscription');
+        }
+      } catch (error) {
+        console.error('Cancel subscription error:', error);
+        alert('Error cancelling subscription: ' + error.message + '\n\nPlease contact pharma@biztrack.io for assistance.');
+      }
+    }
+
+    function renderPricingCards() {
+      const grid = document.getElementById('pricingGrid');
+      grid.innerHTML = '';
+      
+      Object.entries(PHARMA_TIERS).forEach(([tierKey, tier]) => {
+        const isCurrentPlan = tierKey === currentUserTier;
+        const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
+        
+        const card = document.createElement('div');
+        card.className = `pricing-card ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
+        
+        let badge = '';
+        if (isCurrentPlan) badge = '<div class="current-plan-badge">Current Plan</div>';
+        else if (tier.popular && !isCurrentPlan) badge = '<div class="popular-badge">Most Popular</div>';
+        
+        let buttonHTML = '';
+        if (isCurrentPlan) {
+          buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
+        } else if (tier.isContact) {
+          buttonHTML = '<a href="mailto:pharma@biztrack.io" class="cta-button cta-contact"><i class="fas fa-envelope"></i> Contact Sales</a>';
+        } else if (isUpgrade) {
+          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Get Started</button>`;
+        }
+        
+        const priceDisplay = tier.isContact 
+          ? `<span class="price-amount">$${tier.price.toLocaleString()}</span><span class="price-period">+ / month</span>`
+          : `<span class="price-amount">$${tier.price.toLocaleString()}</span><span class="price-period">/ month</span>`;
+        
+        card.innerHTML = `
+          ${badge}
+          <h3 class="tier-name">${tier.name}</h3>
+          <div class="tier-price">
+            ${priceDisplay}
+          </div>
+          <div class="tier-volume">${tier.qrCodes >= 50000 ? tier.qrCodes.toLocaleString() + '+' : tier.qrCodes.toLocaleString()} QR codes per month</div>
+          <ul class="features-list">
+            ${tier.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}
+          </ul>
+          ${buttonHTML}
+        `;
+        
+        grid.appendChild(card);
+      });
+    }
+
+    function getTierLevel(tier) {
+      const levels = { free: 0, compliance: 1, pharmaEnterprise: 2 };
+      return levels[tier] || 0;
+    }
+
+    async function upgradeTier(tier) {
+      const token = localStorage.getItem('biztrack-auth-token');
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ tier })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          alert('Error: ' + (data.error || 'Failed to create checkout session'));
+        }
+      } catch (error) {
+        console.error('Upgrade error:', error);
+        alert('Error creating checkout session. Please try again.');
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) logout();
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('canceled') === 'true') {
+      alert('Checkout canceled. You can upgrade anytime!');
+    }
+
+    loadUserTier();
+  </script>
+</body>
+</html>

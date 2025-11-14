@@ -25,95 +25,6 @@
       min-height: 100vh;
     }
 
-    /* Dark Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 280px;
-      height: 100vh;
-      background: #0f172a;
-      padding: 2rem 1.5rem;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-logo {
-      padding: 0 0 2rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    .sidebar-logo h1 {
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      flex: 1;
-    }
-
-    .sidebar-nav a {
-      display: flex;
-      align-items: center;
-      padding: 0.875rem 1rem;
-      color: #94a3b8;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s;
-      border-radius: 8px;
-      gap: 0.75rem;
-    }
-
-    .sidebar-nav a:hover {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav a.active {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav a i {
-      width: 20px;
-      font-size: 1.1rem;
-    }
-
-    .sidebar-logout {
-      margin-top: auto;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-logout button {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .sidebar-logout button:hover {
-      background: rgba(239, 68, 68, 0.2);
-      transform: translateY(-2px);
-    }
-
     /* Main Content */
     .main-with-sidebar {
       margin-left: 280px;
@@ -365,7 +276,7 @@
       border-color: #94A3B8;
     }
 
-    /* Cancel Subscription Section (At Bottom) */
+    /* Cancel Subscription Section */
     .cancel-section {
       background: #FEF2F2;
       border: 2px solid #FCA5A5;
@@ -431,15 +342,9 @@
       text-decoration: underline;
     }
 
+    /* Mobile adjustments */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-
       .main-with-sidebar {
-        margin-left: 0;
         padding: 1.5rem;
       }
 
@@ -454,24 +359,8 @@
   </style>
 </head>
 <body>
-  <!-- Dark Sidebar -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="pricing.html" class="active"><i class="fas fa-credit-card"></i> Subscription</a></li>
-      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-    </ul>
-    <div class="sidebar-logout">
-      <button id="logoutBtn">
-        <i class="fas fa-sign-out-alt"></i>
-        Logout
-      </button>
-    </div>
-  </nav>
-
+  <!-- SI-Sidebar (auto-loads from JS) -->
+  
   <!-- Main Content -->
   <div class="main-with-sidebar">
     <div class="pricing-container">
@@ -481,10 +370,10 @@
         <p>Flexible pricing for businesses of all sizes</p>
       </div>
 
-      <!-- Current Plan Indicator (shown only if paid plan) -->
+      <!-- Current Plan Indicator -->
       <div id="currentPlanIndicator" style="display: none;"></div>
 
-      <!-- Free Trial Banner (shown only for free users) -->
+      <!-- Free Trial Banner -->
       <div class="free-trial-banner" id="freeTrialBanner">
         <h2>Start Free Today!</h2>
         <p>We give you <strong>10 free QR codes</strong> when you sign up — no credit card required.</p>
@@ -493,7 +382,7 @@
       <!-- Pricing Cards -->
       <div class="pricing-grid" id="pricingGrid"></div>
 
-      <!-- Cancel Subscription Section (At Bottom, shown only for paid users) -->
+      <!-- Cancel Subscription Section -->
       <div class="cancel-section" id="cancelSection">
         <h3><i class="fas fa-exclamation-triangle"></i> Cancel Subscription</h3>
         <p>Need to cancel? Your subscription will remain active until the end of your billing period.</p>
@@ -512,7 +401,9 @@
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="js/auth.js"></script>
+  <script src="js/SI-sidebar.js"></script>
   <script>
     requireAuth();
     const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU');
@@ -533,13 +424,10 @@
         if (data.success) {
           currentUserTier = data.subscription.tier;
           
-          // Show appropriate content based on tier
           if (currentUserTier === 'free') {
-            // Free user: show free trial banner
             document.getElementById('freeTrialBanner').classList.add('show');
             document.getElementById('cancelSection').classList.remove('show');
           } else {
-            // Paid user: show current plan indicator and cancel section
             showCurrentPlanIndicator();
             document.getElementById('freeTrialBanner').classList.remove('show');
             document.getElementById('cancelSection').classList.add('show');
@@ -674,11 +562,6 @@
       if (!confirm(`Are you sure you want to downgrade to ${TIERS[tier].name}? This will take effect at the end of your current billing cycle.`)) return;
       alert('To downgrade your plan, please contact support@biztrack.io and we\'ll help you right away!');
     }
-
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      if (confirm('Are you sure you want to logout?')) logout();
-    });
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('canceled') === 'true') {

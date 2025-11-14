@@ -1,14 +1,17 @@
-// api/check-limits.js - FIXED WITH CORRECT COLUMN NAMES
+// api/check-limits.js - WITH PHARMA TIERS
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
+// UPDATED: Added pharma tiers
 const LIMITS = {
   free: 10,
   essential: 500,
   scale: 2500,
-  enterprise: 10000
+  enterprise: 10000,
+  compliance: 10000,           // NEW PHARMA TIER
+  pharma_enterprise: 50000     // NEW PHARMA TIER
 };
 
 module.exports = async (req, res) => {
@@ -31,9 +34,9 @@ module.exports = async (req, res) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // Get user - USING CORRECT COLUMN NAMES
+    // Get user - including business_type and pharma flags
     const result = await pool.query(
-      'SELECT id, email, subscription_tier, qr_codes_used, qr_codes_limit FROM users WHERE id = $1',
+      'SELECT id, email, subscription_tier, qr_codes_used, qr_codes_limit, business_type, is_pharma FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -48,15 +51,25 @@ module.exports = async (req, res) => {
     const qrLimit = user.qr_codes_limit || LIMITS[tier] || 10;
     const qrCodesUsed = user.qr_codes_used || 0;
 
+    // Determine max batch size based on tier
+    let maxBatchSize = 10;
+    if (tier === 'pharma_enterprise') maxBatchSize = 5000;
+    else if (tier === 'compliance') maxBatchSize = 1000;
+    else if (tier === 'enterprise') maxBatchSize = 1000;
+    else if (tier === 'scale') maxBatchSize = 500;
+    else if (tier === 'essential') maxBatchSize = 100;
+
     return res.status(200).json({
       success: true,
       subscription: {
         tier: tier,
-        status: 'active'
+        status: 'active',
+        businessType: user.business_type || 'general',
+        isPharma: user.is_pharma || false
       },
       limits: {
         qrLimit: qrLimit,
-        maxBatchSize: tier === 'enterprise' ? 1000 : tier === 'scale' ? 500 : tier === 'essential' ? 100 : 10
+        maxBatchSize: maxBatchSize
       },
       usage: {
         qrCodesUsed: qrCodesUsed,
@@ -79,3 +92,35 @@ module.exports = async (req, res) => {
     }
   }
 };
+```
+
+---
+
+## 🎯 KEY CHANGES MADE
+
+### **create-checkout-session.js:**
+1. ✅ Added `compliance` and `pharma_enterprise` to STRIPE_PRICES
+2. ✅ Uses `process.env` for pharma price IDs (you'll add to .env tonight)
+3. ✅ Updated `validTiers` array to include pharma tiers
+4. ✅ Routes pharma users to correct success/cancel URLs
+5. ✅ Adds `businessType` to metadata for tracking
+
+### **check-limits.js:**
+1. ✅ Added pharma tiers to LIMITS object
+2. ✅ Includes `business_type` and `is_pharma` in user query
+3. ✅ Returns pharma info in response
+4. ✅ Sets higher batch sizes for pharma tiers (1000-5000)
+
+---
+
+## 📋 TONIGHT'S CHECKLIST (UPDATED)
+```
+1. ⏳ Run database migration SQL
+2. ⏳ Add to .env:
+   STRIPE_PRICE_COMPLIANCE=price_1STUPIRzdZsHMZRFBPj64pTW
+   STRIPE_PRICE_PHARMA_ENTERPRISE=price_1STURMRzdZsHMZRF6bdkpcrN
+3. ⏳ Replace create-checkout-session.js (code above)
+4. ⏳ Replace check-limits.js (code above)
+5. ⏳ Add to Vercel env variables
+6. ⏳ Deploy to Vercel
+7. ⏳ Test signup!

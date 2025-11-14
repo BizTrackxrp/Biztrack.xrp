@@ -93,34 +93,3 @@ module.exports = async (req, res) => {
   }
 };
 ```
-
----
-
-## 🎯 KEY CHANGES MADE
-
-### **create-checkout-session.js:**
-1. ✅ Added `compliance` and `pharma_enterprise` to STRIPE_PRICES
-2. ✅ Uses `process.env` for pharma price IDs (you'll add to .env tonight)
-3. ✅ Updated `validTiers` array to include pharma tiers
-4. ✅ Routes pharma users to correct success/cancel URLs
-5. ✅ Adds `businessType` to metadata for tracking
-
-### **check-limits.js:**
-1. ✅ Added pharma tiers to LIMITS object
-2. ✅ Includes `business_type` and `is_pharma` in user query
-3. ✅ Returns pharma info in response
-4. ✅ Sets higher batch sizes for pharma tiers (1000-5000)
-
----
-
-## 📋 TONIGHT'S CHECKLIST (UPDATED)
-```
-1. ⏳ Run database migration SQL
-2. ⏳ Add to .env:
-   STRIPE_PRICE_COMPLIANCE=price_1STUPIRzdZsHMZRFBPj64pTW
-   STRIPE_PRICE_PHARMA_ENTERPRISE=price_1STURMRzdZsHMZRF6bdkpcrN
-3. ⏳ Replace create-checkout-session.js (code above)
-4. ⏳ Replace check-limits.js (code above)
-5. ⏳ Add to Vercel env variables
-6. ⏳ Deploy to Vercel
-7. ⏳ Test signup!

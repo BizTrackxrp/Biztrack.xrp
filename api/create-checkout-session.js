@@ -12,9 +12,14 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-pro
 
 // Stripe Price IDs from your Stripe dashboard (TEST MODE)
 const STRIPE_PRICES = {
-  essential: 'price_1SLwgr2Octf3b3PtKdeaw5kk',  // Essential $49 (TEST)
-  scale: 'price_1SLwkL2Octf3b3Pt29yFLCkI',      // Scale $149 (TEST)
-  enterprise: 'price_1SLwm82Octf3b3Pt09oWF4Jj'  // Enterprise $399 (TEST)
+  // General business tiers
+  essential: 'price_1SLwgr2Octf3b3PtKdeaw5kk',           // Essential $49 (TEST)
+  scale: 'price_1SLwkL2Octf3b3Pt29yFLCkI',               // Scale $149 (TEST)
+  enterprise: 'price_1SLwm82Octf3b3Pt09oWF4Jj',          // Enterprise $399 (TEST)
+  
+  // NEW PHARMA TIERS (ADD THESE)
+  compliance: process.env.STRIPE_PRICE_COMPLIANCE,       // Compliance $2,500
+  pharma_enterprise: process.env.STRIPE_PRICE_PHARMA_ENTERPRISE  // Pharma Enterprise $5,000
 };
 
 module.exports = async (req, res) => {
@@ -45,12 +50,29 @@ module.exports = async (req, res) => {
     const user = userResult.rows[0];
     const { tier } = req.body;
 
-    if (!tier || !['essential', 'scale', 'enterprise'].includes(tier)) {
+    // UPDATED: Include pharma tiers
+    const validTiers = ['essential', 'scale', 'enterprise', 'compliance', 'pharma_enterprise'];
+    
+    if (!tier || !validTiers.includes(tier)) {
       return res.status(400).json({ error: 'Invalid tier' });
     }
 
     // Get Stripe price ID for the tier
     const priceId = STRIPE_PRICES[tier];
+
+    if (!priceId) {
+      return res.status(400).json({ error: 'Price ID not configured for this tier' });
+    }
+
+    // Determine success URL based on business type
+    const isPharma = user.business_type === 'pharma' || tier === 'compliance' || tier === 'pharma_enterprise';
+    const successUrl = isPharma 
+      ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pharma-dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`
+      : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`;
+    
+    const cancelUrl = isPharma
+      ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/SI-pharma-pricing.html?canceled=true`
+      : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`;
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -63,25 +85,26 @@ module.exports = async (req, res) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         userId: user.id.toString(),
-        tier: tier
+        tier: tier,
+        businessType: user.business_type || 'general'
       },
       subscription_data: {
-        // Proration happens automatically when users change plans
-        // Not applicable for new subscriptions
         metadata: {
           userId: user.id.toString(),
-          tier: tier
+          tier: tier,
+          businessType: user.business_type || 'general'
         }
       }
     });
 
     return res.status(200).json({
       url: session.url,
-      sessionId: session.id
+      sessionId: session.id,
+      success: true
     });
 
   } catch (error) {

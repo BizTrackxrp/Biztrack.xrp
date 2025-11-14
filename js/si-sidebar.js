@@ -379,7 +379,7 @@
         return;
       }
 
-      const response = await authenticatedFetch('/api/user/profile');
+      const response = await authenticatedFetch('/api/profile');
       const data = await response.json();
       
       if (data.success && data.user) {

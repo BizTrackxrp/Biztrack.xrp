@@ -8,18 +8,23 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// ✅ NEW QR LIMITS
+// ✅ UPDATED: Added pharma tiers
 const TIER_CONFIG = {
   free: { qrLimit: 10 },
   essential: { qrLimit: 500 },
   scale: { qrLimit: 2500 },
-  enterprise: { qrLimit: 10000 }
+  enterprise: { qrLimit: 10000 },
+  compliance: { qrLimit: 10000 },           // PHARMA
+  pharma_enterprise: { qrLimit: 50000 }     // PHARMA
 };
 
+// ✅ UPDATED: Added pharma price IDs
 const PRICE_TO_TIER = {
   'price_1SLwgr2Octf3b3PtKdeaw5kk': 'essential',
   'price_1SLwkL2Octf3b3Pt29yFLCkI': 'scale',
-  'price_1SLwm82Octf3b3Pt09oWF4Jj': 'enterprise'
+  'price_1SLwm82Octf3b3Pt09oWF4Jj': 'enterprise',
+  'price_1STUPIRzdZsHMZRFBPj64pTW': 'compliance',           // PHARMA $2,500
+  'price_1STURMRzdZsHMZRF6bdkpcrN': 'pharma_enterprise'    // PHARMA $5,000
 };
 
 export const config = {
@@ -73,10 +78,13 @@ export default async function handler(req, res) {
 
         const { qrLimit } = TIER_CONFIG[tier] || TIER_CONFIG.free;
 
+        // ✅ UPGRADE: Reset counter immediately + set new billing cycle
         await pool.query(
           `UPDATE users 
            SET subscription_tier = $1, 
                qr_codes_limit = $2,
+               qr_codes_used = 0,
+               billing_cycle_start = NOW(),
                stripe_subscription_id = $3,
                stripe_customer_id = $4,
                updated_at = NOW()
@@ -84,35 +92,85 @@ export default async function handler(req, res) {
           [tier, qrLimit, subscriptionId, session.customer, userId]
         );
 
-        console.log(`[WEBHOOK] ✅ User ${userId} upgraded to ${tier} (${qrLimit} QRs)`);
+        console.log(`[WEBHOOK] ✅ User ${userId} upgraded to ${tier} (${qrLimit} QRs) - Counter reset to 0`);
         break;
       }
 
-      // ✅ SUBSCRIPTION UPDATED (tier change, renewal)
+      // ✅ SUBSCRIPTION UPDATED (tier change during billing cycle)
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
+        const previousAttributes = event.data.previous_attributes;
 
         // Determine new tier from price
         const priceId = subscription.items.data[0]?.price.id;
-        const tier = PRICE_TO_TIER[priceId] || 'free';
-        const { qrLimit } = TIER_CONFIG[tier];
+        const newTier = PRICE_TO_TIER[priceId] || 'free';
+        const { qrLimit } = TIER_CONFIG[newTier];
 
-        await pool.query(
-          `UPDATE users 
-           SET subscription_tier = $1,
-               qr_codes_limit = $2,
-               stripe_subscription_id = $3,
-               updated_at = NOW()
-           WHERE stripe_customer_id = $4`,
-          [tier, qrLimit, subscription.id, customerId]
+        // Get current user tier
+        const userResult = await pool.query(
+          'SELECT subscription_tier FROM users WHERE stripe_customer_id = $1',
+          [customerId]
         );
 
-        console.log(`[WEBHOOK] ✅ Subscription updated for customer ${customerId} → ${tier}`);
+        if (userResult.rows.length === 0) {
+          console.error(`[WEBHOOK] User not found for customer ${customerId}`);
+          return res.status(404).send('User not found');
+        }
+
+        const currentTier = userResult.rows[0].subscription_tier;
+
+        // Determine if upgrade or downgrade
+        const tierOrder = ['free', 'essential', 'scale', 'enterprise', 'compliance', 'pharma_enterprise'];
+        const currentIndex = tierOrder.indexOf(currentTier);
+        const newIndex = tierOrder.indexOf(newTier);
+
+        if (newIndex > currentIndex) {
+          // ✅ UPGRADE: Reset counter immediately
+          await pool.query(
+            `UPDATE users 
+             SET subscription_tier = $1,
+                 qr_codes_limit = $2,
+                 qr_codes_used = 0,
+                 billing_cycle_start = NOW(),
+                 stripe_subscription_id = $3,
+                 updated_at = NOW()
+             WHERE stripe_customer_id = $4`,
+            [newTier, qrLimit, subscription.id, customerId]
+          );
+
+          console.log(`[WEBHOOK] ✅ UPGRADE: ${customerId} → ${newTier} (${qrLimit} QRs) - Counter reset to 0`);
+        } else if (newIndex < currentIndex) {
+          // ✅ DOWNGRADE: Keep counter, update tier/limit only
+          // User keeps their QR codes until billing cycle ends
+          await pool.query(
+            `UPDATE users 
+             SET subscription_tier = $1,
+                 qr_codes_limit = $2,
+                 stripe_subscription_id = $3,
+                 updated_at = NOW()
+             WHERE stripe_customer_id = $4`,
+            [newTier, qrLimit, subscription.id, customerId]
+          );
+
+          console.log(`[WEBHOOK] ⚠️ DOWNGRADE: ${customerId} → ${newTier} - Counter NOT reset (waits for billing cycle)`);
+        } else {
+          // Same tier (renewal or other update)
+          await pool.query(
+            `UPDATE users 
+             SET qr_codes_limit = $1,
+                 stripe_subscription_id = $2,
+                 updated_at = NOW()
+             WHERE stripe_customer_id = $3`,
+            [qrLimit, subscription.id, customerId]
+          );
+
+          console.log(`[WEBHOOK] ✅ Subscription updated for ${customerId} (same tier)`);
+        }
         break;
       }
 
-      // ✅ SUBSCRIPTION CANCELLED/DELETED (downgrade to free)
+      // ✅ SUBSCRIPTION CANCELLED/DELETED (downgrade to free at end of billing cycle)
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
@@ -130,7 +188,7 @@ export default async function handler(req, res) {
           [qrLimit, customerId]
         );
 
-        console.log(`[WEBHOOK] ✅ Subscription cancelled for customer ${customerId} → downgraded to FREE (${qrLimit} QRs)`);
+        console.log(`[WEBHOOK] ✅ Subscription cancelled for ${customerId} → FREE tier (${qrLimit} QRs)`);
         break;
       }
 
@@ -164,3 +222,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Webhook processing failed', details: error.message });
   }
 }
+```

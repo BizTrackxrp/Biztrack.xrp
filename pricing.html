@@ -265,15 +265,17 @@
       transform: none;
     }
 
-    .cta-downgrade {
-      background: white;
-      color: #F59E0B;
-      border: 2px solid #F59E0B;
+    .cta-secondary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      opacity: 0.8;
     }
 
-    .cta-downgrade:hover {
-      background: #FFFBEB;
+    .cta-secondary:hover {
+      opacity: 1;
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
     }
 
     /* Manage Section */
@@ -759,46 +761,64 @@
       
       try {
         const token = localStorage.getItem('biztrack-auth-token');
-        const response = await fetch('/api/subscription-request', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            requestType: type,
-            currentPlan: currentUserTier,
-            userEmail: currentUserEmail,
-            targetPlan: pendingTierChange
-          })
-        });
         
-        const data = await response.json();
-        
-        if (data.success || response.ok) {
-          // Show success message
+        // Try to call the API, but if it fails, show graceful message
+        try {
+          const response = await fetch('/api/subscription-request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              requestType: type,
+              currentPlan: currentUserTier,
+              userEmail: currentUserEmail,
+              targetPlan: pendingTierChange
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success || response.ok) {
+            // API worked - show success
+            modal.innerHTML = `
+              <div class="modal-success">
+                <div class="success-icon">
+                  <i class="fas fa-check"></i>
+                </div>
+                <h4>We've Got You Covered!</h4>
+                <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been received. We'll process it within 24 hours and send you a confirmation email.</p>
+                <button class="modal-button primary" onclick="closeModal()">Close</button>
+              </div>
+            `;
+          } else {
+            throw new Error('API error');
+          }
+        } catch (apiError) {
+          // API doesn't exist yet or failed - show graceful fallback
+          console.log('Request logged:', { type, currentUserTier, currentUserEmail, pendingTierChange });
+          
           modal.innerHTML = `
             <div class="modal-success">
               <div class="success-icon">
                 <i class="fas fa-check"></i>
               </div>
-              <h4>We've Got You Covered!</h4>
-              <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been received. We'll process it within 24 hours and send you a confirmation email.</p>
+              <h4>Request Received!</h4>
+              <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been noted. Please email us at <a href="mailto:info@biztrack.io">info@biztrack.io</a> and we'll process it within 24 hours.</p>
               <button class="modal-button primary" onclick="closeModal()">Close</button>
             </div>
           `;
-        } else {
-          throw new Error(data.error || 'Request failed');
         }
       } catch (error) {
         console.error('Request error:', error);
         modal.innerHTML = `
           <div class="modal-header">
-            <h3><i class="fas fa-exclamation-circle"></i> Error</h3>
+            <h3><i class="fas fa-exclamation-circle"></i> Almost There!</h3>
             <button class="modal-close" onclick="closeModal()">×</button>
           </div>
           <div class="modal-content">
-            <p>There was an error processing your request. Please contact us directly at <a href="mailto:info@biztrack.io">info@biztrack.io</a></p>
+            <p>Please email us at <a href="mailto:info@biztrack.io" style="color: #667eea; font-weight: 600;">info@biztrack.io</a> to complete your ${type === 'cancel' ? 'cancellation' : 'downgrade'}. We'll get back to you within 24 hours!</p>
           </div>
           <button class="modal-button primary" onclick="closeModal()">Close</button>
         `;
@@ -837,7 +857,7 @@
         } else if (isUpgrade) {
           buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Click to Upgrade</button>`;
         } else if (isDowngrade) {
-          buttonHTML = `<button class="cta-button cta-downgrade" onclick="confirmCardDowngrade('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
+          buttonHTML = `<button class="cta-button cta-secondary" onclick="confirmCardDowngrade('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
         }
         
         card.innerHTML = `

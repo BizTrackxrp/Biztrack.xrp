@@ -10,16 +10,16 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// Stripe Price IDs from your Stripe dashboard (TEST MODE)
+// Stripe Price IDs from your Stripe dashboard
 const STRIPE_PRICES = {
   // General business tiers
-  essential: 'price_1SLwgr2Octf3b3PtKdeaw5kk',           // Essential $49 (TEST)
-  scale: 'price_1SLwkL2Octf3b3Pt29yFLCkI',               // Scale $149 (TEST)
-  enterprise: 'price_1SLwm82Octf3b3Pt09oWF4Jj',          // Enterprise $399 (TEST)
+  essential: 'price_1SLwgr2Octf3b3PtKdeaw5kk',
+  scale: 'price_1SLwkL2Octf3b3Pt29yFLCkI',
+  enterprise: 'price_1SLwm82Octf3b3Pt09oWF4Jj',
   
-  // NEW PHARMA TIERS (ADD THESE)
-  compliance: process.env.STRIPE_PRICE_COMPLIANCE,       // Compliance $2,500
-  pharma_enterprise: process.env.STRIPE_PRICE_PHARMA_ENTERPRISE  // Pharma Enterprise $5,000
+  // Pharma tiers
+  compliance: 'price_1STUPIRzdZsHMZRFBPj64pTW',
+  pharma_enterprise: 'price_1STURMRzdZsHMZRF6bdkpcrN'
 };
 
 module.exports = async (req, res) => {
@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
     const user = userResult.rows[0];
     const { tier } = req.body;
 
-    // UPDATED: Include pharma tiers
+    // Validate tier
     const validTiers = ['essential', 'scale', 'enterprise', 'compliance', 'pharma_enterprise'];
     
     if (!tier || !validTiers.includes(tier)) {
@@ -59,9 +59,13 @@ module.exports = async (req, res) => {
 
     // Get Stripe price ID for the tier
     const priceId = STRIPE_PRICES[tier];
-
+    
     if (!priceId) {
-      return res.status(400).json({ error: 'Price ID not configured for this tier' });
+      console.error('[CHECKOUT] Missing price ID for tier:', tier);
+      return res.status(400).json({ 
+        error: 'Price ID not configured for this tier',
+        tier: tier
+      });
     }
 
     // Determine success URL based on business type
@@ -73,6 +77,8 @@ module.exports = async (req, res) => {
     const cancelUrl = isPharma
       ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/SI-pharma-pricing.html?canceled=true`
       : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`;
+
+    console.log('[CHECKOUT] Creating session for user:', user.id, 'tier:', tier, 'isPharma:', isPharma);
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -101,6 +107,8 @@ module.exports = async (req, res) => {
       }
     });
 
+    console.log('[CHECKOUT] Session created successfully:', session.id);
+
     return res.status(200).json({
       url: session.url,
       sessionId: session.id,
@@ -108,7 +116,7 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Checkout session creation error:', error);
+    console.error('[CHECKOUT] Error creating session:', error);
     return res.status(500).json({
       error: 'Failed to create checkout session',
       details: error.message

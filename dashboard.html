@@ -643,44 +643,53 @@ box-shadow: none;
     let qrLimit = 10;
     let currentTier = 'free';
 
-    // ✅ FIXED: Load subscription limits from backend
-    async function loadSubscriptionLimits() {
-      try {
-        const response = await authenticatedFetch('/api/check-limits');
-        const data = await response.json();
-        
-        if (data.success) {
-          // ✅ FIXED: Use correct field names from API response
-          qrUsedThisMonth = data.usage.qrCodesUsed;       // was: data.subscription.qrCodesUsed
-          qrLimit = data.limits.qrLimit;                  // was: data.subscription.qrCodesLimit
-          currentTier = data.subscription.tier;
-          
-          // Update UI
-          document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
-          document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
-          
-          // ✅ FIXED: Build tier name from tier field
-          const tierName = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
-          document.getElementById('tierName').textContent = tierName;
-          
-          // Update max batch quantity based on tier and remaining QR codes
-          const remaining = qrLimit - qrUsedThisMonth;
-          const tierMaxBatch = data.limits.maxBatchSize || 10;
-          const maxBatch = Math.min(tierMaxBatch, remaining);
-          
-          document.getElementById('maxBatchQuantity').textContent = maxBatch;
-          document.getElementById('batchQuantity').max = maxBatch;
-          
-          // Show upgrade prompt if near limit (80%+)
-          const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
-          if (percentUsed >= 80 && currentTier !== 'enterprise') {
-            showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load subscription limits:', error);
+// FIXED: Load subscription limits with forced UI update
+async function loadSubscriptionLimits() {
+  try {
+    const response = await authenticatedFetch('/api/check-limits');
+    const data = await response.json();
+    
+    if (data.success) {
+      // Update global variables
+      qrUsedThisMonth = data.usage.qrCodesUsed;
+      qrLimit = data.limits.qrLimit;
+      currentTier = data.subscription.tier;
+      
+      // FORCE update UI elements immediately
+      const qrUsedEl = document.getElementById('qrUsedCount');
+      const qrLimitEl = document.getElementById('qrLimitCount');
+      const tierNameEl = document.getElementById('tierName');
+      
+      if (qrUsedEl) qrUsedEl.textContent = qrUsedThisMonth.toLocaleString();
+      if (qrLimitEl) qrLimitEl.textContent = qrLimit.toLocaleString();
+      if (tierNameEl) {
+        const tierName = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
+        tierNameEl.textContent = tierName;
       }
+      
+      // Update max batch quantity
+      const remaining = qrLimit - qrUsedThisMonth;
+      const tierMaxBatch = data.limits.maxBatchSize || 10;
+      const maxBatch = Math.min(tierMaxBatch, remaining);
+      
+      const maxBatchEl = document.getElementById('maxBatchQuantity');
+      const batchQtyInput = document.getElementById('batchQuantity');
+      
+      if (maxBatchEl) maxBatchEl.textContent = maxBatch;
+      if (batchQtyInput) batchQtyInput.max = maxBatch;
+      
+      // Show upgrade prompt if needed
+      const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
+      if (percentUsed >= 80 && currentTier !== 'enterprise' && currentTier !== 'pharma_enterprise') {
+        showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
+      }
+      
+      console.log('✅ Counter updated:', qrUsedThisMonth, '/', qrLimit);
     }
+  } catch (error) {
+    console.error('Failed to load subscription limits:', error);
+  }
+}
 
     // ✅ FIXED: showUpgradePrompt with simpler parameters
     function showUpgradePrompt(percentUsed, used, limit, tier) {

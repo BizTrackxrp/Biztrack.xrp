@@ -242,6 +242,7 @@
       justify-content: center;
       gap: 0.5rem;
       margin-top: auto;
+      text-decoration: none;
     }
 
     .cta-primary {
@@ -265,63 +266,102 @@
       transform: none;
     }
 
-    .cta-downgrade {
+    .cta-secondary {
       background: white;
-      color: #64748B;
-      border: 2px solid #CBD5E1;
+      color: #667eea;
+      border: 2px solid #667eea;
     }
 
-    .cta-downgrade:hover {
+    .cta-secondary:hover {
       background: #F8FAFC;
-      border-color: #94A3B8;
     }
 
-    /* Cancel Subscription Section */
-    .cancel-section {
-      background: #FEF2F2;
-      border: 2px solid #FCA5A5;
+    /* Cancel & Downgrade Section */
+    .manage-section {
+      background: white;
+      border: 2px solid #E2E8F0;
       border-radius: 16px;
       padding: 2rem;
       margin-bottom: 2rem;
-      text-align: center;
       display: none;
     }
 
-    .cancel-section.show {
+    .manage-section.show {
       display: block;
     }
 
-    .cancel-section h3 {
-      color: #DC2626;
-      font-size: 1.25rem;
+    .manage-section h3 {
+      color: #1E293B;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .manage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .manage-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .manage-card h4 {
+      color: #1E293B;
+      font-size: 1.125rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .cancel-section p {
-      color: #991B1B;
-      margin-bottom: 1.5rem;
+    .manage-card p {
+      color: #64748B;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
     }
 
-    .cancel-subscription-btn {
-      padding: 0.875rem 1.75rem;
-      background: #DC2626;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
+    .manage-card a {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+      padding: 0.75rem 1.5rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
     }
 
-    .cancel-subscription-btn:hover {
+    .manage-card a:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+
+    .manage-card.cancel {
+      border-color: #FCA5A5;
+      background: #FEF2F2;
+    }
+
+    .manage-card.cancel h4 {
+      color: #DC2626;
+    }
+
+    .manage-card.cancel a {
+      background: #DC2626;
+    }
+
+    .manage-card.cancel a:hover {
       background: #B91C1C;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
     }
 
     /* Footer */
@@ -345,6 +385,7 @@
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .main-with-sidebar {
+        margin-left: 0;
         padding: 1.5rem;
       }
 
@@ -353,6 +394,10 @@
       }
 
       .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .manage-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -382,20 +427,36 @@
       <!-- Pricing Cards -->
       <div class="pricing-grid" id="pricingGrid"></div>
 
-      <!-- Cancel Subscription Section -->
-      <div class="cancel-section" id="cancelSection">
-        <h3><i class="fas fa-exclamation-triangle"></i> Cancel Subscription</h3>
-        <p>Need to cancel? Your subscription will remain active until the end of your billing period.</p>
-        <button class="cancel-subscription-btn" onclick="cancelSubscription()">
-          <i class="fas fa-times-circle"></i>
-          Cancel Subscription
-        </button>
+      <!-- Manage Subscription Section (Replaces Cancel Button) -->
+      <div class="manage-section" id="manageSection">
+        <h3>Manage Your Subscription</h3>
+        <div class="manage-grid">
+          
+          <!-- Downgrade Card -->
+          <div class="manage-card">
+            <h4><i class="fas fa-arrow-down"></i> Want to Downgrade?</h4>
+            <p>Your plan change will take effect at the end of your current billing period. You'll keep your current limits until then.</p>
+            <a href="mailto:info@biztrack.io?subject=Downgrade%20Request&body=Hi%2C%0A%0AI'd%20like%20to%20downgrade%20my%20plan.%0A%0AMy%20account%20email%3A%20%5BYOUR_EMAIL%5D%0ACurrent%20Plan%3A%20%5BYOUR_CURRENT_PLAN%5D%0ADesired%20Plan%3A%20%5BESSENTIAL%2FSCALE%2FENTERPRISE%5D%0A%0AThank%20you!">
+              <i class="fas fa-envelope"></i> Request Downgrade
+            </a>
+          </div>
+
+          <!-- Cancel Card -->
+          <div class="manage-card cancel">
+            <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
+            <p>Your subscription will remain active until the end of your current billing period. After that, you'll revert to the Free tier (10 QR codes/month).</p>
+            <a href="mailto:info@biztrack.io?subject=Cancel%20Subscription%20Request&body=Hi%2C%0A%0APlease%20cancel%20my%20BizTrack%20subscription.%0A%0AMy%20account%20email%3A%20%5BYOUR_EMAIL%5D%0A%0AThank%20you!">
+              <i class="fas fa-envelope"></i> Request Cancellation
+            </a>
+          </div>
+
+        </div>
       </div>
 
       <!-- Footer -->
       <div class="pricing-footer">
         All plans include: Blockchain verification, IPFS storage, and QR code generation<br>
-        Questions? <a href="mailto:support@biztrack.io">Contact our team</a>
+        Questions? <a href="mailto:info@biztrack.io">Contact our team</a>
       </div>
 
     </div>
@@ -426,11 +487,11 @@
           
           if (currentUserTier === 'free') {
             document.getElementById('freeTrialBanner').classList.add('show');
-            document.getElementById('cancelSection').classList.remove('show');
+            document.getElementById('manageSection').classList.remove('show');
           } else {
             showCurrentPlanIndicator();
             document.getElementById('freeTrialBanner').classList.remove('show');
-            document.getElementById('cancelSection').classList.add('show');
+            document.getElementById('manageSection').classList.add('show');
           }
           
           renderPricingCards();
@@ -457,33 +518,6 @@
       indicator.style.display = 'block';
     }
 
-    async function cancelSubscription() {
-      if (!confirm('⚠️ Are you sure you want to cancel your subscription?\n\nYour subscription will remain active until the end of your current billing period, then you\'ll be moved to the Free plan with 10 QR codes per month.\n\nYou can always resubscribe later!')) return;
-      
-      try {
-        const token = localStorage.getItem('biztrack-auth-token');
-        const response = await fetch('/api/cancel-subscription', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          alert('😢 Sorry to see you go!\n\nYour subscription has been cancelled and will remain active until the end of your billing period.\n\nAfter that, you\'ll be back on our Free plan with 10 QR codes per month.\n\n💙 We hope to see you back soon! Feel free to reach out if you have any feedback.');
-          window.location.reload();
-        } else {
-          throw new Error(data.error || 'Failed to cancel subscription');
-        }
-      } catch (error) {
-        console.error('Cancel subscription error:', error);
-        alert('Error cancelling subscription: ' + error.message + '\n\nPlease contact support@biztrack.io for assistance.');
-      }
-    }
-
     function renderPricingCards() {
       const grid = document.getElementById('pricingGrid');
       grid.innerHTML = '';
@@ -491,7 +525,6 @@
       Object.entries(TIERS).forEach(([tierKey, tier]) => {
         const isCurrentPlan = tierKey === currentUserTier;
         const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
-        const isDowngrade = getTierLevel(tierKey) < getTierLevel(currentUserTier);
         
         const card = document.createElement('div');
         card.className = `pricing-card ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
@@ -501,9 +534,14 @@
         else if (tier.popular && !isCurrentPlan) badge = '<div class="popular-badge">Most Popular</div>';
         
         let buttonHTML = '';
-        if (isCurrentPlan) buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
-        else if (isUpgrade) buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Get Started</button>`;
-        else if (isDowngrade) buttonHTML = `<button class="cta-button cta-downgrade" onclick="downgradeTier('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
+        if (isCurrentPlan) {
+          buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
+        } else if (isUpgrade) {
+          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Get Started</button>`;
+        } else {
+          // Downgrade button - shows even for lower tiers
+          buttonHTML = `<button class="cta-button cta-secondary"><i class="fas fa-envelope"></i> Contact to Change</button>`;
+        }
         
         card.innerHTML = `
           ${badge}
@@ -556,11 +594,6 @@
         console.error('Upgrade error:', error);
         alert('Error creating checkout session. Please try again.');
       }
-    }
-
-    async function downgradeTier(tier) {
-      if (!confirm(`Are you sure you want to downgrade to ${TIERS[tier].name}? This will take effect at the end of your current billing cycle.`)) return;
-      alert('To downgrade your plan, please contact support@biztrack.io and we\'ll help you right away!');
     }
 
     const urlParams = new URLSearchParams(window.location.search);

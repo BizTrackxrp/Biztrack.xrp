@@ -18,13 +18,13 @@ const TIER_CONFIG = {
   pharma_enterprise: { qrLimit: 50000 }
 };
 
-// ✅ LIVE PRICE TO TIER MAPPING
+// ✅ TEST MODE PRICE TO TIER MAPPING
 const PRICE_TO_TIER = {
-  'price_1SPSCoRzdZsHMZRF5IBmTG6s': 'essential',
-  'price_1SPSC3RzdZsHMZRFraOq6siQ': 'scale',
-  'price_1SPSBRRzdZsHMZRFyFx0E3Ez': 'enterprise',
-  'price_1STUPIRzdZsHMZRFBPj64pTW': 'compliance',
-  'price_1STURMRzdZsHMZRF6bdkpcrN': 'pharma_enterprise'
+  'price_1SUukV2Kvkd8Qy8OIgqAGV3k': 'essential',
+  'price_1SUuko2Kvkd8Qy8OemmtHbZb': 'scale',
+  'price_1SUulO2Kvkd8Qy8O0IiV9vmh': 'enterprise',
+  'price_1SUulu2Kvkd8Qy8O0qAlY4w3': 'compliance',
+  'price_1SUum52Kvkd8Qy8Oq5W9t6hT': 'pharma_enterprise'
 };
 
 export const config = {
@@ -206,14 +206,6 @@ export default async function handler(req, res) {
 }
 ```
 
----
+STRIPE_PRICE_COMPLIANCE=price_1SUulu2Kvkd8Qy8O0qAlY4w3
 
-## 📦 FILE 3: Update Vercel Environment Variables
-
-Go to Vercel → Environment Variables and **UPDATE** these:
-```
-STRIPE_PRICE_ESSENTIAL=price_1SPSCoRzdZsHMZRF5IBmTG6s
-STRIPE_PRICE_SCALE=price_1SPSC3RzdZsHMZRFraOq6siQ
-STRIPE_PRICE_ENTERPRISE=price_1SPSBRRzdZsHMZRFyFx0E3Ez
-STRIPE_PRICE_COMPLIANCE=price_1STUPIRzdZsHMZRFBPj64pTW
-STRIPE_PRICE_PHARMA_ENTERPRISE=price_1STURMRzdZsHMZRF6bdkpcrN
+STRIPE_PRICE_PHARMA_ENTERPRISE=price_1SUum52Kvkd8Qy8Oq5W9t6hT

@@ -15,6 +15,16 @@ const LIMITS = {
 };
 
 module.exports = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -32,11 +42,27 @@ module.exports = async (req, res) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
+    let decoded;
+    
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      console.error('[CHECK-LIMITS] JWT verification failed:', err.message);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
 
     // Get user - including business_type and pharma flags
     const result = await pool.query(
-      'SELECT id, email, subscription_tier, qr_codes_used, qr_codes_limit, business_type, is_pharma FROM users WHERE id = $1',
+      `SELECT 
+        id, 
+        email, 
+        subscription_tier, 
+        qr_codes_used, 
+        qr_codes_limit, 
+        business_type, 
+        is_pharma 
+       FROM users 
+       WHERE id = $1`,
       [decoded.userId]
     );
 
@@ -59,6 +85,13 @@ module.exports = async (req, res) => {
     else if (tier === 'scale') maxBatchSize = 500;
     else if (tier === 'essential') maxBatchSize = 100;
 
+    console.log('[CHECK-LIMITS] ✅ Success:', {
+      userId: user.id,
+      tier: tier,
+      used: qrCodesUsed,
+      limit: qrLimit
+    });
+
     return res.status(200).json({
       success: true,
       subscription: {
@@ -79,7 +112,7 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Check limits error:', error);
+    console.error('[CHECK-LIMITS] ❌ Error:', error);
     return res.status(500).json({
       error: 'Failed to check limits',
       details: error.message
@@ -88,8 +121,7 @@ module.exports = async (req, res) => {
     try {
       await pool.end();
     } catch (e) {
-      console.error('Pool end error:', e);
+      console.error('[CHECK-LIMITS] Pool end error:', e);
     }
   }
 };
-```

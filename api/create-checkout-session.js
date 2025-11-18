@@ -10,13 +10,13 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// ✅ LIVE PRICE IDS
+// ✅ TEST MODE PRICE IDS
 const STRIPE_PRICES = {
-  essential: 'price_1SPSCoRzdZsHMZRF5IBmTG6s',
-  scale: 'price_1SPSC3RzdZsHMZRFraOq6siQ',
-  enterprise: 'price_1SPSBRRzdZsHMZRFyFx0E3Ez',
-  compliance: 'price_1STUPIRzdZsHMZRFBPj64pTW',
-  pharma_enterprise: 'price_1STURMRzdZsHMZRF6bdkpcrN'
+  essential: 'price_1SUukV2Kvkd8Qy8OIgqAGV3k',
+  scale: 'price_1SUuko2Kvkd8Qy8OemmtHbZb',
+  enterprise: 'price_1SUulO2Kvkd8Qy8O0IiV9vmh',
+  compliance: 'price_1SUulu2Kvkd8Qy8O0qAlY4w3',
+  pharma_enterprise: 'price_1SUum52Kvkd8Qy8Oq5W9t6hT'
 };
 
 module.exports = async (req, res) => {
@@ -75,7 +75,7 @@ module.exports = async (req, res) => {
       ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/SI-pharma-pricing.html?canceled=true`
       : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`;
 
-    console.log('[CHECKOUT] Creating LIVE session for user:', user.id, 'tier:', tier, 'isPharma:', isPharma);
+    console.log('[CHECKOUT] Creating TEST session for user:', user.id, 'tier:', tier, 'isPharma:', isPharma);
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -104,7 +104,7 @@ module.exports = async (req, res) => {
       }
     });
 
-    console.log('[CHECKOUT] ✅ LIVE session created:', session.id);
+    console.log('[CHECKOUT] ✅ TEST session created:', session.id);
 
     return res.status(200).json({
       url: session.url,

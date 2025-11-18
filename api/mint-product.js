@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Product name is required' });
     }
 
-    // ✅ UPDATED: Check batch quantity against tier limits
+    // Check batch quantity against tier limits
     if (isBatchOrder) {
       const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
       const maxBatch = tierConfig.maxBatchSize || 10;
@@ -71,43 +71,55 @@ module.exports = async (req, res) => {
 
     const quantity = isBatchOrder ? parseInt(batchQuantity) : 1;
 
-    // CHECK QR CODE LIMITS
+    // CHECK QR CODE LIMITS WITH FIXED BILLING CYCLE LOGIC
     const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
-    const remaining = user.qr_codes_limit - user.qr_codes_used;
-
-    // Check if billing cycle needs reset (30 days)
     const now = new Date();
-    const billingStart = new Date(user.billing_cycle_start);
-    const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
+    const billingStart = user.billing_cycle_start ? new Date(user.billing_cycle_start) : null;
 
-    if (daysSinceStart >= 30) {
-      // Reset counter
+    // Only reset if we have a billing start AND it's been 30+ days
+    if (billingStart) {
+      const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
+      
+      if (daysSinceStart >= 30) {
+        console.log(`[BILLING] Resetting counter for user ${user.id} (${daysSinceStart} days since start)`);
+        
+        await pool.query(
+          `UPDATE users 
+           SET qr_codes_used = 0,
+               billing_cycle_start = NOW()
+           WHERE id = $1`,
+          [user.id]
+        );
+        user.qr_codes_used = 0;
+      }
+    } else {
+      // First time minting - set billing cycle start
+      console.log(`[BILLING] Setting initial billing cycle for user ${user.id}`);
+      
       await pool.query(
         `UPDATE users 
-         SET qr_codes_used = 0,
-             billing_cycle_start = NOW()
+         SET billing_cycle_start = NOW()
          WHERE id = $1`,
         [user.id]
       );
-      user.qr_codes_used = 0;
     }
 
-    // Re-calculate remaining after potential reset
-    const updatedRemaining = user.qr_codes_limit - user.qr_codes_used;
+    // Calculate remaining AFTER potential reset
+    const remaining = user.qr_codes_limit - user.qr_codes_used;
 
     // Check if user has enough QR codes
-    if (quantity > updatedRemaining) {
+    if (quantity > remaining) {
       const nextTier = stripeConfig.getNextTier(user.subscription_tier);
       const nextTierConfig = nextTier ? stripeConfig.getTierConfig(nextTier) : null;
 
       return res.status(403).json({ 
         error: 'QR code limit exceeded',
-        message: `You need ${quantity} QR codes but only have ${updatedRemaining} remaining.`,
+        message: `You need ${quantity} QR codes but only have ${remaining} remaining.`,
         limits: {
           tier: user.subscription_tier,
           used: user.qr_codes_used,
           limit: user.qr_codes_limit,
-          remaining: updatedRemaining,
+          remaining: remaining,
           requested: quantity
         },
         upgrade: {

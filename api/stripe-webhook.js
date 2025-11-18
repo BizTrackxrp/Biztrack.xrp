@@ -1,6 +1,6 @@
 // pages/api/stripe-webhook.js
-import Stripe from 'stripe';
-import { Pool } from 'pg';
+const Stripe = require('stripe');
+const { Pool } = require('pg');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const pool = new Pool({
@@ -27,13 +27,7 @@ const PRICE_TO_TIER = {
   'price_1SUum52Kvkd8Qy8Oq5W9t6hT': 'pharma_enterprise'
 };
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(400).end();
 
   let rawBody;
@@ -203,9 +197,11 @@ export default async function handler(req, res) {
     console.error('[WEBHOOK] Error:', error);
     return res.status(500).json({ error: 'Webhook failed', details: error.message });
   }
-}
-```
+};
 
-STRIPE_PRICE_COMPLIANCE=price_1SUulu2Kvkd8Qy8O0qAlY4w3
-
-STRIPE_PRICE_PHARMA_ENTERPRISE=price_1SUum52Kvkd8Qy8Oq5W9t6hT
+// ✅ Disable Vercel's body parsing so we can verify Stripe signature
+module.exports.config = {
+  api: {
+    bodyParser: false,
+  },
+};

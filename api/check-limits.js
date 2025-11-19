@@ -1,17 +1,20 @@
-// api/check-limits.js - WITH PHARMA TIERS
+// api/check-limits.js - WITH PHARMA TIERS + PROPER BATCH LOGIC
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// UPDATED: Added pharma tiers
+// UPDATED: New 3-tier pharma system (GENEROUS LIMITS)
 const LIMITS = {
   free: 10,
+  // GENERAL BUSINESS TIERS (unchanged)
   essential: 500,
   scale: 2500,
   enterprise: 10000,
-  compliance: 10000,           // NEW PHARMA TIER
-  pharma_enterprise: 50000     // NEW PHARMA TIER
+  // PHARMA TIERS (updated - GENEROUS!)
+  starter: 1000,             // NEW - $199/month - 1,000 QR codes
+  professional: 5000,        // RENAMED from "compliance" - $599/month - 5,000 QR codes
+  pharma_enterprise: 50000   // RENAMED to "enterprise" - $1,499/month - 50,000 QR codes
 };
 
 module.exports = async (req, res) => {
@@ -60,7 +63,8 @@ module.exports = async (req, res) => {
         qr_codes_used, 
         qr_codes_limit, 
         business_type, 
-        is_pharma 
+        is_pharma,
+        company_name
        FROM users 
        WHERE id = $1`,
       [decoded.userId]
@@ -76,39 +80,40 @@ module.exports = async (req, res) => {
     // Use qr_codes_limit from DB if set, otherwise use tier default
     const qrLimit = user.qr_codes_limit || LIMITS[tier] || 10;
     const qrCodesUsed = user.qr_codes_used || 0;
+    
+    // Calculate remaining codes
+    const remaining = qrLimit - qrCodesUsed;
 
-    // Determine max batch size based on tier
-    let maxBatchSize = 10;
-    if (tier === 'pharma_enterprise') maxBatchSize = 5000;
-    else if (tier === 'compliance') maxBatchSize = 1000;
-    else if (tier === 'enterprise') maxBatchSize = 1000;
-    else if (tier === 'scale') maxBatchSize = 500;
-    else if (tier === 'essential') maxBatchSize = 100;
+    // 🎯 FIXED: Max batch size = REMAINING codes (not arbitrary tier limits)
+    // If you paid for 50k and used 1, you can batch 49,999!
+    const maxBatchSize = remaining;
 
     console.log('[CHECK-LIMITS] ✅ Success:', {
       userId: user.id,
       tier: tier,
       used: qrCodesUsed,
-      limit: qrLimit
+      limit: qrLimit,
+      remaining: remaining,
+      maxBatch: maxBatchSize
     });
 
     return res.status(200).json({
       success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        company_name: user.company_name,
+        business_type: user.business_type || 'general',
+        is_pharma: user.is_pharma || false
+      },
       subscription: {
         tier: tier,
-        status: 'active',
-        businessType: user.business_type || 'general',
-        isPharma: user.is_pharma || false
-      },
-      limits: {
         qrLimit: qrLimit,
-        maxBatchSize: maxBatchSize
-      },
-      usage: {
-        qrCodesUsed: qrCodesUsed,
-        remaining: qrLimit - qrCodesUsed
-      },
-      canMint: qrCodesUsed < qrLimit
+        qrUsed: qrCodesUsed,
+        remaining: remaining,
+        maxBatchSize: maxBatchSize,  // 🎯 Now equals remaining!
+        status: 'active'
+      }
     });
 
   } catch (error) {

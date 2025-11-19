@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 module.exports = async (req, res) => {
@@ -65,18 +65,19 @@ module.exports = async (req, res) => {
         business_type,
         subscription_tier,
         qr_codes_limit,
-        qr_codes_used
+        qr_codes_used,
+        created_at
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) 
       RETURNING id, email, company_name, business_type`,
       [
         email.toLowerCase(),
         hashedPassword,
         companyName || null,
-        businessType, // Save business type
-        'free', // Default subscription tier
-        10, // Free tier limit
-        0 // Start with 0 QR codes used
+        businessType,
+        'free',
+        10,
+        0
       ]
     );
 
@@ -102,16 +103,27 @@ module.exports = async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
+    
+    // Handle specific database errors
+    if (error.code === '23505') {
+      return res.status(400).json({
+        success: false,
+        error: 'Email already registered'
+      });
+    }
+    
+    if (error.code === '42703') {
+      return res.status(500).json({
+        success: false,
+        error: 'Database configuration error - please contact support'
+      });
+    }
+
     return res.status(500).json({
       success: false,
       error: 'Registration failed',
-      details: error.message
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
-  } finally {
-    try {
-      await pool.end();
-    } catch (e) {
-      console.error('Pool end error:', e);
-    }
   }
+  // ✅ NO pool.end() - Keep connection pool alive for serverless functions!
 };

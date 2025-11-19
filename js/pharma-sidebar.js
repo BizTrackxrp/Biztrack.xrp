@@ -1,6 +1,5 @@
 // js/pharma-sidebar.js
 // Pharma-specific sidebar for signed-in pharmaceutical users
-// ~200 lines
 
 (function() {
   'use strict';
@@ -62,7 +61,7 @@
             <i class="fas fa-credit-card"></i> Subscription
           </a></li>
           
-          <li><a href="/pharma/settings.html" id="pharma-nav-settings">
+          <li><a href="/SI-pharma-settings.html" id="pharma-nav-settings">
             <i class="fas fa-cog"></i> Settings
           </a></li>
         </ul>
@@ -294,15 +293,10 @@
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        if (typeof DashboardComponents !== 'undefined' && typeof DashboardComponents.logout === 'function') {
-          DashboardComponents.logout();
-        } else {
-          // Fallback
-          if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('biztrack-auth-token');
-            localStorage.removeItem('biztrack-user-email');
-            window.location.href = '/login.html';
-          }
+        if (confirm('Are you sure you want to logout?')) {
+          localStorage.removeItem('biztrack-auth-token');
+          localStorage.removeItem('biztrack-user-email');
+          window.location.href = '/login.html';
         }
       });
     }
@@ -342,13 +336,14 @@
     
     const navMap = {
       'pharma-dashboard.html': 'pharma-nav-dashboard',
+      'SI-pharma-dashboard.html': 'pharma-nav-dashboard',
       'receive.html': 'pharma-nav-receive',
       'partners.html': 'pharma-nav-partners',
       'returns.html': 'pharma-nav-returns',
       'quarantine.html': 'pharma-nav-quarantine',
       'epcis.html': 'pharma-nav-epcis',
       'SI-pharma-pricing.html': 'pharma-nav-subscription',
-      'settings.html': 'pharma-nav-settings'
+      'SI-pharma-settings.html': 'pharma-nav-settings'
     };
     
     const activeNavId = navMap[currentPage];

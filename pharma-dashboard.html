@@ -30,246 +30,338 @@
       min-height: 100vh;
     }
 
-    /* Hero Section */
-    .pharma-hero {
-      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-      color: white;
-      border-radius: 20px;
-      padding: 2.5rem;
+    /* Header */
+    .dashboard-header {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
       margin-bottom: 2rem;
-      box-shadow: 0 8px 24px rgba(30, 64, 175, 0.3);
-    }
-
-    .pharma-hero h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-    }
-
-    .pharma-hero p {
-      font-size: 1.125rem;
-      opacity: 0.95;
-    }
-
-    .pharma-hero-meta {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       display: flex;
-      gap: 2rem;
-      margin-top: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-info h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-info p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 1rem;
       flex-wrap: wrap;
     }
 
-    .pharma-hero-meta-item {
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .view-toggle {
+      padding: 0.625rem 1.25rem;
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .view-toggle:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    /* Layout */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+    }
+
+    /* Left Sidebar Actions */
+    .action-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 2px solid #e2e8f0;
+    }
+
+    .action-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-card h3 i {
+      color: #667eea;
+    }
+
+    .action-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .action-option {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-size: 0.95rem;
-      opacity: 0.9;
+      color: #334155;
     }
 
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+    .action-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
     }
 
-    .stat-card {
+    .action-btn {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .status-card {
       background: white;
       border-radius: 16px;
-      padding: 1.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       border: 2px solid #e2e8f0;
-      transition: all 0.3s;
     }
 
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      border-color: #3b82f6;
-    }
-
-    .stat-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .status-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0f172a;
       margin-bottom: 1rem;
     }
 
-    .stat-card-title {
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .status-item:last-child {
+      border-bottom: none;
+    }
+
+    .status-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .status-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .status-value.success {
+      color: #059669;
+    }
+
+    .status-value.warning {
+      color: #d97706;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Expandable Section */
+    .expandable-section {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 2px solid #e2e8f0;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .section-header:hover {
+      background: #f8fafc;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .section-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      padding: 0 0.75rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .section-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #667eea;
+      transition: all 0.2s;
+    }
+
+    .section-toggle:hover {
+      background: #f0f9ff;
+      border-color: #667eea;
+    }
+
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .section-content.open {
+      max-height: 1000px;
+      transition: max-height 0.5s ease-in;
+    }
+
+    .section-body {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    /* Data Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table thead {
+      background: #f8fafc;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0.75rem;
       font-size: 0.875rem;
       font-weight: 600;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border-bottom: 2px solid #e2e8f0;
     }
 
-    .stat-card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .stat-card-icon.blue {
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
-      color: white;
-    }
-
-    .stat-card-icon.green {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-    }
-
-    .stat-card-icon.yellow {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-    }
-
-    .stat-card-icon.purple {
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-      color: white;
-    }
-
-    .stat-card-value {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-card-label {
-      font-size: 0.875rem;
-      color: #64748b;
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      border: 2px solid #e2e8f0;
-      margin-bottom: 2rem;
-    }
-
-    .quick-actions h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .quick-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .quick-action-btn {
-      padding: 1.25rem;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #334155;
-      font-weight: 600;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      transition: all 0.2s;
-      text-align: center;
-    }
-
-    .quick-action-btn:hover {
-      background: white;
-      border-color: #3b82f6;
-      color: #3b82f6;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-    }
-
-    .quick-action-btn i {
-      font-size: 2rem;
-    }
-
-    /* Recent Activity */
-    .recent-activity {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      border: 2px solid #e2e8f0;
-    }
-
-    .recent-activity h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .activity-list {
-      list-style: none;
-    }
-
-    .activity-item {
-      padding: 1rem;
+    .data-table td {
+      padding: 1rem 0.75rem;
       border-bottom: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+      font-size: 0.95rem;
+      color: #334155;
     }
 
-    .activity-item:last-child {
+    .data-table tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .data-table tbody tr:last-child td {
       border-bottom: none;
     }
 
-    .activity-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
     }
 
-    .activity-icon.success {
+    .status-badge.success {
       background: #d1fae5;
       color: #059669;
     }
 
-    .activity-icon.warning {
+    .status-badge.warning {
       background: #fef3c7;
       color: #d97706;
     }
 
-    .activity-icon.info {
+    .status-badge.info {
       background: #dbeafe;
       color: #2563eb;
-    }
-
-    .activity-content {
-      flex: 1;
-    }
-
-    .activity-title {
-      font-weight: 600;
-      color: #0f172a;
-      margin-bottom: 0.25rem;
-    }
-
-    .activity-time {
-      font-size: 0.875rem;
-      color: #64748b;
     }
 
     .empty-state {
@@ -284,18 +376,66 @@
       opacity: 0.5;
     }
 
-    /* Compliance Badge */
-    .compliance-badge {
-      display: inline-flex;
+    /* Workflow Modal */
+    .workflow-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #d1fae5;
-      color: #059669;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-top: 1rem;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .workflow-modal.show {
+      display: flex;
+    }
+
+    .workflow-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .workflow-modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .workflow-modal-close:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .action-sidebar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
     }
 
     @media (max-width: 768px) {
@@ -304,20 +444,18 @@
         padding: 1.5rem;
       }
 
-      .pharma-hero {
-        padding: 1.5rem;
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      .pharma-hero h1 {
-        font-size: 1.5rem;
+      .data-table {
+        font-size: 0.875rem;
       }
 
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-actions-grid {
-        grid-template-columns: 1fr;
+      .data-table th,
+      .data-table td {
+        padding: 0.5rem;
       }
     }
   </style>
@@ -328,116 +466,428 @@
   <!-- Main Content -->
   <div class="main-with-sidebar">
     
-    <!-- Hero Section -->
-    <div class="pharma-hero">
-      <h1 id="welcomeMessage">Welcome to BizTrack Pharma</h1>
-      <p id="tierInfo">Loading subscription info...</p>
-      <div class="pharma-hero-meta">
-        <div class="pharma-hero-meta-item">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="header-info">
+        <h1 id="welcomeMessage">Pharmaceutical Dashboard</h1>
+        <p id="companyInfo">Loading company info...</p>
+      </div>
+      <div class="header-meta">
+        <span class="header-badge">
           <i class="fas fa-shield-check"></i>
-          <span>DSCSA Compliant</span>
-        </div>
-        <div class="pharma-hero-meta-item">
-          <i class="fas fa-check-circle"></i>
-          <span>GS1 Compatible</span>
-        </div>
-        <div class="pharma-hero-meta-item">
-          <i class="fas fa-cloud"></i>
-          <span>XRPL Blockchain</span>
-        </div>
-      </div>
-      <div class="compliance-badge">
-        <i class="fas fa-check-double"></i>
-        FDA Ready • Audit-Proof Event Logs
+          <span id="tierInfo">Loading...</span>
+        </span>
+        <button class="view-toggle" onclick="toggleWorkflowView()">
+          <i class="fas fa-sitemap"></i>
+          View Workflow Map
+        </button>
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <!-- QR Codes Stat -->
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-title">QR Codes</span>
-          <div class="stat-card-icon blue">
-            <i class="fas fa-qrcode"></i>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+      
+      <!-- Left Sidebar: Actions -->
+      <div class="action-sidebar">
+        
+        <!-- Quick Actions Card -->
+        <div class="action-card">
+          <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+          <div class="action-options">
+            <label class="action-option">
+              <input type="radio" name="quick-action" value="generate" checked>
+              <span>Generate QR Codes</span>
+            </label>
+            <label class="action-option">
+              <input type="radio" name="quick-action" value="receive">
+              <span>Receive Shipment</span>
+            </label>
+            <label class="action-option">
+              <input type="radio" name="quick-action" value="verify">
+              <span>Verify Product (VRS)</span>
+            </label>
+            <label class="action-option">
+              <input type="radio" name="quick-action" value="return">
+              <span>Process Return</span>
+            </label>
+            <label class="action-option">
+              <input type="radio" name="quick-action" value="ship">
+              <span>Ship Products</span>
+            </label>
+          </div>
+          <button class="action-btn" onclick="executeQuickAction()">
+            <i class="fas fa-play"></i>
+            Start Action
+          </button>
+        </div>
+
+        <!-- Compliance Status Card -->
+        <div class="status-card">
+          <h3>Compliance Status</h3>
+          <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+            <div style="font-size: 0.875rem; color: #059669; font-weight: 600; margin-bottom: 0.25rem;">DSCSA READY</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #059669;">100%</div>
+            <div style="font-size: 0.75rem; color: #059669; margin-top: 0.25rem;">All features enabled</div>
+          </div>
+          <div class="status-item">
+            <span class="status-label">ATP Verified</span>
+            <span class="status-value success">Active</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Serialization</span>
+            <span class="status-value success">GS1</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">QR Codes Used</span>
+            <span class="status-value" id="qrCodesUsed">0 / 10,000</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Data Retention</span>
+            <span class="status-value success">6 Years</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">VRS Integration</span>
+            <span class="status-value success">Ready</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">EPCIS Export</span>
+            <span class="status-value success">XML/JSON</span>
           </div>
         </div>
-        <div class="stat-card-value" id="qrCodesUsed">0</div>
-        <div class="stat-card-label" id="qrCodesLabel">of 10,000 used this month</div>
+
+        <!-- Additional Links -->
+        <div class="status-card">
+          <h3>Management</h3>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="/pharma/partners.html" style="text-decoration: none; color: #667eea; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0;">
+              <i class="fas fa-building"></i>
+              ATP Partners
+            </a>
+            <a href="/SI-pharma-settings.html" style="text-decoration: none; color: #667eea; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0;">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+            <a href="/SI-pharma-pricing.html" style="text-decoration: none; color: #667eea; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0;">
+              <i class="fas fa-credit-card"></i>
+              Subscription
+            </a>
+          </div>
+        </div>
       </div>
 
-      <!-- Returns Stat -->
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-title">Returns</span>
-          <div class="stat-card-icon green">
-            <i class="fas fa-undo"></i>
+      <!-- Main Content: Expandable Sections -->
+      <div class="main-content">
+        
+        <!-- Items Awaiting Action -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('awaiting-action')">
+            <div class="section-title">
+              <i class="fas fa-bell" style="color: #f59e0b;"></i>
+              Items Awaiting Your Action
+              <span class="section-count" id="awaitingCount">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-awaiting-action">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-awaiting-action">
+            <div class="section-body">
+              <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>No items awaiting your action</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">You're all caught up!</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-label">processed this month</div>
-      </div>
 
-      <!-- Quarantine Stat -->
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-title">Quarantine</span>
-          <div class="stat-card-icon yellow">
-            <i class="fas fa-exclamation-triangle"></i>
+        <!-- Recent QR Codes -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('qr-codes')">
+            <div class="section-title">
+              <i class="fas fa-qrcode" style="color: #3b82f6;"></i>
+              Recent QR Codes
+              <span class="section-count" id="qrCodesCount">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-qr-codes">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-qr-codes">
+            <div class="section-body">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Serial Number</th>
+                    <th>Batch/Lot</th>
+                    <th>Created</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="qrCodesTable">
+                  <tr>
+                    <td colspan="5">
+                      <div class="empty-state">
+                        <i class="fas fa-qrcode"></i>
+                        <p>No QR codes generated yet</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-label">items flagged</div>
-      </div>
 
-      <!-- ATP Partners Stat -->
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-title">ATP Partners</span>
-          <div class="stat-card-icon purple">
-            <i class="fas fa-building"></i>
+        <!-- Returns Processing -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('returns')">
+            <div class="section-title">
+              <i class="fas fa-undo" style="color: #f59e0b;"></i>
+              Returns Processing
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-returns">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-returns">
+            <div class="section-body">
+              <div class="empty-state">
+                <i class="fas fa-undo"></i>
+                <p>No returns to process</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-label">verified trading partners</div>
+
+        <!-- Quarantine Zone -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('quarantine')">
+            <div class="section-title">
+              <i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i>
+              Quarantine Zone
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-quarantine">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-quarantine">
+            <div class="section-body">
+              <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>No items in quarantine</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">All products cleared</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trading Partners -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('partners')">
+            <div class="section-title">
+              <i class="fas fa-building" style="color: #10b981;"></i>
+              Authorized Trading Partners (ATP)
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-partners">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-partners">
+            <div class="section-body">
+              <div class="empty-state">
+                <i class="fas fa-building"></i>
+                <p>No trading partners added yet</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction History (TI/TS) -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('transactions')">
+            <div class="section-title">
+              <i class="fas fa-exchange-alt" style="color: #667eea;"></i>
+              Transaction History (TI/TS)
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-transactions">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-transactions">
+            <div class="section-body">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Trading Partner</th>
+                    <th>Product</th>
+                    <th>Documents</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTable">
+                  <tr>
+                    <td colspan="6">
+                      <div class="empty-state">
+                        <i class="fas fa-exchange-alt"></i>
+                        <p>No transaction history yet</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">TI/TS documents will appear here</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Verification (VRS) -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('verification')">
+            <div class="section-title">
+              <i class="fas fa-check-double" style="color: #10b981;"></i>
+              Product Verification (VRS)
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-verification">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-verification">
+            <div class="section-body">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Product Name</th>
+                    <th>Verified With</th>
+                    <th>Verification Date</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="verificationTable">
+                  <tr>
+                    <td colspan="5">
+                      <div class="empty-state">
+                        <i class="fas fa-check-double"></i>
+                        <p>No verification requests yet</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Verify products with manufacturer VRS</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outbound Shipments -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('outbound')">
+            <div class="section-title">
+              <i class="fas fa-shipping-fast" style="color: #3b82f6;"></i>
+              Outbound Shipments
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-outbound">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-outbound">
+            <div class="section-body">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Ship Date</th>
+                    <th>Recipient</th>
+                    <th>Products</th>
+                    <th>Tracking</th>
+                    <th>TI/TS</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="outboundTable">
+                  <tr>
+                    <td colspan="6">
+                      <div class="empty-state">
+                        <i class="fas fa-shipping-fast"></i>
+                        <p>No outbound shipments yet</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Track products leaving your facility</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- EPCIS Compliance Reports -->
+        <div class="expandable-section">
+          <div class="section-header" onclick="toggleSection('epcis')">
+            <div class="section-title">
+              <i class="fas fa-file-export" style="color: #f59e0b;"></i>
+              EPCIS Compliance Reports
+              <span class="section-count">0</span>
+            </div>
+            <button class="section-toggle" id="toggle-epcis">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="section-content" id="content-epcis">
+            <div class="section-body">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Report Name</th>
+                    <th>Date Range</th>
+                    <th>Format</th>
+                    <th>Generated</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="epcisTable">
+                  <tr>
+                    <td colspan="5">
+                      <div class="empty-state">
+                        <i class="fas fa-file-export"></i>
+                        <p>No EPCIS reports generated yet</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Export compliance data for FDA audits</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                <button class="action-btn" onclick="generateEPCIS()">
+                  <i class="fas fa-download"></i>
+                  Generate New EPCIS Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-      <div class="quick-actions-grid">
-        <a href="/pharma/receive.html" class="quick-action-btn">
-          <i class="fas fa-box"></i>
-          <span>Receive Shipment</span>
-        </a>
-        <a href="/pharma/partners.html" class="quick-action-btn">
-          <i class="fas fa-building"></i>
-          <span>Verify ATP</span>
-        </a>
-        <a href="/pharma/returns.html" class="quick-action-btn">
-          <i class="fas fa-undo"></i>
-          <span>Process Returns</span>
-        </a>
-        <a href="/pharma/epcis.html" class="quick-action-btn">
-          <i class="fas fa-file-export"></i>
-          <span>Export EPCIS</span>
-        </a>
-      </div>
-    </div>
+  </div>
 
-    <!-- Recent Activity -->
-    <div class="recent-activity">
-      <h2><i class="fas fa-history"></i> Recent Activity</h2>
-      <ul class="activity-list" id="activityList">
-        <li class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <p>No recent activity</p>
-          <p style="margin-top: 0.5rem; font-size: 0.875rem;">Your compliance events will appear here</p>
-        </li>
-      </ul>
+  <!-- Workflow Modal -->
+  <div class="workflow-modal" id="workflowModal">
+    <div class="workflow-modal-content">
+      <button class="workflow-modal-close" onclick="toggleWorkflowView()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe src="/SI-pharma-workflow-map.html" style="width: 100%; height: 80vh; border: none; border-radius: 12px;"></iframe>
     </div>
-
   </div>
 
   <!-- Scripts -->
@@ -445,13 +895,10 @@
   <script src="js/SI-sidebar.js"></script>
   
   <script>
-    // Require authentication
     requireAuth();
 
-    // Load dashboard data
     async function loadDashboard() {
       try {
-        // Load subscription info using authenticatedFetch from auth.js
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
         
@@ -459,66 +906,81 @@
           const subData = data.subscription;
           const user = data.user;
           
-          // Update welcome message
+          // Update header
           if (user.company_name) {
             document.getElementById('welcomeMessage').textContent = 
-              `Welcome to ${user.company_name}`;
+              `Welcome, ${user.company_name}`;
+            document.getElementById('companyInfo').textContent = 
+              `${user.email} • ${user.business_type || 'Pharmaceutical'}`;
           }
           
           // Update tier info
-          const tierName = subData.tier === 'compliance' ? 'Compliance' : 
-                          subData.tier === 'pharma_enterprise' ? 'Pharma Enterprise' :
+          const tierName = subData.tier === 'starter' ? 'Starter' :
+                          subData.tier === 'professional' ? 'Professional' :
+                          subData.tier === 'enterprise' ? 'Enterprise' :
                           subData.tier.charAt(0).toUpperCase() + subData.tier.slice(1);
           
-          document.getElementById('tierInfo').textContent = 
-            `${tierName} Plan • ${subData.qrUsed.toLocaleString()} / ${subData.qrLimit.toLocaleString()} QR codes used`;
+          document.getElementById('tierInfo').textContent = `${tierName} Plan`;
           
-          // Update QR codes stat
-          document.getElementById('qrCodesUsed').textContent = subData.qrUsed.toLocaleString();
-          document.getElementById('qrCodesLabel').textContent = 
-            `of ${subData.qrLimit.toLocaleString()} used this month`;
+          // Update QR codes used
+          document.getElementById('qrCodesUsed').textContent = 
+            `${subData.qrUsed.toLocaleString()} / ${subData.qrLimit.toLocaleString()}`;
         }
-        
-        // Load recent activity (placeholder for now)
-        loadRecentActivity();
         
       } catch (error) {
         console.error('Failed to load dashboard:', error);
-        document.getElementById('tierInfo').textContent = 'Error loading subscription info';
       }
     }
 
-    // Load recent activity (will be replaced with real API call)
-    function loadRecentActivity() {
-      const activityList = document.getElementById('activityList');
+    function toggleSection(sectionId) {
+      const content = document.getElementById(`content-${sectionId}`);
+      const toggle = document.getElementById(`toggle-${sectionId}`);
+      const icon = toggle.querySelector('i');
       
-      // Placeholder - replace with real API call later
-      const activities = [
-        // Example:
-        // { type: 'success', icon: 'check-circle', title: 'ATP Verified: Pfizer Inc.', time: '2 hours ago' },
-        // { type: 'warning', icon: 'exclamation-triangle', title: 'Quarantine Alert: Batch OZ-1124', time: '5 hours ago' },
-        // { type: 'info', icon: 'file-export', title: 'EPCIS Export Completed', time: 'Yesterday' }
-      ];
+      content.classList.toggle('open');
       
-      if (activities.length === 0) {
-        // Keep empty state
-        return;
+      if (content.classList.contains('open')) {
+        icon.classList.remove('fa-plus');
+        icon.classList.add('fa-minus');
+      } else {
+        icon.classList.remove('fa-minus');
+        icon.classList.add('fa-plus');
       }
-      
-      activityList.innerHTML = activities.map(activity => `
-        <li class="activity-item">
-          <div class="activity-icon ${activity.type}">
-            <i class="fas fa-${activity.icon}"></i>
-          </div>
-          <div class="activity-content">
-            <div class="activity-title">${activity.title}</div>
-            <div class="activity-time">${activity.time}</div>
-          </div>
-        </li>
-      `).join('');
     }
 
-    // Initialize dashboard
+    function toggleWorkflowView() {
+      const modal = document.getElementById('workflowModal');
+      modal.classList.toggle('show');
+    }
+
+    function executeQuickAction() {
+      const selected = document.querySelector('input[name="quick-action"]:checked');
+      
+      if (selected.value === 'generate') {
+        window.location.href = '/generate.html';
+      } else if (selected.value === 'receive') {
+        window.location.href = '/pharma/receive.html';
+      } else if (selected.value === 'verify') {
+        window.location.href = '/verify.html';
+      } else if (selected.value === 'return') {
+        window.location.href = '/pharma/returns.html';
+      } else if (selected.value === 'ship') {
+        window.location.href = '/ship.html';
+      }
+    }
+
+    function generateEPCIS() {
+      // TODO: Implement EPCIS generation
+      alert('EPCIS Report Generation\n\nThis feature will generate FDA-compliant EPCIS reports in XML or JSON format.\n\nComing soon in Week 2-3!');
+    }
+
+    // Close workflow modal when clicking outside
+    document.getElementById('workflowModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        toggleWorkflowView();
+      }
+    });
+
     loadDashboard();
   </script>
 </body>

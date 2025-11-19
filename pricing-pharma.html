@@ -285,6 +285,99 @@
       border-radius: 12px;
     }
 
+    /* DSCSA Compliance Section */
+    .dscsa-section {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      border-radius: 20px;
+      border: 2px solid #667eea;
+    }
+
+    .dscsa-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dscsa-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #334155;
+      margin-bottom: 3rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .dscsa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .dscsa-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .dscsa-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+      border-color: #667eea;
+    }
+
+    .dscsa-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dscsa-card h3 i {
+      color: #667eea;
+      font-size: 1.75rem;
+    }
+
+    .dscsa-card p {
+      color: #64748b;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .dscsa-card ul {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .dscsa-card ul li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      color: #334155;
+    }
+
+    .dscsa-card ul li i {
+      color: #10b981;
+      margin-top: 0.25rem;
+    }
+
     /* Includes Section */
     .includes-section {
       max-width: 1200px;
@@ -442,11 +535,11 @@
       <div class="pricing-tier">
         <h2 class="tier-name">Starter</h2>
         <div class="tier-price">$199<span> / month</span></div>
-        <div class="tier-volume">500 QR codes per month</div>
+        <div class="tier-volume">1,000 QR codes per month</div>
         <p class="tier-description">Perfect for single-location compounding pharmacies and small dispensers</p>
         
         <ul class="tier-features">
-          <li><i class="fas fa-check-circle"></i> 500 smart QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> 1,000 smart QR codes / month</li>
           <li><i class="fas fa-check-circle"></i> GS1-compliant serialization</li>
           <li><i class="fas fa-check-circle"></i> Transaction documentation (TI/TS)</li>
           <li><i class="fas fa-check-circle"></i> 6-year blockchain retention</li>
@@ -466,12 +559,12 @@
         <div class="popular-badge">MOST POPULAR</div>
         <h2 class="tier-name">Professional</h2>
         <div class="tier-price">$599<span> / month</span></div>
-        <div class="tier-volume">2,500 QR codes per month</div>
+        <div class="tier-volume">5,000 QR codes per month</div>
         <p class="tier-description">Complete DSCSA toolkit for multi-location pharmacies and small distributors</p>
         
         <ul class="tier-features">
           <li><i class="fas fa-check-circle"></i> <strong>Everything in Starter</strong></li>
-          <li><i class="fas fa-check-circle"></i> 2,500 QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> 5,000 QR codes / month</li>
           <li><i class="fas fa-check-circle"></i> ATP verification</li>
           <li><i class="fas fa-check-circle"></i> Returns processing workflow</li>
           <li><i class="fas fa-check-circle"></i> Quarantine management</li>
@@ -490,12 +583,12 @@
       <div class="pricing-tier">
         <h2 class="tier-name">Enterprise</h2>
         <div class="tier-price">$1,499<span> / month</span></div>
-        <div class="tier-volume">10,000 QR codes per month</div>
+        <div class="tier-volume">50,000 QR codes per month</div>
         <p class="tier-description">Enterprise-grade infrastructure for regional distributors and specialty pharma</p>
         
         <ul class="tier-features">
           <li><i class="fas fa-check-circle"></i> <strong>Everything in Professional</strong></li>
-          <li><i class="fas fa-check-circle"></i> 10,000 QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> 50,000 QR codes / month</li>
           <li><i class="fas fa-check-circle"></i> VRS integration</li>
           <li><i class="fas fa-check-circle"></i> Custom API integrations</li>
           <li><i class="fas fa-check-circle"></i> SLA guarantees (99.9%)</li>
@@ -510,6 +603,104 @@
         </button>
       </div>
 
+    </div>
+
+    <!-- DSCSA COMPLIANCE SECTION - THE BRAGGING PART! -->
+    <div class="dscsa-section">
+      <h2>Full FDA DSCSA Compliance</h2>
+      <p class="dscsa-intro">
+        BizTrack provides complete Drug Supply Chain Security Act (DSCSA) compliance out of the box. 
+        Built specifically for pharmaceutical manufacturers, distributors, repackagers, and dispensers to meet 
+        FDA's November 2023 Enhanced Drug Distribution Security requirements.
+      </p>
+
+      <div class="dscsa-grid">
+        
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-shield-alt"></i>
+            Product Tracing
+          </h3>
+          <p>Complete unit-level serialization and verification for every product in your supply chain.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Transaction Information (TI)</li>
+            <li><i class="fas fa-check"></i> Transaction Statement (TS)</li>
+            <li><i class="fas fa-check"></i> Transaction History (TH)</li>
+            <li><i class="fas fa-check"></i> GS1-compliant 2D barcodes</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-database"></i>
+            Blockchain Verification
+          </h3>
+          <p>Immutable proof of authenticity using XRP Ledger's enterprise blockchain technology.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Tamper-proof records</li>
+            <li><i class="fas fa-check"></i> Real-time verification</li>
+            <li><i class="fas fa-check"></i> 6-year retention (FDA compliant)</li>
+            <li><i class="fas fa-check"></i> IPFS decentralized storage</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-exchange-alt"></i>
+            ATP Verification
+          </h3>
+          <p>Authorized Trading Partner (ATP) verification to ensure secure pharmaceutical supply chains.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Partner credentials validation</li>
+            <li><i class="fas fa-check"></i> License verification tracking</li>
+            <li><i class="fas fa-check"></i> Suspicious order monitoring</li>
+            <li><i class="fas fa-check"></i> Quarantine management</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-file-medical"></i>
+            Returns & Recalls
+          </h3>
+          <p>FDA-compliant product returns processing and recall management workflows.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Saleable returns verification</li>
+            <li><i class="fas fa-check"></i> Product investigation tracking</li>
+            <li><i class="fas fa-check"></i> Batch/lot recall management</li>
+            <li><i class="fas fa-check"></i> Disposition documentation</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-chart-line"></i>
+            EPCIS Integration
+          </h3>
+          <p>Electronic Product Code Information Services (EPCIS) for seamless data exchange.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> EPCIS 1.2 / 2.0 support</li>
+            <li><i class="fas fa-check"></i> Interoperable data formats</li>
+            <li><i class="fas fa-check"></i> VRS-ready infrastructure</li>
+            <li><i class="fas fa-check"></i> API-first architecture</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-clipboard-check"></i>
+            Audit-Ready Reports
+          </h3>
+          <p>Comprehensive audit trails and reporting for FDA inspections and compliance verification.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Complete chain of custody</li>
+            <li><i class="fas fa-check"></i> Serialization event tracking</li>
+            <li><i class="fas fa-check"></i> Exception handling logs</li>
+            <li><i class="fas fa-check"></i> One-click FDA report generation</li>
+          </ul>
+        </div>
+
+      </div>
     </div>
 
     <!-- Comparison Section -->

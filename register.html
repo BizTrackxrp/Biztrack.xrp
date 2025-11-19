@@ -183,7 +183,7 @@
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -196,7 +196,7 @@
     }
 
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 1;
       cursor: not-allowed;
     }
 
@@ -345,9 +345,6 @@
     const selectedPlan = urlParams.get('plan');
     const planPrice = urlParams.get('price');
 
-    // Plan badge removed - users see pricing after registration
-    // No need to show pricing on registration form
-
     function showMessage(text, type = 'error') {
       const messageEl = document.getElementById('message');
       messageEl.className = `message ${type} show`;
@@ -410,7 +407,7 @@
             email, 
             password, 
             companyName: companyName || null,
-            businessType // Include business type
+            businessType
           })
         });
 
@@ -421,8 +418,9 @@
           throw new Error(registerData.error || 'Registration failed');
         }
 
-        showMessage('Account created! Logging you in...', 'success');
-        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        // ✅ Show success in button (turns green)
+        registerBtn.innerHTML = '<i class="fas fa-check-circle"></i> Success! Signing you in...';
+        registerBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
 
         // Step 2: Automatically log them in
         console.log('Step 2: Logging in user...');
@@ -446,8 +444,7 @@
         localStorage.setItem('biztrack-user-email', email);
 
         // Step 3: Redirect to appropriate pricing page based on business type
-        showMessage('Success! Redirecting to pricing...', 'success');
-        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+        registerBtn.innerHTML = '<i class="fas fa-rocket"></i> Redirecting... (Don\'t refresh!)';
         
         setTimeout(() => {
           // Route based on business type
@@ -456,7 +453,7 @@
           } else {
             window.location.href = '/pricing.html';
           }
-        }, 1000);
+        }, 1500);
 
       } catch (error) {
         console.error('Registration error:', error);
@@ -464,13 +461,13 @@
         
         registerBtn.disabled = false;
         registerBtn.innerHTML = '<i class="fas fa-rocket"></i> Create Account';
+        registerBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
       }
     });
 
     // Check if already logged in
     const existingToken = localStorage.getItem('biztrack-auth-token');
     if (existingToken && !selectedPlan) {
-      // Already logged in and no plan selected, redirect to dashboard
       window.location.href = '/dashboard.html';
     }
   </script>

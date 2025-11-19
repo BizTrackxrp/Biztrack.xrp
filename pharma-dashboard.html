@@ -324,7 +324,6 @@
 </head>
 <body>
   <!-- Pharma Sidebar (auto-loads) -->
-  <div id="pharma-sidebar-container"></div>
 
   <!-- Main Content -->
   <div class="main-with-sidebar">
@@ -442,35 +441,50 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/js/auth.js"></script>
-  <script src="/js/dashboard-components.js"></script>
-  <script src="/js/pharma-sidebar.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/SI-sidebar.js"></script>
   
   <script>
     // Require authentication
-    DashboardComponents.requireAuth();
+    requireAuth();
 
     // Load dashboard data
     async function loadDashboard() {
       try {
-        // Load subscription info
-        const subData = await DashboardComponents.loadSubscriptionLimits();
+        // Load subscription info using authenticatedFetch from auth.js
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
         
-        // Update hero section
-        const tierName = subData.tier.charAt(0).toUpperCase() + subData.tier.slice(1);
-        document.getElementById('tierInfo').textContent = 
-          `${tierName} Plan • ${subData.qrUsed.toLocaleString()} / ${subData.qrLimit.toLocaleString()} QR codes used`;
-        
-        // Update QR codes stat
-        document.getElementById('qrCodesUsed').textContent = subData.qrUsed.toLocaleString();
-        document.getElementById('qrCodesLabel').textContent = 
-          `of ${subData.qrLimit.toLocaleString()} used this month`;
+        if (data.success) {
+          const subData = data.subscription;
+          const user = data.user;
+          
+          // Update welcome message
+          if (user.company_name) {
+            document.getElementById('welcomeMessage').textContent = 
+              `Welcome to ${user.company_name}`;
+          }
+          
+          // Update tier info
+          const tierName = subData.tier === 'compliance' ? 'Compliance' : 
+                          subData.tier === 'pharma_enterprise' ? 'Pharma Enterprise' :
+                          subData.tier.charAt(0).toUpperCase() + subData.tier.slice(1);
+          
+          document.getElementById('tierInfo').textContent = 
+            `${tierName} Plan • ${subData.qrUsed.toLocaleString()} / ${subData.qrLimit.toLocaleString()} QR codes used`;
+          
+          // Update QR codes stat
+          document.getElementById('qrCodesUsed').textContent = subData.qrUsed.toLocaleString();
+          document.getElementById('qrCodesLabel').textContent = 
+            `of ${subData.qrLimit.toLocaleString()} used this month`;
+        }
         
         // Load recent activity (placeholder for now)
         loadRecentActivity();
         
       } catch (error) {
         console.error('Failed to load dashboard:', error);
+        document.getElementById('tierInfo').textContent = 'Error loading subscription info';
       }
     }
 
@@ -509,4 +523,3 @@
   </script>
 </body>
 </html>
-```

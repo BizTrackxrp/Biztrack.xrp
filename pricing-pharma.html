@@ -23,63 +23,8 @@
       line-height: 1.6;
     }
 
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 260px;
-      background: #0f172a;
-      padding: 2rem 1.5rem;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-logo {
-      margin-bottom: 3rem;
-    }
-
-    .sidebar-logo h1 {
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .sidebar-nav a {
-      color: #94a3b8;
-      text-decoration: none;
-      padding: 0.875rem 1rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .sidebar-nav a:hover,
-    .sidebar-nav a.active {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav i {
-      width: 20px;
-      font-size: 1.1rem;
-    }
-
-    /* Main Content */
-    .main-content {
-      margin-left: 260px;
+    .main-with-sidebar {
+      margin-left: 280px;
       min-height: 100vh;
       padding: 3rem 2rem;
     }
@@ -90,9 +35,9 @@
       margin: 0 auto 4rem;
       text-align: center;
       padding: 4rem 2rem;
-      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(30, 64, 175, 0.3);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
     }
 
     .hero h1 {
@@ -166,12 +111,12 @@
     .pricing-tier:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      border-color: #3b82f6;
+      border-color: #667eea;
     }
 
     .pricing-tier.popular {
-      border-color: #3b82f6;
-      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
       transform: scale(1.05);
     }
 
@@ -180,13 +125,13 @@
       top: -15px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       padding: 0.5rem 1.25rem;
       border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 700;
-      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -201,7 +146,10 @@
     .tier-price {
       font-size: 3rem;
       font-weight: 800;
-      color: #3b82f6;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 0.5rem;
     }
 
@@ -252,7 +200,7 @@
     .cta-button {
       width: 100%;
       padding: 1.25rem 2rem;
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
       border-radius: 12px;
@@ -269,7 +217,7 @@
 
     .cta-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
     }
 
     /* Comparison Section */
@@ -319,7 +267,10 @@
     .comparison-item .price {
       font-size: 2rem;
       font-weight: 800;
-      color: #3b82f6;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 0.5rem;
     }
 
@@ -329,8 +280,8 @@
     }
 
     .comparison-highlight {
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      border: 2px solid #3b82f6;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border: 2px solid #667eea;
       border-radius: 12px;
     }
 
@@ -367,7 +318,7 @@
     }
 
     .includes-item i {
-      color: #3b82f6;
+      color: #667eea;
       font-size: 1.25rem;
     }
 
@@ -401,7 +352,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #3b82f6;
+      color: #667eea;
       text-decoration: none;
       font-weight: 600;
       font-size: 1.125rem;
@@ -409,7 +360,7 @@
     }
 
     .contact-link:hover {
-      color: #2563eb;
+      color: #764ba2;
       transform: translateX(3px);
     }
 
@@ -418,7 +369,7 @@
       background: #0f172a;
       color: #94a3b8;
       padding: 3rem 2rem 2rem;
-      margin-left: 260px;
+      margin-left: 280px;
       margin-top: 4rem;
       text-align: center;
     }
@@ -435,19 +386,7 @@
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 1.5rem;
-      }
-
-      .sidebar-nav {
-        flex-direction: row;
-        overflow-x: auto;
-      }
-
-      .main-content,
+      .main-with-sidebar,
       .footer {
         margin-left: 0;
       }
@@ -468,11 +407,11 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div id="sidebar-container" data-page="pricing"></div>
+  <!-- Sidebar (auto-loads) -->
+  <div id="sidebar-container"></div>
 
   <!-- Main Content -->
-  <main class="main-content">
+  <main class="main-with-sidebar">
     
     <!-- Hero -->
     <div class="hero">
@@ -516,10 +455,10 @@
           <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
         </ul>
         
-        <a href="register.html?plan=starter&price=199" class="cta-button">
+        <button class="cta-button" onclick="selectPlan('starter', 199)">
           Get Started
           <i class="fas fa-arrow-right"></i>
-        </a>
+        </button>
       </div>
 
       <!-- Professional Compliance -->
@@ -541,10 +480,10 @@
           <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
         </ul>
         
-        <a href="register.html?plan=professional&price=599" class="cta-button">
+        <button class="cta-button" onclick="selectPlan('professional', 599)">
           Get Started
           <i class="fas fa-arrow-right"></i>
-        </a>
+        </button>
       </div>
 
       <!-- Enterprise Compliance -->
@@ -565,10 +504,10 @@
           <li><i class="fas fa-check-circle"></i> Priority support (12hr response)</li>
         </ul>
         
-        <a href="register.html?plan=enterprise&price=1499" class="cta-button">
+        <button class="cta-button" onclick="selectPlan('enterprise', 1499)">
           Get Started
           <i class="fas fa-arrow-right"></i>
-        </a>
+        </button>
       </div>
 
     </div>
@@ -661,6 +600,22 @@
     </div>
   </footer>
 
+  <script src="js/auth.js"></script>
   <script src="js/SI-sidebar.js"></script>
+  
+  <script>
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('biztrack-auth-token');
+
+    function selectPlan(tier, price) {
+      if (isLoggedIn) {
+        // User is logged in - go to subscription management
+        window.location.href = `/SI-pharma-subscription.html?tier=${tier}&price=${price}`;
+      } else {
+        // User is not logged in - go to register
+        window.location.href = `/register.html?plan=${tier}&price=${price}`;
+      }
+    }
+  </script>
 </body>
 </html>

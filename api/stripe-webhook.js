@@ -14,16 +14,21 @@ const TIER_CONFIG = {
   essential: { qrLimit: 500 },
   scale: { qrLimit: 2500 },
   enterprise: { qrLimit: 10000 },
-  compliance: { qrLimit: 10000 },
+  pharma_starter: { qrLimit: 1000 },
+  professional: { qrLimit: 5000 },
   pharma_enterprise: { qrLimit: 50000 }
 };
 
 // ✅ TEST MODE PRICE TO TIER MAPPING
 const PRICE_TO_TIER = {
+  // General Business Tiers
   'price_1SUukV2Kvkd8Qy8OIgqAGV3k': 'essential',
   'price_1SUuko2Kvkd8Qy8OemmtHbZb': 'scale',
   'price_1SUulO2Kvkd8Qy8O0IiV9vmh': 'enterprise',
-  'price_1SUulu2Kvkd8Qy8O0qAlY4w3': 'compliance',
+  
+  // Pharma Tiers
+  'price_1SVJEC2Kvkd8Qy8O1LTwpw50': 'pharma_starter',
+  'price_1SUulu2Kvkd8Qy8O0qAlY4w3': 'professional',
   'price_1SUum52Kvkd8Qy8Oq5W9t6hT': 'pharma_enterprise'
 };
 
@@ -33,8 +38,9 @@ const TIER_PRICING = {
   essential: 49,
   scale: 149,
   enterprise: 399,
-  compliance: 2500,
-  pharma_enterprise: 5000
+  pharma_starter: 199,
+  professional: 599,
+  pharma_enterprise: 1499
 };
 
 // ==========================================
@@ -350,7 +356,7 @@ module.exports = async function handler(req, res) {
 
         const { subscription_tier: currentTier, email: userEmail } = userResult.rows[0];
 
-        const tierOrder = ['free', 'essential', 'scale', 'enterprise', 'compliance', 'pharma_enterprise'];
+        const tierOrder = ['free', 'essential', 'scale', 'enterprise', 'pharma_starter', 'professional', 'pharma_enterprise'];
         const currentIndex = tierOrder.indexOf(currentTier);
         const newIndex = tierOrder.indexOf(newTier);
         

@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pharmaceutical Pricing - BizTrack</title>
+  <title>Pharmaceutical Pricing - DSCSA Compliance | BizTrack</title>
+  <meta name="description" content="FDA DSCSA-compliant pharmaceutical supply chain verification. From $199/month. Self-service compliance software.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://js.stripe.com/v3/"></script>
-  
   <style>
     * {
       margin: 0;
@@ -22,25 +21,23 @@
       background: #f0f4f8;
       color: #1e293b;
       line-height: 1.6;
-      min-height: 100vh;
     }
 
-    /* Main Content */
     .main-with-sidebar {
       margin-left: 280px;
-      padding: 2rem 3rem;
       min-height: 100vh;
+      padding: 3rem 2rem;
     }
 
     /* Hero */
     .hero {
       max-width: 1200px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 4rem;
       text-align: center;
       padding: 4rem 2rem;
-      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(30, 64, 175, 0.3);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
     }
 
     .hero h1 {
@@ -53,67 +50,49 @@
     }
 
     .hero p {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       color: rgba(255, 255, 255, 0.95);
-      margin-bottom: 0;
-      max-width: 800px;
+      margin-bottom: 1.5rem;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
       font-weight: 500;
     }
 
+    .hero-subtext {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
     .hero-badges {
       display: flex;
       justify-content: center;
-      gap: 3rem;
+      gap: 2rem;
       margin-top: 2rem;
       flex-wrap: wrap;
-      color: white;
     }
 
     .hero-badge {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 1.125rem;
+      gap: 0.5rem;
+      color: white;
+      font-size: 1rem;
       font-weight: 600;
     }
 
-    .hero-badge span {
-      font-size: 2rem;
+    .hero-badge i {
+      font-size: 1.5rem;
     }
 
-    /* Current Plan Indicator */
-    .current-plan-indicator {
-      background: linear-gradient(135deg, #10B981, #059669);
-      color: white;
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-      text-align: center;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .current-plan-indicator h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .current-plan-indicator p {
-      opacity: 0.95;
-      font-size: 1rem;
-    }
-
-    /* Pricing Container */
+    /* Pricing Grid */
     .pricing-container {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       margin-bottom: 3rem;
     }
@@ -121,7 +100,7 @@
     .pricing-tier {
       background: white;
       border-radius: 20px;
-      padding: 3rem;
+      padding: 2.5rem 2rem;
       border: 3px solid #e2e8f0;
       transition: all 0.3s;
       position: relative;
@@ -132,43 +111,27 @@
     .pricing-tier:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      border-color: #3b82f6;
+      border-color: #667eea;
     }
 
     .pricing-tier.popular {
-      border-color: #3b82f6;
-      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
-    }
-
-    .pricing-tier.current-plan {
-      border-color: #10B981;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+      transform: scale(1.05);
     }
 
     .popular-badge {
       position: absolute;
       top: -15px;
-      right: 30px;
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       padding: 0.5rem 1.25rem;
       border-radius: 50px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-    }
-
-    .current-plan-badge {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #10B981, #059669);
-      color: white;
-      padding: 0.5rem 1.5rem;
-      border-radius: 24px;
       font-size: 0.75rem;
       font-weight: 700;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -183,7 +146,10 @@
     .tier-price {
       font-size: 3rem;
       font-weight: 800;
-      color: #3b82f6;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 0.5rem;
     }
 
@@ -198,8 +164,15 @@
       color: #64748b;
       margin-bottom: 2rem;
       font-weight: 600;
+    }
+
+    .tier-description {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 2rem;
       padding-bottom: 2rem;
       border-bottom: 1px solid #e2e8f0;
+      line-height: 1.5;
     }
 
     .tier-features {
@@ -217,10 +190,6 @@
       color: #334155;
     }
 
-    .tier-features li strong {
-      font-weight: 700;
-    }
-
     .tier-features i {
       color: #10b981;
       font-size: 1.25rem;
@@ -231,6 +200,9 @@
     .cta-button {
       width: 100%;
       padding: 1.25rem 2rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
       border-radius: 12px;
       font-weight: 700;
       font-size: 1.125rem;
@@ -241,101 +213,169 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      margin-top: auto;
-      border: none;
     }
 
-    .cta-primary {
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
-      color: white;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .cta-primary:hover {
+    .cta-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
     }
 
-    .cta-current {
-      background: #10B981;
-      color: white;
-      cursor: default;
-    }
-
-    .cta-current:hover {
-      transform: none;
-    }
-
-    .cta-downgrade {
-      background: white;
-      color: #64748B;
-      border: 2px solid #CBD5E1;
-    }
-
-    .cta-downgrade:hover {
-      background: #F8FAFC;
-      border-color: #94A3B8;
-    }
-
-    .cta-contact {
-      background: white;
-      color: #3b82f6;
-      border: 2px solid #3b82f6;
-    }
-
-    .cta-contact:hover {
-      background: #f0f9ff;
-    }
-
-    /* Cancel Subscription Section */
-    .cancel-section {
-      background: #FEF2F2;
-      border: 2px solid #FCA5A5;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      text-align: center;
+    /* Comparison Section */
+    .comparison-section {
       max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      display: none;
+      margin: 3rem auto;
+      padding: 3rem 2rem;
+      background: white;
+      border-radius: 20px;
+      border: 2px solid #e2e8f0;
     }
 
-    .cancel-section.show {
-      display: block;
+    .comparison-section h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      text-align: center;
     }
 
-    .cancel-section h3 {
-      color: #DC2626;
+    .comparison-section p {
+      text-align: center;
+      color: #64748b;
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .comparison-item {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .comparison-item h3 {
       font-size: 1.25rem;
       font-weight: 700;
+      color: #0f172a;
       margin-bottom: 0.5rem;
     }
 
-    .cancel-section p {
-      color: #991B1B;
-      margin-bottom: 1.5rem;
+    .comparison-item .price {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
     }
 
-    .cancel-subscription-btn {
-      padding: 0.875rem 1.75rem;
-      background: #DC2626;
-      color: white;
-      border: none;
+    .comparison-item .label {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .comparison-highlight {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border: 2px solid #667eea;
       border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
     }
 
-    .cancel-subscription-btn:hover {
-      background: #B91C1C;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    /* DSCSA Compliance Section */
+    .dscsa-section {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      border-radius: 20px;
+      border: 2px solid #667eea;
+    }
+
+    .dscsa-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dscsa-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #334155;
+      margin-bottom: 3rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .dscsa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .dscsa-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .dscsa-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+      border-color: #667eea;
+    }
+
+    .dscsa-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dscsa-card h3 i {
+      color: #667eea;
+      font-size: 1.75rem;
+    }
+
+    .dscsa-card p {
+      color: #64748b;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .dscsa-card ul {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .dscsa-card ul li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      color: #334155;
+    }
+
+    .dscsa-card ul li i {
+      color: #10b981;
+      margin-top: 0.25rem;
     }
 
     /* Includes Section */
@@ -371,7 +411,7 @@
     }
 
     .includes-item i {
-      color: #3b82f6;
+      color: #667eea;
       font-size: 1.25rem;
     }
 
@@ -405,7 +445,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #3b82f6;
+      color: #667eea;
       text-decoration: none;
       font-weight: 600;
       font-size: 1.125rem;
@@ -413,35 +453,35 @@
     }
 
     .contact-link:hover {
-      color: #2563eb;
+      color: #764ba2;
       transform: translateX(3px);
     }
 
     /* Footer */
-    .pricing-footer {
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 2rem 2rem;
+      margin-left: 280px;
+      margin-top: 4rem;
       text-align: center;
-      color: #64748B;
-      font-size: 0.95rem;
-      padding: 2rem 0;
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
-    .pricing-footer a {
-      color: #3b82f6;
-      text-decoration: none;
-      font-weight: 600;
+    /* Responsive */
+    @media (max-width: 968px) {
+      .pricing-container {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-tier.popular {
+        transform: scale(1);
+      }
     }
 
-    .pricing-footer a:hover {
-      text-decoration: underline;
-    }
-
-    /* Mobile adjustments */
     @media (max-width: 768px) {
-      .main-with-sidebar {
+      .main-with-sidebar,
+      .footer {
         margin-left: 0;
-        padding: 1.5rem;
       }
 
       .hero {
@@ -455,51 +495,290 @@
       .hero p {
         font-size: 1.125rem;
       }
-
-      .pricing-container {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- SI-Sidebar (auto-loads from JS) -->
-  
+
+  <!-- Sidebar (auto-loads) -->
+  <div id="sidebar-container"></div>
+
   <!-- Main Content -->
-  <div class="main-with-sidebar">
+  <main class="main-with-sidebar">
     
     <!-- Hero -->
     <div class="hero">
-      <h1>Pharmaceutical Supply Chain Verification</h1>
-      <p>DSCSA-compliant. Immutable. Consumer-facing. Zero IT overhaul.</p>
+      <h1>DSCSA Compliance Made Simple</h1>
+      <p>Self-service compliance software • From $199/month</p>
+      <p class="hero-subtext">Real DSCSA compliance with unlimited partners, locations, and users. No "free plan" gotchas. No hidden enterprise fees. Blockchain-verified from $199/month.</p>
       
       <div class="hero-badges">
         <div class="hero-badge">
-          <span>✓</span> FDA DSCSA Ready
+          <i class="fas fa-shield-check"></i> FDA DSCSA Ready
         </div>
         <div class="hero-badge">
-          <span>✓</span> GS1 Compatible
+          <i class="fas fa-check-circle"></i> GS1 Compatible
         </div>
         <div class="hero-badge">
-          <span>✓</span> 99.99% Uptime SLA
+          <i class="fas fa-cloud"></i> Blockchain Verified
+        </div>
+        <div class="hero-badge">
+          <i class="fas fa-clock"></i> 6-Year Retention
         </div>
       </div>
     </div>
 
-    <!-- Current Plan Indicator -->
-    <div id="currentPlanIndicator" style="display: none;"></div>
+    <!-- Pricing Tiers -->
+    <div class="pricing-container">
+      
+      <!-- Starter Compliance -->
+      <div class="pricing-tier">
+        <h2 class="tier-name">Starter</h2>
+        <div class="tier-price">$199<span> / month</span></div>
+        <div class="tier-volume">1,000 QR codes per month</div>
+        <p class="tier-description">Perfect for single-location compounding pharmacies and small dispensers</p>
+        
+        <ul class="tier-features">
+          <li><i class="fas fa-check-circle"></i> 1,000 smart QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> GS1-compliant serialization</li>
+          <li><i class="fas fa-check-circle"></i> Transaction documentation (TI/TS)</li>
+          <li><i class="fas fa-check-circle"></i> 6-year blockchain retention</li>
+          <li><i class="fas fa-check-circle"></i> IPFS storage</li>
+          <li><i class="fas fa-check-circle"></i> Basic EPCIS export</li>
+          <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
+        </ul>
+        
+        <button class="cta-button" onclick="selectPlan('starter', 199)">
+          Get Started
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
 
-    <!-- Pricing Cards -->
-    <div class="pricing-container" id="pricingGrid"></div>
+      <!-- Professional Compliance -->
+      <div class="pricing-tier popular">
+        <div class="popular-badge">MOST POPULAR</div>
+        <h2 class="tier-name">Professional</h2>
+        <div class="tier-price">$599<span> / month</span></div>
+        <div class="tier-volume">5,000 QR codes per month</div>
+        <p class="tier-description">Complete DSCSA toolkit for multi-location pharmacies and small distributors</p>
+        
+        <ul class="tier-features">
+          <li><i class="fas fa-check-circle"></i> <strong>Everything in Starter</strong></li>
+          <li><i class="fas fa-check-circle"></i> 5,000 QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> ATP verification</li>
+          <li><i class="fas fa-check-circle"></i> Returns processing workflow</li>
+          <li><i class="fas fa-check-circle"></i> Quarantine management</li>
+          <li><i class="fas fa-check-circle"></i> Advanced EPCIS export</li>
+          <li><i class="fas fa-check-circle"></i> API access</li>
+          <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
+        </ul>
+        
+        <button class="cta-button" onclick="selectPlan('professional', 599)">
+          Get Started
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
 
-    <!-- Cancel Subscription Section -->
-    <div class="cancel-section" id="cancelSection">
-      <h3><i class="fas fa-exclamation-triangle"></i> Cancel Subscription</h3>
-      <p>Need to cancel? Your subscription will remain active until the end of your billing period.</p>
-      <button class="cancel-subscription-btn" onclick="cancelSubscription()">
-        <i class="fas fa-times-circle"></i>
-        Cancel Subscription
-      </button>
+      <!-- Enterprise Compliance -->
+      <div class="pricing-tier">
+        <h2 class="tier-name">Enterprise</h2>
+        <div class="tier-price">$1,499<span> / month</span></div>
+        <div class="tier-volume">50,000 QR codes per month</div>
+        <p class="tier-description">Enterprise-grade infrastructure for regional distributors and specialty pharma</p>
+        
+        <ul class="tier-features">
+          <li><i class="fas fa-check-circle"></i> <strong>Everything in Professional</strong></li>
+          <li><i class="fas fa-check-circle"></i> 50,000 QR codes / month</li>
+          <li><i class="fas fa-check-circle"></i> VRS integration</li>
+          <li><i class="fas fa-check-circle"></i> Custom API integrations</li>
+          <li><i class="fas fa-check-circle"></i> SLA guarantees (99.9%)</li>
+          <li><i class="fas fa-check-circle"></i> FDA audit-ready reports</li>
+          <li><i class="fas fa-check-circle"></i> White-label options</li>
+          <li><i class="fas fa-check-circle"></i> Priority support (12hr response)</li>
+        </ul>
+        
+        <button class="cta-button" onclick="selectPlan('enterprise', 1499)">
+          Get Started
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- DSCSA COMPLIANCE SECTION - THE BRAGGING PART! -->
+    <div class="dscsa-section">
+      <h2>Full FDA DSCSA Compliance</h2>
+      <p class="dscsa-intro">
+        BizTrack provides complete Drug Supply Chain Security Act (DSCSA) compliance out of the box. 
+        Built specifically for pharmaceutical manufacturers, distributors, repackagers, and dispensers to meet 
+        FDA's November 2023 Enhanced Drug Distribution Security requirements.
+      </p>
+
+      <div class="dscsa-grid">
+        
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-shield-alt"></i>
+            Product Tracing
+          </h3>
+          <p>Complete unit-level serialization and verification for every product in your supply chain.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Transaction Information (TI)</li>
+            <li><i class="fas fa-check"></i> Transaction Statement (TS)</li>
+            <li><i class="fas fa-check"></i> Transaction History (TH)</li>
+            <li><i class="fas fa-check"></i> GS1-compliant 2D barcodes</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-database"></i>
+            Blockchain Verification
+          </h3>
+          <p>Immutable proof of authenticity using XRP Ledger's enterprise blockchain technology.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Tamper-proof records</li>
+            <li><i class="fas fa-check"></i> Real-time verification</li>
+            <li><i class="fas fa-check"></i> 6-year retention (FDA compliant)</li>
+            <li><i class="fas fa-check"></i> IPFS decentralized storage</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-exchange-alt"></i>
+            ATP Verification
+          </h3>
+          <p>Authorized Trading Partner (ATP) verification to ensure secure pharmaceutical supply chains.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Partner credentials validation</li>
+            <li><i class="fas fa-check"></i> License verification tracking</li>
+            <li><i class="fas fa-check"></i> Suspicious order monitoring</li>
+            <li><i class="fas fa-check"></i> Quarantine management</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-file-medical"></i>
+            Returns & Recalls
+          </h3>
+          <p>FDA-compliant product returns processing and recall management workflows.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Saleable returns verification</li>
+            <li><i class="fas fa-check"></i> Product investigation tracking</li>
+            <li><i class="fas fa-check"></i> Batch/lot recall management</li>
+            <li><i class="fas fa-check"></i> Disposition documentation</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-chart-line"></i>
+            EPCIS Integration
+          </h3>
+          <p>Electronic Product Code Information Services (EPCIS) for seamless data exchange.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> EPCIS 1.2 / 2.0 support</li>
+            <li><i class="fas fa-check"></i> Interoperable data formats</li>
+            <li><i class="fas fa-check"></i> VRS-ready infrastructure</li>
+            <li><i class="fas fa-check"></i> API-first architecture</li>
+          </ul>
+        </div>
+
+        <div class="dscsa-card">
+          <h3>
+            <i class="fas fa-clipboard-check"></i>
+            Audit-Ready Reports
+          </h3>
+          <p>Comprehensive audit trails and reporting for FDA inspections and compliance verification.</p>
+          <ul>
+            <li><i class="fas fa-check"></i> Complete chain of custody</li>
+            <li><i class="fas fa-check"></i> Serialization event tracking</li>
+            <li><i class="fas fa-check"></i> Exception handling logs</li>
+            <li><i class="fas fa-check"></i> One-click FDA report generation</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comparison Section -->
+    <div class="comparison-section">
+      <h2>Transparent Pricing. No Gotchas.</h2>
+      <p>Unlike "free" platforms with hidden limits or enterprise solutions with setup fees, we're upfront about everything</p>
+      
+      <div class="comparison-grid">
+        <div class="comparison-item">
+          <h3>TrackTraceRX "Free"</h3>
+          <div class="price">$0*</div>
+          <div class="label">*1 location, 1 partner, 1 user<br>Real pricing hidden</div>
+        </div>
+        
+        <div class="comparison-item comparison-highlight">
+          <h3>BizTrack Starter</h3>
+          <div class="price">$199</div>
+          <div class="label">Unlimited locations, partners, users<br>1,000 QR codes/month</div>
+        </div>
+        
+        <div class="comparison-item">
+          <h3>TraceLink / MasterControl</h3>
+          <div class="price">$8,000+</div>
+          <div class="label">per month + $10k-50k setup<br>Enterprise only</div>
+        </div>
+        
+        <div class="comparison-item comparison-highlight">
+          <h3>BizTrack Enterprise</h3>
+          <div class="price">$1,499</div>
+          <div class="label">50,000 QR codes/month<br>$0 setup • Full features</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- What Makes BizTrack Different -->
+    <div class="comparison-section" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05)); border: 2px solid #667eea;">
+      <h2>What Makes BizTrack Different</h2>
+      <p style="max-width: 900px; margin: 0 auto 2rem; font-size: 1.125rem; line-height: 1.7;">
+        Most DSCSA platforms only handle B2B compliance with centralized databases. 
+        BizTrack goes further: <strong>blockchain-verified records</strong> that are immutable forever, 
+        plus <strong>consumer-facing verification</strong> so patients can verify authenticity themselves.
+      </p>
+      
+      <div class="comparison-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 900px; margin: 0 auto;">
+        <div style="text-align: left; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #e2e8f0;">
+          <h3 style="color: #64748b; margin-bottom: 1rem; font-size: 1.25rem;">📊 Traditional Platforms</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0; color: #64748b;">• Centralized database storage</li>
+            <li style="padding: 0.5rem 0; color: #64748b;">• Records can be modified</li>
+            <li style="padding: 0.5rem 0; color: #64748b;">• B2B compliance only</li>
+            <li style="padding: 0.5rem 0; color: #64748b;">• No consumer verification</li>
+            <li style="padding: 0.5rem 0; color: #64748b;">• Trust the platform operator</li>
+          </ul>
+        </div>
+        
+        <div style="text-align: left; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #667eea;">
+          <h3 style="color: #667eea; margin-bottom: 1rem; font-size: 1.25rem;">⛓️ BizTrack (Blockchain)</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• XRP Ledger immutable storage</li>
+            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Tamper-proof forever</li>
+            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• B2B + B2C compliance</li>
+            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Consumer scan portal</li>
+            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Trust cryptography, not us</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; max-width: 900px; margin-left: auto; margin-right: auto;">
+        <p style="color: #0f172a; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">
+          <i class="fas fa-mobile-alt" style="color: #667eea;"></i> 
+          Consumer Trust = Competitive Advantage
+        </p>
+        <p style="color: #334155; margin: 0;">
+          Your customers can scan QR codes on their medication and instantly verify authenticity, 
+          see the complete supply chain history, and confirm it's never been tampered with. 
+          No other DSCSA platform offers public verification—this builds trust and brand loyalty.
+        </p>
+      </div>
     </div>
 
     <!-- Includes Section -->
@@ -508,19 +787,27 @@
       <div class="includes-grid">
         <div class="includes-item">
           <i class="fas fa-shield-alt"></i>
-          Blockchain verification
+          Blockchain verification (XRPL)
         </div>
         <div class="includes-item">
           <i class="fas fa-database"></i>
-          IPFS storage
+          IPFS decentralized storage
         </div>
         <div class="includes-item">
           <i class="fas fa-qrcode"></i>
-          QR generation
+          GS1-compliant QR generation
         </div>
         <div class="includes-item">
           <i class="fas fa-mobile-alt"></i>
           Consumer scan portal
+        </div>
+        <div class="includes-item">
+          <i class="fas fa-file-alt"></i>
+          Transaction documentation (TI/TS)
+        </div>
+        <div class="includes-item">
+          <i class="fas fa-clock"></i>
+          6-year immutable retention
         </div>
       </div>
     </div>
@@ -528,242 +815,36 @@
     <!-- Contact Section -->
     <div class="contact-section">
       <h2>Questions?</h2>
-      <p style="color: #64748b; margin-bottom: 0;">Our pharmaceutical compliance experts are here to help</p>
+      <p style="color: #64748b; margin-bottom: 0;">Need help choosing a plan? We're here to help.</p>
       
       <div class="contact-links">
-        <a href="mailto:zach@biztrack.io" class="contact-link">
+        <a href="/cdn-cgi/l/email-protection#067c67656e46646f7c727467656d286f69" class="contact-link">
           <i class="fas fa-envelope"></i>
-          zach@biztrack.io
-        </a>
-        <a href="tel:+13606700852" class="contact-link">
-          <i class="fas fa-phone"></i>
-          (360) 670-0852
+          <span class="__cf_email__" data-cfemail="037962606b43616a7977716260682d6a6c">[email&#160;protected]</span>
         </a>
       </div>
       <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
-        Hours: 7 AM – 5 PM Pacific, Mon–Fri
+        Typical response time: 24-48 hours
       </p>
     </div>
 
-    <!-- Footer -->
-    <div class="pricing-footer">
-      Questions? <a href="mailto:support@biztrack.io">Contact our team</a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-copyright">
+      <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL | FDA-Ready Since Day One</p>
     </div>
+  </footer>
 
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/auth.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/auth.js"></script>
   <script src="js/SI-sidebar.js"></script>
+  
   <script>
-    requireAuth();
-    const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU');
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('biztrack-auth-token');
 
-    const PHARMA_TIERS = {
-      compliance: {
-        name: 'Compliance',
-        price: 2500,
-        qrCodes: 10000,
-        popular: false,
-        features: [
-          '10,000 smart QR codes / month',
-          'DSCSA-ready serialization & traceability',
-          'XRPL blockchain immutability',
-          'IPFS for cold chain, temp logs, COAs',
-          'Audit-proof event logs',
-          'API access (EPCIS-ready)',
-          'Dedicated compliance rep',
-          '24/7 priority support',
-          'SLA guarantees'
-        ]
-      },
-      pharma_enterprise: {
-        name: 'Enterprise',
-        price: 5000,
-        qrCodes: 50000,
-        popular: true,
-        features: [
-          '<strong>Everything in Compliance</strong>',
-          '50,000+ QR codes / month',
-          'Custom EPCIS / ERP integrations',
-          'White-label consumer scanner app',
-          'Dedicated infrastructure & account manager',
-          'FDA mock audit prep & training',
-          'Custom analytics & recall dashboards',
-          'Co-branded patient trust portal',
-          'Onboarding & quarterly reviews'
-        ]
-      }
-    };
-
-    let currentUserTier = 'free';
-
-    async function loadUserTier() {
-      try {
-        const response = await authenticatedFetch('/api/check-limits');
-        const data = await response.json();
-        
-        if (data.success) {
-          currentUserTier = data.subscription.tier;
-          
-          if (currentUserTier !== 'free' && currentUserTier !== 'compliance' && currentUserTier !== 'pharma_enterprise') {
-            // User is on a general tier, show nothing special
-            document.getElementById('cancelSection').classList.remove('show');
-          } else if (currentUserTier === 'compliance' || currentUserTier === 'pharma_enterprise') {
-            showCurrentPlanIndicator();
-            document.getElementById('cancelSection').classList.add('show');
-          }
-          
-          renderPricingCards();
-        }
-      } catch (error) {
-        console.error('Failed to load user tier:', error);
-        renderPricingCards();
-      }
-    }
-
-    function showCurrentPlanIndicator() {
-      const indicator = document.getElementById('currentPlanIndicator');
-      const tierInfo = PHARMA_TIERS[currentUserTier];
-      
-      if (!tierInfo) return;
-      
-      indicator.innerHTML = `
-        <div class="current-plan-indicator">
-          <h3>Current Plan: ${tierInfo.name}</h3>
-          <p>${tierInfo.qrCodes.toLocaleString()} QR codes per month • $${tierInfo.price.toLocaleString()}/month</p>
-        </div>
-      `;
-      indicator.style.display = 'block';
-    }
-
-    async function cancelSubscription() {
-      if (!confirm('⚠️ Are you sure you want to cancel your subscription?\n\nYour subscription will remain active until the end of your current billing period, then you\'ll be moved to the Free plan with 10 QR codes per month.\n\nYou can always resubscribe later!')) return;
-      
-      try {
-        const token = localStorage.getItem('biztrack-auth-token');
-        const response = await fetch('/api/cancel-subscription', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          alert('😢 Sorry to see you go!\n\nYour subscription has been cancelled and will remain active until the end of your billing period.\n\nAfter that, you\'ll be back on our Free plan with 10 QR codes per month.\n\n💙 We hope to see you back soon! Feel free to reach out if you have any feedback.');
-          window.location.reload();
-        } else {
-          throw new Error(data.error || 'Failed to cancel subscription');
-        }
-      } catch (error) {
-        console.error('Cancel subscription error:', error);
-        alert('Error cancelling subscription: ' + error.message + '\n\nPlease contact support@biztrack.io for assistance.');
-      }
-    }
-
-    function renderPricingCards() {
-      const grid = document.getElementById('pricingGrid');
-      grid.innerHTML = '';
-      
-      Object.entries(PHARMA_TIERS).forEach(([tierKey, tier]) => {
-        const isCurrentPlan = tierKey === currentUserTier;
-        const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
-        const isDowngrade = getTierLevel(tierKey) < getTierLevel(currentUserTier);
-        
-        const card = document.createElement('div');
-        card.className = `pricing-tier ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
-        
-        let badge = '';
-        if (isCurrentPlan) {
-          badge = '<div class="current-plan-badge">Current Plan</div>';
-        } else if (tier.popular && !isCurrentPlan) {
-          badge = '<div class="popular-badge">MOST POPULAR</div>';
-        }
-        
-        let buttonHTML = '';
-        if (isCurrentPlan) {
-          buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
-        } else if (tier.contactSales) {
-          buttonHTML = `<a href="mailto:zach@biztrack.io" class="cta-button cta-contact"><i class="fas fa-envelope"></i> Contact Sales</a>`;
-        } else if (isUpgrade) {
-          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Get Started</button>`;
-        } else if (isDowngrade) {
-          buttonHTML = `<button class="cta-button cta-downgrade" onclick="downgradeTier('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
-        }
-        
-        const priceDisplay = tier.price >= 5000 ? `$${(tier.price/1000).toFixed(1)}k+` : `$${tier.price.toLocaleString()}`;
-        
-        card.innerHTML = `
-          ${badge}
-          <h2 class="tier-name">${tier.name}</h2>
-          <div class="tier-price">${priceDisplay}<span> / month</span></div>
-          <div class="tier-volume">${tier.qrCodes.toLocaleString()}${tier.qrCodes >= 50000 ? '+' : ''} QR codes per month</div>
-          <ul class="tier-features">
-            ${tier.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join('')}
-          </ul>
-          ${buttonHTML}
-        `;
-        
-        grid.appendChild(card);
-      });
-    }
-
-    function getTierLevel(tier) {
-      const levels = { 
-        free: 0, 
-        essential: 1, 
-        scale: 2, 
-        enterprise: 3,
-        compliance: 4,
-        pharma_enterprise: 5
-      };
-      return levels[tier] || 0;
-    }
-
-    async function upgradeTier(tier) {
-      const token = localStorage.getItem('biztrack-auth-token');
-      if (!token) {
-        window.location.href = '/login.html';
-        return;
-      }
-      
-      try {
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ tier })
-        });
-        
-        const data = await response.json();
-        
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('Error: ' + (data.error || 'Failed to create checkout session'));
-        }
-      } catch (error) {
-        console.error('Upgrade error:', error);
-        alert('Error creating checkout session. Please try again.');
-      }
-    }
-
-    async function downgradeTier(tier) {
-      if (!confirm(`Are you sure you want to downgrade to ${PHARMA_TIERS[tier].name}? This will take effect at the end of your current billing cycle.`)) return;
-      alert('To downgrade your plan, please contact support@biztrack.io and we\'ll help you right away!');
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('canceled') === 'true') {
-      alert('Checkout canceled. You can upgrade anytime!');
-    }
-
-    loadUserTier();
-  </script>
-</body>
-</html>
+    function selectPlan(tier, price) {
+      if (isLoggedIn) {
+        // User is logged in - go to subscription management
+        window.location.href = `/SI-ph

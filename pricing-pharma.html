@@ -23,6 +23,60 @@
       line-height: 1.6;
     }
 
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: #1e293b;
+      color: #3b82f6;
+    }
+
+    .sidebar-nav i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
     /* Has PUBLIC sidebar at 280px */
     .main-container {
       margin-left: 280px;
@@ -825,9 +879,9 @@
       <p style="color: #64748b; margin-bottom: 0;">Need help choosing a plan? We're here to help.</p>
       
       <div class="contact-links">
-        <a href="mailto:info@biztrack.io" class="contact-link">
+        <a href="/cdn-cgi/l/email-protection#a9c0c7cfc6e9cbc0d3dddbc8cac287c0c6" class="contact-link">
           <i class="fas fa-envelope"></i>
-          info@biztrack.io
+          <span class="__cf_email__" data-cfemail="ec85828a83ac8e8596989e8d8f87c28583">[email&#160;protected]</span>
         </a>
       </div>
       <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
@@ -840,11 +894,4 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-copyright">
-      <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL | FDA-Ready Since Day One</p>
-    </div>
-  </footer>
-
-  <script src="js/sidebar.js"></script>
-
-</body>
-</html>
+      <p>&copy; 2025 BizTrack - Built by Aventra LLC

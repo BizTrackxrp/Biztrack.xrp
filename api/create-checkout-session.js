@@ -18,7 +18,7 @@ const STRIPE_PRICES = {
   enterprise: 'price_1SUulO2Kvkd8Qy8O0IiV9vmh',     // $399/mo
   
   // Pharma Tiers
-  pharma_starter: 'price_1SVJEC2Kvkd8Qy8O1LTwpw50', // $199/mo - 1,000 QR codes
+  starter: 'price_1SVJEC2Kvkd8Qy8O1LTwpw50', // $199/mo - 1,000 QR codes
   professional: 'price_1SUulu2Kvkd8Qy8O0qAlY4w3',   // $599/mo - 5,000 QR codes
   pharma_enterprise: 'price_1SUum52Kvkd8Qy8Oq5W9t6hT' // $1,499/mo - 50,000 QR codes
 };
@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
     const { tier } = req.body;
 
     // Validate tier
-    const validTiers = ['essential', 'scale', 'enterprise', 'pharma_starter', 'professional', 'pharma_enterprise'];
+    const validTiers = ['essential', 'scale', 'enterprise', 'starter', 'professional', 'pharma_enterprise'];
     
     if (!tier || !validTiers.includes(tier)) {
       return res.status(400).json({ 
@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
 
     // Determine success URL based on business type or tier
     const isPharma = user.business_type === 'pharma' || 
-                     tier === 'pharma_starter' || 
+                     tier === 'starter' || 
                      tier === 'professional' || 
                      tier === 'pharma_enterprise';
     

@@ -30,12 +30,12 @@
       top: 0;
       width: 280px;
       height: 100vh;
-     background: #0f172a;
-border-right: none;
-padding: 2rem 1.5rem;
-box-shadow: none;
-       display: flex;              /* ADD THIS */
-  flex-direction: column;     /* ADD THIS */
+      background: #0f172a;
+      border-right: none;
+      padding: 2rem 1.5rem;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar-logo {
@@ -43,12 +43,12 @@ box-shadow: none;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 2rem;
     }
-.sidebar-logo h1 {
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-    
+
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
 
     .sidebar-nav {
       list-style: none;
@@ -83,33 +83,34 @@ box-shadow: none;
       margin-right: 0.75rem;
       width: 20px;
     }
+
     .sidebar-logout {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-.sidebar-logout button {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-}
+    .sidebar-logout button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
 
-.sidebar-logout button:hover {
-  background: rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px);
-}
+    .sidebar-logout button:hover {
+      background: rgba(239, 68, 68, 0.2);
+      transform: translateY(-2px);
+    }
 
     .main-with-sidebar {
       margin-left: 280px;
@@ -502,12 +503,11 @@ box-shadow: none;
       <h1>🚚 BizTrack</h1>
     </div>
     <ul class="sidebar-nav">
-      
       <li><a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
       <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
       <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
-      <div class="sidebar-logout">
+    <div class="sidebar-logout">
       <button id="logoutBtn">
         <i class="fas fa-sign-out-alt"></i>
         Logout
@@ -542,7 +542,7 @@ box-shadow: none;
       <div class="batch-toggle-container">
         <div class="batch-toggle-label">
           <i class="fas fa-layer-group"></i>
-         <span id="batchToggleText">Enable Batch Upload</span>
+          <span id="batchToggleText">Enable Batch Upload</span>
         </div>
         <div class="toggle-switch" id="batchToggle" onclick="toggleBatchMode()">
           <div class="toggle-switch-slider"></div>
@@ -631,11 +631,7 @@ box-shadow: none;
     // Require authentication
     requireAuth();
 
-    // Helper to get token directly
-    function getToken() {
-      return localStorage.getItem('biztrack-auth-token');
-    }
-
+    // State variables
     let isBatchMode = false;
     let selectedPhotos = [];
     let capturedLocation = null;
@@ -643,60 +639,61 @@ box-shadow: none;
     let qrLimit = 10;
     let currentTier = 'free';
 
-// FIXED: Load subscription limits with forced UI update
-async function loadSubscriptionLimits() {
-  try {
-    const response = await authenticatedFetch('/api/check-limits');
-    const data = await response.json();
-    
-    if (data.success) {
-      // Update global variables
-      qrUsedThisMonth = data.usage.qrCodesUsed;
-      qrLimit = data.limits.qrLimit;
-      currentTier = data.subscription.tier;
-      
-      // FORCE update UI elements immediately
-      const qrUsedEl = document.getElementById('qrUsedCount');
-      const qrLimitEl = document.getElementById('qrLimitCount');
-      const tierNameEl = document.getElementById('tierName');
-      
-      if (qrUsedEl) qrUsedEl.textContent = qrUsedThisMonth.toLocaleString();
-      if (qrLimitEl) qrLimitEl.textContent = qrLimit.toLocaleString();
-      if (tierNameEl) {
-        const tierName = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
-        tierNameEl.textContent = tierName;
+    // ✅ FIXED: Load subscription limits with correct API response paths
+    async function loadSubscriptionLimits() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        
+        if (data.success) {
+          // ✅ FIXED: Read from data.subscription (not data.usage or data.limits)
+          qrUsedThisMonth = data.subscription.qrUsed;
+          qrLimit = data.subscription.qrLimit;
+          currentTier = data.subscription.tier;
+          
+          // Update UI elements
+          const qrUsedEl = document.getElementById('qrUsedCount');
+          const qrLimitEl = document.getElementById('qrLimitCount');
+          const tierNameEl = document.getElementById('tierName');
+          
+          if (qrUsedEl) qrUsedEl.textContent = qrUsedThisMonth.toLocaleString();
+          if (qrLimitEl) qrLimitEl.textContent = qrLimit.toLocaleString();
+          if (tierNameEl) {
+            const tierName = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
+            tierNameEl.textContent = tierName;
+          }
+          
+          // ✅ FIXED: Read maxBatchSize from subscription
+          const remaining = qrLimit - qrUsedThisMonth;
+          const tierMaxBatch = data.subscription.maxBatchSize || 10;
+          const maxBatch = Math.min(tierMaxBatch, remaining);
+          
+          const maxBatchEl = document.getElementById('maxBatchQuantity');
+          const batchQtyInput = document.getElementById('batchQuantity');
+          
+          if (maxBatchEl) maxBatchEl.textContent = maxBatch;
+          if (batchQtyInput) batchQtyInput.max = maxBatch;
+          
+          // Show upgrade prompt if needed
+          const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
+          if (percentUsed >= 80 && currentTier !== 'enterprise' && currentTier !== 'pharma_enterprise') {
+            showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
+          }
+          
+          console.log('✅ Limits loaded:', qrUsedThisMonth, '/', qrLimit, '- Tier:', currentTier);
+        }
+      } catch (error) {
+        console.error('Failed to load subscription limits:', error);
       }
-      
-      // Update max batch quantity
-      const remaining = qrLimit - qrUsedThisMonth;
-      const tierMaxBatch = data.limits.maxBatchSize || 10;
-      const maxBatch = Math.min(tierMaxBatch, remaining);
-      
-      const maxBatchEl = document.getElementById('maxBatchQuantity');
-      const batchQtyInput = document.getElementById('batchQuantity');
-      
-      if (maxBatchEl) maxBatchEl.textContent = maxBatch;
-      if (batchQtyInput) batchQtyInput.max = maxBatch;
-      
-      // Show upgrade prompt if needed
-      const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
-      if (percentUsed >= 80 && currentTier !== 'enterprise' && currentTier !== 'pharma_enterprise') {
-        showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
-      }
-      
-      console.log('✅ Counter updated:', qrUsedThisMonth, '/', qrLimit);
     }
-  } catch (error) {
-    console.error('Failed to load subscription limits:', error);
-  }
-}
 
-    // ✅ FIXED: showUpgradePrompt with simpler parameters
     function showUpgradePrompt(percentUsed, used, limit, tier) {
-     const tierUpgrades = {
+      const tierUpgrades = {
         free: { next: 'essential', name: 'Essential', price: 49, limit: 500 },
         essential: { next: 'scale', name: 'Scale', price: 149, limit: 2500 },
-        scale: { next: 'enterprise', name: 'Enterprise', price: 399, limit: 10000 }
+        scale: { next: 'enterprise', name: 'Enterprise', price: 399, limit: 10000 },
+        starter: { next: 'professional', name: 'Professional', price: 599, limit: 5000 },
+        professional: { next: 'enterprise', name: 'Enterprise', price: 1499, limit: 50000 }
       };
       
       const upgrade = tierUpgrades[tier];
@@ -756,7 +753,7 @@ async function loadSubscriptionLimits() {
       }
     }
 
-    // Photo handling
+    // Photo compression
     async function compressImage(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -795,6 +792,7 @@ async function loadSubscriptionLimits() {
       });
     }
 
+    // Photo upload handlers
     document.getElementById('photoInput').addEventListener('change', async (e) => {
       const files = Array.from(e.target.files);
       for (const file of files) {
@@ -874,7 +872,7 @@ async function loadSubscriptionLimits() {
       );
     });
 
-    // FIXED: Download ZIP with QR codes - handles 'items' array
+    // Download batch ZIP
     window.downloadBatchZip = async (batchGroupId) => {
       const btn = event.target;
       const originalHTML = btn.innerHTML;
@@ -891,10 +889,9 @@ async function loadSubscriptionLimits() {
           throw new Error('Batch not found');
         }
 
-        // Get batch items - API returns 'items' not 'products'
-        const batchItems = batch.items || batch.products;
+        const batchItems = batch.items || batch.products || [];
         
-        if (!batchItems || batchItems.length === 0) {
+        if (batchItems.length === 0) {
           throw new Error('No items in batch');
         }
 
@@ -947,7 +944,7 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     };
 
-    // FIXED: Fetch products from API and handle 'items' array
+    // Populate product list
     function populateBatches() {
       const batchList = document.getElementById('batchList');
       batchList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading products...</p></div>';
@@ -972,12 +969,10 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
           products.forEach((product) => {
             const li = document.createElement('li');
             
-            // Get batch items - API returns 'items' not 'products'
-            const batchItems = product.items || product.products;
+            const batchItems = product.items || product.products || [];
             
-            // Check if this is a batch
-            if (product.isBatchGroup && batchItems && batchItems.length > 0) {
-              // This is a BATCH ORDER
+            if (product.isBatchGroup && batchItems.length > 0) {
+              // Batch order
               const itemsId = `items-${product.batchGroupId}`;
               li.innerHTML = `
                 <div class="product-header">
@@ -1003,19 +998,19 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                         <br><small>ID: ${p.productId}</small>
                       </div>
                       <div style="display: flex; gap: 0.5rem;">
-                       <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-  <i class="fas fa-shield-check"></i> View
-</a>
-<a href="${p.qrCodeUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-  <i class="fas fa-qrcode"></i> QR
-</a>
+                        <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                          <i class="fas fa-shield-check"></i> View
+                        </a>
+                        <a href="${p.qrCodeUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                          <i class="fas fa-qrcode"></i> QR
+                        </a>
                       </div>
                     </div>
                   `).join('')}
                 </div>
               `;
-            } else if (product.type === 'single' || !product.isBatchGroup) {
-              // This is a SINGLE PRODUCT
+            } else {
+              // Single product
               li.innerHTML = `
                 <div class="product-header">
                   <div>
@@ -1025,11 +1020,11 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                   </div>
                   <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <a href="${product.verificationUrl}" class="btn btn-secondary">
-  <i class="fas fa-shield-check"></i> Verify Product
-</a>
-<a href="${product.qrCodeUrl}" target="_blank" class="btn btn-secondary">
-  <i class="fas fa-qrcode"></i> Download QR
-</a>
+                      <i class="fas fa-shield-check"></i> Verify Product
+                    </a>
+                    <a href="${product.qrCodeUrl}" target="_blank" class="btn btn-secondary">
+                      <i class="fas fa-qrcode"></i> Download QR
+                    </a>
                   </div>
                 </div>
               `;
@@ -1144,7 +1139,6 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
 
         const result = await response.json();
 
-        // Handle limit exceeded error
         if (!response.ok) {
           if (response.status === 403 && result.upgrade) {
             const nextTier = result.upgrade.nextTierName || 'higher tier';
@@ -1183,7 +1177,7 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
         document.getElementById('locationDisplay').style.display = 'none';
         document.getElementById('locationBtnText').textContent = 'Capture Location';
 
-        // Reload from database
+        // Reload data
         await loadSubscriptionLimits();
         populateBatches();
 
@@ -1196,16 +1190,17 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     });
 
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) {
+        logout();
+      }
+    });
+
     // Initialize
     loadSubscriptionLimits();
     populateBatches();
-    // Logout button
-document.getElementById('logoutBtn').addEventListener('click', (e) => {
-  e.preventDefault();
-  if (confirm('Are you sure you want to logout?')) {
-    logout();
-  }
-});
   </script>
 </body>
 </html>

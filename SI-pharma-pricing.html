@@ -222,6 +222,12 @@
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
     }
 
+    .cta-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     /* Comparison Section */
     .comparison-section {
       max-width: 1200px;
@@ -550,7 +556,7 @@
           <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('starter', 199)">
+        <button class="cta-button" onclick="selectPlan('starter')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -575,7 +581,7 @@
           <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('professional', 599)">
+        <button class="cta-button" onclick="selectPlan('professional')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -599,7 +605,7 @@
           <li><i class="fas fa-check-circle"></i> Priority support (12hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('enterprise', 1499)">
+        <button class="cta-button" onclick="selectPlan('pharma_enterprise')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -607,7 +613,7 @@
 
     </div>
 
-    <!-- DSCSA COMPLIANCE SECTION - THE BRAGGING PART! -->
+    <!-- DSCSA COMPLIANCE SECTION -->
     <div class="dscsa-section">
       <h2>Full FDA DSCSA Compliance</h2>
       <p class="dscsa-intro">
@@ -843,16 +849,36 @@
   <script src="js/pharma-sidebar.js"></script>
   
   <script>
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('biztrack-auth-token');
-
-    function selectPlan(tier, price) {
-      if (isLoggedIn) {
-        // User is logged in - initiate Stripe checkout
-        window.location.href = `/api/create-checkout-session?tier=${tier}&price=${price}`;
-      } else {
+    // ✅ COPIED FROM WORKING subscription.html
+    async function selectPlan(tier) {
+      const token = localStorage.getItem('biztrack-auth-token');
+      
+      if (!token) {
         // Not logged in - redirect to register
-        window.location.href = `/register.html?plan=${tier}&price=${price}`;
+        window.location.href = `/register.html?plan=${tier}`;
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ tier })
+        });
+        
+        const data = await response.json();
+        
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Error: ' + (data.error || 'Failed to create checkout session'));
+        }
+      } catch (error) {
+        console.error('Upgrade error:', error);
+        alert('Error creating checkout session. Please try again.');
       }
     }
   </script>

@@ -95,6 +95,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       margin-bottom: 3rem;
+      align-items: start;
     }
 
     .pricing-tier {
@@ -106,6 +107,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      height: 100%;
     }
 
     .pricing-tier:hover {
@@ -117,7 +119,6 @@
     .pricing-tier.popular {
       border-color: #667eea;
       box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-      transform: scale(1.05);
     }
 
     .popular-badge {
@@ -141,6 +142,7 @@
       font-weight: 800;
       color: #0f172a;
       margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
     }
 
     .tier-price {
@@ -501,7 +503,7 @@
 <body>
 
   <!-- Sidebar (auto-loads) -->
-  <div id="sidebar-container"></div>
+  <div id="pharma-sidebar-container"></div>
 
   <!-- Main Content -->
   <main class="main-with-sidebar">
@@ -523,7 +525,7 @@
           <i class="fas fa-cloud"></i> Blockchain Verified
         </div>
         <div class="hero-badge">
-          <i class="fas fa-clock"></i> 6-Year Retention
+          <i class="fas fa-infinity"></i> Infinite Storage
         </div>
       </div>
     </div>
@@ -542,7 +544,7 @@
           <li><i class="fas fa-check-circle"></i> 1,000 smart QR codes / month</li>
           <li><i class="fas fa-check-circle"></i> GS1-compliant serialization</li>
           <li><i class="fas fa-check-circle"></i> Transaction documentation (TI/TS)</li>
-          <li><i class="fas fa-check-circle"></i> 6-year blockchain retention</li>
+          <li><i class="fas fa-check-circle"></i> Infinite blockchain retention</li>
           <li><i class="fas fa-check-circle"></i> IPFS storage</li>
           <li><i class="fas fa-check-circle"></i> Basic EPCIS export</li>
           <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
@@ -639,7 +641,7 @@
           <ul>
             <li><i class="fas fa-check"></i> Tamper-proof records</li>
             <li><i class="fas fa-check"></i> Real-time verification</li>
-            <li><i class="fas fa-check"></i> 6-year retention (FDA compliant)</li>
+            <li><i class="fas fa-check"></i> Infinite blockchain storage</li>
             <li><i class="fas fa-check"></i> IPFS decentralized storage</li>
           </ul>
         </div>
@@ -806,8 +808,8 @@
           Transaction documentation (TI/TS)
         </div>
         <div class="includes-item">
-          <i class="fas fa-clock"></i>
-          6-year immutable retention
+          <i class="fas fa-infinity"></i>
+          Infinite immutable retention
         </div>
       </div>
     </div>
@@ -818,9 +820,9 @@
       <p style="color: #64748b; margin-bottom: 0;">Need help choosing a plan? We're here to help.</p>
       
       <div class="contact-links">
-        <a href="/cdn-cgi/l/email-protection#067c67656e46646f7c727467656d286f69" class="contact-link">
+        <a href="mailto:info@biztrack.io" class="contact-link">
           <i class="fas fa-envelope"></i>
-          <span class="__cf_email__" data-cfemail="037962606b43616a7977716260682d6a6c">[email&#160;protected]</span>
+          info@biztrack.io
         </a>
       </div>
       <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
@@ -837,7 +839,7 @@
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/auth.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/pharma-sidebar.js"></script>
   
   <script>
@@ -846,5 +848,13 @@
 
     function selectPlan(tier, price) {
       if (isLoggedIn) {
-        // User is logged in - go to subscription management
-        window.location.href = `/SI-ph
+        // User is logged in - initiate Stripe checkout
+        window.location.href = `/api/create-checkout-session?tier=${tier}&price=${price}`;
+      } else {
+        // Not logged in - redirect to register
+        window.location.href = `/register.html?plan=${tier}&price=${price}`;
+      }
+    }
+  </script>
+</body>
+</html>

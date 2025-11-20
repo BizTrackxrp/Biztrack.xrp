@@ -10,13 +10,17 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// ✅ TEST MODE PRICE IDS
+// ✅ STRIPE PRICE IDS (TEST MODE)
 const STRIPE_PRICES = {
-  essential: 'price_1SUukV2Kvkd8Qy8OIgqAGV3k',
-  scale: 'price_1SUuko2Kvkd8Qy8OemmtHbZb',
-  enterprise: 'price_1SUulO2Kvkd8Qy8O0IiV9vmh',
-  compliance: 'price_1SUulu2Kvkd8Qy8O0qAlY4w3',
-  pharma_enterprise: 'price_1SUum52Kvkd8Qy8Oq5W9t6hT'
+  // General Business Tiers
+  essential: 'price_1SUukV2Kvkd8Qy8OIgqAGV3k',      // $49/mo
+  scale: 'price_1SUuko2Kvkd8Qy8OemmtHbZb',          // $149/mo
+  enterprise: 'price_1SUulO2Kvkd8Qy8O0IiV9vmh',     // $399/mo
+  
+  // Pharma Tiers
+  pharma_starter: 'price_1SVJEC2Kvkd8Qy8O1LTwpw50', // $199/mo - 1,000 QR codes
+  professional: 'price_1SUulu2Kvkd8Qy8O0qAlY4w3',   // $599/mo - 5,000 QR codes
+  pharma_enterprise: 'price_1SUum52Kvkd8Qy8Oq5W9t6hT' // $1,499/mo - 50,000 QR codes
 };
 
 module.exports = async (req, res) => {
@@ -48,10 +52,13 @@ module.exports = async (req, res) => {
     const { tier } = req.body;
 
     // Validate tier
-    const validTiers = ['essential', 'scale', 'enterprise', 'compliance', 'pharma_enterprise'];
+    const validTiers = ['essential', 'scale', 'enterprise', 'pharma_starter', 'professional', 'pharma_enterprise'];
     
     if (!tier || !validTiers.includes(tier)) {
-      return res.status(400).json({ error: 'Invalid tier' });
+      return res.status(400).json({ 
+        error: 'Invalid tier',
+        validTiers: validTiers 
+      });
     }
 
     // Get Stripe price ID for the tier
@@ -65,8 +72,12 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Determine success URL based on business type
-    const isPharma = user.business_type === 'pharma' || tier === 'compliance' || tier === 'pharma_enterprise';
+    // Determine success URL based on business type or tier
+    const isPharma = user.business_type === 'pharma' || 
+                     tier === 'pharma_starter' || 
+                     tier === 'professional' || 
+                     tier === 'pharma_enterprise';
+    
     const successUrl = isPharma 
       ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pharma-dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`
       : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/dashboard.html?session_id={CHECKOUT_SESSION_ID}&upgrade=success`;
@@ -75,7 +86,13 @@ module.exports = async (req, res) => {
       ? `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/SI-pharma-pricing.html?canceled=true`
       : `${process.env.FRONTEND_URL || 'https://www.biztrack.io'}/pricing.html?canceled=true`;
 
-    console.log('[CHECKOUT] Creating TEST session for user:', user.id, 'tier:', tier, 'isPharma:', isPharma);
+    console.log('[CHECKOUT] Creating session for:', {
+      userId: user.id,
+      email: user.email,
+      tier: tier,
+      priceId: priceId,
+      isPharma: isPharma
+    });
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -104,7 +121,7 @@ module.exports = async (req, res) => {
       }
     });
 
-    console.log('[CHECKOUT] ✅ TEST session created:', session.id);
+    console.log('[CHECKOUT] ✅ Session created:', session.id);
 
     return res.status(200).json({
       url: session.url,

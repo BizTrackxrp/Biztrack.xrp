@@ -1,9 +1,12 @@
-// api/change-subscription.js - Self-service tier changes
+// api/change-subscription.js - Self-service tier changes + Manual request handling
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 const Stripe = require('stripe');
+const { Resend } = require('resend');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY); // Add to .env: RESEND_API_KEY=re_xxxxx
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
@@ -40,8 +43,101 @@ module.exports = async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
 
-    const { newTier } = req.body;
+    const { newTier, requestType, targetPlan, currentPlan, userEmail } = req.body;
 
+    // ========================================
+    // HANDLE MANUAL DOWNGRADE/CANCEL REQUESTS
+    // ========================================
+    if (requestType === 'downgrade' || requestType === 'cancel') {
+      console.log('[CHANGE-SUB] Manual request received:', { requestType, userId, currentPlan, targetPlan });
+
+      // Get user info
+      const userResult = await pool.query(
+        'SELECT id, email, company_name, stripe_subscription_id, stripe_customer_id, subscription_tier FROM users WHERE id = $1',
+        [userId]
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const user = userResult.rows[0];
+
+      // Log request in database (optional - create table if needed)
+      try {
+        await pool.query(
+          `INSERT INTO subscription_change_requests 
+           (user_id, request_type, current_tier, target_tier, status, created_at)
+           VALUES ($1, $2, $3, $4, $5, NOW())
+           ON CONFLICT DO NOTHING`,
+          [userId, requestType, currentPlan || user.subscription_tier, targetPlan, 'pending']
+        );
+      } catch (dbError) {
+        console.log('[CHANGE-SUB] Could not log to DB (table may not exist):', dbError.message);
+      }
+
+      // Send email to info@biztrack.io
+      try {
+        const emailSubject = requestType === 'cancel' 
+          ? `🚨 CANCELLATION Request - ${user.email}`
+          : `🚨 DOWNGRADE Request - ${user.email}`;
+
+        const emailHtml = `
+          <h2>🚨 Subscription ${requestType === 'cancel' ? 'CANCELLATION' : 'DOWNGRADE'} Request</h2>
+          
+          <p><strong>Action:</strong> ${requestType === 'cancel' ? 'CANCEL SUBSCRIPTION' : 'DOWNGRADE'}</p>
+          
+          <h3>Customer Info:</h3>
+          <ul>
+            <li><strong>Email:</strong> ${user.email}</li>
+            <li><strong>Company:</strong> ${user.company_name || 'N/A'}</li>
+            <li><strong>User ID:</strong> ${user.id}</li>
+            <li><strong>Current Tier:</strong> ${currentPlan || user.subscription_tier}</li>
+            ${requestType === 'downgrade' ? `<li><strong>Requested Tier:</strong> ${targetPlan || 'Not specified'}</li>` : ''}
+          </ul>
+
+          <h3>Stripe Info:</h3>
+          <ul>
+            <li><strong>Customer ID:</strong> ${user.stripe_customer_id || 'N/A'}</li>
+            <li><strong>Subscription ID:</strong> ${user.stripe_subscription_id || 'N/A'}</li>
+          </ul>
+
+          <hr>
+          
+          <h3>Next Steps:</h3>
+          <ol>
+            <li>Go to Stripe Dashboard: <a href="https://dashboard.stripe.com/subscriptions/${user.stripe_subscription_id}">View Subscription</a></li>
+            <li>${requestType === 'cancel' 
+              ? 'Click "Cancel subscription" → "At period end"' 
+              : `Click "Update subscription" → Change to ${targetPlan} tier → Schedule for period end`}</li>
+            <li>Reply to customer: ${user.email}</li>
+          </ol>
+
+          <p><em>This is an automated notification from BizTrack.</em></p>
+        `;
+
+        await resend.emails.send({
+          from: 'BizTrack <noreply@biztrack.io>',
+          to: 'info@biztrack.io',
+          subject: emailSubject,
+          html: emailHtml
+        });
+
+        console.log('[CHANGE-SUB] ✅ Email sent to info@biztrack.io');
+      } catch (emailError) {
+        console.error('[CHANGE-SUB] ❌ Email send failed:', emailError);
+        // Don't fail the request if email fails - still return success to user
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: `Your ${requestType} request has been received and will be processed within 24 hours.`
+      });
+    }
+
+    // ========================================
+    // HANDLE AUTOMATED TIER CHANGES (EXISTING CODE)
+    // ========================================
     if (!newTier || !TIER_TO_PRICE[newTier]) {
       return res.status(400).json({ error: 'Invalid tier specified' });
     }
@@ -132,9 +228,9 @@ module.exports = async (req, res) => {
     }
 
   } catch (error) {
-    console.error('Change subscription error:', error);
+    console.error('[CHANGE-SUB] Error:', error);
     return res.status(500).json({
-      error: 'Failed to change subscription',
+      error: 'Failed to process request',
       details: error.message
     });
   }

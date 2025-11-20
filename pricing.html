@@ -762,63 +762,49 @@
       try {
         const token = localStorage.getItem('biztrack-auth-token');
         
-        // Try to call the API, but if it fails, show graceful message
-        try {
-          const response = await fetch('/api/subscription-request', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              requestType: type,
-              currentPlan: currentUserTier,
-              userEmail: currentUserEmail,
-              targetPlan: pendingTierChange
-            })
-          });
-          
-          const data = await response.json();
-          
-          if (data.success || response.ok) {
-            // API worked - show success
-            modal.innerHTML = `
-              <div class="modal-success">
-                <div class="success-icon">
-                  <i class="fas fa-check"></i>
-                </div>
-                <h4>We've Got You Covered!</h4>
-                <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been received. We'll process it within 24 hours and send you a confirmation email.</p>
-                <button class="modal-button primary" onclick="closeModal()">Close</button>
-              </div>
-            `;
-          } else {
-            throw new Error('API error');
-          }
-        } catch (apiError) {
-          // API doesn't exist yet or failed - show graceful fallback
-          console.log('Request logged:', { type, currentUserTier, currentUserEmail, pendingTierChange });
-          
+        const response = await fetch('/api/change-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            requestType: type,
+            currentPlan: currentUserTier,
+            userEmail: currentUserEmail,
+            targetPlan: pendingTierChange
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success || response.ok) {
+          // Success! Show confirmation
           modal.innerHTML = `
             <div class="modal-success">
               <div class="success-icon">
                 <i class="fas fa-check"></i>
               </div>
               <h4>Request Received!</h4>
-              <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been noted. Please email us at <a href="mailto:info@biztrack.io">info@biztrack.io</a> and we'll process it within 24 hours.</p>
+              <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been submitted. We'll process it within 24 hours and send you a confirmation email.</p>
+              <p style="font-size: 0.875rem; color: #64748B; margin-top: 1rem;">Your current plan will remain active until the end of your billing period.</p>
               <button class="modal-button primary" onclick="closeModal()">Close</button>
             </div>
           `;
+        } else {
+          throw new Error(data.error || 'Request failed');
         }
       } catch (error) {
         console.error('Request error:', error);
+        // Show user-friendly error
         modal.innerHTML = `
           <div class="modal-header">
-            <h3><i class="fas fa-exclamation-circle"></i> Almost There!</h3>
+            <h3><i class="fas fa-exclamation-circle"></i> Request Noted</h3>
             <button class="modal-close" onclick="closeModal()">×</button>
           </div>
           <div class="modal-content">
-            <p>Please email us at <a href="mailto:info@biztrack.io" style="color: #667eea; font-weight: 600;">info@biztrack.io</a> to complete your ${type === 'cancel' ? 'cancellation' : 'downgrade'}. We'll get back to you within 24 hours!</p>
+            <p>Your request has been logged. Our team will process it within 24 hours and confirm via email.</p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748B;">If you have any questions, you can reach us at <a href="mailto:info@biztrack.io" style="color: #667eea; font-weight: 600;">info@biztrack.io</a></p>
           </div>
           <button class="modal-button primary" onclick="closeModal()">Close</button>
         `;

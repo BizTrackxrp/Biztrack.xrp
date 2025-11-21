@@ -169,6 +169,36 @@
       color: #4F46E5;
     }
 
+    /* Password Input Wrapper with Eye Toggle */
+    .password-input-wrapper {
+      position: relative;
+    }
+
+    .password-input-wrapper input {
+      padding-right: 3rem;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #64748B;
+      cursor: pointer;
+      font-size: 1.125rem;
+      padding: 0.5rem;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-toggle:hover {
+      color: #4F46E5;
+    }
+
     .btn {
       width: 100%;
       padding: 1rem;
@@ -313,13 +343,23 @@
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" required autocomplete="new-password">
+        <div class="password-input-wrapper">
+          <input type="password" id="password" required autocomplete="new-password">
+          <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
         <div id="password-feedback"></div>
       </div>
 
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" required autocomplete="new-password">
+        <div class="password-input-wrapper">
+          <input type="password" id="confirmPassword" required autocomplete="new-password">
+          <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
         <div id="password-match"></div>
       </div>
 
@@ -337,6 +377,24 @@
   <script src="js/password-validator.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+    // ==========================================
+    // PASSWORD VISIBILITY TOGGLE
+    // ==========================================
+    function togglePassword(inputId, button) {
+      const input = document.getElementById(inputId);
+      const icon = button.querySelector('i');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
 
     // ==========================================
     // INITIALIZE PASSWORD VALIDATOR

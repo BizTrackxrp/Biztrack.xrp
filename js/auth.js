@@ -142,10 +142,12 @@ function requireAuth() {
 function logout() {
   localStorage.removeItem('biztrack-auth-token');
   localStorage.removeItem('biztrack-user-email');
+  localStorage.removeItem('biztrack-business-type');
+  localStorage.removeItem('biztrack-company-name');
   window.location.href = '/login.html';
 }
 
-// Get user info from token
+// ✅ Get user info from token (NOW INCLUDES BUSINESSTYPE)
 function getUserFromToken() {
   const token = localStorage.getItem('biztrack-auth-token');
   
@@ -157,11 +159,28 @@ function getUserFromToken() {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return {
       userId: payload.userId,
-      email: payload.email
+      email: payload.email,
+      businessType: payload.businessType || 'general'
     };
   } catch (e) {
     return null;
   }
+}
+
+// ✅ NEW: Get business type from localStorage or token (HELPER FUNCTION)
+function getBusinessType() {
+  // First try localStorage (faster)
+  const stored = localStorage.getItem('biztrack-business-type');
+  if (stored) {
+    console.log('📋 Business Type from localStorage:', stored);
+    return stored;
+  }
+  
+  // Fallback to token
+  const user = getUserFromToken();
+  const businessType = user?.businessType || 'general';
+  console.log('📋 Business Type from token:', businessType);
+  return businessType;
 }
 
 // Set up automatic token refresh check (every 4 minutes)

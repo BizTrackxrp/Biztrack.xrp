@@ -61,7 +61,9 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 3rem;
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .logo {
@@ -165,12 +167,6 @@
     .business-type-info i {
       margin-top: 0.125rem;
       color: #4F46E5;
-    }
-
-    .password-requirements {
-      font-size: 0.875rem;
-      color: #64748B;
-      margin-top: 0.5rem;
     }
 
     .btn {
@@ -318,12 +314,13 @@
       <div class="form-group">
         <label for="password">Password</label>
         <input type="password" id="password" required autocomplete="new-password">
-        <p class="password-requirements">Must be at least 8 characters</p>
+        <div id="password-feedback"></div>
       </div>
 
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
         <input type="password" id="confirmPassword" required autocomplete="new-password">
+        <div id="password-match"></div>
       </div>
 
       <button type="submit" class="btn" id="registerBtn">
@@ -337,8 +334,15 @@
     </div>
   </div>
 
+  <script src="js/password-validator.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+    // ==========================================
+    // INITIALIZE PASSWORD VALIDATOR
+    // ==========================================
+    PasswordValidator.initValidation('password', 'password-feedback');
+    PasswordValidator.initPasswordMatch('password', 'confirmPassword', 'password-match');
 
     // Get plan from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -382,8 +386,10 @@
         return;
       }
 
-      if (password.length < 8) {
-        showMessage('Password must be at least 8 characters', 'error');
+      // ✅ USE PASSWORD VALIDATOR
+      const passwordValidation = PasswordValidator.validate(password);
+      if (!passwordValidation.valid) {
+        showMessage(passwordValidation.errors[0], 'error');
         return;
       }
 

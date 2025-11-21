@@ -305,8 +305,10 @@
       .then(res => res.json())
       .then(data => {
         if (data.valid) {
-          // Token is valid, redirect to dashboard
-          window.location.href = '/dashboard.html';
+          // Token is valid, redirect to correct dashboard
+          const businessType = localStorage.getItem('biztrack-business-type') || 'general';
+          const dashboardUrl = businessType === 'pharma' ? '/pharma-dashboard.html' : '/dashboard.html';
+          window.location.href = dashboardUrl;
         } else {
           // Token invalid, clear it
           localStorage.removeItem('biztrack-auth-token');

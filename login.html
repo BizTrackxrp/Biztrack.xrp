@@ -366,11 +366,14 @@
           // Success
           showMessage('Login successful! Redirecting...', 'success');
           
-          // Save token
+          // ✅ SAVE ALL USER DATA INCLUDING BUSINESSTYPE
           localStorage.setItem('biztrack-auth-token', data.token);
           localStorage.setItem('biztrack-user-email', email);
+          localStorage.setItem('biztrack-business-type', data.user.businessType);
+          localStorage.setItem('biztrack-company-name', data.user.companyName || '');
           
-          console.log('Token saved, redirecting to dashboard');
+          console.log('✅ Token and user data saved, redirecting to dashboard');
+          console.log('Business Type:', data.user.businessType);
 
           // Redirect to dashboard
           setTimeout(() => {

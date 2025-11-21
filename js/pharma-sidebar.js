@@ -25,7 +25,7 @@
       <!-- Overlay -->
       <div class="pharma-overlay" id="pharmaOverlay"></div>
 
-      <!-- Sidebar -->
+     <!-- Sidebar -->
       <nav class="pharma-sidebar" id="pharmaSidebar">
         <div class="pharma-sidebar-logo">
           <h1>🚚 BizTrack</h1>
@@ -35,6 +35,11 @@
         <ul class="pharma-sidebar-nav">
           <li><a href="/pharma-dashboard.html" id="pharma-nav-dashboard">
             <i class="fas fa-chart-line"></i> Dashboard
+          </a></li>
+          
+          <!-- ✅ ADD THIS NEW LINE HERE -->
+          <li><a href="/pharma-generate.html" id="pharma-nav-generate">
+            <i class="fas fa-fingerprint"></i> Generate Product IDs
           </a></li>
           
           <li><a href="/pharma/receive.html" id="pharma-nav-receive">

@@ -321,24 +321,28 @@
       border-radius: 12px;
       margin-top: 1rem;
       font-weight: 500;
-      display: flex;
+      display: none;
       align-items: center;
       gap: 0.75rem;
     }
 
-    .message.success {
+    .message.show {
+      display: flex;
+    }
+
+    .message-success {
       background: #F0FDF4;
       color: #16A34A;
       border: 1px solid #BBF7D0;
     }
 
-    .message.error {
+    .message-error {
       background: #FEF2F2;
       color: #DC2626;
       border: 1px solid #FECACA;
     }
 
-    .message.info {
+    .message-info {
       background: #EFF6FF;
       color: #2563EB;
       border: 1px solid #BFDBFE;
@@ -446,25 +450,26 @@
 
       <!-- Change Password -->
       <h3>Change Password</h3>
-      <form id="changePasswordForm">
+      <form id="password-reset-form">
         <div class="form-group">
-          <label for="currentPassword">Current Password</label>
-          <input type="password" id="currentPassword" placeholder="Enter current password" required>
+          <label for="current-password">Current Password</label>
+          <input type="password" id="current-password" placeholder="Enter current password" required>
         </div>
         <div class="form-group">
-          <label for="newPassword">New Password</label>
-          <input type="password" id="newPassword" placeholder="Enter new password (min 8 characters)" minlength="8" required>
-          <small>Must be at least 8 characters long</small>
+          <label for="new-password">New Password</label>
+          <input type="password" id="new-password" placeholder="Enter new password" required>
+          <div id="password-feedback"></div>
         </div>
         <div class="form-group">
-          <label for="confirmPassword">Confirm New Password</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+          <label for="confirm-password">Confirm New Password</label>
+          <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+          <div id="password-match"></div>
         </div>
-        <button type="submit" class="btn">
+        <button type="submit" class="btn" id="password-submit-btn">
           <i class="fas fa-key"></i>
           Update Password
         </button>
-        <div id="passwordMsg"></div>
+        <div id="password-message" class="message"></div>
       </form>
 
       <hr class="section-divider">
@@ -575,6 +580,8 @@
   </div>
 
   <script src="js/auth.js"></script>
+  <script src="js/password-validator.js"></script>
+  <script src="js/password-reset.js"></script>
   <script>
     // Ensure user is authenticated
     requireAuth();
@@ -605,37 +612,20 @@
     if (prefs.timezone) document.getElementById('timezone').value = prefs.timezone;
     if (prefs.darkMode) document.getElementById('darkMode').checked = prefs.darkMode;
 
-    // Change Password
-    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const msgEl = document.getElementById('passwordMsg');
-      const currentPassword = document.getElementById('currentPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-
-      if (newPassword !== confirmPassword) {
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> New passwords do not match!</div>';
-        return;
-      }
-
-      msgEl.innerHTML = '<div class="message info"><i class="fas fa-spinner fa-spin"></i> Updating password...</div>';
-
-      // TODO: Call your API to change password
-      setTimeout(() => {
-        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Password updated successfully!</div>';
-        e.target.reset();
-      }, 1000);
-    });
+    // ==========================================
+    // PASSWORD RESET IS HANDLED BY password-reset.js
+    // No custom code needed! It auto-initializes.
+    // ==========================================
 
     // Update Account Info
     document.getElementById('accountInfoForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msgEl = document.getElementById('accountMsg');
-      msgEl.innerHTML = '<div class="message info"><i class="fas fa-spinner fa-spin"></i> Saving changes...</div>';
+      msgEl.innerHTML = '<div class="message message-info show"><i class="fas fa-spinner fa-spin"></i> Saving changes...</div>';
 
       // TODO: Call your API to update account info
       setTimeout(() => {
-        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Account information updated!</div>';
+        msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Account information updated!</div>';
       }, 1000);
     });
 
@@ -651,7 +641,7 @@
       };
       
       localStorage.setItem('biztrack-preferences', JSON.stringify(preferences));
-      msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Preferences saved!</div>';
+      msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Preferences saved!</div>';
     });
 
     // 2FA Toggle (placeholder - implement with your backend)
@@ -673,12 +663,12 @@
       const msgEl = document.getElementById('verifyMsg');
       
       if (code.length !== 6) {
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please enter a 6-digit code</div>';
+        msgEl.innerHTML = '<div class="message message-error show"><i class="fas fa-exclamation-circle"></i> Please enter a 6-digit code</div>';
         return;
       }
 
       // TODO: Verify with your backend
-      msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> 2FA enabled successfully!</div>';
+      msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> 2FA enabled successfully!</div>';
     });
 
     // Logout

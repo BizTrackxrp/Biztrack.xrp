@@ -138,48 +138,6 @@
         submitButton.innerHTML = '<i class="fas fa-key"></i> Change Password';
       }
     });
-
-    // Real-time password strength indicator (optional enhancement)
-    if (newPasswordInput) {
-      newPasswordInput.addEventListener('input', () => {
-        const password = newPasswordInput.value;
-        const strengthIndicator = document.getElementById('password-strength');
-        
-        if (strengthIndicator) {
-          if (password.length === 0) {
-            strengthIndicator.textContent = '';
-          } else if (password.length < 8) {
-            strengthIndicator.textContent = 'Too short';
-            strengthIndicator.style.color = '#ef4444';
-          } else if (password.length < 12) {
-            strengthIndicator.textContent = 'Good';
-            strengthIndicator.style.color = '#f59e0b';
-          } else {
-            strengthIndicator.textContent = 'Strong';
-            strengthIndicator.style.color = '#10b981';
-          }
-        }
-      });
-    }
-
-    // Real-time confirm password matching
-    if (confirmPasswordInput && newPasswordInput) {
-      confirmPasswordInput.addEventListener('input', () => {
-        const matchIndicator = document.getElementById('password-match');
-        
-        if (matchIndicator) {
-          if (confirmPasswordInput.value.length === 0) {
-            matchIndicator.textContent = '';
-          } else if (confirmPasswordInput.value === newPasswordInput.value) {
-            matchIndicator.textContent = '✓ Passwords match';
-            matchIndicator.style.color = '#10b981';
-          } else {
-            matchIndicator.textContent = '✗ Passwords do not match';
-            matchIndicator.style.color = '#ef4444';
-          }
-        }
-      });
-    }
   }
 
   // ==========================================

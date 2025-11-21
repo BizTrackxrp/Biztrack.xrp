@@ -375,9 +375,15 @@
           console.log('✅ Token and user data saved, redirecting to dashboard');
           console.log('Business Type:', data.user.businessType);
 
-          // Redirect to dashboard
+          // Redirect to correct dashboard based on business type
+          const dashboardUrl = data.user.businessType === 'pharma' 
+            ? '/pharma-dashboard.html' 
+            : '/dashboard.html';
+          
+          console.log('Redirecting to:', dashboardUrl);
+          
           setTimeout(() => {
-            window.location.href = '/dashboard.html';
+            window.location.href = dashboardUrl;
           }, 1000);
 
         } else {

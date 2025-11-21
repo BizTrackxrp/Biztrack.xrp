@@ -85,12 +85,11 @@ module.exports = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token WITH business_type
+    // Generate JWT token
     const token = jwt.sign(
       {
         userId: user.id,
-        email: user.email,
-        businessType: user.business_type  // ← ADD THIS!
+        email: user.email
       },
       JWT_SECRET,
       { expiresIn: '7d' }
@@ -146,8 +145,7 @@ module.exports = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        companyName: user.company_name,
-        businessType: user.business_type  // ← ADD THIS!
+        companyName: user.company_name
       }
     });
 

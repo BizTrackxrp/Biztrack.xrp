@@ -19,17 +19,17 @@ const TIER_CONFIG = {
   pharma_enterprise: { qrLimit: 50000 }
 };
 
-// ✅ TEST MODE PRICE TO TIER MAPPING
+// ✅ LIVE MODE PRICE TO TIER MAPPING
 const PRICE_TO_TIER = {
   // General Business Tiers
-  'price_1SUukV2Kvkd8Qy8OIgqAGV3k': 'essential',
-  'price_1SUuko2Kvkd8Qy8OemmtHbZb': 'scale',
-  'price_1SUulO2Kvkd8Qy8O0IiV9vmh': 'enterprise',
+  'price_1SPSCoRzdZsHMZRF5IBmTG6s': 'essential',
+  'price_1SPSC3RzdZsHMZRFraOq6siQ': 'scale',
+  'price_1SPSBRRzdZsHMZRFyFx0E3Ez': 'enterprise',
   
   // Pharma Tiers
-  'price_1SVJEC2Kvkd8Qy8O1LTwpw50': 'starter',
-  'price_1SUulu2Kvkd8Qy8O0qAlY4w3': 'professional',
-  'price_1SUum52Kvkd8Qy8Oq5W9t6hT': 'pharma_enterprise'
+  'price_1SX5nGRzdZsHMZRFtSRBopNI': 'starter',
+  'price_1STUPIRzdZsHMZRFBPj64pTW': 'professional',
+  'price_1STURMRzdZsHMZRF6bdkpcrN': 'pharma_enterprise'
 };
 
 // TIER PRICING (for revenue calculations)

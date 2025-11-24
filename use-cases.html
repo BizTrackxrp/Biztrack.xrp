@@ -235,7 +235,9 @@
       transition: all 0.3s;
       text-decoration: none;
       color: inherit;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      min-height: 320px;
     }
 
     .solution-card:hover {
@@ -245,12 +247,11 @@
     }
 
     .solution-card.pharma {
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      border-color: #f59e0b;
+      border-color: #7c3aed;
     }
 
     .solution-card.pharma:hover {
-      border-color: #d97706;
+      border-color: #6d28d9;
     }
 
     .solution-card.general {
@@ -273,6 +274,7 @@
       color: #475569;
       margin-bottom: 1.5rem;
       line-height: 1.7;
+      flex-grow: 1;
     }
 
     .solution-link {
@@ -281,10 +283,11 @@
       gap: 0.5rem;
       color: #3b82f6;
       font-weight: 600;
+      margin-top: auto;
     }
 
     .solution-card.pharma .solution-link {
-      color: #d97706;
+      color: #7c3aed;
     }
 
     .expand-icon {
@@ -758,6 +761,13 @@
       
       section.classList.toggle('expanded');
       icon.classList.toggle('rotated');
+      
+      // Auto-scroll to center the expanded section after it opens
+      if (section.classList.contains('expanded')) {
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
     }
 
     function toggleContact() {

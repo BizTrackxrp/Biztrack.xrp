@@ -212,47 +212,154 @@
       margin-right: auto;
     }
 
-    .industries-grid {
+    /* Two main solution cards */
+    .solutions-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .solutions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .solution-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .solution-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .solution-card.pharma {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-color: #f59e0b;
+    }
+
+    .solution-card.pharma:hover {
+      border-color: #d97706;
+    }
+
+    .solution-card.general {
+      cursor: pointer;
+    }
+
+    .solution-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .solution-card h3 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .solution-card p {
+      color: #475569;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .solution-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+
+    .solution-card.pharma .solution-link {
+      color: #d97706;
+    }
+
+    .expand-icon {
+      transition: transform 0.3s;
+    }
+
+    .expand-icon.rotated {
+      transform: rotate(180deg);
+    }
+
+    /* Expandable General Business Section */
+    .general-industries {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.3s ease-out;
+      background: #f1f5f9;
+      border-radius: 0 0 16px 16px;
+      margin-top: -16px;
+      padding: 0 2rem;
+    }
+
+    .general-industries.expanded {
+      max-height: 1000px;
+      padding: 2rem;
+      border: 2px solid #e2e8f0;
+      border-top: none;
+    }
+
+    .general-industries-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .general-industries-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .industry-card {
       background: white;
-      padding: 2.5rem;
-      border-radius: 16px;
+      padding: 1.5rem;
+      border-radius: 12px;
       border: 2px solid #e2e8f0;
       transition: all 0.3s;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
       display: block;
-      height: 100%;
     }
 
     .industry-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       border-color: #3b82f6;
     }
 
     .industry-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
     }
 
-    .industry-card h3 {
-      font-size: 1.75rem;
+    .industry-card h4 {
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       color: #0f172a;
     }
 
     .industry-card p {
-      color: #475569;
-      margin-bottom: 1.5rem;
-      line-height: 1.7;
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
     }
 
     .industry-link {
@@ -261,6 +368,7 @@
       gap: 0.5rem;
       color: #3b82f6;
       font-weight: 600;
+      font-size: 0.9rem;
     }
 
     /* Custom Solution CTA */
@@ -454,10 +562,6 @@
       .features-list {
         grid-template-columns: 1fr;
       }
-
-      .industries-grid {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -493,9 +597,9 @@
     <!-- Industry Focus Section -->
     <section class="industry-focus">
       <div class="industry-focus-content">
-        <h2>Built to Benefit These Industries</h2>
+        <h2>Two Solutions. Every Industry.</h2>
         <p>
-          While our platform works for any business fighting counterfeits and ensuring supply chain integrity, we've developed specialized solutions for industries with strict compliance requirements and high-value products.
+          We offer specialized pharmaceutical compliance software for FDA DSCSA requirements, plus a flexible general business solution for any industry fighting counterfeits and building customer trust.
         </p>
       </div>
     </section>
@@ -503,75 +607,95 @@
     <!-- Industry Cards Section -->
     <section id="industries" class="industries">
       <div class="industries-container">
-        <h2>Sectors Where We Specialize</h2>
+        <h2>Choose Your Solution</h2>
         <p class="industries-intro">
-          Explore our pre-built solutions designed for specific industries—or contact us to build something custom.
+          Select the path that fits your business needs.
         </p>
 
-        <!-- Industry Grid -->
-        <div class="industries-grid">
+        <!-- Two Main Solutions -->
+        <div class="solutions-grid">
           
-          <!-- Pharmaceutical -->
-          <a href="pharmaceutical.html" class="industry-card">
-            <div class="industry-icon">💊</div>
+          <!-- Pharmaceutical - Standalone -->
+          <a href="pharmaceutical.html" class="solution-card pharma">
+            <div class="solution-icon">💊</div>
             <h3>Pharmaceutical Compliance</h3>
             <p>
-              Meet FDA DSCSA requirements with GS1 serialization, automated T3 documentation, and real-time ATP verification. Full compliance in 15 minutes.
+              FDA DSCSA-ready compliance software. GS1 serialization, ATP verification, T3 documentation, and VRS integration. Built specifically for pharma manufacturers, distributors, and dispensers.
             </p>
-            <div class="industry-link">
+            <div class="solution-link">
               Learn More <i class="fas fa-arrow-right"></i>
             </div>
           </a>
 
-          <!-- Cannabis -->
-          <a href="cannabis.html" class="industry-card">
-            <div class="industry-icon">🌿</div>
-            <h3>Cannabis Manufacturing</h3>
+          <!-- General Business - Expandable -->
+          <div class="solution-card general" onclick="toggleGeneralIndustries()">
+            <div class="solution-icon">🏢</div>
+            <h3>General Business</h3>
             <p>
-              Seed-to-sale tracking with state compliance (Metrc integration), batch recalls, lab results, and complete supply chain transparency for cultivators and dispensaries.
+              Product verification for any industry. Smart QR codes, blockchain authentication, and customer-facing verification pages. Perfect for luxury goods, food & beverage, electronics, cannabis, and more.
             </p>
-            <div class="industry-link">
-              Learn More <i class="fas fa-arrow-right"></i>
+            <div class="solution-link">
+              View Industries <i class="fas fa-chevron-down expand-icon" id="expandIcon"></i>
             </div>
-          </a>
-
-          <!-- Luxury Goods -->
-          <a href="luxury.html" class="industry-card">
-            <div class="industry-icon">💎</div>
-            <h3>Luxury Goods Authentication</h3>
-            <p>
-              Fight counterfeits with blockchain-backed certificates of authenticity. Track ownership history and verify genuine products for Rolex, Gucci, Louis Vuitton, and more.
-            </p>
-            <div class="industry-link">
-              Learn More <i class="fas fa-arrow-right"></i>
-            </div>
-          </a>
-
-          <!-- Food & Beverage -->
-          <a href="food.html" class="industry-card">
-            <div class="industry-icon">🍔</div>
-            <h3>Food & Beverage Safety</h3>
-            <p>
-              Farm-to-table traceability with temperature monitoring, recall management, and complete ingredient transparency. Protect consumers and your brand reputation.
-            </p>
-            <div class="industry-link">
-              Learn More <i class="fas fa-arrow-right"></i>
-            </div>
-          </a>
-
-          <!-- Electronics -->
-          <a href="electronics.html" class="industry-card">
-            <div class="industry-icon">📱</div>
-            <h3>Electronics Anti-Counterfeiting</h3>
-            <p>
-              Warranty verification, gray market prevention, and component tracking. Protect authorized dealers and ensure genuine products reach customers.
-            </p>
-            <div class="industry-link">
-              Learn More <i class="fas fa-arrow-right"></i>
-            </div>
-          </a>
+          </div>
 
         </div>
+
+        <!-- Expandable General Industries -->
+        <div class="general-industries" id="generalIndustries">
+          <div class="general-industries-grid">
+            
+            <!-- Cannabis -->
+            <a href="cannabis.html" class="industry-card">
+              <div class="industry-icon">🌿</div>
+              <h4>Cannabis Manufacturing</h4>
+              <p>
+                Seed-to-sale tracking with state compliance (Metrc integration), batch recalls, and lab results.
+              </p>
+              <div class="industry-link">
+                Learn More <i class="fas fa-arrow-right"></i>
+              </div>
+            </a>
+
+            <!-- Luxury Goods -->
+            <a href="luxury.html" class="industry-card">
+              <div class="industry-icon">💎</div>
+              <h4>Luxury Goods Authentication</h4>
+              <p>
+                Fight counterfeits with blockchain-backed certificates. Track ownership and verify authenticity.
+              </p>
+              <div class="industry-link">
+                Learn More <i class="fas fa-arrow-right"></i>
+              </div>
+            </a>
+
+            <!-- Food & Beverage -->
+            <a href="food.html" class="industry-card">
+              <div class="industry-icon">🍔</div>
+              <h4>Food & Beverage Safety</h4>
+              <p>
+                Farm-to-table traceability with temperature monitoring, recall management, and ingredient transparency.
+              </p>
+              <div class="industry-link">
+                Learn More <i class="fas fa-arrow-right"></i>
+              </div>
+            </a>
+
+            <!-- Electronics -->
+            <a href="electronics.html" class="industry-card">
+              <div class="industry-icon">📱</div>
+              <h4>Electronics Anti-Counterfeiting</h4>
+              <p>
+                Warranty verification, gray market prevention, and component tracking for genuine products.
+              </p>
+              <div class="industry-link">
+                Learn More <i class="fas fa-arrow-right"></i>
+              </div>
+            </a>
+
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -591,9 +715,9 @@
         <!-- Contact Info (Hidden by default) -->
         <div id="contactInfo" class="contact-info">
           <div class="contact-links">
-            <a href="/cdn-cgi/l/email-protection#cba2a5ada48ba9a2b1bfb9aaa8a0e5a2a4" class="contact-link">
+            <a href="mailto:info@biztrack.io" class="contact-link">
               <i class="fas fa-envelope"></i>
-              <span style="font-weight: 600;"><span class="__cf_email__" data-cfemail="d7beb9b1b897b5beada3a5b6b4bcf9beb8">[email&#160;protected]</span></span>
+              <span style="font-weight: 600;">info@biztrack.io</span>
             </a>
             <a href="tel:+13606700852" class="contact-link">
               <i class="fas fa-phone"></i>
@@ -611,7 +735,7 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="faq.html">FAQ</a>
-        <a href="pricing-public.html">Pricing</a>
+        <a href="pricing-hub.html">Pricing</a>
         <a href="contact.html">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
@@ -628,6 +752,14 @@
   </footer>
 
   <script>
+    function toggleGeneralIndustries() {
+      const section = document.getElementById('generalIndustries');
+      const icon = document.getElementById('expandIcon');
+      
+      section.classList.toggle('expanded');
+      icon.classList.toggle('rotated');
+    }
+
     function toggleContact() {
       const contactInfo = document.getElementById('contactInfo');
       const contactBtn = document.getElementById('contactBtn');
@@ -645,4 +777,3 @@
   <script src="js/sidebar.js"></script>
 </body>
 </html>
-        contactBtn.innerHTML = '<i class="fas fa-tim

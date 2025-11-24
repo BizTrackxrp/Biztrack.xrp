@@ -16,12 +16,6 @@ function renderSidebar(activePage) {
           </a>
         </li>
         
-        <!-- For Businesses -->
-        <li>
-          <a href="business.html" class="${activePage === 'business' ? 'active' : ''}">
-            <i class="fas fa-briefcase"></i> For Businesses
-          </a>
-        </li>
         
         <!-- Use Cases (Simple Link - No Dropdown!) -->
         <li>

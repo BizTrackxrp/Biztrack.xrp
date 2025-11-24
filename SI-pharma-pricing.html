@@ -137,6 +137,11 @@
       letter-spacing: 0.5px;
     }
 
+    /* Hide popular badge when user is logged in */
+    .popular-badge.hidden {
+      display: none;
+    }
+
     .tier-name {
       font-size: 2rem;
       font-weight: 800;
@@ -226,6 +231,21 @@
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
+    }
+
+    .cta-button:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .cta-button.current-plan {
+      background: #10b981;
+      cursor: default;
+    }
+
+    .cta-button.current-plan:hover {
+      transform: none;
+      box-shadow: none;
     }
 
     /* Comparison Section */
@@ -540,7 +560,7 @@
     <div class="pricing-container">
       
       <!-- Starter Compliance -->
-      <div class="pricing-tier">
+      <div class="pricing-tier" data-tier="starter">
         <h2 class="tier-name">Starter</h2>
         <div class="tier-price">$199<span> / month</span></div>
         <div class="tier-volume">1,000 QR codes per month</div>
@@ -556,15 +576,15 @@
           <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('starter')">
+        <button class="cta-button" id="btn-starter" onclick="selectPlan('starter')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
 
       <!-- Professional Compliance -->
-      <div class="pricing-tier popular">
-        <div class="popular-badge">MOST POPULAR</div>
+      <div class="pricing-tier popular" data-tier="professional">
+        <div class="popular-badge" id="popular-badge">MOST POPULAR</div>
         <h2 class="tier-name">Professional</h2>
         <div class="tier-price">$599<span> / month</span></div>
         <div class="tier-volume">5,000 QR codes per month</div>
@@ -581,14 +601,14 @@
           <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('professional')">
+        <button class="cta-button" id="btn-professional" onclick="selectPlan('professional')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
 
       <!-- Enterprise Compliance -->
-      <div class="pricing-tier">
+      <div class="pricing-tier" data-tier="pharma_enterprise">
         <h2 class="tier-name">Enterprise</h2>
         <div class="tier-price">$1,499<span> / month</span></div>
         <div class="tier-volume">50,000 QR codes per month</div>
@@ -605,7 +625,7 @@
           <li><i class="fas fa-check-circle"></i> Priority support (12hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('pharma_enterprise')">
+        <button class="cta-button" id="btn-pharma_enterprise" onclick="selectPlan('pharma_enterprise')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -849,6 +869,57 @@
   <script src="js/pharma-sidebar.js"></script>
   
   <script>
+    // Check user's current tier and update UI
+    async function updatePricingUI() {
+      const token = localStorage.getItem('biztrack-auth-token');
+      
+      if (!token) {
+        // Not logged in - show default UI (with Most Popular badge)
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/check-limits', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          const currentTier = data.subscription?.tier || data.user?.subscription_tier || 'free';
+          
+          // Hide "Most Popular" badge for logged-in users
+          const popularBadge = document.getElementById('popular-badge');
+          if (popularBadge) {
+            popularBadge.classList.add('hidden');
+          }
+          
+          // Update buttons based on current tier
+          const tiers = ['starter', 'professional', 'pharma_enterprise'];
+          
+          tiers.forEach(tier => {
+            const btn = document.getElementById(`btn-${tier}`);
+            if (btn) {
+              if (tier === currentTier) {
+                // Current plan - show green "Current Plan" button
+                btn.innerHTML = '<i class="fas fa-check"></i> Current Plan';
+                btn.classList.add('current-plan');
+                btn.disabled = true;
+                btn.onclick = null;
+              } else {
+                // Other plans - keep as upgrade option
+                btn.innerHTML = 'Upgrade <i class="fas fa-arrow-right"></i>';
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error checking subscription:', error);
+      }
+    }
+    
     // ✅ COPIED FROM WORKING subscription.html
     async function selectPlan(tier) {
       const token = localStorage.getItem('biztrack-auth-token');
@@ -881,6 +952,9 @@
         alert('Error creating checkout session. Please try again.');
       }
     }
+    
+    // Run on page load
+    updatePricingUI();
   </script>
 </body>
 </html>

@@ -376,6 +376,27 @@
       opacity: 0.5;
     }
 
+    .btn-small {
+      padding: 0.5rem 0.75rem;
+      background: white;
+      color: #667eea;
+      border: 1px solid #667eea;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s;
+    }
+
+    .btn-small:hover {
+      background: #667eea;
+      color: white;
+    }
+
     /* Workflow Modal */
     .workflow-modal {
       display: none;
@@ -619,18 +640,18 @@
                 <thead>
                   <tr>
                     <th>Product Name</th>
-                    <th>Serial Number</th>
+                    <th>Serial / NDC</th>
                     <th>Batch/Lot</th>
                     <th>Created</th>
-                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="qrCodesTable">
                   <tr>
                     <td colspan="5">
                       <div class="empty-state">
-                        <i class="fas fa-qrcode"></i>
-                        <p>No QR codes generated yet</p>
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading QR codes...</p>
                       </div>
                     </td>
                   </tr>
@@ -932,6 +953,94 @@
       }
     }
 
+    // ==========================================
+    // LOAD QR CODES - NEW FUNCTION
+    // ==========================================
+    async function loadQRCodes() {
+      const tbody = document.getElementById('qrCodesTable');
+      const countEl = document.getElementById('qrCodesCount');
+      
+      try {
+        const response = await authenticatedFetch('/api/list-products');
+        const data = await response.json();
+        
+        if (!data.success || !data.products || data.products.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <i class="fas fa-qrcode"></i>
+                  <p>No QR codes generated yet</p>
+                  <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+                    <a href="/pharma-generate.html" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                      <i class="fas fa-plus"></i> Generate your first QR code
+                    </a>
+                  </p>
+                </div>
+              </td>
+            </tr>
+          `;
+          countEl.textContent = '0';
+          return;
+        }
+
+        const products = data.products;
+        countEl.textContent = products.length;
+        
+        // Build table rows
+        tbody.innerHTML = products.slice(0, 10).map(product => {
+          const serial = product.sku || product.metadata?.serialNumber || 'N/A';
+          const ndc = product.metadata?.ndc || '';
+          const serialDisplay = ndc ? `${serial}<br><small style="color: #64748b;">NDC: ${ndc}</small>` : serial;
+          const lot = product.batchNumber || 'N/A';
+          const created = new Date(product.timestamp).toLocaleDateString();
+          
+          return `
+            <tr>
+              <td><strong>${product.productName}</strong></td>
+              <td>${serialDisplay}</td>
+              <td>${lot}</td>
+              <td>${created}</td>
+              <td>
+                <a href="${product.verificationUrl}" target="_blank" class="btn-small">
+                  <i class="fas fa-eye"></i> View
+                </a>
+                <a href="${product.qrCodeUrl}" target="_blank" class="btn-small" style="margin-left: 0.5rem;">
+                  <i class="fas fa-qrcode"></i> QR
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        // If more than 10 products, show "View All" link
+        if (products.length > 10) {
+          tbody.innerHTML += `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 1rem;">
+                <a href="/pharma-generate.html" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                  View all ${products.length} products →
+                </a>
+              </td>
+            </tr>
+          `;
+        }
+        
+      } catch (error) {
+        console.error('Failed to load QR codes:', error);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Failed to load QR codes</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
     function toggleSection(sectionId) {
       const content = document.getElementById(`content-${sectionId}`);
       const toggle = document.getElementById(`toggle-${sectionId}`);
@@ -981,7 +1090,9 @@
       }
     });
 
+    // Initialize
     loadDashboard();
+    loadQRCodes();
   </script>
 </body>
 </html>

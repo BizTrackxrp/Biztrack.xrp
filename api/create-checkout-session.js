@@ -10,17 +10,17 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// ✅ STRIPE PRICE IDS (TEST MODE)
+// ✅ STRIPE PRICE IDS (LIVE MODE)
 const STRIPE_PRICES = {
   // General Business Tiers
-  essential: 'price_1SUukV2Kvkd8Qy8OIgqAGV3k',      // $49/mo
-  scale: 'price_1SUuko2Kvkd8Qy8OemmtHbZb',          // $149/mo
-  enterprise: 'price_1SUulO2Kvkd8Qy8O0IiV9vmh',     // $399/mo
+  essential: 'price_1SPSCoRzdZsHMZRF5IBmTG6s',      // $49/mo
+  scale: 'price_1SPSC3RzdZsHMZRFraOq6siQ',          // $149/mo
+  enterprise: 'price_1SPSBRRzdZsHMZRFyFx0E3Ez',     // $399/mo
   
   // Pharma Tiers
-  starter: 'price_1SVJEC2Kvkd8Qy8O1LTwpw50', // $199/mo - 1,000 QR codes
-  professional: 'price_1SUulu2Kvkd8Qy8O0qAlY4w3',   // $599/mo - 5,000 QR codes
-  pharma_enterprise: 'price_1SUum52Kvkd8Qy8Oq5W9t6hT' // $1,499/mo - 50,000 QR codes
+  starter: 'price_1SX5nGRzdZsHMZRFtSRBopNI', // $199/mo - 1,000 QR codes
+  professional: 'price_1STUPIRzdZsHMZRFBPj64pTW',   // $599/mo - 5,000 QR codes
+  pharma_enterprise: 'price_1STURMRzdZsHMZRF6bdkpcrN' // $1,499/mo - 50,000 QR codes
 };
 
 module.exports = async (req, res) => {

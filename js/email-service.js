@@ -187,7 +187,7 @@ export async function sendPasswordResetEmail(userEmail, userName, resetLink) {
               <p>We received a request to reset your BizTrack password. Click the button below to create a new password:</p>
               
               <div style="text-align: center;">
-                <a href="${resetLink}" class="button">Reset Password</a>
+               <a href="${resetLink}" style="display: inline-block; background: linear-gradient(135deg, #4F46E5, #7C3AED); color: #ffffff !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0;">Reset Password</a>
               </div>
 
               <div class="alert">

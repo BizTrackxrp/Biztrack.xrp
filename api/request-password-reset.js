@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
 
     // Find user
     const userResult = await pool.query(
-      'SELECT id, email, name FROM users WHERE email = $1',
+      'SELECT id, email, company_name FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
     
     if (process.env.RESEND_API_KEY) {
       try {
-        await sendPasswordResetEmail(user.email, user.name, resetUrl);
+        await sendPasswordResetEmail(user.email, user.company_name, resetUrl);
         console.log('📧 Password reset email sent to:', user.email);
       } catch (emailError) {
         console.error('⚠️ Failed to send password reset email:', emailError);

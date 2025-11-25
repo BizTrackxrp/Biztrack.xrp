@@ -176,7 +176,7 @@ module.exports = async (req, res) => {
         
         // Get location asynchronously (don't wait for it)
         getLocationFromIP(ipAddress).then(location => {
-          sendNewIPLoginEmail(user.email, user.name, ipAddress, location)
+         sendNewIPLoginEmail(user.email, user.company_name, ipAddress, location)
             .then(() => {
               console.log('[LOGIN] 📧 New IP alert email sent to:', user.email);
             })

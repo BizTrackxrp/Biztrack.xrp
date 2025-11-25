@@ -114,7 +114,7 @@ module.exports = async (req, res) => {
 
     // Get user from database
     const userResult = await pool.query(
-      'SELECT id, email, password_hash, name FROM users WHERE id = $1',
+      'SELECT id, email, password_hash, company_name FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -151,7 +151,7 @@ module.exports = async (req, res) => {
     // Send email notification about password change
     if (process.env.RESEND_API_KEY) {
       try {
-        await sendPasswordChangeEmail(user.email, user.name);
+        await sendPasswordChangeEmail(user.email, user.company_name);
         console.log('📧 Password change email sent to:', user.email);
       } catch (emailError) {
         console.error('⚠️ Failed to send password change email:', emailError);

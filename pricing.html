@@ -265,17 +265,15 @@
       transform: none;
     }
 
-    .cta-secondary {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+    .cta-downgrade {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      opacity: 0.8;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
     }
 
-    .cta-secondary:hover {
-      opacity: 1;
+    .cta-downgrade:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
     }
 
     /* Manage Section */
@@ -475,6 +473,16 @@
       box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
     }
 
+    .modal-button.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .modal-button.danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
     .modal-button.secondary {
       background: white;
       color: #64748B;
@@ -588,21 +596,12 @@
         <h3>Manage Your Subscription</h3>
         <div class="manage-grid">
           
-          <!-- Downgrade Card -->
-          <div class="manage-card">
-            <h4><i class="fas fa-arrow-down"></i> Want to Downgrade?</h4>
-            <p>Your plan change will take effect at the end of your current billing period.</p>
-            <button onclick="confirmDowngrade()">
-              <i class="fas fa-arrow-down"></i> Request Downgrade
-            </button>
-          </div>
-
           <!-- Cancel Card -->
           <div class="manage-card cancel">
             <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
             <p>Your subscription will remain active until the end of your billing period.</p>
-            <button onclick="confirmCancel()">
-              <i class="fas fa-times-circle"></i> Request Cancellation
+            <button onclick="showCancelModal()">
+              <i class="fas fa-times-circle"></i> Cancel Subscription
             </button>
           </div>
 
@@ -638,9 +637,12 @@
       enterprise: { name: 'Enterprise', price: 399, qrCodes: 10000, features: ['10,000+ QR codes per month', 'Enterprise blockchain features', 'Dedicated infrastructure', 'Dedicated account manager', 'Custom analytics', 'White-label options', 'SLA guarantees', 'Training & consultation'] }
     };
 
+    const TIER_ORDER = ['free', 'essential', 'scale', 'enterprise'];
+
     let currentUserTier = 'free';
     let currentUserEmail = '';
-    let pendingTierChange = null;
+    let currentUserName = '';
+    let pendingDowngradeTier = null;
 
     async function loadUserTier() {
       try {
@@ -650,6 +652,7 @@
         if (data.success) {
           currentUserTier = data.subscription.tier;
           currentUserEmail = data.user?.email || '';
+          currentUserName = data.user?.name || data.user?.company_name || '';
           
           if (currentUserTier === 'free') {
             document.getElementById('freeTrialBanner').classList.add('show');
@@ -684,151 +687,17 @@
       indicator.style.display = 'block';
     }
 
-    // Confirmation modals for downgrade/cancel from manage section
-    function confirmDowngrade() {
-      showConfirmationModal('downgrade', null);
-    }
-
-    function confirmCancel() {
-      showConfirmationModal('cancel', null);
-    }
-
-    // Confirmation modal for card-based downgrade
-    function confirmCardDowngrade(tierKey) {
-      showConfirmationModal('downgrade', tierKey);
-    }
-
-    function showConfirmationModal(type, targetTier) {
-      const modal = document.getElementById('modal');
-      const overlay = document.getElementById('modalOverlay');
-      
-      pendingTierChange = targetTier;
-      
-      if (type === 'downgrade') {
-        const targetTierName = targetTier ? TIERS[targetTier].name : 'a lower tier';
-        modal.innerHTML = `
-          <div class="modal-header">
-            <h3><i class="fas fa-arrow-down"></i> Confirm Downgrade</h3>
-            <button class="modal-close" onclick="closeModal()">×</button>
-          </div>
-          <div class="modal-content">
-            <p><strong>Are you sure you want to downgrade${targetTier ? ` to ${targetTierName}` : ''}?</strong></p>
-            <p>Your plan change will take effect at the end of your current billing period. You'll keep your current limits until then.</p>
-          </div>
-          <div class="modal-buttons">
-            <button class="modal-button secondary" onclick="closeModal()">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-            <button class="modal-button primary" onclick="proceedWithRequest('downgrade')">
-              <i class="fas fa-check"></i> Yes, Downgrade
-            </button>
-          </div>
-        `;
-      } else if (type === 'cancel') {
-        modal.innerHTML = `
-          <div class="modal-header">
-            <h3><i class="fas fa-times-circle"></i> Confirm Cancellation</h3>
-            <button class="modal-close" onclick="closeModal()">×</button>
-          </div>
-          <div class="modal-content">
-            <p><strong>Are you sure you want to cancel your subscription?</strong></p>
-            <p>Your subscription will remain active until the end of your billing period, then you'll revert to the Free tier (10 QR codes/month).</p>
-          </div>
-          <div class="modal-buttons">
-            <button class="modal-button secondary" onclick="closeModal()">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-            <button class="modal-button primary" onclick="proceedWithRequest('cancel')">
-              <i class="fas fa-check"></i> Yes, Cancel Subscription
-            </button>
-          </div>
-        `;
-      }
-      
-      overlay.classList.add('show');
-    }
-
-    async function proceedWithRequest(type) {
-      const modal = document.getElementById('modal');
-      
-      // Show loading state
-      modal.innerHTML = `
-        <div class="modal-content" style="text-align: center; padding: 2rem;">
-          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
-          <p>Processing your request...</p>
-        </div>
-      `;
-      
-      try {
-        const token = localStorage.getItem('biztrack-auth-token');
-        
-        const response = await fetch('/api/change-subscription', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            requestType: type,
-            currentPlan: currentUserTier,
-            userEmail: currentUserEmail,
-            targetPlan: pendingTierChange
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success || response.ok) {
-          // Success! Show confirmation
-          modal.innerHTML = `
-            <div class="modal-success">
-              <div class="success-icon">
-                <i class="fas fa-check"></i>
-              </div>
-              <h4>Request Received!</h4>
-              <p>Your ${type === 'cancel' ? 'cancellation' : 'downgrade'} request has been submitted. We'll process it within 24 hours and send you a confirmation email.</p>
-              <p style="font-size: 0.875rem; color: #64748B; margin-top: 1rem;">Your current plan will remain active until the end of your billing period.</p>
-              <button class="modal-button primary" onclick="closeModal()">Close</button>
-            </div>
-          `;
-        } else {
-          throw new Error(data.error || 'Request failed');
-        }
-      } catch (error) {
-        console.error('Request error:', error);
-        // Show user-friendly error
-        modal.innerHTML = `
-          <div class="modal-header">
-            <h3><i class="fas fa-exclamation-circle"></i> Request Noted</h3>
-            <button class="modal-close" onclick="closeModal()">×</button>
-          </div>
-          <div class="modal-content">
-            <p>Your request has been logged. Our team will process it within 24 hours and confirm via email.</p>
-            <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748B;">If you have any questions, you can reach us at <a href="mailto:info@biztrack.io" style="color: #667eea; font-weight: 600;">info@biztrack.io</a></p>
-          </div>
-          <button class="modal-button primary" onclick="closeModal()">Close</button>
-        `;
-      }
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('show');
-      pendingTierChange = null;
-    }
-
-    // Close modal when clicking overlay
-    document.getElementById('modalOverlay').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
     function renderPricingCards() {
       const grid = document.getElementById('pricingGrid');
       grid.innerHTML = '';
       
+      const currentIndex = TIER_ORDER.indexOf(currentUserTier);
+      
       Object.entries(TIERS).forEach(([tierKey, tier]) => {
+        const tierIndex = TIER_ORDER.indexOf(tierKey);
         const isCurrentPlan = tierKey === currentUserTier;
-        const isUpgrade = getTierLevel(tierKey) > getTierLevel(currentUserTier);
-        const isDowngrade = getTierLevel(tierKey) < getTierLevel(currentUserTier);
+        const isUpgrade = tierIndex > currentIndex;
+        const isDowngrade = tierIndex < currentIndex;
         
         const card = document.createElement('div');
         card.className = `pricing-card ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
@@ -841,9 +710,9 @@
         if (isCurrentPlan) {
           buttonHTML = '<button class="cta-button cta-current"><i class="fas fa-check-circle"></i> Current Plan</button>';
         } else if (isUpgrade) {
-          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Click to Upgrade</button>`;
+          buttonHTML = `<button class="cta-button cta-primary" onclick="upgradeTier('${tierKey}')"><i class="fas fa-rocket"></i> Upgrade</button>`;
         } else if (isDowngrade) {
-          buttonHTML = `<button class="cta-button cta-secondary" onclick="confirmCardDowngrade('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade to ${tier.name}</button>`;
+          buttonHTML = `<button class="cta-button cta-downgrade" onclick="showDowngradeModal('${tierKey}')"><i class="fas fa-arrow-down"></i> Downgrade</button>`;
         }
         
         card.innerHTML = `
@@ -864,10 +733,183 @@
       });
     }
 
-    function getTierLevel(tier) {
-      const levels = { free: 0, essential: 1, scale: 2, enterprise: 3 };
-      return levels[tier] || 0;
+    // ==========================================
+    // DOWNGRADE MODAL
+    // ==========================================
+    function showDowngradeModal(tierKey) {
+      pendingDowngradeTier = tierKey;
+      const tierName = TIERS[tierKey].name;
+      const modal = document.getElementById('modal');
+      const overlay = document.getElementById('modalOverlay');
+      
+      modal.innerHTML = `
+        <div class="modal-header">
+          <h3><i class="fas fa-arrow-down" style="color: #f59e0b;"></i> Confirm Downgrade</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content">
+          <p><strong>Are you sure you want to downgrade to ${tierName}?</strong></p>
+          <p>Your plan will change at the end of your current billing period. You'll keep your current features until then.</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="modal-button primary" onclick="processDowngrade()">
+            <i class="fas fa-check"></i> Yes, Downgrade
+          </button>
+        </div>
+      `;
+      
+      overlay.classList.add('show');
     }
+
+    async function processDowngrade() {
+      const modal = document.getElementById('modal');
+      
+      modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+          <p>Processing your request...</p>
+        </div>
+      `;
+      
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        
+        const response = await fetch('/api/downgrade-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            newTier: pendingDowngradeTier
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          modal.innerHTML = `
+            <div class="modal-success">
+              <div class="success-icon">
+                <i class="fas fa-check"></i>
+              </div>
+              <h4>Downgrade Scheduled!</h4>
+              <p>Your plan will change to ${TIERS[pendingDowngradeTier].name} at the end of your billing period.</p>
+              <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Got it</button>
+            </div>
+          `;
+        } else {
+          throw new Error(data.error || 'Failed to process downgrade');
+        }
+      } catch (error) {
+        console.error('Downgrade error:', error);
+        modal.innerHTML = `
+          <div class="modal-header">
+            <h3><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Error</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+          </div>
+          <div class="modal-content">
+            <p>Something went wrong. Please try again or contact support at <a href="mailto:info@biztrack.io" style="color: #667eea;">info@biztrack.io</a></p>
+          </div>
+          <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Close</button>
+        `;
+      }
+    }
+
+    // ==========================================
+    // CANCEL MODAL
+    // ==========================================
+    function showCancelModal() {
+      const modal = document.getElementById('modal');
+      const overlay = document.getElementById('modalOverlay');
+      
+      modal.innerHTML = `
+        <div class="modal-header">
+          <h3><i class="fas fa-times-circle" style="color: #ef4444;"></i> Cancel Subscription</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content">
+          <p><strong>Are you sure you want to cancel?</strong></p>
+          <p>Your subscription will remain active until the end of your billing period, then you'll revert to the Free tier (10 QR codes/month).</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Keep Subscription
+          </button>
+          <button class="modal-button danger" onclick="processCancel()">
+            <i class="fas fa-check"></i> Yes, Cancel
+          </button>
+        </div>
+      `;
+      
+      overlay.classList.add('show');
+    }
+
+    async function processCancel() {
+      const modal = document.getElementById('modal');
+      
+      modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+          <p>Processing your request...</p>
+        </div>
+      `;
+      
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        
+        const response = await fetch('/api/cancel-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          modal.innerHTML = `
+            <div class="modal-success">
+              <div class="success-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <i class="fas fa-check"></i>
+              </div>
+              <h4>Cancellation Confirmed</h4>
+              <p>Your subscription will end at the end of your billing period. We're sorry to see you go!</p>
+              <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Got it</button>
+            </div>
+          `;
+        } else {
+          throw new Error(data.error || 'Failed to process cancellation');
+        }
+      } catch (error) {
+        console.error('Cancel error:', error);
+        modal.innerHTML = `
+          <div class="modal-header">
+            <h3><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Error</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+          </div>
+          <div class="modal-content">
+            <p>Something went wrong. Please try again or contact support at <a href="mailto:info@biztrack.io" style="color: #667eea;">info@biztrack.io</a></p>
+          </div>
+          <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Close</button>
+        `;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      pendingDowngradeTier = null;
+    }
+
+    // Close modal when clicking overlay
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
 
     async function upgradeTier(tier) {
       const token = localStorage.getItem('biztrack-auth-token');

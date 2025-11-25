@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { sendNewIPLoginEmail } = require('../js/email-service.js');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -54,6 +55,31 @@ function getIPAddress(req) {
   );
 }
 
+// ==========================================
+// GET LOCATION FROM IP (using free ipapi.co API)
+// ==========================================
+async function getLocationFromIP(ipAddress) {
+  if (!ipAddress || ipAddress === 'Unknown' || ipAddress.includes('::1') || ipAddress === '127.0.0.1') {
+    return 'Local/Unknown Location';
+  }
+
+  try {
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+    const data = await response.json();
+    
+    if (data.city && data.region && data.country_name) {
+      return `${data.city}, ${data.region}, ${data.country_name}`;
+    } else if (data.country_name) {
+      return data.country_name;
+    }
+  } catch (error) {
+    console.error('Error getting location:', error);
+  }
+  
+  return 'Unknown Location';
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -90,20 +116,29 @@ module.exports = async (req, res) => {
       {
         userId: user.id,
         email: user.email,
-        businessType: user.business_type  // ← ADD THIS!
+        businessType: user.business_type
       },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
     // ==========================================
-    // CREATE SESSION RECORD
+    // CREATE SESSION RECORD & CHECK FOR NEW IP
     // ==========================================
+    let isNewIP = false;
     try {
       const userAgent = req.headers['user-agent'] || '';
       const ipAddress = getIPAddress(req);
       const deviceName = parseDeviceName(userAgent);
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+      // Check if this IP has been used before by this user
+      const previousIPCheck = await pool.query(
+        'SELECT id FROM sessions WHERE user_id = $1 AND ip_address = $2 LIMIT 1',
+        [user.id, ipAddress]
+      );
+
+      isNewIP = previousIPCheck.rows.length === 0;
 
       // Check if session already exists
       const existingSession = await pool.query(
@@ -134,6 +169,23 @@ module.exports = async (req, res) => {
         );
         console.log('[LOGIN] ✅ New session created for:', user.email);
       }
+
+      // Send email alert for new IP login
+      if (isNewIP && process.env.RESEND_API_KEY) {
+        console.log('[LOGIN] 🚨 New IP detected, sending alert email');
+        
+        // Get location asynchronously (don't wait for it)
+        getLocationFromIP(ipAddress).then(location => {
+          sendNewIPLoginEmail(user.email, user.name, ipAddress, location)
+            .then(() => {
+              console.log('[LOGIN] 📧 New IP alert email sent to:', user.email);
+            })
+            .catch(emailError => {
+              console.error('[LOGIN] ⚠️ Failed to send new IP email:', emailError);
+            });
+        });
+      }
+
     } catch (sessionError) {
       // Don't fail login if session creation fails
       console.error('[LOGIN] ⚠️ Session creation failed:', sessionError);
@@ -147,7 +199,7 @@ module.exports = async (req, res) => {
         id: user.id,
         email: user.email,
         companyName: user.company_name,
-        businessType: user.business_type  // ← ADD THIS!
+        businessType: user.business_type
       }
     });
 

@@ -1,13 +1,11 @@
 const { Pool } = require('pg');
-const { Resend } = require('resend');
 const crypto = require('crypto');
+const { sendPasswordResetEmail } = require('../js/email-service.js');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -23,7 +21,7 @@ module.exports = async (req, res) => {
 
     // Find user
     const userResult = await pool.query(
-      'SELECT id, email FROM users WHERE email = $1',
+      'SELECT id, email, name FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -48,23 +46,18 @@ module.exports = async (req, res) => {
       [user.id, resetToken, expiresAt]
     );
 
-    // Send email
+    // Send email using professional template
     const resetUrl = `https://www.biztrack.io/reset-password.html?token=${resetToken}`;
-
-    await resend.emails.send({
-      from: 'BizTrack <onboarding@resend.dev>', // Change this to your verified domain later
-      to: user.email,
-      subject: 'Reset Your BizTrack Password',
-      html: `
-        <h2>Password Reset Request</h2>
-        <p>You requested to reset your password for BizTrack.</p>
-        <p>Click the link below to reset your password (link expires in 1 hour):</p>
-        <p><a href="${resetUrl}">${resetUrl}</a></p>
-        <p>If you didn't request this, you can safely ignore this email.</p>
-        <br>
-        <p>- The BizTrack Team</p>
-      `
-    });
+    
+    if (process.env.RESEND_API_KEY) {
+      try {
+        await sendPasswordResetEmail(user.email, user.name, resetUrl);
+        console.log('📧 Password reset email sent to:', user.email);
+      } catch (emailError) {
+        console.error('⚠️ Failed to send password reset email:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     return res.status(200).json({
       success: true,

@@ -2,6 +2,7 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { sendPasswordChangeEmail } = require('../js/email-service.js');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -113,7 +114,7 @@ module.exports = async (req, res) => {
 
     // Get user from database
     const userResult = await pool.query(
-      'SELECT id, email, password_hash FROM users WHERE id = $1',
+      'SELECT id, email, password_hash, name FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -147,10 +148,16 @@ module.exports = async (req, res) => {
 
     console.log('✅ Password changed successfully for user:', user.email);
 
-    // TODO: Send email notification about password change
-    // if (process.env.RESEND_API_KEY) {
-    //   await sendPasswordChangeEmail(user.email);
-    // }
+    // Send email notification about password change
+    if (process.env.RESEND_API_KEY) {
+      try {
+        await sendPasswordChangeEmail(user.email, user.name);
+        console.log('📧 Password change email sent to:', user.email);
+      } catch (emailError) {
+        console.error('⚠️ Failed to send password change email:', emailError);
+        // Don't fail the password change if email fails
+      }
+    }
 
     return res.status(200).json({
       success: true,

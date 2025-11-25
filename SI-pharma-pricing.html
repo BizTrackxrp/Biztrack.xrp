@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -264,7 +263,233 @@
       background: linear-gradient(135deg, #f59e0b, #d97706);
     }
 
-    /* Comparison Section */
+    /* Manage Section */
+    .manage-section {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      background: white;
+      border: 2px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 2rem;
+      display: none;
+    }
+
+    .manage-section.show {
+      display: block;
+    }
+
+    .manage-section h3 {
+      color: #1E293B;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .manage-card {
+      background: #FEF2F2;
+      border: 1px solid #FCA5A5;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .manage-card h4 {
+      color: #DC2626;
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .manage-card p {
+      color: #64748B;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .manage-card button {
+      padding: 0.75rem 1.5rem;
+      background: #DC2626;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .manage-card button:hover {
+      background: #B91C1C;
+      transform: translateY(-1px);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-header h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      flex-grow: 1;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #64748B;
+      cursor: pointer;
+      padding: 0.25rem;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #1E293B;
+    }
+
+    .modal-content p {
+      color: #64748B;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .modal-button {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .modal-button.primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .modal-button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .modal-button.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .modal-button.danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .modal-button.secondary {
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+    }
+
+    .modal-button.secondary:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    .modal-success {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .modal-success .success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: white;
+      font-size: 2.5rem;
+    }
+
+    .modal-success h4 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-success p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Rest of existing styles... */
     .comparison-section {
       max-width: 1200px;
       margin: 3rem auto;
@@ -329,7 +554,6 @@
       border-radius: 12px;
     }
 
-    /* DSCSA Compliance Section */
     .dscsa-section {
       max-width: 1200px;
       margin: 3rem auto;
@@ -422,7 +646,6 @@
       margin-top: 0.25rem;
     }
 
-    /* Includes Section */
     .includes-section {
       max-width: 1200px;
       margin: 3rem auto;
@@ -459,7 +682,6 @@
       font-size: 1.25rem;
     }
 
-    /* Contact Section */
     .contact-section {
       max-width: 800px;
       margin: 3rem auto 0;
@@ -501,7 +723,6 @@
       transform: translateX(3px);
     }
 
-    /* Footer */
     .footer {
       background: #0f172a;
       color: #94a3b8;
@@ -511,7 +732,6 @@
       text-align: center;
     }
 
-    /* Responsive */
     @media (max-width: 968px) {
       .pricing-container {
         grid-template-columns: 1fr;
@@ -538,6 +758,10 @@
 
       .hero p {
         font-size: 1.125rem;
+      }
+
+      .modal-buttons {
+        flex-direction: column-reverse;
       }
     }
   </style>
@@ -599,7 +823,7 @@
       </div>
 
       <!-- Professional Compliance -->
-      <div class="pricing-tier popular" id="tier-professional">
+      <div class="pricing-tier popular" id="tier-pharma_professional">
         <div class="popular-badge">MOST POPULAR</div>
         <h2 class="tier-name">Professional</h2>
         <div class="tier-price">$599<span> / month</span></div>
@@ -617,7 +841,7 @@
           <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
         </ul>
         
-        <button class="cta-button" onclick="selectPlan('professional')">
+        <button class="cta-button" onclick="selectPlan('pharma_professional')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -647,6 +871,18 @@
         </button>
       </div>
 
+    </div>
+
+    <!-- Manage Subscription Section (shown only for paid users) -->
+    <div class="manage-section" id="manageSection">
+      <h3>Manage Your Subscription</h3>
+      <div class="manage-card">
+        <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
+        <p>Your subscription will remain active until the end of your billing period.</p>
+        <button onclick="showCancelModal()">
+          <i class="fas fa-times-circle"></i> Cancel Subscription
+        </button>
+      </div>
     </div>
 
     <!-- DSCSA COMPLIANCE SECTION -->
@@ -778,52 +1014,6 @@
         </div>
       </div>
     </div>
-    
-    <!-- What Makes BizTrack Different -->
-    <div class="comparison-section" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05)); border: 2px solid #667eea;">
-      <h2>What Makes BizTrack Different</h2>
-      <p style="max-width: 900px; margin: 0 auto 2rem; font-size: 1.125rem; line-height: 1.7;">
-        Most DSCSA platforms only handle B2B compliance with centralized databases. 
-        BizTrack goes further: <strong>blockchain-verified records</strong> that are immutable forever, 
-        plus <strong>consumer-facing verification</strong> so patients can verify authenticity themselves.
-      </p>
-      
-      <div class="comparison-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 900px; margin: 0 auto;">
-        <div style="text-align: left; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #e2e8f0;">
-          <h3 style="color: #64748b; margin-bottom: 1rem; font-size: 1.25rem;">📊 Traditional Platforms</h3>
-          <ul style="list-style: none; padding: 0;">
-            <li style="padding: 0.5rem 0; color: #64748b;">• Centralized database storage</li>
-            <li style="padding: 0.5rem 0; color: #64748b;">• Records can be modified</li>
-            <li style="padding: 0.5rem 0; color: #64748b;">• B2B compliance only</li>
-            <li style="padding: 0.5rem 0; color: #64748b;">• No consumer verification</li>
-            <li style="padding: 0.5rem 0; color: #64748b;">• Trust the platform operator</li>
-          </ul>
-        </div>
-        
-        <div style="text-align: left; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #667eea;">
-          <h3 style="color: #667eea; margin-bottom: 1rem; font-size: 1.25rem;">⛓️ BizTrack (Blockchain)</h3>
-          <ul style="list-style: none; padding: 0;">
-            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• XRP Ledger immutable storage</li>
-            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Tamper-proof forever</li>
-            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• B2B + B2C compliance</li>
-            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Consumer scan portal</li>
-            <li style="padding: 0.5rem 0; color: #334155; font-weight: 600;">• Trust cryptography, not us</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; max-width: 900px; margin-left: auto; margin-right: auto;">
-        <p style="color: #0f172a; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">
-          <i class="fas fa-mobile-alt" style="color: #667eea;"></i> 
-          Consumer Trust = Competitive Advantage
-        </p>
-        <p style="color: #334155; margin: 0;">
-          Your customers can scan QR codes on their medication and instantly verify authenticity, 
-          see the complete supply chain history, and confirm it's never been tampered with. 
-          No other DSCSA platform offers public verification—this builds trust and brand loyalty.
-        </p>
-      </div>
-    </div>
 
     <!-- Includes Section -->
     <div class="includes-section">
@@ -881,6 +1071,13 @@
     </div>
   </footer>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <!-- Dynamic content loaded by JS -->
+    </div>
+  </div>
+
   <script src="js/auth.js"></script>
   <script src="js/pharma-sidebar.js"></script>
   
@@ -888,7 +1085,16 @@
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
     
     // Tier hierarchy for comparison
-    const TIER_ORDER = ['free', 'pharma_starter', 'professional', 'pharma_enterprise'];
+    const TIER_ORDER = ['free', 'pharma_starter', 'pharma_professional', 'pharma_enterprise'];
+    
+    const TIER_NAMES = {
+      'pharma_starter': 'Starter',
+      'pharma_professional': 'Professional',
+      'pharma_enterprise': 'Enterprise'
+    };
+
+    let currentUserTier = 'free';
+    let pendingDowngradeTier = null;
 
     // ==========================================
     // LOAD USER TIER ON PAGE LOAD
@@ -911,12 +1117,17 @@
         if (!response.ok) throw new Error('Failed to load user data');
 
         const data = await response.json();
-        const currentTier = data.subscription_tier || 'free';
+        currentUserTier = data.subscription_tier || 'free';
         
-        console.log('[PRICING] User current tier:', currentTier);
+        console.log('[PRICING] User current tier:', currentUserTier);
+        
+        // Show manage section for paid users
+        if (currentUserTier !== 'free') {
+          document.getElementById('manageSection').classList.add('show');
+        }
         
         // Update UI based on current tier
-        updatePricingUI(currentTier);
+        updatePricingUI(currentUserTier);
 
       } catch (error) {
         console.error('[PRICING] Error loading user tier:', error);
@@ -940,10 +1151,14 @@
         const existingBadges = tierElement.querySelectorAll('.current-plan-badge');
         existingBadges.forEach(badge => badge.remove());
 
+        // Hide popular badge if viewing
+        const popularBadge = tierElement.querySelector('.popular-badge');
+
         if (tier === currentTier) {
           // Current plan
           tierElement.classList.add('current-plan');
           tierElement.classList.remove('popular');
+          if (popularBadge) popularBadge.style.display = 'none';
           
           // Add "Current Plan" badge
           const badge = document.createElement('div');
@@ -955,12 +1170,14 @@
           button.classList.add('current');
           button.disabled = true;
           button.innerHTML = '<i class="fas fa-check-circle"></i> Current Plan';
+          button.onclick = null;
           
         } else if (index > currentIndex) {
           // Upgrade
           button.classList.remove('current', 'downgrade');
           button.disabled = false;
           button.innerHTML = '<i class="fas fa-arrow-up"></i> Upgrade';
+          button.onclick = () => selectPlan(tier);
           
         } else if (index < currentIndex) {
           // Downgrade
@@ -968,30 +1185,24 @@
           button.classList.remove('current');
           button.disabled = false;
           button.innerHTML = '<i class="fas fa-arrow-down"></i> Downgrade';
+          button.onclick = () => showDowngradeModal(tier);
         }
       });
     }
 
     // ==========================================
-    // SELECT PLAN (CHECKOUT)
+    // SELECT PLAN (CHECKOUT FOR NEW/UPGRADE)
     // ==========================================
     async function selectPlan(tier) {
-      const button = event.target;
-      const originalHTML = button.innerHTML;
-      button.disabled = true;
-      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+      const token = localStorage.getItem('biztrack-auth-token');
+      
+      if (!token) {
+        // Not logged in - redirect to register
+        window.location.href = `/register.html?plan=${tier}`;
+        return;
+      }
 
       try {
-        // Get auth token
-        const token = localStorage.getItem('biztrack-auth-token');
-        
-        if (!token) {
-          // Not logged in - redirect to register
-          window.location.href = `/register.html?plan=${tier}`;
-          return;
-        }
-
-        // User is logged in - create checkout session
         const response = await fetch(`${API_BASE}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
@@ -1013,10 +1224,187 @@
       } catch (error) {
         console.error('Checkout error:', error);
         alert('Failed to start checkout. Please try again or contact support.');
-        button.disabled = false;
-        button.innerHTML = originalHTML;
       }
     }
+
+    // ==========================================
+    // DOWNGRADE MODAL
+    // ==========================================
+    function showDowngradeModal(tierKey) {
+      pendingDowngradeTier = tierKey;
+      const tierName = TIER_NAMES[tierKey] || tierKey;
+      const modal = document.getElementById('modal');
+      const overlay = document.getElementById('modalOverlay');
+      
+      modal.innerHTML = `
+        <div class="modal-header">
+          <h3><i class="fas fa-arrow-down" style="color: #f59e0b;"></i> Confirm Downgrade</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content">
+          <p><strong>Are you sure you want to downgrade to ${tierName}?</strong></p>
+          <p>Your plan will change at the end of your current billing period. You'll keep your current features until then.</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="modal-button primary" onclick="processDowngrade()">
+            <i class="fas fa-check"></i> Yes, Downgrade
+          </button>
+        </div>
+      `;
+      
+      overlay.classList.add('show');
+    }
+
+    async function processDowngrade() {
+      const modal = document.getElementById('modal');
+      
+      modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+          <p>Processing your request...</p>
+        </div>
+      `;
+      
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        
+        const response = await fetch(`${API_BASE}/api/downgrade-subscription`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            newTier: pendingDowngradeTier
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          const tierName = TIER_NAMES[pendingDowngradeTier] || pendingDowngradeTier;
+          modal.innerHTML = `
+            <div class="modal-success">
+              <div class="success-icon">
+                <i class="fas fa-check"></i>
+              </div>
+              <h4>Downgrade Scheduled!</h4>
+              <p>Your plan will change to ${tierName} at the end of your billing period.</p>
+              <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Got it</button>
+            </div>
+          `;
+        } else {
+          throw new Error(data.error || 'Failed to process downgrade');
+        }
+      } catch (error) {
+        console.error('Downgrade error:', error);
+        modal.innerHTML = `
+          <div class="modal-header">
+            <h3><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Error</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+          </div>
+          <div class="modal-content">
+            <p>Something went wrong. Please try again or contact support at <a href="mailto:info@biztrack.io" style="color: #667eea;">info@biztrack.io</a></p>
+          </div>
+          <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Close</button>
+        `;
+      }
+    }
+
+    // ==========================================
+    // CANCEL MODAL
+    // ==========================================
+    function showCancelModal() {
+      const modal = document.getElementById('modal');
+      const overlay = document.getElementById('modalOverlay');
+      
+      modal.innerHTML = `
+        <div class="modal-header">
+          <h3><i class="fas fa-times-circle" style="color: #ef4444;"></i> Cancel Subscription</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content">
+          <p><strong>Are you sure you want to cancel?</strong></p>
+          <p>Your subscription will remain active until the end of your billing period. After that, you'll lose access to premium features.</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Keep Subscription
+          </button>
+          <button class="modal-button danger" onclick="processCancel()">
+            <i class="fas fa-check"></i> Yes, Cancel
+          </button>
+        </div>
+      `;
+      
+      overlay.classList.add('show');
+    }
+
+    async function processCancel() {
+      const modal = document.getElementById('modal');
+      
+      modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+          <p>Processing your request...</p>
+        </div>
+      `;
+      
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        
+        const response = await fetch(`${API_BASE}/api/cancel-subscription`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          modal.innerHTML = `
+            <div class="modal-success">
+              <div class="success-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <i class="fas fa-check"></i>
+              </div>
+              <h4>Cancellation Confirmed</h4>
+              <p>Your subscription will end at the end of your billing period. We're sorry to see you go!</p>
+              <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Got it</button>
+            </div>
+          `;
+        } else {
+          throw new Error(data.error || 'Failed to process cancellation');
+        }
+      } catch (error) {
+        console.error('Cancel error:', error);
+        modal.innerHTML = `
+          <div class="modal-header">
+            <h3><i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Error</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+          </div>
+          <div class="modal-content">
+            <p>Something went wrong. Please try again or contact support at <a href="mailto:info@biztrack.io" style="color: #667eea;">info@biztrack.io</a></p>
+          </div>
+          <button class="modal-button primary" onclick="closeModal()" style="width: 100%;">Close</button>
+        `;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      pendingDowngradeTier = null;
+    }
+
+    // Close modal when clicking overlay
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
 
     // ==========================================
     // INIT ON PAGE LOAD

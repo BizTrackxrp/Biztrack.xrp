@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,6 +122,11 @@
       box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
     }
 
+    .pricing-tier.current-plan {
+      border-color: #10b981;
+      box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+    }
+
     .popular-badge {
       position: absolute;
       top: -15px;
@@ -137,9 +143,20 @@
       letter-spacing: 0.5px;
     }
 
-    /* Hide popular badge when user is logged in */
-    .popular-badge.hidden {
-      display: none;
+    .current-plan-badge {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .tier-name {
@@ -233,19 +250,18 @@
       transform: none;
     }
 
-    .cta-button:disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .cta-button.current-plan {
+    .cta-button.current {
       background: #10b981;
       cursor: default;
     }
 
-    .cta-button.current-plan:hover {
+    .cta-button.current:hover {
       transform: none;
       box-shadow: none;
+    }
+
+    .cta-button.downgrade {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
     }
 
     /* Comparison Section */
@@ -560,7 +576,7 @@
     <div class="pricing-container">
       
       <!-- Starter Compliance -->
-      <div class="pricing-tier" data-tier="starter">
+      <div class="pricing-tier" id="tier-pharma_starter">
         <h2 class="tier-name">Starter</h2>
         <div class="tier-price">$199<span> / month</span></div>
         <div class="tier-volume">1,000 QR codes per month</div>
@@ -576,15 +592,15 @@
           <li><i class="fas fa-check-circle"></i> Email support (48hr response)</li>
         </ul>
         
-        <button class="cta-button" id="btn-starter" onclick="selectPlan('starter')">
+        <button class="cta-button" onclick="selectPlan('pharma_starter')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
 
       <!-- Professional Compliance -->
-      <div class="pricing-tier popular" data-tier="professional">
-        <div class="popular-badge" id="popular-badge">MOST POPULAR</div>
+      <div class="pricing-tier popular" id="tier-professional">
+        <div class="popular-badge">MOST POPULAR</div>
         <h2 class="tier-name">Professional</h2>
         <div class="tier-price">$599<span> / month</span></div>
         <div class="tier-volume">5,000 QR codes per month</div>
@@ -601,14 +617,14 @@
           <li><i class="fas fa-check-circle"></i> Priority support (24hr response)</li>
         </ul>
         
-        <button class="cta-button" id="btn-professional" onclick="selectPlan('professional')">
+        <button class="cta-button" onclick="selectPlan('professional')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
 
       <!-- Enterprise Compliance -->
-      <div class="pricing-tier" data-tier="pharma_enterprise">
+      <div class="pricing-tier" id="tier-pharma_enterprise">
         <h2 class="tier-name">Enterprise</h2>
         <div class="tier-price">$1,499<span> / month</span></div>
         <div class="tier-volume">50,000 QR codes per month</div>
@@ -625,7 +641,7 @@
           <li><i class="fas fa-check-circle"></i> Priority support (12hr response)</li>
         </ul>
         
-        <button class="cta-button" id="btn-pharma_enterprise" onclick="selectPlan('pharma_enterprise')">
+        <button class="cta-button" onclick="selectPlan('pharma_enterprise')">
           Get Started
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -869,92 +885,145 @@
   <script src="js/pharma-sidebar.js"></script>
   
   <script>
-    // Check user's current tier and update UI
-    async function updatePricingUI() {
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+    
+    // Tier hierarchy for comparison
+    const TIER_ORDER = ['free', 'pharma_starter', 'professional', 'pharma_enterprise'];
+
+    // ==========================================
+    // LOAD USER TIER ON PAGE LOAD
+    // ==========================================
+    async function loadUserTier() {
       const token = localStorage.getItem('biztrack-auth-token');
       
       if (!token) {
-        // Not logged in - show default UI (with Most Popular badge)
+        console.log('[PRICING] No auth token - user not logged in');
         return;
       }
-      
+
       try {
-        const response = await fetch('/api/check-limits', {
+        const response = await fetch(`${API_BASE}/api/user`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
+        if (!response.ok) throw new Error('Failed to load user data');
+
         const data = await response.json();
+        const currentTier = data.subscription_tier || 'free';
         
-        if (data.success) {
-          const currentTier = data.subscription?.tier || data.user?.subscription_tier || 'free';
-          
-          // Hide "Most Popular" badge for logged-in users
-          const popularBadge = document.getElementById('popular-badge');
-          if (popularBadge) {
-            popularBadge.classList.add('hidden');
-          }
-          
-          // Update buttons based on current tier
-          const tiers = ['starter', 'professional', 'pharma_enterprise'];
-          
-          tiers.forEach(tier => {
-            const btn = document.getElementById(`btn-${tier}`);
-            if (btn) {
-              if (tier === currentTier) {
-                // Current plan - show green "Current Plan" button
-                btn.innerHTML = '<i class="fas fa-check"></i> Current Plan';
-                btn.classList.add('current-plan');
-                btn.disabled = true;
-                btn.onclick = null;
-              } else {
-                // Other plans - keep as upgrade option
-                btn.innerHTML = 'Upgrade <i class="fas fa-arrow-right"></i>';
-              }
-            }
-          });
-        }
+        console.log('[PRICING] User current tier:', currentTier);
+        
+        // Update UI based on current tier
+        updatePricingUI(currentTier);
+
       } catch (error) {
-        console.error('Error checking subscription:', error);
+        console.error('[PRICING] Error loading user tier:', error);
       }
     }
-    
-    // ✅ COPIED FROM WORKING subscription.html
+
+    // ==========================================
+    // UPDATE UI BASED ON CURRENT TIER
+    // ==========================================
+    function updatePricingUI(currentTier) {
+      const currentIndex = TIER_ORDER.indexOf(currentTier);
+
+      TIER_ORDER.forEach((tier, index) => {
+        const tierElement = document.getElementById(`tier-${tier}`);
+        if (!tierElement) return;
+
+        const button = tierElement.querySelector('.cta-button');
+        if (!button) return;
+
+        // Remove existing badges
+        const existingBadges = tierElement.querySelectorAll('.current-plan-badge');
+        existingBadges.forEach(badge => badge.remove());
+
+        if (tier === currentTier) {
+          // Current plan
+          tierElement.classList.add('current-plan');
+          tierElement.classList.remove('popular');
+          
+          // Add "Current Plan" badge
+          const badge = document.createElement('div');
+          badge.className = 'current-plan-badge';
+          badge.textContent = 'CURRENT PLAN';
+          tierElement.insertBefore(badge, tierElement.firstChild);
+          
+          // Update button
+          button.classList.add('current');
+          button.disabled = true;
+          button.innerHTML = '<i class="fas fa-check-circle"></i> Current Plan';
+          
+        } else if (index > currentIndex) {
+          // Upgrade
+          button.classList.remove('current', 'downgrade');
+          button.disabled = false;
+          button.innerHTML = '<i class="fas fa-arrow-up"></i> Upgrade';
+          
+        } else if (index < currentIndex) {
+          // Downgrade
+          button.classList.add('downgrade');
+          button.classList.remove('current');
+          button.disabled = false;
+          button.innerHTML = '<i class="fas fa-arrow-down"></i> Downgrade';
+        }
+      });
+    }
+
+    // ==========================================
+    // SELECT PLAN (CHECKOUT)
+    // ==========================================
     async function selectPlan(tier) {
-      const token = localStorage.getItem('biztrack-auth-token');
-      
-      if (!token) {
-        // Not logged in - redirect to register
-        window.location.href = `/register.html?plan=${tier}`;
-        return;
-      }
-      
+      const button = event.target;
+      const originalHTML = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
       try {
-        const response = await fetch('/api/create-checkout-session', {
+        // Get auth token
+        const token = localStorage.getItem('biztrack-auth-token');
+        
+        if (!token) {
+          // Not logged in - redirect to register
+          window.location.href = `/register.html?plan=${tier}`;
+          return;
+        }
+
+        // User is logged in - create checkout session
+        const response = await fetch(`${API_BASE}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ tier })
+          body: JSON.stringify({ tier: tier })
         });
-        
+
         const data = await response.json();
-        
-        if (data.url) {
+
+        if (data.success && data.url) {
+          // Redirect to Stripe checkout
           window.location.href = data.url;
         } else {
-          alert('Error: ' + (data.error || 'Failed to create checkout session'));
+          throw new Error(data.error || 'Failed to create checkout session');
         }
+
       } catch (error) {
-        console.error('Upgrade error:', error);
-        alert('Error creating checkout session. Please try again.');
+        console.error('Checkout error:', error);
+        alert('Failed to start checkout. Please try again or contact support.');
+        button.disabled = false;
+        button.innerHTML = originalHTML;
       }
     }
-    
-    // Run on page load
-    updatePricingUI();
+
+    // ==========================================
+    // INIT ON PAGE LOAD
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUserTier();
+    });
   </script>
 </body>
 </html>

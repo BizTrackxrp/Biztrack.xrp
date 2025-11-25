@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
 
     // Get user info
     const userResult = await pool.query(
-      'SELECT id, email, name, company_name, subscription_tier FROM users WHERE id = $1',
+      'SELECT id, email, company_name, subscription_tier FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -84,7 +84,7 @@ module.exports = async (req, res) => {
         await sendCancellationNotification(
           user.id,
           user.email,
-          user.name || user.company_name,
+          user.company_name,
           currentTier
         );
         console.log('📧 Cancellation notification sent to admin');

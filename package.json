@@ -16,7 +16,8 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "stripe": "^14.0.0",
-    "micro": "^10.0.1"
+    "micro": "^10.0.1",
+    "resend": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

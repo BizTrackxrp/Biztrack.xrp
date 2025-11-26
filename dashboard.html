@@ -252,6 +252,99 @@
 
     .batch-badge { background: #4F46E5; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem; }
 
+    /* QR Modal */
+    .qr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .qr-modal-overlay.show { display: flex; }
+    .qr-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .qr-modal-header h2 { font-size: 1.5rem; font-weight: 700; color: #1E293B; }
+    .qr-modal-close {
+      background: none; border: none; font-size: 1.5rem; color: #64748B;
+      cursor: pointer; padding: 0.5rem; border-radius: 8px;
+    }
+    .qr-modal-close:hover { background: #F1F5F9; color: #1E293B; }
+    .qr-modal-sku {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .qr-modal-sku span {
+      background: #F1F5F9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      color: #334155;
+    }
+    .qr-codes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-code-box { text-align: center; }
+    .qr-code-box img {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      padding: 8px;
+      background: white;
+    }
+    .qr-code-box.customer img { border-color: #A5B4FC; }
+    .qr-code-box.inventory img { border-color: #CBD5E1; }
+    .qr-code-label { margin-top: 0.75rem; font-weight: 600; font-size: 0.9rem; }
+    .qr-code-box.customer .qr-code-label { color: #4F46E5; }
+    .qr-code-box.inventory .qr-code-label { color: #64748B; }
+    .qr-download-buttons { display: flex; gap: 0.75rem; justify-content: center; }
+    .qr-download-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white; border: none;
+    }
+    .qr-download-btn.customer:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+    .qr-download-btn.inventory {
+      background: white; color: #64748B; border: 2px solid #CBD5E1;
+    }
+    .qr-download-btn.inventory:hover { background: #F8FAFC; }
+    .qr-download-btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white; border: none;
+    }
+    .qr-download-btn.both:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+
     @media (max-width: 768px) {
       .sidebar { width: 100%; height: auto; position: relative; }
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; }
@@ -373,6 +466,45 @@
     </div>
   </div>
 
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
+        <button class="qr-modal-close" onclick="closeQRModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="qr-modal-sku">
+        <span id="modalSku">SKU: ---</span>
+      </div>
+
+      <div class="qr-codes-container">
+        <div class="qr-code-box customer">
+          <img id="modalCustomerQR" src="" alt="Customer QR" />
+          <div class="qr-code-label">Customer</div>
+        </div>
+        <div class="qr-code-box inventory" id="inventoryQRBox">
+          <img id="modalInventoryQR" src="" alt="Inventory QR" />
+          <div class="qr-code-label">Inventory</div>
+        </div>
+      </div>
+
+      <div class="qr-download-buttons">
+        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" target="_blank">
+          <i class="fas fa-mobile-alt"></i> Customer
+        </a>
+        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" target="_blank">
+          <i class="fas fa-barcode"></i> Inventory
+        </a>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
+          <i class="fas fa-layer-group"></i> Both
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/auth.js"></script>
   <script>
     requireAuth();
@@ -385,11 +517,132 @@
     let currentTier = 'free';
 
     // ==========================================
-    // QR - Opens image in new tab
+    // QR MODAL - Shows both QRs with download options
     // ==========================================
-    window.openQR = function(url) {
-      window.open(url, '_blank');
+    let currentQRData = null;
+    
+    window.openQRModal = function(productJson) {
+      const product = typeof productJson === 'string' ? JSON.parse(productJson) : productJson;
+      currentQRData = product;
+      
+      document.getElementById('modalSku').textContent = 'SKU: ' + (product.sku || product.productId);
+      document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
+      
+      // Customer download button
+      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
+      document.getElementById('downloadCustomerBtn').setAttribute('download', (product.sku || product.productId) + '-customer-qr.png');
+      
+      // Handle inventory QR
+      const inventoryBox = document.getElementById('inventoryQRBox');
+      const inventoryBtn = document.getElementById('downloadInventoryBtn');
+      const bothBtn = document.getElementById('downloadBothBtn');
+      
+      if (product.inventoryQrCodeUrl) {
+        document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
+        inventoryBtn.href = product.inventoryQrCodeUrl;
+        inventoryBtn.setAttribute('download', (product.sku || product.productId) + '-inventory-qr.png');
+        inventoryBox.style.display = 'block';
+        inventoryBtn.style.display = 'flex';
+        bothBtn.style.display = 'flex';
+      } else {
+        inventoryBox.style.display = 'none';
+        inventoryBtn.style.display = 'none';
+        bothBtn.style.display = 'none';
+      }
+      
+      document.getElementById('qrModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
     };
+    
+    window.closeQRModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('qrModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentQRData = null;
+    };
+    
+    window.downloadBothQRs = async function() {
+      if (!currentQRData) return;
+      
+      const btn = document.getElementById('downloadBothBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+      btn.disabled = true;
+      
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 380;
+        
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const customerImg = new Image();
+        const inventoryImg = new Image();
+        customerImg.crossOrigin = 'anonymous';
+        inventoryImg.crossOrigin = 'anonymous';
+        
+        await Promise.all([
+          new Promise(function(resolve, reject) {
+            customerImg.onload = resolve;
+            customerImg.onerror = reject;
+            customerImg.src = currentQRData.qrCodeUrl;
+          }),
+          new Promise(function(resolve, reject) {
+            inventoryImg.onload = resolve;
+            inventoryImg.onerror = reject;
+            inventoryImg.src = currentQRData.inventoryQrCodeUrl;
+          })
+        ]);
+        
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 22px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 32);
+        
+        ctx.fillStyle = '#64748B';
+        ctx.font = '14px Inter, Arial, sans-serif';
+        ctx.fillText('SKU: ' + (currentQRData.sku || currentQRData.productId), canvas.width / 2, 55);
+        
+        var qrSize = 140;
+        var qrY = 75;
+        
+        ctx.drawImage(customerImg, 80, qrY, qrSize, qrSize);
+        ctx.drawImage(inventoryImg, 380, qrY, qrSize, qrSize);
+        
+        ctx.fillStyle = '#4F46E5';
+        ctx.font = 'bold 13px Inter, Arial, sans-serif';
+        ctx.fillText('Customer', 150, qrY + qrSize + 22);
+        
+        ctx.fillStyle = '#64748B';
+        ctx.fillText('Inventory', 450, qrY + qrSize + 22);
+        
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(300, qrY + 10);
+        ctx.lineTo(300, qrY + qrSize - 10);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px Inter, Arial, sans-serif';
+        ctx.fillText('Verified by BizTrack', canvas.width / 2, canvas.height - 12);
+        
+        var link = document.createElement('a');
+        link.download = (currentQRData.sku || currentQRData.productId) + '-label.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert('Error creating label: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fas fa-layer-group"></i> Both';
+        btn.disabled = false;
+      }
+    };
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeQRModal();
+    });
 
     // ==========================================
     // SUBSCRIPTION & LIMITS
@@ -585,20 +838,10 @@
             if (product.isBatchGroup && items.length > 0) {
               const itemsId = 'items-' + product.batchGroupId;
               li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong><span class="batch-badge">BATCH ' + product.quantity + '</span><br><small>Batch: ' + (product.batchNumber || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><button class="btn btn-secondary" onclick="toggleBatchItems(\'' + itemsId + '\',this)"><i class="fas fa-chevron-down"></i> Items</button><button class="btn btn-secondary" onclick="downloadBatchZip(\'' + product.batchGroupId + '\')"><i class="fas fa-download"></i> ZIP</button></div></div><div id="' + itemsId + '" class="batch-items">' + items.map(function(p) {
-                var btns = '<a href="' + p.verificationUrl + '" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" target="_blank" title="View product"><i class="fas fa-eye"></i></a>';
-                btns += '<a href="' + p.qrCodeUrl + '" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" target="_blank" title="Customer QR"><i class="fas fa-mobile-alt"></i></a>';
-                if (p.inventoryQrCodeUrl) {
-                  btns += '<a href="' + p.inventoryQrCodeUrl + '" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;background:#F8FAFC;border-color:#94A3B8;color:#64748B;" target="_blank" title="Inventory QR"><i class="fas fa-barcode"></i></a>';
-                }
-                return '<div class="batch-item"><div><strong>' + p.sku + '</strong></div><div style="display:flex;gap:0.5rem;">' + btns + '</div></div>';
+                return '<div class="batch-item"><div><strong>' + p.sku + '</strong></div><div style="display:flex;gap:0.5rem;"><a href="' + p.verificationUrl + '" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" target="_blank"><i class="fas fa-eye"></i></a><button class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" onclick=\'openQRModal(' + JSON.stringify(p).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i></button></div></div>';
               }).join('') + '</div>';
             } else {
-              var btns = '<a href="' + product.verificationUrl + '" class="btn btn-secondary" target="_blank"><i class="fas fa-eye"></i> View</a>';
-              btns += '<a href="' + product.qrCodeUrl + '" class="btn btn-secondary" target="_blank" title="Customer QR"><i class="fas fa-mobile-alt"></i> Customer</a>';
-              if (product.inventoryQrCodeUrl) {
-                btns += '<a href="' + product.inventoryQrCodeUrl + '" class="btn btn-secondary" style="background:#F8FAFC;border-color:#94A3B8;color:#64748B;" target="_blank" title="Inventory QR"><i class="fas fa-barcode"></i> Inventory</a>';
-              }
-              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong><br><small>SKU: ' + (product.sku || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;">' + btns + '</div></div>';
+              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong><br><small>SKU: ' + (product.sku || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><a href="' + product.verificationUrl + '" class="btn btn-secondary" target="_blank"><i class="fas fa-eye"></i> View</a><button class="btn btn-secondary" onclick=\'openQRModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button></div></div>';
             }
             list.appendChild(li);
           });

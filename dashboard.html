@@ -472,175 +472,6 @@
       margin-left: 0.5rem;
     }
 
-    /* QR Modal Styles */
-    .qr-modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-
-    .qr-modal-overlay.show {
-      display: flex;
-    }
-
-    .qr-modal {
-      background: white;
-      border-radius: 20px;
-      padding: 2rem;
-      max-width: 600px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .qr-modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #E2E8F0;
-    }
-
-    .qr-modal-header h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1E293B;
-    }
-
-    .qr-modal-close {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #64748B;
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-
-    .qr-modal-close:hover {
-      background: #F1F5F9;
-      color: #1E293B;
-    }
-
-    .qr-modal-sku {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .qr-modal-sku span {
-      background: #F1F5F9;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 1.125rem;
-      color: #334155;
-    }
-
-    .qr-codes-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .qr-code-box {
-      text-align: center;
-    }
-
-    .qr-code-box img {
-      width: 160px;
-      height: 160px;
-      border-radius: 12px;
-      background: white;
-      padding: 10px;
-      border: 2px solid #E2E8F0;
-      margin-bottom: 0.75rem;
-    }
-
-    .qr-code-box.customer img {
-      border-color: #A5B4FC;
-    }
-
-    .qr-code-box.inventory img {
-      border-color: #CBD5E1;
-    }
-
-    .qr-code-label {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .qr-code-box.customer .qr-code-label {
-      color: #4F46E5;
-    }
-
-    .qr-code-box.inventory .qr-code-label {
-      color: #64748B;
-    }
-
-    .qr-download-buttons {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-    }
-
-    .qr-download-btn {
-      padding: 0.75rem 1.25rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
-    }
-
-    .qr-download-btn.customer {
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      color: white;
-      border: none;
-    }
-
-    .qr-download-btn.customer:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
-    }
-
-    .qr-download-btn.inventory {
-      background: white;
-      color: #64748B;
-      border: 2px solid #CBD5E1;
-    }
-
-    .qr-download-btn.inventory:hover {
-      background: #F8FAFC;
-      border-color: #94A3B8;
-    }
-
-    .qr-download-btn.both {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: white;
-      border: none;
-    }
-
-    .qr-download-btn.both:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-    }
-
     @media (max-width: 768px) {
       .sidebar {
         width: 100%;
@@ -803,45 +634,6 @@
     </div>
   </div>
 
-  <!-- QR Code Modal -->
-  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
-    <div class="qr-modal" onclick="event.stopPropagation()">
-      <div class="qr-modal-header">
-        <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
-        <button class="qr-modal-close" onclick="closeQRModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      
-      <div class="qr-modal-sku">
-        <span id="modalSku">SKU: ---</span>
-      </div>
-
-      <div class="qr-codes-container">
-        <div class="qr-code-box customer">
-          <img id="modalCustomerQR" src="" alt="Customer QR Code" />
-          <div class="qr-code-label">Customer</div>
-        </div>
-        <div class="qr-code-box inventory" id="inventoryQRBox">
-          <img id="modalInventoryQR" src="" alt="Inventory QR Code" />
-          <div class="qr-code-label">Inventory</div>
-        </div>
-      </div>
-
-      <div class="qr-download-buttons">
-        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" download>
-          <i class="fas fa-mobile-alt"></i> Customer
-        </a>
-        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" download>
-          <i class="fas fa-barcode"></i> Inventory
-        </a>
-        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
-          <i class="fas fa-layer-group"></i> Both
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script src="js/auth.js"></script>
   <script>
     // Require authentication
@@ -854,74 +646,197 @@
     let qrUsedThisMonth = 0;
     let qrLimit = 10;
     let currentTier = 'free';
-    
-    // Current QR modal data
-    let currentQRData = null;
 
     // ==========================================
-    // QR MODAL FUNCTIONS
+    // QR MODAL FUNCTIONS - Opens in new window
     // ==========================================
     window.openQRModal = (product) => {
-      currentQRData = product;
+      // Build the QR viewer HTML
+      const hasInventoryQR = !!product.inventoryQrCodeUrl;
       
-      document.getElementById('modalSku').textContent = `SKU: ${product.sku || product.productId}`;
-      document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
-      
-      // Set download links
-      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
-      document.getElementById('downloadCustomerBtn').download = `${product.sku || product.productId}-customer-qr.png`;
-      
-      // Handle inventory QR visibility
-      const inventoryBox = document.getElementById('inventoryQRBox');
-      const inventoryBtn = document.getElementById('downloadInventoryBtn');
-      const bothBtn = document.getElementById('downloadBothBtn');
-      
-      if (product.inventoryQrCodeUrl) {
-        document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
-        inventoryBtn.href = product.inventoryQrCodeUrl;
-        inventoryBtn.download = `${product.sku || product.productId}-inventory-qr.png`;
-        inventoryBox.style.display = 'block';
-        inventoryBtn.style.display = 'flex';
-        bothBtn.style.display = 'flex';
-      } else {
-        inventoryBox.style.display = 'none';
-        inventoryBtn.style.display = 'none';
-        bothBtn.style.display = 'none';
-      }
-      
-      document.getElementById('qrModalOverlay').classList.add('show');
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.closeQRModal = (event) => {
-      if (event && event.target !== event.currentTarget) return;
-      document.getElementById('qrModalOverlay').classList.remove('show');
-      document.body.style.overflow = '';
-      currentQRData = null;
-    };
-
-    window.downloadBothQRs = async () => {
-      if (!currentQRData) return;
-      
-      const btn = document.getElementById('downloadBothBtn');
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Creating...</span>';
+      const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Codes - ${product.sku || product.productId}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 550px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .header h1 i { color: #4F46E5; }
+    .sku {
+      margin-top: 0.75rem;
+      display: inline-block;
+      background: #F1F5F9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      color: #334155;
+    }
+    .qr-container {
+      display: grid;
+      grid-template-columns: ${hasInventoryQR ? '1fr 1fr' : '1fr'};
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-box {
+      text-align: center;
+    }
+    .qr-box img {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      padding: 10px;
+      background: white;
+    }
+    .qr-box.customer img { border-color: #A5B4FC; }
+    .qr-box.inventory img { border-color: #CBD5E1; }
+    .qr-label {
+      margin-top: 0.75rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .qr-box.customer .qr-label { color: #4F46E5; }
+    .qr-box.inventory .qr-label { color: #64748B; }
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      border: none;
+    }
+    .btn.customer {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+    }
+    .btn.customer:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+    }
+    .btn.inventory {
+      background: white;
+      color: #64748B;
+      border: 2px solid #CBD5E1;
+    }
+    .btn.inventory:hover {
+      background: #F8FAFC;
+    }
+    .btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+    }
+    .btn.both:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+    }
+    .product-name {
+      text-align: center;
+      color: #64748B;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-qrcode"></i> QR Codes</h1>
+      <div class="sku">SKU: ${product.sku || product.productId}</div>
+    </div>
+    
+    <div class="product-name">${product.productName || ''}</div>
+    
+    <div class="qr-container">
+      <div class="qr-box customer">
+        <img src="${product.qrCodeUrl}" alt="Customer QR" />
+        <div class="qr-label">Customer</div>
+      </div>
+      ${hasInventoryQR ? `
+      <div class="qr-box inventory">
+        <img src="${product.inventoryQrCodeUrl}" alt="Inventory QR" />
+        <div class="qr-label">Inventory</div>
+      </div>
+      ` : ''}
+    </div>
+    
+    <div class="buttons">
+      <a href="${product.qrCodeUrl}" download="${product.sku || product.productId}-customer-qr.png" class="btn customer">
+        <i class="fas fa-mobile-alt"></i> Customer
+      </a>
+      ${hasInventoryQR ? `
+      <a href="${product.inventoryQrCodeUrl}" download="${product.sku || product.productId}-inventory-qr.png" class="btn inventory">
+        <i class="fas fa-barcode"></i> Inventory
+      </a>
+      <button onclick="downloadBoth()" class="btn both">
+        <i class="fas fa-layer-group"></i> Both
+      </button>
+      ` : ''}
+    </div>
+  </div>
+  
+  <script>
+    const productData = ${JSON.stringify(product)};
+    
+    async function downloadBoth() {
+      const btn = event.target.closest('button');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
       btn.disabled = true;
       
       try {
-        // Create a canvas to combine both QRs
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        
-        // Label dimensions (suitable for printing)
         canvas.width = 600;
         canvas.height = 400;
         
-        // White background
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Load both QR images
         const customerImg = new Image();
         const inventoryImg = new Image();
         customerImg.crossOrigin = 'anonymous';
@@ -931,48 +846,36 @@
           new Promise((resolve, reject) => {
             customerImg.onload = resolve;
             customerImg.onerror = reject;
-            customerImg.src = currentQRData.qrCodeUrl;
+            customerImg.src = productData.qrCodeUrl;
           }),
           new Promise((resolve, reject) => {
             inventoryImg.onload = resolve;
             inventoryImg.onerror = reject;
-            inventoryImg.src = currentQRData.inventoryQrCodeUrl || currentQRData.qrCodeUrl;
+            inventoryImg.src = productData.inventoryQrCodeUrl;
           })
         ]);
         
-        // Draw header
         ctx.fillStyle = '#1E293B';
         ctx.font = 'bold 24px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 35);
+        ctx.fillText(productData.productName || 'Product', canvas.width / 2, 35);
         
-        // Draw SKU
         ctx.fillStyle = '#64748B';
         ctx.font = '16px Inter, sans-serif';
-        ctx.fillText(`SKU: ${currentQRData.sku || currentQRData.productId}`, canvas.width / 2, 60);
+        ctx.fillText('SKU: ' + (productData.sku || productData.productId), canvas.width / 2, 60);
         
-        // Draw QR codes
         const qrSize = 150;
         const qrY = 90;
         
-        // Customer QR (left)
         ctx.drawImage(customerImg, 75, qrY, qrSize, qrSize);
         ctx.fillStyle = '#4F46E5';
         ctx.font = 'bold 14px Inter, sans-serif';
-        ctx.fillText('📱 Customer', 150, qrY + qrSize + 25);
-        ctx.fillStyle = '#64748B';
-        ctx.font = '11px Inter, sans-serif';
-        ctx.fillText('Scan for verification', 150, qrY + qrSize + 45);
+        ctx.fillText('Customer', 150, qrY + qrSize + 25);
         
-        // Inventory QR (right)
         ctx.drawImage(inventoryImg, 375, qrY, qrSize, qrSize);
         ctx.fillStyle = '#64748B';
-        ctx.font = 'bold 14px Inter, sans-serif';
-        ctx.fillText('📦 Inventory', 450, qrY + qrSize + 25);
-        ctx.font = '11px Inter, sans-serif';
-        ctx.fillText('Scan for SKU', 450, qrY + qrSize + 45);
+        ctx.fillText('Inventory', 450, qrY + qrSize + 25);
         
-        // Draw divider
         ctx.strokeStyle = '#E2E8F0';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -980,30 +883,32 @@
         ctx.lineTo(300, qrY + qrSize);
         ctx.stroke();
         
-        // Footer
         ctx.fillStyle = '#94A3B8';
         ctx.font = '10px Inter, sans-serif';
-        ctx.fillText('Verified by BizTrack • Powered by XRPL', canvas.width / 2, canvas.height - 15);
+        ctx.fillText('Verified by BizTrack', canvas.width / 2, canvas.height - 15);
         
-        // Download
         const link = document.createElement('a');
-        link.download = `${currentQRData.sku || currentQRData.productId}-label.png`;
+        link.download = (productData.sku || productData.productId) + '-label.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-        
       } catch (error) {
-        console.error('Error creating label:', error);
-        alert('Error creating label. Please try downloading individually.');
+        alert('Error creating label: ' + error.message);
       } finally {
-        btn.innerHTML = originalHTML;
+        btn.innerHTML = '<i class="fas fa-layer-group"></i> Both';
         btn.disabled = false;
       }
+    }
+  </script>
+</body>
+</html>`;
+      
+      // Open in new window
+      const newWindow = window.open('', '_blank', 'width=600,height=700');
+      newWindow.document.write(html);
+      newWindow.document.close();
     };
 
-    // Close modal on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeQRModal();
-    });
+    // Close QR window handled by browser (it's a new window now)
 
     // ==========================================
     // SUBSCRIPTION & LIMITS

@@ -472,6 +472,190 @@
       margin-left: 0.5rem;
     }
 
+    /* QR Modal Styles */
+    .qr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .qr-modal-overlay.show {
+      display: flex;
+    }
+
+    .qr-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+
+    .qr-modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+    }
+
+    .qr-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #64748B;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .qr-modal-close:hover {
+      background: #F1F5F9;
+      color: #1E293B;
+    }
+
+    .qr-modal-sku {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .qr-modal-sku span {
+      background: #F1F5F9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1.125rem;
+      color: #334155;
+    }
+
+    .qr-codes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .qr-code-box {
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+    }
+
+    .qr-code-box.customer {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      border-color: #A5B4FC;
+    }
+
+    .qr-code-box.inventory {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    .qr-code-box img {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: white;
+      padding: 8px;
+    }
+
+    .qr-code-box h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .qr-code-box.customer h4 {
+      color: #4F46E5;
+    }
+
+    .qr-code-box.inventory h4 {
+      color: #64748B;
+    }
+
+    .qr-code-box p {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .qr-download-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .qr-download-btn {
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .qr-download-btn i {
+      font-size: 1.25rem;
+    }
+
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      border: none;
+    }
+
+    .qr-download-btn.customer:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    .qr-download-btn.inventory {
+      background: white;
+      color: #64748B;
+      border: 2px solid #CBD5E1;
+    }
+
+    .qr-download-btn.inventory:hover {
+      background: #F8FAFC;
+      border-color: #94A3B8;
+    }
+
+    .qr-download-btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      border: none;
+    }
+
+    .qr-download-btn.both:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         width: 100%;
@@ -493,6 +677,14 @@
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
+      }
+
+      .qr-codes-container {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-download-buttons {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -626,6 +818,50 @@
     </div>
   </div>
 
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
+        <button class="qr-modal-close" onclick="closeQRModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="qr-modal-sku">
+        <span id="modalSku">SKU: ---</span>
+      </div>
+
+      <div class="qr-codes-container">
+        <div class="qr-code-box customer">
+          <img id="modalCustomerQR" src="" alt="Customer QR Code" />
+          <h4><i class="fas fa-mobile-alt"></i> Customer QR</h4>
+          <p>Links to verification page</p>
+        </div>
+        <div class="qr-code-box inventory">
+          <img id="modalInventoryQR" src="" alt="Inventory QR Code" />
+          <h4><i class="fas fa-barcode"></i> Inventory QR</h4>
+          <p>Contains SKU only (for POS)</p>
+        </div>
+      </div>
+
+      <div class="qr-download-buttons">
+        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" download>
+          <i class="fas fa-mobile-alt"></i>
+          <span>Customer QR</span>
+        </a>
+        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" download>
+          <i class="fas fa-barcode"></i>
+          <span>Inventory QR</span>
+        </a>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
+          <i class="fas fa-file-pdf"></i>
+          <span>Both (Label)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/auth.js"></script>
   <script>
     // Require authentication
@@ -638,20 +874,163 @@
     let qrUsedThisMonth = 0;
     let qrLimit = 10;
     let currentTier = 'free';
+    
+    // Current QR modal data
+    let currentQRData = null;
 
-    // ✅ FIXED: Load subscription limits with correct API response paths
+    // ==========================================
+    // QR MODAL FUNCTIONS
+    // ==========================================
+    window.openQRModal = (product) => {
+      currentQRData = product;
+      
+      document.getElementById('modalSku').textContent = `SKU: ${product.sku || product.productId}`;
+      document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
+      document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl || product.qrCodeUrl;
+      
+      // Set download links
+      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
+      document.getElementById('downloadCustomerBtn').download = `${product.sku || product.productId}-customer-qr.png`;
+      
+      if (product.inventoryQrCodeUrl) {
+        document.getElementById('downloadInventoryBtn').href = product.inventoryQrCodeUrl;
+        document.getElementById('downloadInventoryBtn').download = `${product.sku || product.productId}-inventory-qr.png`;
+        document.getElementById('downloadInventoryBtn').style.display = 'flex';
+        document.getElementById('modalInventoryQR').parentElement.style.display = 'block';
+      } else {
+        document.getElementById('downloadInventoryBtn').style.display = 'none';
+        document.getElementById('modalInventoryQR').parentElement.style.display = 'none';
+      }
+      
+      document.getElementById('qrModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeQRModal = (event) => {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('qrModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentQRData = null;
+    };
+
+    window.downloadBothQRs = async () => {
+      if (!currentQRData) return;
+      
+      const btn = document.getElementById('downloadBothBtn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Creating...</span>';
+      btn.disabled = true;
+      
+      try {
+        // Create a canvas to combine both QRs
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Label dimensions (suitable for printing)
+        canvas.width = 600;
+        canvas.height = 400;
+        
+        // White background
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Load both QR images
+        const customerImg = new Image();
+        const inventoryImg = new Image();
+        customerImg.crossOrigin = 'anonymous';
+        inventoryImg.crossOrigin = 'anonymous';
+        
+        await Promise.all([
+          new Promise((resolve, reject) => {
+            customerImg.onload = resolve;
+            customerImg.onerror = reject;
+            customerImg.src = currentQRData.qrCodeUrl;
+          }),
+          new Promise((resolve, reject) => {
+            inventoryImg.onload = resolve;
+            inventoryImg.onerror = reject;
+            inventoryImg.src = currentQRData.inventoryQrCodeUrl || currentQRData.qrCodeUrl;
+          })
+        ]);
+        
+        // Draw header
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 24px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 35);
+        
+        // Draw SKU
+        ctx.fillStyle = '#64748B';
+        ctx.font = '16px Inter, sans-serif';
+        ctx.fillText(`SKU: ${currentQRData.sku || currentQRData.productId}`, canvas.width / 2, 60);
+        
+        // Draw QR codes
+        const qrSize = 150;
+        const qrY = 90;
+        
+        // Customer QR (left)
+        ctx.drawImage(customerImg, 75, qrY, qrSize, qrSize);
+        ctx.fillStyle = '#4F46E5';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.fillText('📱 Customer', 150, qrY + qrSize + 25);
+        ctx.fillStyle = '#64748B';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText('Scan for verification', 150, qrY + qrSize + 45);
+        
+        // Inventory QR (right)
+        ctx.drawImage(inventoryImg, 375, qrY, qrSize, qrSize);
+        ctx.fillStyle = '#64748B';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.fillText('📦 Inventory', 450, qrY + qrSize + 25);
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText('Scan for SKU', 450, qrY + qrSize + 45);
+        
+        // Draw divider
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(300, qrY);
+        ctx.lineTo(300, qrY + qrSize);
+        ctx.stroke();
+        
+        // Footer
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText('Verified by BizTrack • Powered by XRPL', canvas.width / 2, canvas.height - 15);
+        
+        // Download
+        const link = document.createElement('a');
+        link.download = `${currentQRData.sku || currentQRData.productId}-label.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+      } catch (error) {
+        console.error('Error creating label:', error);
+        alert('Error creating label. Please try downloading individually.');
+      } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    };
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeQRModal();
+    });
+
+    // ==========================================
+    // SUBSCRIPTION & LIMITS
+    // ==========================================
     async function loadSubscriptionLimits() {
       try {
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
         
         if (data.success) {
-          // ✅ FIXED: Read from data.subscription (not data.usage or data.limits)
           qrUsedThisMonth = data.subscription.qrUsed;
           qrLimit = data.subscription.qrLimit;
           currentTier = data.subscription.tier;
           
-          // Update UI elements
           const qrUsedEl = document.getElementById('qrUsedCount');
           const qrLimitEl = document.getElementById('qrLimitCount');
           const tierNameEl = document.getElementById('tierName');
@@ -663,7 +1042,6 @@
             tierNameEl.textContent = tierName;
           }
           
-          // ✅ FIXED: Read maxBatchSize from subscription
           const remaining = qrLimit - qrUsedThisMonth;
           const tierMaxBatch = data.subscription.maxBatchSize || 10;
           const maxBatch = Math.min(tierMaxBatch, remaining);
@@ -674,7 +1052,6 @@
           if (maxBatchEl) maxBatchEl.textContent = maxBatch;
           if (batchQtyInput) batchQtyInput.max = maxBatch;
           
-          // Show upgrade prompt if needed
           const percentUsed = qrLimit > 0 ? Math.round((qrUsedThisMonth / qrLimit) * 100) : 0;
           if (percentUsed >= 80 && currentTier !== 'enterprise' && currentTier !== 'pharma_enterprise') {
             showUpgradePrompt(percentUsed, qrUsedThisMonth, qrLimit, currentTier);
@@ -753,7 +1130,9 @@
       }
     }
 
-    // Photo compression
+    // ==========================================
+    // PHOTO HANDLING
+    // ==========================================
     async function compressImage(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -792,7 +1171,6 @@
       });
     }
 
-    // Photo upload handlers
     document.getElementById('photoInput').addEventListener('change', async (e) => {
       const files = Array.from(e.target.files);
       for (const file of files) {
@@ -840,7 +1218,9 @@
       displayPhotoPreview();
     };
 
-    // Location capture
+    // ==========================================
+    // LOCATION
+    // ==========================================
     document.getElementById('captureLocationBtn').addEventListener('click', () => {
       if (!navigator.geolocation) {
         alert('Geolocation is not supported by your browser');
@@ -872,7 +1252,9 @@
       );
     });
 
-    // Download batch ZIP
+    // ==========================================
+    // BATCH ZIP DOWNLOAD
+    // ==========================================
     window.downloadBatchZip = async (batchGroupId) => {
       const btn = event.target;
       const originalHTML = btn.innerHTML;
@@ -896,15 +1278,25 @@
         }
 
         const zip = new JSZip();
+        const customerFolder = zip.folder('Customer-QR-Codes');
+        const inventoryFolder = zip.folder('Inventory-QR-Codes');
         
-        // Add QR codes
         for (const product of batchItems) {
-          const response = await fetch(product.qrCodeUrl);
-          const blob = await response.blob();
-          zip.file(`${product.sku}-QR.png`, blob);
+          // Customer QR
+          if (product.qrCodeUrl) {
+            const response = await fetch(product.qrCodeUrl);
+            const blob = await response.blob();
+            customerFolder.file(`${product.sku}-customer-qr.png`, blob);
+          }
+          
+          // Inventory QR
+          if (product.inventoryQrCodeUrl) {
+            const response = await fetch(product.inventoryQrCodeUrl);
+            const blob = await response.blob();
+            inventoryFolder.file(`${product.sku}-inventory-qr.png`, blob);
+          }
         }
 
-        // Add summary
         const summary = `BizTrack Batch Order Summary
 ============================
 Product: ${batch.productName}
@@ -912,11 +1304,14 @@ Batch Number: ${batch.batchNumber || 'N/A'}
 Total Items: ${batch.quantity}
 Created: ${new Date(batch.timestamp).toLocaleString()}
 
+FOLDERS:
+- Customer-QR-Codes/: For customers - links to verification page
+- Inventory-QR-Codes/: For POS/warehouse - contains SKU only
+
 Products:
 ${batchItems.map((p, i) => `${i+1}. ${p.sku}
    Product ID: ${p.productId}
    Verify: ${p.verificationUrl}
-   TX: ${p.xrplTxHash}
 `).join('\n')}`;
 
         zip.file('BATCH_SUMMARY.txt', summary);
@@ -944,7 +1339,9 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     };
 
-    // Populate product list
+    // ==========================================
+    // PRODUCT LIST
+    // ==========================================
     function populateBatches() {
       const batchList = document.getElementById('batchList');
       batchList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading products...</p></div>';
@@ -998,12 +1395,12 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                         <br><small>ID: ${p.productId}</small>
                       </div>
                       <div style="display: flex; gap: 0.5rem;">
-                        <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                          <i class="fas fa-shield-check"></i> View
+                        <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" target="_blank">
+                          <i class="fas fa-eye"></i> View
                         </a>
-                        <a href="${p.qrCodeUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick='openQRModal(${JSON.stringify(p).replace(/'/g, "\\'")})'>
                           <i class="fas fa-qrcode"></i> QR
-                        </a>
+                        </button>
                       </div>
                     </div>
                   `).join('')}
@@ -1019,12 +1416,12 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
                     <br><small>Product ID: ${product.productId}</small>
                   </div>
                   <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <a href="${product.verificationUrl}" class="btn btn-secondary">
-                      <i class="fas fa-shield-check"></i> Verify Product
+                    <a href="${product.verificationUrl}" class="btn btn-secondary" target="_blank">
+                      <i class="fas fa-eye"></i> View
                     </a>
-                    <a href="${product.qrCodeUrl}" target="_blank" class="btn btn-secondary">
-                      <i class="fas fa-qrcode"></i> Download QR
-                    </a>
+                    <button class="btn btn-secondary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                      <i class="fas fa-qrcode"></i> QR
+                    </button>
                   </div>
                 </div>
               `;
@@ -1062,7 +1459,9 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     };
 
-    // Mint product
+    // ==========================================
+    // MINT PRODUCT
+    // ==========================================
     document.getElementById('dashCreateBtn').addEventListener('click', async () => {
       const productName = document.getElementById('dashProdName').value.trim();
       const sku = document.getElementById('dashSku').value.trim();
@@ -1099,16 +1498,14 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
           <i class="fas fa-rocket" style="font-size: 1.5rem; color: #3B82F6;"></i> 
           <div>
             <strong style="font-size: 1.125rem; color: #1E40AF;">Minting ${batchQuantity} products to the blockchain...</strong><br><br>
-            <strong>✅ Everything is working correctly!</strong><br>
-            We're generating QR codes, uploading to IPFS, and writing to the XRPL blockchain.<br>
-            <strong>This process takes time - please be patient.</strong><br><br>
-            ⚠️ <strong style="color: #DC2626;">DO NOT refresh or close this page!</strong><br>
-            You'll see a success message when all products are minted.<br><br>
+            <strong>✅ Generating dual QR codes (Customer + Inventory)</strong><br>
+            Uploading to IPFS and writing to the XRPL blockchain.<br><br>
+            ⚠️ <strong style="color: #DC2626;">DO NOT refresh or close this page!</strong><br><br>
             <small style="opacity: 0.8;">Large batches may take several minutes to complete.</small>
           </div>
         </div>`;
       } else {
-        msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to IPFS and blockchain...</div>';
+        msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Generating QR codes and uploading to blockchain...</div>';
       }
 
       try {
@@ -1160,10 +1557,10 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
         if (result.isBatch) {
           msgEl.innerHTML = `<div class="message success">
             <i class="fas fa-check-circle"></i> 
-            Successfully minted ${result.batchInfo.quantity} products! View below to download QR codes.
+            Successfully minted ${result.batchInfo.quantity} products with dual QR codes! Click QR button to view & download.
           </div>`;
         } else {
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Product successfully minted to blockchain!</div>`;
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Product minted with dual QR codes! Click QR button to view & download.</div>`;
         }
 
         // Clear form
@@ -1190,7 +1587,9 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     });
 
-    // Logout
+    // ==========================================
+    // LOGOUT
+    // ==========================================
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
       if (confirm('Are you sure you want to logout?')) {
@@ -1198,7 +1597,9 @@ ${batchItems.map((p, i) => `${i+1}. ${p.sku}
       }
     });
 
-    // Initialize
+    // ==========================================
+    // INIT
+    // ==========================================
     loadSubscriptionLimits();
     populateBatches();
   </script>

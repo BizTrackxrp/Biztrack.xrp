@@ -550,77 +550,62 @@
     .qr-codes-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .qr-code-box {
       text-align: center;
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 2px solid #E2E8F0;
-    }
-
-    .qr-code-box.customer {
-      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-      border-color: #A5B4FC;
-    }
-
-    .qr-code-box.inventory {
-      background: #F8FAFC;
-      border-color: #CBD5E1;
     }
 
     .qr-code-box img {
-      width: 150px;
-      height: 150px;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      width: 160px;
+      height: 160px;
+      border-radius: 12px;
       background: white;
-      padding: 8px;
+      padding: 10px;
+      border: 2px solid #E2E8F0;
+      margin-bottom: 0.75rem;
     }
 
-    .qr-code-box h4 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
+    .qr-code-box.customer img {
+      border-color: #A5B4FC;
     }
 
-    .qr-code-box.customer h4 {
+    .qr-code-box.inventory img {
+      border-color: #CBD5E1;
+    }
+
+    .qr-code-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .qr-code-box.customer .qr-code-label {
       color: #4F46E5;
     }
 
-    .qr-code-box.inventory h4 {
-      color: #64748B;
-    }
-
-    .qr-code-box p {
-      font-size: 0.8rem;
+    .qr-code-box.inventory .qr-code-label {
       color: #64748B;
     }
 
     .qr-download-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
       gap: 0.75rem;
+      justify-content: center;
     }
 
     .qr-download-btn {
-      padding: 0.875rem 1rem;
+      padding: 0.75rem 1.25rem;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
-      flex-direction: column;
       align-items: center;
       gap: 0.5rem;
       text-decoration: none;
-    }
-
-    .qr-download-btn i {
-      font-size: 1.25rem;
     }
 
     .qr-download-btn.customer {
@@ -835,28 +820,23 @@
       <div class="qr-codes-container">
         <div class="qr-code-box customer">
           <img id="modalCustomerQR" src="" alt="Customer QR Code" />
-          <h4><i class="fas fa-mobile-alt"></i> Customer QR</h4>
-          <p>Links to verification page</p>
+          <div class="qr-code-label">Customer</div>
         </div>
-        <div class="qr-code-box inventory">
+        <div class="qr-code-box inventory" id="inventoryQRBox">
           <img id="modalInventoryQR" src="" alt="Inventory QR Code" />
-          <h4><i class="fas fa-barcode"></i> Inventory QR</h4>
-          <p>Contains SKU only (for POS)</p>
+          <div class="qr-code-label">Inventory</div>
         </div>
       </div>
 
       <div class="qr-download-buttons">
         <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" download>
-          <i class="fas fa-mobile-alt"></i>
-          <span>Customer QR</span>
+          <i class="fas fa-mobile-alt"></i> Customer
         </a>
         <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" download>
-          <i class="fas fa-barcode"></i>
-          <span>Inventory QR</span>
+          <i class="fas fa-barcode"></i> Inventory
         </a>
         <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
-          <i class="fas fa-file-pdf"></i>
-          <span>Both (Label)</span>
+          <i class="fas fa-layer-group"></i> Both
         </button>
       </div>
     </div>
@@ -886,20 +866,27 @@
       
       document.getElementById('modalSku').textContent = `SKU: ${product.sku || product.productId}`;
       document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
-      document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl || product.qrCodeUrl;
       
       // Set download links
       document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
       document.getElementById('downloadCustomerBtn').download = `${product.sku || product.productId}-customer-qr.png`;
       
+      // Handle inventory QR visibility
+      const inventoryBox = document.getElementById('inventoryQRBox');
+      const inventoryBtn = document.getElementById('downloadInventoryBtn');
+      const bothBtn = document.getElementById('downloadBothBtn');
+      
       if (product.inventoryQrCodeUrl) {
-        document.getElementById('downloadInventoryBtn').href = product.inventoryQrCodeUrl;
-        document.getElementById('downloadInventoryBtn').download = `${product.sku || product.productId}-inventory-qr.png`;
-        document.getElementById('downloadInventoryBtn').style.display = 'flex';
-        document.getElementById('modalInventoryQR').parentElement.style.display = 'block';
+        document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
+        inventoryBtn.href = product.inventoryQrCodeUrl;
+        inventoryBtn.download = `${product.sku || product.productId}-inventory-qr.png`;
+        inventoryBox.style.display = 'block';
+        inventoryBtn.style.display = 'flex';
+        bothBtn.style.display = 'flex';
       } else {
-        document.getElementById('downloadInventoryBtn').style.display = 'none';
-        document.getElementById('modalInventoryQR').parentElement.style.display = 'none';
+        inventoryBox.style.display = 'none';
+        inventoryBtn.style.display = 'none';
+        bothBtn.style.display = 'none';
       }
       
       document.getElementById('qrModalOverlay').classList.add('show');

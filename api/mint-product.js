@@ -195,37 +195,80 @@ module.exports = async (req, res) => {
         ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
         : (sku || null);
 
-      console.log(`Generating QR code for ${productSku || productId}...`);
-      const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
+      // ==========================================
+      // GENERATE SMART QR (Customer - Verification URL)
+      // ==========================================
+      console.log(`Generating SMART QR code for ${productSku || productId}...`);
+      const smartQrBuffer = await QRCode.toBuffer(verificationUrl, {
         width: 300,
         margin: 2,
         color: {
-          dark: '#000000',
+          dark: '#1E293B',  // Dark blue-gray for branded look
           light: '#FFFFFF'
-        }
+        },
+        errorCorrectionLevel: 'M'
       });
 
-      console.log('Uploading QR code to IPFS...');
+      console.log('Uploading SMART QR code to IPFS...');
       const FormData = require('form-data');
-      const qrFormData = new FormData();
-      qrFormData.append('file', qrCodeBuffer, {
-        filename: `${productId}-qr.png`,
+      const smartQrFormData = new FormData();
+      smartQrFormData.append('file', smartQrBuffer, {
+        filename: `${productId}-smart-qr.png`,
         contentType: 'image/png'
       });
 
-      const qrPinataResponse = await axios.post(
+      const smartQrPinataResponse = await axios.post(
         'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        qrFormData,
+        smartQrFormData,
         {
           headers: {
-            ...qrFormData.getHeaders(),
+            ...smartQrFormData.getHeaders(),
             'Authorization': `Bearer ${process.env.PINATA_JWT}`
           }
         }
       );
 
-      const qrIpfsHash = qrPinataResponse.data.IpfsHash;
-      console.log('QR Code IPFS Hash:', qrIpfsHash);
+      const smartQrIpfsHash = smartQrPinataResponse.data.IpfsHash;
+      console.log('SMART QR Code IPFS Hash:', smartQrIpfsHash);
+
+      // ==========================================
+      // GENERATE DUMB QR (Inventory - Raw SKU only)
+      // ==========================================
+      let dumbQrIpfsHash = null;
+      
+      if (productSku) {
+        console.log(`Generating DUMB QR code (SKU: ${productSku})...`);
+        const dumbQrBuffer = await QRCode.toBuffer(productSku, {
+          width: 300,
+          margin: 2,
+          color: {
+            dark: '#000000',  // Plain black
+            light: '#FFFFFF'  // Plain white
+          },
+          errorCorrectionLevel: 'L'  // Lower error correction for simpler/faster scanning
+        });
+
+        console.log('Uploading DUMB QR code to IPFS...');
+        const dumbQrFormData = new FormData();
+        dumbQrFormData.append('file', dumbQrBuffer, {
+          filename: `${productId}-inventory-qr.png`,
+          contentType: 'image/png'
+        });
+
+        const dumbQrPinataResponse = await axios.post(
+          'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          dumbQrFormData,
+          {
+            headers: {
+              ...dumbQrFormData.getHeaders(),
+              'Authorization': `Bearer ${process.env.PINATA_JWT}`
+            }
+          }
+        );
+
+        dumbQrIpfsHash = dumbQrPinataResponse.data.IpfsHash;
+        console.log('DUMB QR Code IPFS Hash:', dumbQrIpfsHash);
+      }
 
       const productData = {
         productId,
@@ -235,7 +278,8 @@ module.exports = async (req, res) => {
         metadata: metadata || {},
         photoHashes: photoHashes.length > 0 ? photoHashes : null,
         location: location || null,
-        qrCodeIpfsHash: qrIpfsHash,
+        qrCodeIpfsHash: smartQrIpfsHash,
+        inventoryQrCodeIpfsHash: dumbQrIpfsHash,
         verificationUrl,
         createdAt: new Date().toISOString(),
         mintedBy: 'BizTrack Supply Chain Tracking',
@@ -278,7 +322,8 @@ module.exports = async (req, res) => {
               MemoData: Buffer.from(JSON.stringify({
                 productId,
                 ipfsHash,
-                qrCodeIpfsHash: qrIpfsHash,
+                qrCodeIpfsHash: smartQrIpfsHash,
+                inventoryQrCodeIpfsHash: dumbQrIpfsHash,
                 timestamp: new Date().toISOString(),
                 batchInfo: isBatchOrder ? { itemNumber, totalInBatch: quantity, batchGroupId } : null
               })).toString('hex').toUpperCase()
@@ -313,14 +358,15 @@ module.exports = async (req, res) => {
           batch_number, 
           ipfs_hash, 
           xrpl_tx_hash, 
-          qr_code_ipfs_hash, 
+          qr_code_ipfs_hash,
+          inventory_qr_code_ipfs_hash,
           metadata, 
           user_id,
           is_batch_group,
           batch_group_id,
           batch_quantity
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
         [
           productId, 
           productName, 
@@ -328,7 +374,8 @@ module.exports = async (req, res) => {
           batchNumber, 
           ipfsHash, 
           txHash, 
-          qrIpfsHash, 
+          smartQrIpfsHash,
+          dumbQrIpfsHash,
           metadata, 
           user.id,
           isBatchOrder && itemNumber === 1,
@@ -345,10 +392,14 @@ module.exports = async (req, res) => {
         sku: productSku,
         batchNumber,
         ipfsHash,
-        qrCodeIpfsHash: qrIpfsHash,
+        qrCodeIpfsHash: smartQrIpfsHash,
+        inventoryQrCodeIpfsHash: dumbQrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
-        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${qrIpfsHash}`,
+        // Smart QR - for customers (verification page)
+        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${smartQrIpfsHash}`,
+        // Dumb QR - for inventory/POS (raw SKU)
+        inventoryQrCodeUrl: dumbQrIpfsHash ? `https://gateway.pinata.cloud/ipfs/${dumbQrIpfsHash}` : null,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
         ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
         timestamp: new Date().toISOString()
@@ -397,9 +448,11 @@ module.exports = async (req, res) => {
         productId: product.productId,
         ipfsHash: product.ipfsHash,
         qrCodeIpfsHash: product.qrCodeIpfsHash,
+        inventoryQrCodeIpfsHash: product.inventoryQrCodeIpfsHash,
         xrplTxHash: product.xrplTxHash,
         verificationUrl: product.verificationUrl,
         qrCodeUrl: product.qrCodeUrl,
+        inventoryQrCodeUrl: product.inventoryQrCodeUrl,
         blockchainExplorer: product.blockchainExplorer,
         ipfsGateway: product.ipfsGateway
       });

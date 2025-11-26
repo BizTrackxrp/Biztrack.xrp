@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
 
-    // Fetch all products for this user ONLY
+    // Fetch all products for this user ONLY (now includes inventory_qr_code_ipfs_hash)
     const result = await pool.query(
       `SELECT 
         product_id,
@@ -34,6 +34,7 @@ module.exports = async (req, res) => {
         batch_number,
         ipfs_hash,
         qr_code_ipfs_hash,
+        inventory_qr_code_ipfs_hash,
         xrpl_tx_hash,
         metadata,
         is_batch_group,
@@ -53,6 +54,7 @@ module.exports = async (req, res) => {
       batchNumber: row.batch_number,
       ipfsHash: row.ipfs_hash,
       qrCodeIpfsHash: row.qr_code_ipfs_hash,
+      inventoryQrCodeIpfsHash: row.inventory_qr_code_ipfs_hash,
       xrplTxHash: row.xrpl_tx_hash,
       metadata: row.metadata,
       isBatchGroup: row.is_batch_group,
@@ -62,6 +64,9 @@ module.exports = async (req, res) => {
       verificationUrl: `https://www.biztrack.io/verify.html?id=${row.product_id}`,
       qrCodeUrl: row.qr_code_ipfs_hash 
         ? `https://gateway.pinata.cloud/ipfs/${row.qr_code_ipfs_hash}`
+        : null,
+      inventoryQrCodeUrl: row.inventory_qr_code_ipfs_hash
+        ? `https://gateway.pinata.cloud/ipfs/${row.inventory_qr_code_ipfs_hash}`
         : null
     }));
 
@@ -83,7 +88,6 @@ module.exports = async (req, res) => {
         // Find the batch group leader (the one with is_batch_group = true)
         const batchLeader = batchItems.find(p => p.isBatchGroup) || batchItems[0];
 
-        // ✅ FIXED: Changed 'products' to 'items' to match frontend expectation
         displayList.push({
           isBatchGroup: true,
           batchGroupId: product.batchGroupId,
@@ -91,7 +95,7 @@ module.exports = async (req, res) => {
           batchNumber: batchLeader.batchNumber,
           quantity: batchLeader.batchQuantity || batchItems.length,
           timestamp: batchLeader.timestamp,
-          items: batchItems.sort((a, b) => {  // Changed from 'products' to 'items'
+          items: batchItems.sort((a, b) => {
             // Sort by SKU if available (handles BATCH-001, BATCH-002, etc)
             if (a.sku && b.sku) {
               return a.sku.localeCompare(b.sku);

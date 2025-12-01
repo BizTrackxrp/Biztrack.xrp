@@ -770,33 +770,47 @@
       
       const options = {
         enableHighAccuracy: false,
-        timeout: 15000,
+        timeout: 10000,
         maximumAge: 300000
       };
       
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          capturedLocation = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-          document.getElementById('locationDisplay').style.display = 'block';
-          btn.disabled = false;
-          document.getElementById('locationBtnText').textContent = 'Update';
-        },
-        (err) => {
-          btn.disabled = false;
-          document.getElementById('locationBtnText').textContent = 'Location';
-          
-          if (err.code === 1) {
-            alert('Location access denied. Please enable location permissions in your browser settings.');
-          } else if (err.code === 2) {
-            alert('Location unavailable. Please check your device location settings.');
-          } else if (err.code === 3) {
-            alert('Location request timed out. Please try again.');
-          } else {
-            alert('Location error: ' + err.message);
-          }
-        },
-        options
-      );
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      function tryGetLocation() {
+        attempts++;
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            capturedLocation = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+            document.getElementById('locationDisplay').style.display = 'block';
+            btn.disabled = false;
+            document.getElementById('locationBtnText').textContent = 'Update';
+          },
+          (err) => {
+            // If position unavailable and we haven't maxed out attempts, retry after delay
+            if (err.code === 2 && attempts < maxAttempts) {
+              setTimeout(tryGetLocation, 1000);
+              return;
+            }
+            
+            btn.disabled = false;
+            document.getElementById('locationBtnText').textContent = 'Location';
+            
+            if (err.code === 1) {
+              alert('Location access denied. Please enable location permissions in your browser settings.');
+            } else if (err.code === 2) {
+              alert('Location unavailable. This feature works best on mobile devices.');
+            } else if (err.code === 3) {
+              alert('Location request timed out. Please try again.');
+            } else {
+              alert('Location error: ' + err.message);
+            }
+          },
+          options
+        );
+      }
+      
+      tryGetLocation();
     });
 
     // ==========================================

@@ -397,6 +397,23 @@
         </div>
       </div>
 
+      <div class="batch-toggle-container" style="border-color: #10B981;">
+        <div class="batch-toggle-label">
+          <i class="fas fa-route" style="color: #10B981;"></i>
+          <span id="productionToggleText">Production Mode</span>
+        </div>
+        <div class="toggle-switch" id="productionToggle" onclick="toggleProductionMode()" style="background: #CBD5E1;">
+          <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <div class="production-mode-section" id="productionModeSection" style="display: none; padding: 1.5rem; background: #ECFDF5; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid #10B981;">
+        <h4 style="color: #065F46; margin-bottom: 0.75rem;"><i class="fas fa-info-circle"></i> Production Mode Enabled</h4>
+        <p style="color: #047857; font-size: 0.9rem; margin-bottom: 0;">
+          This product will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing it for customer verification.
+        </p>
+      </div>
+
       <div class="batch-quantity-section" id="batchQuantitySection">
         <h4><i class="fas fa-boxes"></i> Batch Order Settings</h4>
         <div class="form-group">
@@ -510,6 +527,7 @@
     requireAuth();
 
     let isBatchMode = false;
+    let isProductionMode = false;
     let selectedPhotos = [];
     let capturedLocation = null;
     let qrUsedThisMonth = 0;
@@ -691,7 +709,7 @@
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Mode Enabled ✓';
-        mintText.textContent = 'Mint Batch to Blockchain';
+        mintText.textContent = isProductionMode ? 'Mint Batch to Production' : 'Mint Batch to Blockchain';
         skuInput.disabled = true;
         skuInput.value = '';
         skuInput.placeholder = 'Auto-generated';
@@ -700,10 +718,32 @@
         toggle.classList.remove('active');
         section.classList.remove('show');
         toggleText.textContent = 'Enable Batch Upload';
-        mintText.textContent = 'Mint to Blockchain';
+        mintText.textContent = isProductionMode ? 'Mint to Production' : 'Mint to Blockchain';
         skuInput.disabled = false;
         skuInput.placeholder = 'e.g. HNY1234';
         document.getElementById('remainingQRs').textContent = '';
+      }
+    }
+
+    function toggleProductionMode() {
+      isProductionMode = !isProductionMode;
+      const toggle = document.getElementById('productionToggle');
+      const section = document.getElementById('productionModeSection');
+      const toggleText = document.getElementById('productionToggleText');
+      const mintText = document.getElementById('mintButtonText');
+      
+      if (isProductionMode) {
+        toggle.classList.add('active');
+        toggle.style.background = '#10B981';
+        section.style.display = 'block';
+        toggleText.textContent = 'Production Mode ✓';
+        mintText.textContent = isBatchMode ? 'Mint Batch to Production' : 'Mint to Production';
+      } else {
+        toggle.classList.remove('active');
+        toggle.style.background = '#CBD5E1';
+        section.style.display = 'none';
+        toggleText.textContent = 'Production Mode';
+        mintText.textContent = isBatchMode ? 'Mint Batch to Blockchain' : 'Mint to Blockchain';
       }
     }
 
@@ -876,14 +916,15 @@
           data.products.forEach(product => {
             const li = document.createElement('li');
             const items = product.items || [];
+            const modeBadge = product.mode === 'production' ? '<span style="background:#10B981;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.7rem;font-weight:700;margin-left:0.5rem;">PRODUCTION</span>' : '';
             
             if (product.isBatchGroup && items.length > 0) {
               const itemsId = 'items-' + product.batchGroupId;
-              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong><span class="batch-badge">BATCH ' + product.quantity + '</span><br><small>Batch: ' + (product.batchNumber || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><button class="btn btn-secondary" onclick="toggleBatchItems(\'' + itemsId + '\',this)"><i class="fas fa-chevron-down"></i> Items</button><button class="btn btn-secondary" onclick="downloadBatchZip(\'' + product.batchGroupId + '\')"><i class="fas fa-download"></i> ZIP</button></div></div><div id="' + itemsId + '" class="batch-items">' + items.map(function(p) {
+              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong>' + modeBadge + '<span class="batch-badge">BATCH ' + product.quantity + '</span><br><small>Batch: ' + (product.batchNumber || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><button class="btn btn-secondary" onclick="toggleBatchItems(\'' + itemsId + '\',this)"><i class="fas fa-chevron-down"></i> Items</button><button class="btn btn-secondary" onclick="downloadBatchZip(\'' + product.batchGroupId + '\')"><i class="fas fa-download"></i> ZIP</button></div></div><div id="' + itemsId + '" class="batch-items">' + items.map(function(p) {
                 return '<div class="batch-item"><div><strong>' + p.sku + '</strong></div><div style="display:flex;gap:0.5rem;"><a href="' + p.verificationUrl + '" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" target="_blank"><i class="fas fa-eye"></i></a><button class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" onclick=\'openQRModal(' + JSON.stringify(p).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i></button></div></div>';
               }).join('') + '</div>';
             } else {
-              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong><br><small>SKU: ' + (product.sku || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><a href="' + product.verificationUrl + '" class="btn btn-secondary" target="_blank"><i class="fas fa-eye"></i> View</a><button class="btn btn-secondary" onclick=\'openQRModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button></div></div>';
+              li.innerHTML = '<div class="product-header"><div><strong>' + product.productName + '</strong>' + modeBadge + '<br><small>SKU: ' + (product.sku || 'N/A') + '</small></div><div style="display:flex;gap:0.5rem;"><a href="' + product.verificationUrl + '" class="btn btn-secondary" target="_blank"><i class="fas fa-eye"></i> View</a><button class="btn btn-secondary" onclick=\'openQRModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button></div></div>';
             }
             list.appendChild(li);
           });
@@ -940,14 +981,18 @@
             photos: selectedPhotos.length ? selectedPhotos : null,
             location: capturedLocation,
             isBatchOrder: isBatchMode,
-            batchQuantity
+            batchQuantity,
+            mode: isProductionMode ? 'production' : 'live'
           })
         });
 
         const result = await response.json();
         if (!response.ok) throw new Error(result.details || result.error || 'Minting failed');
 
-        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> ' + (result.isBatch ? 'Batch minted!' : 'Product minted!') + '</div>';
+        const successMsg = isProductionMode 
+          ? (result.isBatch ? 'Batch created in production mode! Add checkpoints before finalizing.' : 'Product created in production mode! Add checkpoints before finalizing.')
+          : (result.isBatch ? 'Batch minted!' : 'Product minted!');
+        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> ' + successMsg + '</div>';
         
         document.getElementById('dashProdName').value = '';
         document.getElementById('dashSku').value = '';

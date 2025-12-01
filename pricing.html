@@ -660,7 +660,7 @@
       <!-- Footer -->
       <div class="pricing-footer">
         All plans include: Blockchain verification, IPFS storage, and QR code generation<br>
-        Questions? <a href="mailto:info@biztrack.io">Contact our team</a>
+        Questions? <a href="/cdn-cgi/l/email-protection#b8d1d6ded7f8dad1c2cccad9dbd396d1d7">Contact our team</a>
       </div>
 
     </div>
@@ -674,15 +674,15 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/auth.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/auth.js"></script>
   <script src="js/SI-sidebar.js"></script>
   <script>
     requireAuth();
     const stripe = Stripe('pk_test_51QPnfvRqEoyB6yY7aGlrGv6ArcWsX11HhaTxpDRtB9RiJKs2bJzZC5ZRJoLvADWsP2GUOcuUOyIpxsw7k59b4Rkz00VhNGBzBU');
 
     const TIERS = {
-      essential: { name: 'Essential', price: 49, qrCodes: 500, popular: true, features: ['500 QR codes per month', 'Blockchain verification', 'IPFS storage', 'Priority email support', 'Basic analytics', 'API access'] },
-      scale: { name: 'Scale', price: 149, qrCodes: 2500, features: ['2,500 QR codes per month', 'Advanced blockchain features', 'Dedicated IPFS storage', '24/7 priority support', 'Advanced analytics', 'Full API access', 'Custom integrations'] },
+      essential: { name: 'Essential', price: 49, qrCodes: 500, features: ['500 QR codes per month', 'Blockchain verification', 'IPFS storage', 'Priority email support', 'Basic analytics', 'API access'] },
+      scale: { name: 'Scale', price: 149, qrCodes: 2500, popular: true, features: ['2,500 QR codes per month', 'Advanced blockchain features', 'Dedicated IPFS storage', '24/7 priority support', 'Advanced analytics', 'Full API access', 'Custom integrations'] },
       enterprise: { name: 'Enterprise', price: 399, qrCodes: 10000, features: ['10,000+ QR codes per month', 'Enterprise blockchain features', 'Dedicated infrastructure', 'Dedicated account manager', 'Custom analytics', 'White-label options', 'SLA guarantees', 'Training & consultation'] }
     };
 
@@ -749,11 +749,11 @@
         const isDowngrade = tierIndex < currentIndex;
         
         const card = document.createElement('div');
-        card.className = `pricing-card ${tier.popular && !isCurrentPlan ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
+        card.className = `pricing-card ${tier.popular && currentUserTier === 'free' ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}`;
         
         let badge = '';
         if (isCurrentPlan) badge = '<div class="current-plan-badge">Current Plan</div>';
-        else if (tier.popular && !isCurrentPlan) badge = '<div class="popular-badge">Most Popular</div>';
+        else if (tier.popular && currentUserTier === 'free') badge = '<div class="popular-badge">Most Popular</div>';
         
         let buttonHTML = '';
         if (isCurrentPlan) {
@@ -1041,11 +1041,4 @@
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('canceled') === 'true') {
-      alert('Checkout canceled. You can upgrade anytime!');
-    }
-
-    loadUserTier();
-  </script>
-</body>
-</html>
+    if (urlParam

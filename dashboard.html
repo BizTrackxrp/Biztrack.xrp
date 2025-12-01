@@ -117,69 +117,6 @@
     }
     .usage-counter-upgrade:hover { transform: translateY(-2px); }
 
-    .promo-section {
-      background: white;
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 2rem;
-      border: 2px dashed #E2E8F0;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .promo-section:hover { border-color: #F59E0B; }
-    .promo-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #64748B;
-      font-weight: 600;
-    }
-    .promo-label i { color: #F59E0B; }
-    .promo-input-group {
-      display: flex;
-      gap: 0.5rem;
-      flex: 1;
-      min-width: 200px;
-    }
-    .promo-input-group input {
-      flex: 1;
-      padding: 0.625rem 1rem;
-      border: 2px solid #E2E8F0;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
-    }
-    .promo-input-group input:focus {
-      outline: none;
-      border-color: #F59E0B;
-    }
-    .promo-input-group button {
-      padding: 0.625rem 1.25rem;
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .promo-input-group button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-    }
-    .promo-input-group button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .promo-message {
-      width: 100%;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-    }
-    .promo-message.success { color: #059669; }
-    .promo-message.error { color: #DC2626; }
-
     .card {
       background: white;
       border-radius: 16px;
@@ -442,22 +379,9 @@
         </div>
         <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;" id="tierName">Free Plan</p>
       </div>
-      <button class="usage-counter-upgrade" onclick="window.location.href='pricing.html'">
-        <i class="fas fa-arrow-up"></i> Upgrade Plan
+      <button class="usage-counter-upgrade" id="planButton" onclick="window.location.href='pricing.html'">
+        <i class="fas fa-arrow-up"></i> <span id="planButtonText">Upgrade Plan</span>
       </button>
-    </div>
-
-    <!-- NEW: Promo Code Section -->
-    <div class="promo-section">
-      <div class="promo-label">
-        <i class="fas fa-gift"></i>
-        <span>Have a promo code?</span>
-      </div>
-      <div class="promo-input-group">
-        <input type="text" id="promoCodeInput" placeholder="Enter code" maxlength="30" />
-        <button id="redeemPromoBtn" onclick="redeemPromoCode()">Redeem</button>
-      </div>
-      <div id="promoMessage" class="promo-message" style="display: none;"></div>
     </div>
 
     <div class="card">
@@ -721,58 +645,6 @@
     });
 
     // ==========================================
-    // PROMO CODE REDEMPTION (NEW)
-    // ==========================================
-    async function redeemPromoCode() {
-      const input = document.getElementById('promoCodeInput');
-      const btn = document.getElementById('redeemPromoBtn');
-      const msgEl = document.getElementById('promoMessage');
-      const code = input.value.trim();
-      
-      if (!code) {
-        msgEl.style.display = 'block';
-        msgEl.className = 'promo-message error';
-        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a promo code.';
-        return;
-      }
-      
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      msgEl.style.display = 'none';
-      
-      try {
-        const response = await authenticatedFetch('/api/redeem-promo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: code })
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-          msgEl.style.display = 'block';
-          msgEl.className = 'promo-message success';
-          msgEl.innerHTML = '<i class="fas fa-check-circle"></i> ' + result.message;
-          input.value = '';
-          
-          // Reload limits to show new QR count
-          await loadSubscriptionLimits();
-        } else {
-          msgEl.style.display = 'block';
-          msgEl.className = 'promo-message error';
-          msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (result.message || result.error);
-        }
-      } catch (error) {
-        msgEl.style.display = 'block';
-        msgEl.className = 'promo-message error';
-        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to redeem code. Please try again.';
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Redeem';
-      }
-    }
-
-    // ==========================================
     // SUBSCRIPTION & LIMITS
     // ==========================================
     async function loadSubscriptionLimits() {
@@ -788,6 +660,13 @@
           document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
           document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
           document.getElementById('tierName').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
+          
+          // Update button text for top tier users
+          const topTiers = ['enterprise', 'pharma_enterprise'];
+          if (topTiers.includes(currentTier)) {
+            document.getElementById('planButtonText').textContent = 'View Plan';
+            document.getElementById('planButton').querySelector('i').className = 'fas fa-eye';
+          }
           
           const remaining = qrLimit - qrUsedThisMonth;
           const maxBatch = Math.min(data.subscription.maxBatchSize || 10, remaining);
@@ -1057,11 +936,6 @@
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
       if (confirm('Logout?')) logout();
-    });
-
-    // Promo code Enter key support
-    document.getElementById('promoCodeInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') redeemPromoCode();
     });
 
     loadSubscriptionLimits();

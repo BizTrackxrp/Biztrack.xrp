@@ -73,6 +73,7 @@ module.exports = async (req, res) => {
 
     // CHECK QR CODE LIMITS WITH FIXED BILLING CYCLE LOGIC
     const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
+    const tierDefaultLimit = tierConfig.qrLimit || 10;  // Get tier's default QR limit
     const now = new Date();
     const billingStart = user.billing_cycle_start ? new Date(user.billing_cycle_start) : null;
 
@@ -83,14 +84,19 @@ module.exports = async (req, res) => {
       if (daysSinceStart >= 30) {
         console.log(`[BILLING] Resetting counter for user ${user.id} (${daysSinceStart} days since start)`);
         
+        // Reset usage to 0 AND reset limit to tier default (removes promo bonuses)
         await pool.query(
           `UPDATE users 
            SET qr_codes_used = 0,
+               qr_codes_limit = $1,
                billing_cycle_start = NOW()
-           WHERE id = $1`,
-          [user.id]
+           WHERE id = $2`,
+          [tierDefaultLimit, user.id]
         );
         user.qr_codes_used = 0;
+        user.qr_codes_limit = tierDefaultLimit;
+        
+        console.log(`[BILLING] Reset complete - limit back to ${tierDefaultLimit} (tier default)`);
       }
     } else {
       // First time minting - set billing cycle start

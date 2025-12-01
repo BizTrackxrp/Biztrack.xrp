@@ -350,6 +350,12 @@
       transform: translateY(-1px);
     }
 
+    .manage-card button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .manage-card.cancel {
       border-color: #FCA5A5;
       background: #FEF2F2;
@@ -365,6 +371,36 @@
 
     .manage-card.cancel button:hover {
       background: #B91C1C;
+    }
+
+    .manage-card.promo {
+      border-color: #FDE047;
+      background: #FEFCE8;
+    }
+
+    .manage-card.promo h4 {
+      color: #A16207;
+    }
+
+    .manage-card.promo button {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+    }
+
+    .manage-card.promo button:hover {
+      background: linear-gradient(135deg, #D97706, #B45309);
+    }
+
+    .manage-card.promo input:focus {
+      outline: none;
+      border-color: #F59E0B;
+    }
+
+    .promo-success {
+      color: #059669;
+    }
+
+    .promo-error {
+      color: #DC2626;
     }
 
     /* Modal */
@@ -596,6 +632,19 @@
         <h3>Manage Your Subscription</h3>
         <div class="manage-grid">
           
+          <!-- Promo Code Card -->
+          <div class="manage-card promo">
+            <h4><i class="fas fa-gift"></i> Have a Promo Code?</h4>
+            <p>Enter your code to unlock bonus QR codes for this month.</p>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <input type="text" id="promoCodeInput" placeholder="Enter code" maxlength="30" style="flex: 1; padding: 0.625rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; text-transform: uppercase; font-family: 'Inter', sans-serif;" />
+              <button onclick="redeemPromoCode()" id="redeemPromoBtn">
+                <i class="fas fa-check"></i> Redeem
+              </button>
+            </div>
+            <div id="promoMessage" style="font-size: 0.875rem; min-height: 1.25rem;"></div>
+          </div>
+
           <!-- Cancel Card -->
           <div class="manage-card cancel">
             <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
@@ -732,6 +781,56 @@
         grid.appendChild(card);
       });
     }
+
+    // ==========================================
+    // PROMO CODE REDEMPTION
+    // ==========================================
+    async function redeemPromoCode() {
+      const input = document.getElementById('promoCodeInput');
+      const btn = document.getElementById('redeemPromoBtn');
+      const msgEl = document.getElementById('promoMessage');
+      const code = input.value.trim();
+      
+      if (!code) {
+        msgEl.className = 'promo-error';
+        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a promo code.';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      msgEl.innerHTML = '';
+      
+      try {
+        const response = await authenticatedFetch('/api/redeem-promo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          msgEl.className = 'promo-success';
+          msgEl.innerHTML = '<i class="fas fa-check-circle"></i> ' + result.message;
+          input.value = '';
+        } else {
+          msgEl.className = 'promo-error';
+          msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (result.message || result.error);
+        }
+      } catch (error) {
+        msgEl.className = 'promo-error';
+        msgEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to redeem code. Please try again.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Redeem';
+      }
+    }
+
+    // Enter key support for promo code
+    document.getElementById('promoCodeInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') redeemPromoCode();
+    });
 
     // ==========================================
     // DOWNGRADE MODAL

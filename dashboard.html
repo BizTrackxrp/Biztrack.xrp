@@ -767,6 +767,13 @@
       const btn = document.getElementById('captureLocationBtn');
       btn.disabled = true;
       document.getElementById('locationBtnText').textContent = 'Getting...';
+      
+      const options = {
+        enableHighAccuracy: false,
+        timeout: 15000,
+        maximumAge: 300000
+      };
+      
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           capturedLocation = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
@@ -774,7 +781,21 @@
           btn.disabled = false;
           document.getElementById('locationBtnText').textContent = 'Update';
         },
-        (err) => { alert('Location error: ' + err.message); btn.disabled = false; document.getElementById('locationBtnText').textContent = 'Location'; }
+        (err) => {
+          btn.disabled = false;
+          document.getElementById('locationBtnText').textContent = 'Location';
+          
+          if (err.code === 1) {
+            alert('Location access denied. Please enable location permissions in your browser settings.');
+          } else if (err.code === 2) {
+            alert('Location unavailable. Please check your device location settings.');
+          } else if (err.code === 3) {
+            alert('Location request timed out. Please try again.');
+          } else {
+            alert('Location error: ' + err.message);
+          }
+        },
+        options
       );
     });
 

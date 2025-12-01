@@ -50,8 +50,12 @@ module.exports = async (req, res) => {
       photos, 
       location,
       isBatchOrder,
-      batchQuantity 
+      batchQuantity,
+      mode: productMode
     } = req.body;
+
+    // Validate mode (default to 'live')
+    const mode = productMode === 'production' ? 'production' : 'live';
 
     if (!productName) {
       return res.status(400).json({ error: 'Product name is required' });
@@ -370,9 +374,10 @@ module.exports = async (req, res) => {
           user_id,
           is_batch_group,
           batch_group_id,
-          batch_quantity
+          batch_quantity,
+          mode
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           productId, 
           productName, 
@@ -386,7 +391,8 @@ module.exports = async (req, res) => {
           user.id,
           isBatchOrder && itemNumber === 1,
           batchGroupId,
-          isBatchOrder ? quantity : null
+          isBatchOrder ? quantity : null,
+          mode
         ]
       );
 
@@ -402,6 +408,7 @@ module.exports = async (req, res) => {
         inventoryQrCodeIpfsHash: dumbQrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
+        mode,
         // Smart QR - for customers (verification page)
         qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${smartQrIpfsHash}`,
         // Dumb QR - for inventory/POS (raw SKU)

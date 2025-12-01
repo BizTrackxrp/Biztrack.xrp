@@ -1041,4 +1041,11 @@
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParam
+    if (urlParams.get('canceled') === 'true') {
+      alert('Checkout canceled. You can upgrade anytime!');
+    }
+
+    loadUserTier();
+  </script>
+</body>
+</html>

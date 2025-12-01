@@ -640,14 +640,14 @@
           <div class="manage-card promo" style="min-height: 200px; position: relative; padding-bottom: 70px;">
             <h4><i class="fas fa-gift"></i> Have a Promo Code?</h4>
             <p>Enter your code to unlock bonus QR codes for this month.</p>
-            <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
-              <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="position: absolute; bottom: 3rem; left: 1.5rem; right: 1.5rem;">
+              <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="promoCodeInput" placeholder="Enter code" maxlength="30" style="flex: 1; padding: 0.625rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; text-transform: uppercase; font-family: 'Inter', sans-serif;" />
                 <button onclick="redeemPromoCode()" id="redeemPromoBtn">
                   <i class="fas fa-check"></i> Redeem
                 </button>
               </div>
-              <div id="promoMessage" style="font-size: 0.875rem; min-height: 1.25rem;"></div>
+              <div id="promoMessage" style="font-size: 0.875rem; min-height: 1.25rem; margin-top: 0.5rem;"></div>
             </div>
           </div>
 
@@ -655,7 +655,7 @@
           <div class="manage-card cancel" style="min-height: 200px; position: relative; padding-bottom: 70px;">
             <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
             <p>Your subscription will remain active until the end of your billing period.</p>
-            <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
+            <div style="position: absolute; bottom: 3rem; left: 1.5rem; right: 1.5rem;">
               <button onclick="showCancelModal()" style="width: 100%;">
                 <i class="fas fa-times-circle"></i> Cancel Subscription
               </button>

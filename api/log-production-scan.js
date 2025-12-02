@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const axios = require('axios');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
@@ -50,8 +51,58 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Product has been finalized and cannot be updated' });
     }
 
+    // Upload photos to IPFS if provided
+    let photoUrls = [];
+    if (photos && photos.length > 0) {
+      console.log(`Uploading ${photos.length} checkpoint photos to IPFS...`);
+      
+      const FormData = require('form-data');
+      
+      for (let i = 0; i < photos.length; i++) {
+        try {
+          const photoData = photos[i];
+          
+          // Handle both base64 with prefix and without
+          const base64Data = photoData.includes(',') 
+            ? photoData.split(',')[1] 
+            : photoData;
+          
+          const buffer = Buffer.from(base64Data, 'base64');
+          
+          const formData = new FormData();
+          formData.append('file', buffer, {
+            filename: `checkpoint-${productId}-${Date.now()}-${i + 1}.jpg`,
+            contentType: 'image/jpeg'
+          });
+
+          const pinataResponse = await axios.post(
+            'https://api.pinata.cloud/pinning/pinFileToIPFS',
+            formData,
+            {
+              headers: {
+                ...formData.getHeaders(),
+                'Authorization': `Bearer ${process.env.PINATA_JWT}`
+              },
+              maxContentLength: Infinity,
+              maxBodyLength: Infinity
+            }
+          );
+
+          const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${pinataResponse.data.IpfsHash}`;
+          photoUrls.push(ipfsUrl);
+          console.log(`Checkpoint photo ${i + 1} uploaded: ${pinataResponse.data.IpfsHash}`);
+        } catch (uploadError) {
+          console.error(`Failed to upload photo ${i + 1}:`, uploadError.message);
+          // Continue with other photos even if one fails
+        }
+      }
+    }
+
     // Get IP address
-    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || null;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || 
+               req.headers['x-real-ip'] || 
+               req.socket?.remoteAddress || 
+               null;
 
     // Insert production scan
     const scanResult = await pool.query(
@@ -74,7 +125,7 @@ module.exports = async (req, res) => {
         longitude || null,
         locationName || null,
         notes || null,
-        photos && photos.length > 0 ? photos : null,
+        photoUrls.length > 0 ? photoUrls : null,
         scannedByName,
         scannedByRole,
         ip
@@ -88,6 +139,8 @@ module.exports = async (req, res) => {
       'SELECT COUNT(*) FROM production_scans WHERE product_id = $1',
       [product.id]
     );
+
+    console.log(`Checkpoint logged for ${productId}: scan #${scan.id}, ${photoUrls.length} photos`);
 
     return res.status(200).json({
       success: true,

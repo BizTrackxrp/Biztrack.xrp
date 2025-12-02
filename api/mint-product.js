@@ -56,12 +56,13 @@ module.exports = async (req, res) => {
 
     // Validate mode (default to 'live')
     const mode = productMode === 'production' ? 'production' : 'live';
+    const isProductionMode = mode === 'production';
 
     if (!productName) {
       return res.status(400).json({ error: 'Product name is required' });
     }
 
-    // Check batch quantity against tier limits
+    // Check batch quantity against tier limits (applies to both modes)
     if (isBatchOrder) {
       const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
       const maxBatch = tierConfig.maxBatchSize || 10;
@@ -75,72 +76,230 @@ module.exports = async (req, res) => {
 
     const quantity = isBatchOrder ? parseInt(batchQuantity) : 1;
 
-    // CHECK QR CODE LIMITS WITH FIXED BILLING CYCLE LOGIC
-    const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
-    const tierDefaultLimit = tierConfig.qrLimit || 10;  // Get tier's default QR limit
-    const now = new Date();
-    const billingStart = user.billing_cycle_start ? new Date(user.billing_cycle_start) : null;
+    // ==========================================
+    // QR CODE LIMITS - ONLY CHECK FOR LIVE MODE
+    // ==========================================
+    if (!isProductionMode) {
+      const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
+      const tierDefaultLimit = tierConfig.qrLimit || 10;
+      const now = new Date();
+      const billingStart = user.billing_cycle_start ? new Date(user.billing_cycle_start) : null;
 
-    // Only reset if we have a billing start AND it's been 30+ days
-    if (billingStart) {
-      const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
-      
-      if (daysSinceStart >= 30) {
-        console.log(`[BILLING] Resetting counter for user ${user.id} (${daysSinceStart} days since start)`);
+      // Only reset if we have a billing start AND it's been 30+ days
+      if (billingStart) {
+        const daysSinceStart = Math.floor((now - billingStart) / (1000 * 60 * 60 * 24));
         
-        // Reset usage to 0 AND reset limit to tier default (removes promo bonuses)
+        if (daysSinceStart >= 30) {
+          console.log(`[BILLING] Resetting counter for user ${user.id} (${daysSinceStart} days since start)`);
+          
+          await pool.query(
+            `UPDATE users 
+             SET qr_codes_used = 0,
+                 qr_codes_limit = $1,
+                 billing_cycle_start = NOW()
+             WHERE id = $2`,
+            [tierDefaultLimit, user.id]
+          );
+          user.qr_codes_used = 0;
+          user.qr_codes_limit = tierDefaultLimit;
+          
+          console.log(`[BILLING] Reset complete - limit back to ${tierDefaultLimit} (tier default)`);
+        }
+      } else {
+        console.log(`[BILLING] Setting initial billing cycle for user ${user.id}`);
+        
         await pool.query(
           `UPDATE users 
-           SET qr_codes_used = 0,
-               qr_codes_limit = $1,
-               billing_cycle_start = NOW()
-           WHERE id = $2`,
-          [tierDefaultLimit, user.id]
+           SET billing_cycle_start = NOW()
+           WHERE id = $1`,
+          [user.id]
         );
-        user.qr_codes_used = 0;
-        user.qr_codes_limit = tierDefaultLimit;
-        
-        console.log(`[BILLING] Reset complete - limit back to ${tierDefaultLimit} (tier default)`);
+      }
+
+      // Calculate remaining AFTER potential reset
+      const remaining = user.qr_codes_limit - user.qr_codes_used;
+
+      // Check if user has enough QR codes
+      if (quantity > remaining) {
+        const nextTier = stripeConfig.getNextTier(user.subscription_tier);
+        const nextTierConfig = nextTier ? stripeConfig.getTierConfig(nextTier) : null;
+
+        return res.status(403).json({ 
+          error: 'QR code limit exceeded',
+          message: `You need ${quantity} QR codes but only have ${remaining} remaining.`,
+          limits: {
+            tier: user.subscription_tier,
+            used: user.qr_codes_used,
+            limit: user.qr_codes_limit,
+            remaining: remaining,
+            requested: quantity
+          },
+          upgrade: {
+            available: !!nextTier,
+            nextTier: nextTier,
+            nextTierName: nextTierConfig?.name,
+            nextTierLimit: nextTierConfig?.qrLimit,
+            nextTierPrice: nextTierConfig?.price
+          }
+        });
       }
     } else {
-      // First time minting - set billing cycle start
-      console.log(`[BILLING] Setting initial billing cycle for user ${user.id}`);
-      
-      await pool.query(
-        `UPDATE users 
-         SET billing_cycle_start = NOW()
-         WHERE id = $1`,
-        [user.id]
-      );
+      console.log(`[PRODUCTION MODE] Skipping QR limit check for user ${user.id}`);
     }
 
-    // Calculate remaining AFTER potential reset
-    const remaining = user.qr_codes_limit - user.qr_codes_used;
+    // ==========================================
+    // PRODUCTION MODE - Simple flow
+    // ==========================================
+    if (isProductionMode) {
+      console.log(`\n=== PRODUCTION MODE: Creating tracking entry ===`);
+      
+      const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Production mode QR points to /scan which routes appropriately
+      const scanUrl = `https://www.biztrack.io/scan.html?id=${productId}`;
+      const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-    // Check if user has enough QR codes
-    if (quantity > remaining) {
-      const nextTier = stripeConfig.getNextTier(user.subscription_tier);
-      const nextTierConfig = nextTier ? stripeConfig.getTierConfig(nextTier) : null;
+      // Generate SKU prefix for batch
+      const skuPrefix = isBatchOrder && !sku 
+        ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
+        : sku;
 
-      return res.status(403).json({ 
-        error: 'QR code limit exceeded',
-        message: `You need ${quantity} QR codes but only have ${remaining} remaining.`,
-        limits: {
-          tier: user.subscription_tier,
-          used: user.qr_codes_used,
-          limit: user.qr_codes_limit,
-          remaining: remaining,
-          requested: quantity
-        },
-        upgrade: {
-          available: !!nextTier,
-          nextTier: nextTier,
-          nextTierName: nextTierConfig?.name,
-          nextTierLimit: nextTierConfig?.qrLimit,
-          nextTierPrice: nextTierConfig?.price
+      // Generate batch group ID
+      const batchGroupId = isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null;
+
+      // Upload photos to IPFS if provided (keep for later use)
+      let photoHashes = [];
+      if (photos && photos.length > 0) {
+        console.log(`Uploading ${photos.length} photos to IPFS...`);
+        
+        const FormData = require('form-data');
+        
+        for (let i = 0; i < photos.length; i++) {
+          const photoData = photos[i];
+          const base64Data = photoData.includes(',') ? photoData.split(',')[1] : photoData;
+          const buffer = Buffer.from(base64Data, 'base64');
+          
+          const photoFormData = new FormData();
+          photoFormData.append('file', buffer, {
+            filename: `production-photo-${Date.now()}-${i + 1}.jpg`,
+            contentType: 'image/jpeg'
+          });
+
+          const photoResponse = await axios.post(
+            'https://api.pinata.cloud/pinning/pinFileToIPFS',
+            photoFormData,
+            {
+              headers: {
+                ...photoFormData.getHeaders(),
+                'Authorization': `Bearer ${process.env.PINATA_JWT}`
+              }
+            }
+          );
+
+          photoHashes.push(photoResponse.data.IpfsHash);
+          console.log(`Photo ${i + 1} IPFS Hash:`, photoResponse.data.IpfsHash);
         }
+      }
+
+      // Generate ONE tracking QR code (points to /scan.html for routing)
+      console.log('Generating tracking QR code...');
+      const trackingQrBuffer = await QRCode.toBuffer(scanUrl, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#10B981',  // Green for production mode
+          light: '#FFFFFF'
+        },
+        errorCorrectionLevel: 'M'
+      });
+
+      // Upload tracking QR to IPFS
+      const FormData = require('form-data');
+      const qrFormData = new FormData();
+      qrFormData.append('file', trackingQrBuffer, {
+        filename: `${productId}-tracking-qr.png`,
+        contentType: 'image/png'
+      });
+
+      const qrPinataResponse = await axios.post(
+        'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        qrFormData,
+        {
+          headers: {
+            ...qrFormData.getHeaders(),
+            'Authorization': `Bearer ${process.env.PINATA_JWT}`
+          }
+        }
+      );
+
+      const trackingQrIpfsHash = qrPinataResponse.data.IpfsHash;
+      console.log('Tracking QR IPFS Hash:', trackingQrIpfsHash);
+
+      // Save to database (NO xrpl_tx_hash, NO ipfs_hash for product data yet)
+      console.log('Saving production entry to database...');
+      await pool.query(
+        `INSERT INTO products (
+          product_id, 
+          product_name, 
+          sku, 
+          batch_number, 
+          qr_code_ipfs_hash,
+          metadata, 
+          user_id,
+          is_batch_group,
+          batch_group_id,
+          batch_quantity,
+          mode,
+          is_finalized,
+          photo_hashes,
+          location_data
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+        [
+          productId, 
+          productName, 
+          skuPrefix || null, 
+          batchNumber || null, 
+          trackingQrIpfsHash,
+          metadata || {}, 
+          user.id,
+          isBatchOrder,
+          batchGroupId,
+          quantity,
+          'production',
+          false,
+          photoHashes.length > 0 ? JSON.stringify(photoHashes) : null,
+          location ? JSON.stringify(location) : null
+        ]
+      );
+
+      console.log('Production entry created successfully!');
+      console.log(`[PRODUCTION MODE] NO charge applied - will charge ${quantity} QR codes on finalization`);
+
+      return res.status(200).json({
+        success: true,
+        isProductionMode: true,
+        productId,
+        productName,
+        sku: skuPrefix,
+        batchNumber,
+        quantity,
+        batchGroupId,
+        mode: 'production',
+        // Tracking QR for supply chain
+        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${trackingQrIpfsHash}`,
+        scanUrl,
+        verificationUrl,
+        message: isBatchOrder 
+          ? `Production batch created with ${quantity} items. Add checkpoints, then Go Live to mint to blockchain.`
+          : 'Production entry created. Add checkpoints, then Go Live to mint to blockchain.',
+        note: 'No QR codes charged yet. You will be charged when you finalize/Go Live.'
       });
     }
+
+    // ==========================================
+    // LIVE MODE - Full blockchain mint flow
+    // ==========================================
+    console.log(`\n=== LIVE MODE: Full blockchain mint ===`);
 
     const products = [];
 
@@ -159,7 +318,8 @@ module.exports = async (req, res) => {
       
       for (let i = 0; i < photos.length; i++) {
         const photoData = photos[i];
-        const buffer = Buffer.from(photoData.split(',')[1], 'base64');
+        const base64Data = photoData.includes(',') ? photoData.split(',')[1] : photoData;
+        const buffer = Buffer.from(base64Data, 'base64');
         
         const FormData = require('form-data');
         const photoFormData = new FormData();
@@ -213,7 +373,7 @@ module.exports = async (req, res) => {
         width: 300,
         margin: 2,
         color: {
-          dark: '#1E293B',  // Dark blue-gray for branded look
+          dark: '#1E293B',
           light: '#FFFFFF'
         },
         errorCorrectionLevel: 'M'
@@ -252,10 +412,10 @@ module.exports = async (req, res) => {
           width: 300,
           margin: 2,
           color: {
-            dark: '#000000',  // Plain black
-            light: '#FFFFFF'  // Plain white
+            dark: '#000000',
+            light: '#FFFFFF'
           },
-          errorCorrectionLevel: 'L'  // Lower error correction for simpler/faster scanning
+          errorCorrectionLevel: 'L'
         });
 
         console.log('Uploading DUMB QR code to IPFS...');
@@ -375,9 +535,10 @@ module.exports = async (req, res) => {
           is_batch_group,
           batch_group_id,
           batch_quantity,
-          mode
+          mode,
+          is_finalized
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
         [
           productId, 
           productName, 
@@ -392,7 +553,8 @@ module.exports = async (req, res) => {
           isBatchOrder && itemNumber === 1,
           batchGroupId,
           isBatchOrder ? quantity : null,
-          mode
+          'live',
+          true  // Live mode products are "finalized" by default
         ]
       );
 
@@ -408,10 +570,8 @@ module.exports = async (req, res) => {
         inventoryQrCodeIpfsHash: dumbQrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
-        mode,
-        // Smart QR - for customers (verification page)
+        mode: 'live',
         qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${smartQrIpfsHash}`,
-        // Dumb QR - for inventory/POS (raw SKU)
         inventoryQrCodeUrl: dumbQrIpfsHash ? `https://gateway.pinata.cloud/ipfs/${dumbQrIpfsHash}` : null,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
         ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
@@ -425,7 +585,7 @@ module.exports = async (req, res) => {
 
     await client.disconnect();
 
-    // UPDATE QR CODE COUNTER
+    // UPDATE QR CODE COUNTER (ONLY FOR LIVE MODE)
     await pool.query(
       'UPDATE users SET qr_codes_used = qr_codes_used + $1 WHERE id = $2',
       [quantity, user.id]

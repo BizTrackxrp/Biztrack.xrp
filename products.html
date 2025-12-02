@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finished Products – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-header h1 { font-size: 2rem; font-weight: 800; color: #1E293B; }
+    .page-header p { font-size: 1rem; color: #64748B; margin-top: 0.25rem; }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .stat-box {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+      text-align: center;
+    }
+    .stat-box-value { font-size: 1.5rem; font-weight: 800; color: #4F46E5; }
+    .stat-box-label { font-size: 0.75rem; color: #64748B; text-transform: uppercase; }
+
+    /* Search & Filters */
+    .filters-bar {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .filter-select {
+      padding: 0.75rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      min-width: 150px;
+    }
+    .filter-select:focus {
+      outline: none;
+      border-color: #4F46E5;
+    }
+
+    .clear-filters {
+      padding: 0.75rem 1rem;
+      background: #F1F5F9;
+      border: none;
+      border-radius: 10px;
+      color: #64748B;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clear-filters:hover { background: #E2E8F0; color: #334155; }
+
+    /* Product Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .product-card-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .product-card-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+    .product-card-sku {
+      font-size: 0.85rem;
+      color: #64748B;
+      font-family: monospace;
+    }
+
+    .product-card-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-live { background: #DBEAFE; color: #1D4ED8; }
+    .badge-batch { background: #E0E7FF; color: #4338CA; }
+    .badge-finalized { background: #D1FAE5; color: #065F46; }
+
+    .product-card-body {
+      padding: 1.25rem;
+    }
+
+    .product-card-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .meta-item {
+      font-size: 0.85rem;
+    }
+    .meta-item-label {
+      color: #94A3B8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+    .meta-item-value {
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .product-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-secondary {
+      background: #F1F5F9;
+      color: #475569;
+    }
+    .btn-secondary:hover { background: #E2E8F0; }
+    .btn-outline {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+    }
+    .btn-outline:hover { background: #F5F3FF; }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #94A3B8;
+    }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+    .empty-state h3 { font-size: 1.25rem; color: #64748B; margin-bottom: 0.5rem; }
+    .empty-state p { margin-bottom: 1.5rem; }
+    .empty-state a { color: #4F46E5; text-decoration: none; font-weight: 600; }
+    .empty-state a:hover { text-decoration: underline; }
+
+    /* Loading State */
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #64748B;
+    }
+    .loading-state i { font-size: 2rem; margin-bottom: 1rem; }
+
+    /* QR Modal */
+    .qr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .qr-modal-overlay.show { display: flex; }
+    .qr-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .qr-modal-header h2 { font-size: 1.5rem; font-weight: 700; color: #1E293B; }
+    .qr-modal-close {
+      background: none; border: none; font-size: 1.5rem; color: #64748B;
+      cursor: pointer; padding: 0.5rem; border-radius: 8px;
+    }
+    .qr-modal-close:hover { background: #F1F5F9; color: #1E293B; }
+    .qr-modal-sku {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .qr-modal-sku span {
+      background: #F1F5F9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      color: #334155;
+    }
+    .qr-codes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-code-box { text-align: center; }
+    .qr-code-box img {
+      width: 140px; height: 140px;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      padding: 8px;
+      background: white;
+    }
+    .qr-code-box.customer img { border-color: #A5B4FC; }
+    .qr-code-box.inventory img { border-color: #CBD5E1; }
+    .qr-code-label { margin-top: 0.75rem; font-weight: 600; font-size: 0.9rem; }
+    .qr-code-box.customer .qr-code-label { color: #4F46E5; }
+    .qr-code-box.inventory .qr-code-label { color: #64748B; }
+    .qr-download-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .qr-download-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white; border: none;
+    }
+    .qr-download-btn.customer:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+    .qr-download-btn.inventory {
+      background: white; color: #64748B; border: 2px solid #CBD5E1;
+    }
+    .qr-download-btn.inventory:hover { background: #F8FAFC; }
+    .qr-download-btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white; border: none;
+    }
+    .qr-download-btn.both:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+
+    /* Batch Items Expansion */
+    .batch-items-section {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #E2E8F0;
+      display: none;
+    }
+    .batch-items-section.show { display: block; }
+    .batch-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background: #F8FAFC;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .batch-item:last-child { margin-bottom: 0; }
+    .batch-item-sku { font-family: monospace; font-weight: 600; }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #E2E8F0;
+    }
+    .pagination-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #E2E8F0;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) { border-color: #4F46E5; color: #4F46E5; }
+    .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination-btn.active { background: #4F46E5; color: white; border-color: #4F46E5; }
+    .pagination-info { color: #64748B; font-size: 0.9rem; margin: 0 1rem; }
+
+    @media (max-width: 768px) {
+      .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .header-stats { width: 100%; }
+      .stat-box { flex: 1; }
+      .products-grid { grid-template-columns: 1fr; }
+      .qr-codes-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="js/SI-sidebar.js"></script>
+
+  <div class="main-with-sidebar">
+    <div class="page-header">
+      <div>
+        <h1><i class="fas fa-box-check" style="color: #4F46E5;"></i> Finished Products</h1>
+        <p>All your live and finalized products ready for customer verification.</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-box">
+          <div class="stat-box-value" id="totalProducts">-</div>
+          <div class="stat-box-label">Total Products</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-value" id="totalBatches">-</div>
+          <div class="stat-box-label">Batches</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, SKU, or batch..." />
+      </div>
+      <select class="filter-select" id="sortSelect">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="name-az">Name A-Z</option>
+        <option value="name-za">Name Z-A</option>
+      </select>
+      <select class="filter-select" id="typeSelect">
+        <option value="all">All Types</option>
+        <option value="single">Single Products</option>
+        <option value="batch">Batches Only</option>
+      </select>
+      <button class="clear-filters" onclick="clearFilters()">
+        <i class="fas fa-times"></i> Clear
+      </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsContainer">
+      <div class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading products...</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display: none;"></div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
+        <button class="qr-modal-close" onclick="closeQRModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="qr-modal-sku">
+        <span id="modalSku">SKU: ---</span>
+      </div>
+
+      <div class="qr-codes-container">
+        <div class="qr-code-box customer">
+          <img id="modalCustomerQR" src="" alt="Customer QR" />
+          <div class="qr-code-label">Customer</div>
+        </div>
+        <div class="qr-code-box inventory" id="inventoryQRBox">
+          <img id="modalInventoryQR" src="" alt="Inventory QR" />
+          <div class="qr-code-label">Inventory</div>
+        </div>
+      </div>
+
+      <div class="qr-download-buttons">
+        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" download>
+          <i class="fas fa-mobile-alt"></i> Customer
+        </a>
+        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" download>
+          <i class="fas fa-barcode"></i> Inventory
+        </a>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
+          <i class="fas fa-layer-group"></i> Both
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+    let currentQRData = null;
+
+    // ==========================================
+    // LOAD PRODUCTS
+    // ==========================================
+    async function loadProducts() {
+      try {
+        const response = await authenticatedFetch('/api/list-products');
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to load products');
+        }
+
+        // Filter for finished products only (live or finalized)
+        allProducts = (data.products || []).filter(p => {
+          return p.mode === 'live' || p.isFinalized === true;
+        });
+
+        // Calculate stats
+        let totalProducts = 0;
+        let totalBatches = 0;
+        
+        allProducts.forEach(p => {
+          if (p.isBatchGroup) {
+            totalBatches++;
+            totalProducts += (p.items?.length || p.quantity || 1);
+          } else {
+            totalProducts++;
+          }
+        });
+
+        document.getElementById('totalProducts').textContent = totalProducts;
+        document.getElementById('totalBatches').textContent = totalBatches;
+
+        applyFilters();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsContainer').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error Loading Products</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // ==========================================
+    // FILTERS & SEARCH
+    // ==========================================
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const sortBy = document.getElementById('sortSelect').value;
+      const typeFilter = document.getElementById('typeSelect').value;
+
+      // Filter
+      filteredProducts = allProducts.filter(p => {
+        // Search
+        const matchesSearch = !searchTerm || 
+          p.productName?.toLowerCase().includes(searchTerm) ||
+          p.sku?.toLowerCase().includes(searchTerm) ||
+          p.batchNumber?.toLowerCase().includes(searchTerm) ||
+          p.productId?.toLowerCase().includes(searchTerm);
+
+        // Type
+        const matchesType = typeFilter === 'all' ||
+          (typeFilter === 'batch' && p.isBatchGroup) ||
+          (typeFilter === 'single' && !p.isBatchGroup);
+
+        return matchesSearch && matchesType;
+      });
+
+      // Sort
+      filteredProducts.sort((a, b) => {
+        switch (sortBy) {
+          case 'newest':
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          case 'oldest':
+            return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          case 'name-az':
+            return (a.productName || '').localeCompare(b.productName || '');
+          case 'name-za':
+            return (b.productName || '').localeCompare(a.productName || '');
+          default:
+            return 0;
+        }
+      });
+
+      currentPage = 1;
+      renderProducts();
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('sortSelect').value = 'newest';
+      document.getElementById('typeSelect').value = 'all';
+      applyFilters();
+    }
+
+    // Event listeners for filters
+    document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+    document.getElementById('sortSelect').addEventListener('change', applyFilters);
+    document.getElementById('typeSelect').addEventListener('change', applyFilters);
+
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // ==========================================
+    // RENDER PRODUCTS
+    // ==========================================
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+
+      if (filteredProducts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>No Finished Products Yet</h3>
+            <p>Products will appear here once they're minted or finalized from production.</p>
+            <a href="dashboard.html"><i class="fas fa-plus"></i> Create Your First Product</a>
+          </div>
+        `;
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      // Pagination
+      const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+      const startIdx = (currentPage - 1) * itemsPerPage;
+      const endIdx = startIdx + itemsPerPage;
+      const pageProducts = filteredProducts.slice(startIdx, endIdx);
+
+      // Render cards
+      container.innerHTML = `
+        <div class="products-grid">
+          ${pageProducts.map(product => renderProductCard(product)).join('')}
+        </div>
+      `;
+
+      // Render pagination
+      renderPagination(totalPages);
+    }
+
+    function renderProductCard(product) {
+      const isBatch = product.isBatchGroup;
+      const items = product.items || [];
+      const itemCount = items.length || product.quantity || 1;
+      const createdDate = product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'N/A';
+      
+      // Badges
+      let badges = '';
+      if (product.isFinalized) {
+        badges += '<span class="badge badge-finalized">Finalized</span>';
+      } else {
+        badges += '<span class="badge badge-live">Live</span>';
+      }
+      if (isBatch) {
+        badges += `<span class="badge badge-batch">Batch ${itemCount}</span>`;
+      }
+
+      // Batch items section
+      let batchItemsHtml = '';
+      if (isBatch && items.length > 0) {
+        batchItemsHtml = `
+          <div class="batch-items-section" id="batch-items-${product.batchGroupId || product.productId}">
+            ${items.slice(0, 5).map(item => `
+              <div class="batch-item">
+                <span class="batch-item-sku">${escapeHtml(item.sku)}</span>
+                <button class="btn btn-secondary" onclick='openQRModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>
+                  <i class="fas fa-qrcode"></i>
+                </button>
+              </div>
+            `).join('')}
+            ${items.length > 5 ? `<div class="batch-item" style="justify-content: center; color: #64748B;">...and ${items.length - 5} more</div>` : ''}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="product-card">
+          <div class="product-card-header">
+            <div>
+              <div class="product-card-title">${escapeHtml(product.productName)}</div>
+              <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
+            </div>
+            <div class="product-card-badges">${badges}</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-meta">
+              <div class="meta-item">
+                <div class="meta-item-label">Batch #</div>
+                <div class="meta-item-value">${escapeHtml(product.batchNumber || 'N/A')}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-item-label">Created</div>
+                <div class="meta-item-value">${createdDate}</div>
+              </div>
+            </div>
+            <div class="product-card-actions">
+              <a href="${product.verificationUrl || '/verify.html?id=' + product.productId}" target="_blank" class="btn btn-secondary">
+                <i class="fas fa-eye"></i> View
+              </a>
+              <button class="btn btn-primary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                <i class="fas fa-qrcode"></i> QR
+              </button>
+              ${isBatch ? `
+                <button class="btn btn-secondary" onclick="toggleBatchItems('${product.batchGroupId || product.productId}')">
+                  <i class="fas fa-list"></i> Items
+                </button>
+                <button class="btn btn-outline" onclick="downloadBatchZip('${product.batchGroupId}', '${escapeHtml(product.productName)}')">
+                  <i class="fas fa-download"></i> ZIP
+                </button>
+              ` : ''}
+            </div>
+            ${batchItemsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPagination(totalPages) {
+      const pagination = document.getElementById('pagination');
+      
+      if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        return;
+      }
+
+      pagination.style.display = 'flex';
+      
+      let html = `
+        <button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+          html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+          html += `<span class="pagination-info">...</span>`;
+        }
+      }
+
+      html += `
+        <button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      `;
+
+      pagination.innerHTML = html;
+    }
+
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // BATCH ITEMS
+    // ==========================================
+    window.toggleBatchItems = function(batchId) {
+      const section = document.getElementById('batch-items-' + batchId);
+      if (section) {
+        section.classList.toggle('show');
+      }
+    };
+
+    window.downloadBatchZip = async function(batchGroupId, productName) {
+      const btn = event.target.closest('button');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+      try {
+        const batch = allProducts.find(p => p.batchGroupId === batchGroupId);
+        if (!batch || !batch.items?.length) throw new Error('Batch not found');
+
+        const zip = new JSZip();
+        const customerFolder = zip.folder('Customer-QR-Codes');
+        const inventoryFolder = zip.folder('Inventory-QR-Codes');
+
+        for (const item of batch.items) {
+          if (item.qrCodeUrl) {
+            const r = await fetch(item.qrCodeUrl);
+            customerFolder.file(item.sku + '-customer.png', await r.blob());
+          }
+          if (item.inventoryQrCodeUrl) {
+            const r = await fetch(item.inventoryQrCodeUrl);
+            inventoryFolder.file(item.sku + '-inventory.png', await r.blob());
+          }
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(zipBlob);
+        a.download = productName.replace(/[^a-z0-9]/gi, '_') + '_batch.zip';
+        a.click();
+      } catch (err) {
+        alert('ZIP error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> ZIP';
+      }
+    };
+
+    // ==========================================
+    // QR MODAL
+    // ==========================================
+    window.openQRModal = function(product) {
+      if (typeof product === 'string') product = JSON.parse(product);
+      currentQRData = product;
+
+      document.getElementById('modalSku').textContent = 'SKU: ' + (product.sku || product.productId);
+      document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
+      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
+
+      const inventoryBox = document.getElementById('inventoryQRBox');
+      const inventoryBtn = document.getElementById('downloadInventoryBtn');
+      const bothBtn = document.getElementById('downloadBothBtn');
+
+      if (product.inventoryQrCodeUrl) {
+        document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
+        inventoryBtn.href = product.inventoryQrCodeUrl;
+        inventoryBox.style.display = 'block';
+        inventoryBtn.style.display = 'flex';
+        bothBtn.style.display = 'flex';
+      } else {
+        inventoryBox.style.display = 'none';
+        inventoryBtn.style.display = 'none';
+        bothBtn.style.display = 'none';
+      }
+
+      document.getElementById('qrModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeQRModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('qrModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentQRData = null;
+    };
+
+    window.downloadBothQRs = async function() {
+      if (!currentQRData) return;
+
+      const btn = document.getElementById('downloadBothBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      btn.disabled = true;
+
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 380;
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const customerImg = new Image();
+        const inventoryImg = new Image();
+        customerImg.crossOrigin = 'anonymous';
+        inventoryImg.crossOrigin = 'anonymous';
+
+        await Promise.all([
+          new Promise((resolve, reject) => { customerImg.onload = resolve; customerImg.onerror = reject; customerImg.src = currentQRData.qrCodeUrl; }),
+          new Promise((resolve, reject) => { inventoryImg.onload = resolve; inventoryImg.onerror = reject; inventoryImg.src = currentQRData.inventoryQrCodeUrl; })
+        ]);
+
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 22px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 32);
+
+        ctx.fillStyle = '#64748B';
+        ctx.font = '14px Inter, Arial, sans-serif';
+        ctx.fillText('SKU: ' + (currentQRData.sku || currentQRData.productId), canvas.width / 2, 55);
+
+        const qrSize = 140;
+        const qrY = 75;
+
+        ctx.drawImage(customerImg, 80, qrY, qrSize, qrSize);
+        ctx.drawImage(inventoryImg, 380, qrY, qrSize, qrSize);
+
+        ctx.fillStyle = '#4F46E5';
+        ctx.font = 'bold 13px Inter, Arial, sans-serif';
+        ctx.fillText('Customer', 150, qrY + qrSize + 22);
+
+        ctx.fillStyle = '#64748B';
+        ctx.fillText('Inventory', 450, qrY + qrSize + 22);
+
+        const link = document.createElement('a');
+        link.download = (currentQRData.sku || currentQRData.productId) + '-label.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert('Error creating label: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fas fa-layer-group"></i> Both';
+        btn.disabled = false;
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeQRModal();
+    });
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    loadProducts();
+  </script>
+</body>
+</html>

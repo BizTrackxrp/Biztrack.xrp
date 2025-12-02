@@ -36,7 +36,9 @@
         </div>
         
         <ul class="si-sidebar-nav">
-          <li><a href="dashboard.html" id="si-nav-dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+          <li><a href="dashboard.html" id="si-nav-dashboard"><i class="fas fa-plus-circle"></i> Create Products</a></li>
+          <li><a href="products.html" id="si-nav-products"><i class="fas fa-box-check"></i> Finished Products</a></li>
+          <li><a href="production.html" id="si-nav-production"><i class="fas fa-industry"></i> Products in Production</a></li>
           <li><a href="#" onclick="goToPricing(); return false;" id="si-nav-subscription"><i class="fas fa-credit-card"></i> Subscription</a></li>
           <li><a href="settings.html" id="si-nav-settings"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
@@ -356,6 +358,8 @@
     
     const navMap = {
       'dashboard.html': 'si-nav-dashboard',
+      'products.html': 'si-nav-products',
+      'production.html': 'si-nav-production',
       'pricing.html': 'si-nav-subscription',
       'SI-pharma-pricing.html': 'si-nav-subscription',
       'settings.html': 'si-nav-settings'

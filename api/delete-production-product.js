@@ -67,19 +67,13 @@ module.exports = async (req, res) => {
       [product.id]
     );
 
-    // Refund the QR code usage
-    await pool.query(
-      'UPDATE users SET qr_codes_used = GREATEST(0, qr_codes_used - 1) WHERE id = $1',
-      [decoded.userId]
-    );
-
-    console.log(`Production product ${productId} deleted with ${deletedScans.rowCount} checkpoints. QR refunded to user ${decoded.userId}`);
+    // No refund needed - production mode doesn't charge until finalization
+    console.log(`Production product ${productId} deleted with ${deletedScans.rowCount} checkpoints by user ${decoded.userId}`);
 
     return res.status(200).json({
       success: true,
       message: 'Production entry deleted successfully',
-      deletedCheckpoints: deletedScans.rowCount,
-      qrRefunded: true
+      deletedCheckpoints: deletedScans.rowCount
     });
 
   } catch (error) {

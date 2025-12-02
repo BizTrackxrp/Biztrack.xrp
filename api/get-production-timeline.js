@@ -1,89 +1,810 @@
-const { Pool } = require('pg');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Checkpoint - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
+    .header {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
 
-module.exports = async (req, res) => {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
 
-  try {
-    const { productId } = req.query;
+    .header p {
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+
+    .production-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .product-info {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .product-info h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-info .meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.875rem;
+      color: #64748B;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 i { color: #10B981; }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #10B981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+      background: white;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .location-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #F8FAFC;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .location-status:hover {
+      background: #F1F5F9;
+    }
+
+    .location-status.success {
+      background: #ECFDF5;
+      color: #059669;
+    }
+
+    .location-status i {
+      font-size: 1rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      flex: 1;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+    }
+
+    .btn-secondary:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    .photo-preview {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+
+    .photo-preview-item {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+
+    .photo-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #E2E8F0;
+    }
+
+    .photo-preview-item button {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #DC2626;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .message.success {
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
+    }
+
+    .message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #E2E8F0;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.5rem;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -2rem;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      background: #10B981;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #10B981;
+    }
+
+    .timeline-content {
+      background: #F8FAFC;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .timeline-who {
+      font-weight: 600;
+      color: #1E293B;
+    }
+
+    .timeline-role {
+      font-size: 0.8rem;
+      color: #64748B;
+      background: #E2E8F0;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .timeline-when {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    .timeline-location {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-location i {
+      color: #10B981;
+      margin-right: 0.25rem;
+    }
+
+    .timeline-notes {
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .timeline-photos {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .timeline-photos img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .timeline-photos img:hover {
+      transform: scale(1.1);
+    }
+
+    .empty-timeline {
+      text-align: center;
+      padding: 2rem;
+      color: #94A3B8;
+    }
+
+    .empty-timeline i {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.5;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: #1E293B;
+    }
+
+    @media (max-width: 500px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🚚 Log Checkpoint</h1>
+    <p>Add your stop to the supply chain</p>
+    <div class="production-badge">
+      <i class="fas fa-route"></i>
+      Production Tracking Mode
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Product Info -->
+    <div class="product-info" id="productInfo">
+      <h2 id="productName">Loading...</h2>
+      <div class="meta">
+        <span><i class="fas fa-barcode"></i> <span id="productSku">---</span></span>
+        <span><i class="fas fa-hashtag"></i> <span id="productId">---</span></span>
+      </div>
+    </div>
+
+    <!-- Checkpoint Form -->
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Add Checkpoint</h3>
+      
+      <div id="formMessage"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="scannerName">Your Name *</label>
+          <input type="text" id="scannerName" placeholder="e.g. John Smith">
+        </div>
+        <div class="form-group">
+          <label for="scannerRole">Your Role *</label>
+          <input type="text" id="scannerRole" placeholder="e.g. QC Inspector">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location</label>
+        <div class="location-status" id="locationStatus" onclick="retryLocation()">
+          <i class="fas fa-location-crosshairs"></i>
+          <span>Tap to capture location</span>
+        </div>
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes (optional)</label>
+        <textarea id="notes" placeholder="e.g. Passed quality inspection, ready for shipping"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Photos (optional)</label>
+        <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">
+            <i class="fas fa-camera"></i> Camera
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
+            <i class="fas fa-images"></i> Gallery
+          </button>
+        </div>
+        <div class="photo-preview" id="photoPreview"></div>
+      </div>
+
+      <button class="btn btn-primary" id="submitBtn" onclick="submitCheckpoint()">
+        <i class="fas fa-check"></i> Log Checkpoint
+      </button>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Checkpoint Timeline</h3>
+      <div id="timeline">
+        <div class="empty-timeline">
+          <i class="fas fa-route"></i>
+          <p>No checkpoints yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close"><i class="fas fa-times"></i></button>
+    <img id="lightboxImg" src="">
+  </div>
+
+  <script>
+    let productId = null;
+    let selectedPhotos = [];
+    let capturedLocation = null;
+
+    // Get product ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    productId = urlParams.get('id');
 
     if (!productId) {
-      return res.status(400).json({ error: 'Product ID is required' });
+      document.getElementById('productName').textContent = 'Error: No product ID';
+    } else {
+      loadProductInfo();
+      loadTimeline();
+      autoGetLocation();
     }
 
-    // Get product
-    const productResult = await pool.query(
-      `SELECT 
-        p.*,
-        u.name as owner_name,
-        u.company_name
-       FROM products p
-       LEFT JOIN users u ON p.user_id = u.id
-       WHERE p.product_id = $1`,
-      [productId]
-    );
+    // ==========================================
+    // LOAD PRODUCT INFO
+    // ==========================================
+    async function loadProductInfo() {
+      try {
+        const response = await fetch(`/api/verify-product?id=${encodeURIComponent(productId)}`);
+        const data = await response.json();
 
-    if (productResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
+        if (!data.success) {
+          document.getElementById('productName').textContent = 'Product not found';
+          return;
+        }
 
-    const product = productResult.rows[0];
-
-    // Get all production scans ordered by time
-    const scansResult = await pool.query(
-      `SELECT * FROM production_scans 
-       WHERE product_id = $1 
-       ORDER BY scanned_at ASC`,
-      [product.id]
-    );
-
-    const checkpoints = scansResult.rows.map((scan, index) => ({
-      id: scan.id,
-      step: index + 1,
-      scannedAt: scan.scanned_at,
-      latitude: scan.latitude ? parseFloat(scan.latitude) : null,
-      longitude: scan.longitude ? parseFloat(scan.longitude) : null,
-      locationName: scan.location_name,
-      notes: scan.notes,
-      photos: scan.photos || [],
-      scannedByName: scan.scanned_by_name,
-      scannedByRole: scan.scanned_by_role
-    }));
-
-    return res.status(200).json({
-      success: true,
-      product: {
-        productId: product.product_id,
-        productName: product.product_name,
-        sku: product.sku,
-        batchNumber: product.batch_number,
-        mode: product.mode,
-        isFinalized: product.is_finalized,
-        finalizedAt: product.finalized_at,
-        createdAt: product.created_at,
-        ownerName: product.owner_name || product.company_name,
-        verificationUrl: `https://www.biztrack.io/verify.html?id=${product.product_id}`,
-        qrCodeUrl: product.qr_code_ipfs_hash 
-          ? `https://gateway.pinata.cloud/ipfs/${product.qr_code_ipfs_hash}` 
-          : null
-      },
-      timeline: {
-        totalCheckpoints: checkpoints.length,
-        checkpoints: checkpoints
+        document.getElementById('productName').textContent = data.product.productName;
+        document.getElementById('productSku').textContent = data.product.sku || 'N/A';
+        document.getElementById('productId').textContent = productId;
+      } catch (error) {
+        console.error('Error loading product:', error);
+        document.getElementById('productName').textContent = 'Error loading product';
       }
-    });
+    }
 
-  } catch (error) {
-    console.error('Get production timeline error:', error);
-    return res.status(500).json({
-      error: 'Failed to get timeline',
-      details: error.message
-    });
-  }
-};
+    // ==========================================
+    // LOAD TIMELINE
+    // ==========================================
+    async function loadTimeline() {
+      try {
+        const response = await fetch(`/api/get-production-timeline?productId=${encodeURIComponent(productId)}`);
+        const data = await response.json();
+
+        const container = document.getElementById('timeline');
+
+        if (!data.success || !data.timeline?.checkpoints || data.timeline.checkpoints.length === 0) {
+          container.innerHTML = `
+            <div class="empty-timeline">
+              <i class="fas fa-route"></i>
+              <p>No checkpoints yet. Be the first!</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '<div class="timeline">' + data.timeline.checkpoints.map(cp => `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <div>
+                  <span class="timeline-who">${escapeHtml(cp.scannedByName || 'Unknown')}</span>
+                  ${cp.scannedByRole ? `<span class="timeline-role">${escapeHtml(cp.scannedByRole)}</span>` : ''}
+                </div>
+                <span class="timeline-when">${formatDate(cp.scannedAt)}</span>
+              </div>
+              ${cp.locationName ? `<div class="timeline-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(cp.locationName)}</div>` : ''}
+              ${cp.notes ? `<div class="timeline-notes">${escapeHtml(cp.notes)}</div>` : ''}
+              ${cp.photos && cp.photos.length > 0 ? `
+                <div class="timeline-photos">
+                  ${cp.photos.map(photo => `<img src="${photo}" onclick="openLightbox('${photo}')" alt="Checkpoint photo">`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `).join('') + '</div>';
+
+      } catch (error) {
+        console.error('Error loading timeline:', error);
+      }
+    }
+
+    // ==========================================
+    // LOCATION
+    // ==========================================
+    function autoGetLocation() {
+      if (!navigator.geolocation) return;
+
+      const statusEl = document.getElementById('locationStatus');
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Getting location...</span>';
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          capturedLocation = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          };
+          document.getElementById('latitude').value = pos.coords.latitude;
+          document.getElementById('longitude').value = pos.coords.longitude;
+
+          // Try to get location name via reverse geocoding
+          let locationName = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+          try {
+            const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`);
+            const geoData = await geoResponse.json();
+            if (geoData.display_name) {
+              locationName = geoData.display_name.split(',').slice(0, 3).join(',');
+            }
+          } catch (e) {
+            console.log('Reverse geocoding failed, using coords');
+          }
+
+          capturedLocation.name = locationName;
+          statusEl.className = 'location-status success';
+          statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>${locationName}</span>`;
+        },
+        (err) => {
+          console.log('Location error:', err);
+          statusEl.innerHTML = `<i class="fas fa-location-crosshairs"></i> <span>Tap to capture location</span>`;
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+
+    function retryLocation() {
+      autoGetLocation();
+    }
+
+    // ==========================================
+    // PHOTOS
+    // ==========================================
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const MAX = 1000;
+            if (w > h && w > MAX) { h *= MAX / w; w = MAX; }
+            else if (h > MAX) { w *= MAX / h; h = MAX; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('photoInput').addEventListener('change', handlePhotos);
+    document.getElementById('cameraInput').addEventListener('change', handlePhotos);
+
+    async function handlePhotos(e) {
+      for (const file of Array.from(e.target.files)) {
+        if (selectedPhotos.length >= 3) break;
+        selectedPhotos.push(await compressImage(file));
+        renderPhotoPreview();
+      }
+      e.target.value = '';
+    }
+
+    function renderPhotoPreview() {
+      const container = document.getElementById('photoPreview');
+      container.innerHTML = selectedPhotos.map((photo, i) => `
+        <div class="photo-preview-item">
+          <img src="${photo}">
+          <button onclick="removePhoto(${i})"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function removePhoto(index) {
+      selectedPhotos.splice(index, 1);
+      renderPhotoPreview();
+    }
+
+    // ==========================================
+    // SUBMIT CHECKPOINT
+    // ==========================================
+    async function submitCheckpoint() {
+      const name = document.getElementById('scannerName').value.trim();
+      const role = document.getElementById('scannerRole').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const msgEl = document.getElementById('formMessage');
+      const btn = document.getElementById('submitBtn');
+
+      msgEl.innerHTML = '';
+
+      if (!name || !role) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Name and role are required.</div>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      try {
+        const response = await fetch('/api/log-production-scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId,
+            scannedByName: name,
+            scannedByRole: role,
+            latitude: capturedLocation?.latitude || null,
+            longitude: capturedLocation?.longitude || null,
+            locationName: capturedLocation?.name || null,
+            notes: notes || null,
+            photos: selectedPhotos.length > 0 ? selectedPhotos : null
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to log checkpoint');
+        }
+
+        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Checkpoint logged successfully!</div>';
+        
+        // Clear form
+        document.getElementById('scannerName').value = '';
+        document.getElementById('scannerRole').value = '';
+        document.getElementById('notes').value = '';
+        selectedPhotos = [];
+        renderPhotoPreview();
+
+        // Reload timeline
+        loadTimeline();
+
+      } catch (error) {
+        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Log Checkpoint';
+      }
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

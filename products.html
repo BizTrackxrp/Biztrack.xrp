@@ -517,9 +517,17 @@
         }
 
         // Filter for finished products only (live or finalized)
+        // Products are "finished" if: mode is 'live', OR isFinalized is true, OR mode is not set (legacy products)
         allProducts = (data.products || []).filter(p => {
-          return p.mode === 'live' || p.isFinalized === true;
+          // If it's in production mode and NOT finalized, it's not finished
+          if (p.mode === 'production' && !p.isFinalized) {
+            return false;
+          }
+          // Everything else is finished (live, finalized, or legacy products without mode)
+          return true;
         });
+
+        console.log('Loaded finished products:', allProducts.length, allProducts);
 
         // Calculate stats
         let totalProducts = 0;

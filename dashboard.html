@@ -188,30 +188,6 @@
 
     .batch-info { margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; font-size: 0.875rem; color: #92400E; }
 
-    /* Batch Type Buttons */
-    .batch-type-btn {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: 2px solid #E2E8F0;
-      border-radius: 10px;
-      background: white;
-      color: #64748B;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    .batch-type-btn:hover { border-color: #F59E0B; color: #B45309; }
-    .batch-type-btn.active {
-      background: #FEF3C7;
-      border-color: #F59E0B;
-      color: #92400E;
-    }
-
     /* Excel Upload Area */
     .excel-instructions {
       font-style: italic;
@@ -449,40 +425,35 @@
         </div>
       </div>
 
-      <!-- Batch Section (with quantity OR Excel options) -->
+      <!-- Batch Section (quantity input + Excel option below) -->
       <div class="expandable-section batch" id="batchSection">
         <h4><i class="fas fa-boxes"></i> Batch Settings</h4>
         
-        <!-- Batch Type Selection -->
-        <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
-          <button type="button" class="batch-type-btn active" id="batchTypeQuantity" onclick="setBatchType('quantity')">
-            <i class="fas fa-hashtag"></i> Enter Quantity
-          </button>
-          <button type="button" class="batch-type-btn" id="batchTypeExcel" onclick="setBatchType('excel')">
-            <i class="fas fa-file-excel"></i> Upload Excel
-          </button>
+        <!-- Quantity Input -->
+        <div class="form-group">
+          <label for="batchQuantity">
+            How many identical items? 
+            <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
+          </label>
+          <input id="batchQuantity" type="number" min="1" max="1000" value="5" placeholder="Enter quantity..." />
+          <p style="font-size: 0.8rem; color: #92400E; margin-top: 0.5rem;">
+            SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...)
+          </p>
         </div>
 
-        <!-- Quantity Input -->
-        <div id="batchQuantityInput">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="batchQuantity">
-              Quantity (1-<span id="maxBatchQuantity">10</span>)
-              <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
-            </label>
-            <input id="batchQuantity" type="number" min="1" max="10" value="5" />
-          </div>
-          <div class="batch-info">
-            <strong>Note:</strong> All items will share the same product name. SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...).
-          </div>
+        <!-- OR divider -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0;">
+          <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
+          <span style="color: #92400E; font-weight: 600; font-size: 0.85rem;">OR upload a list</span>
+          <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
         </div>
 
         <!-- Excel Upload -->
-        <div id="batchExcelInput" style="display: none;">
+        <div id="batchExcelInput">
           <p class="excel-instructions">
-            Upload your spreadsheet with columns in this order:<br>
-            <code>Product Name</code> <code>SKU</code> <code>Batch Number</code> <code>Notes</code><br><br>
-            Don't include headers—just your data, one product per row. Only Product Name and SKU are required.
+            Have a spreadsheet with unique SKUs? Upload it here.<br>
+            Columns: <code>Product Name</code> <code>SKU</code> <code>Batch Number</code> <code>Notes</code><br>
+            <span style="font-size: 0.8rem;">No headers needed—just your data, one product per row.</span>
           </p>
           
           <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" style="display: none;" />
@@ -495,8 +466,13 @@
 
           <div class="excel-preview" id="excelPreview" style="display: none;">
             <div class="excel-preview-header">
-              <strong><i class="fas fa-table"></i> <span id="excelFileName">file.xlsx</span> (<span id="excelRowCount">0</span> products)</strong>
-              <button class="excel-preview-clear" onclick="clearExcelUpload()"><i class="fas fa-times"></i> Clear</button>
+              <strong><i class="fas fa-table"></i> <span id="excelFileName">file.xlsx</span></strong>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="background: #10B981; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">
+                  <span id="excelRowCount">0</span> products
+                </span>
+                <button class="excel-preview-clear" onclick="clearExcelUpload()"><i class="fas fa-times"></i> Clear</button>
+              </div>
             </div>
             <div style="max-height: 200px; overflow-y: auto;">
               <table class="excel-preview-table">
@@ -579,7 +555,6 @@
     requireAuth();
 
     let isBatchMode = false;
-    let batchType = 'quantity'; // 'quantity' or 'excel'
     let isProductionMode = false;
     let selectedPhotos = [];
     let capturedLocation = null;
@@ -621,48 +596,18 @@
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Upload ✓';
-        // Reset to quantity mode by default
-        setBatchType('quantity');
+        skuInput.disabled = true;
+        skuInput.value = '';
+        skuInput.placeholder = 'Auto-generated from batch';
+        document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
       } else {
         toggle.classList.remove('active');
         section.classList.remove('show');
         toggleText.textContent = 'Batch Upload';
         skuInput.disabled = false;
         skuInput.placeholder = 'e.g. HNY1234';
-        manualForm.style.display = 'block';
         document.getElementById('remainingQRs').textContent = '';
         clearExcelUpload();
-        batchType = 'quantity';
-      }
-      updateMintButtonText();
-    }
-
-    function setBatchType(type) {
-      batchType = type;
-      const quantityBtn = document.getElementById('batchTypeQuantity');
-      const excelBtn = document.getElementById('batchTypeExcel');
-      const quantityInput = document.getElementById('batchQuantityInput');
-      const excelInput = document.getElementById('batchExcelInput');
-      const manualForm = document.getElementById('manualEntryForm');
-      const skuInput = document.getElementById('dashSku');
-
-      if (type === 'quantity') {
-        quantityBtn.classList.add('active');
-        excelBtn.classList.remove('active');
-        quantityInput.style.display = 'block';
-        excelInput.style.display = 'none';
-        manualForm.style.display = 'block';
-        skuInput.disabled = true;
-        skuInput.value = '';
-        skuInput.placeholder = 'Auto-generated';
-        document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
-        clearExcelUpload();
-      } else {
-        quantityBtn.classList.remove('active');
-        excelBtn.classList.add('active');
-        quantityInput.style.display = 'none';
-        excelInput.style.display = 'block';
-        manualForm.style.display = 'none';
       }
       updateMintButtonText();
     }
@@ -687,12 +632,26 @@
 
     function updateMintButtonText() {
       const text = document.getElementById('mintButtonText');
-      if (isBatchMode && batchType === 'excel') {
-        text.textContent = isProductionMode ? 'Upload to Production' : 'Upload & Mint All';
-      } else if (isBatchMode) {
-        text.textContent = isProductionMode ? 'Mint Batch to Production' : 'Mint Batch to Blockchain';
+      const hasExcel = excelData.length > 0;
+      
+      if (isProductionMode) {
+        // Production mode - no blockchain yet
+        if (hasExcel) {
+          text.textContent = 'Create Production Entries';
+        } else if (isBatchMode) {
+          text.textContent = 'Create Production Batch';
+        } else {
+          text.textContent = 'Create Production Entry';
+        }
       } else {
-        text.textContent = isProductionMode ? 'Mint to Production' : 'Mint to Blockchain';
+        // Live mode - mint to blockchain
+        if (hasExcel) {
+          text.textContent = 'Upload & Mint All';
+        } else if (isBatchMode) {
+          text.textContent = 'Mint Batch to Blockchain';
+        } else {
+          text.textContent = 'Mint to Blockchain';
+        }
       }
     }
 
@@ -741,10 +700,11 @@
             return;
           }
 
-          // Check if we have enough QR codes
+          // Check if we have enough QR codes (only matters for live mode)
           const remaining = qrLimit - qrUsedThisMonth;
           if (!isProductionMode && excelData.length > remaining) {
             alert(`You have ${remaining} QR codes remaining but are trying to upload ${excelData.length} products. Please upgrade your plan or reduce the number of products.`);
+            excelData = [];
             return;
           }
 
@@ -776,6 +736,9 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
+          
+          // Update button text to reflect Excel upload
+          updateMintButtonText();
         } catch (err) {
           alert('Error reading file: ' + err.message);
         }
@@ -788,6 +751,7 @@
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
+      updateMintButtonText();
     }
 
     // ==========================================
@@ -939,13 +903,8 @@
       const btn = document.getElementById('dashCreateBtn');
       msgEl.innerHTML = '';
 
-      // Excel mode (batch + excel type)
-      if (isBatchMode && batchType === 'excel') {
-        if (excelData.length === 0) {
-          msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please upload an Excel file first.</div>';
-          return;
-        }
-        
+      // Excel mode - if Excel data exists, use that (ignores quantity field)
+      if (excelData.length > 0) {
         btn.disabled = true;
         const origText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';

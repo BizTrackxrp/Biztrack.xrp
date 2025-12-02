@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading... - BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    p { opacity: 0.9; }
+    .error-box {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 400px;
+    }
+    .error-box h1 { margin-bottom: 1rem; }
+    .error-box a {
+      display: inline-block;
+      margin-top: 1.5rem;
+      background: white;
+      color: #764ba2;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loaderState">
+    <div class="spinner"></div>
+    <h1>Verifying Product...</h1>
+    <p>Please wait</p>
+  </div>
+
+  <div class="error-box" id="errorState" style="display: none;">
+    <h1>⚠️ Product Not Found</h1>
+    <p id="errorMessage">We couldn't find this product in our system.</p>
+    <a href="/">Go to BizTrack</a>
+  </div>
+
+  <script>
+    (async function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+
+      if (!productId) {
+        showError('No product ID provided.');
+        return;
+      }
+
+      try {
+        // Fetch product state from API
+        const response = await fetch(`/api/get-product-state?id=${encodeURIComponent(productId)}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          showError(data.error || 'Product not found.');
+          return;
+        }
+
+        // Route based on product state
+        const { mode, isFinalized } = data.product;
+
+        if (mode === 'production' && !isFinalized) {
+          // Still in production - go to checkpoint form
+          window.location.href = `/production-scan.html?id=${encodeURIComponent(productId)}`;
+        } else {
+          // Finalized or live mode - go to verification page
+          window.location.href = `/verify.html?id=${encodeURIComponent(productId)}`;
+        }
+
+      } catch (error) {
+        console.error('Routing error:', error);
+        showError('Failed to load product. Please try again.');
+      }
+    })();
+
+    function showError(message) {
+      document.getElementById('loaderState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('errorMessage').textContent = message;
+    }
+  </script>
+</body>
+</html>

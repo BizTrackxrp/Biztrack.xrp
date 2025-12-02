@@ -25,29 +25,35 @@ module.exports = async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
 
-    // Fetch all products for this user ONLY (now includes inventory_qr_code_ipfs_hash)
+    // Fetch all products for this user with checkpoint counts
     const result = await pool.query(
       `SELECT 
-        product_id,
-        product_name,
-        sku,
-        batch_number,
-        ipfs_hash,
-        qr_code_ipfs_hash,
-        inventory_qr_code_ipfs_hash,
-        xrpl_tx_hash,
-        metadata,
-        is_batch_group,
-        batch_group_id,
-        batch_quantity,
-        created_at
-       FROM products 
-       WHERE user_id = $1 
-       ORDER BY created_at DESC`,
+        p.id,
+        p.product_id,
+        p.product_name,
+        p.sku,
+        p.batch_number,
+        p.ipfs_hash,
+        p.qr_code_ipfs_hash,
+        p.inventory_qr_code_ipfs_hash,
+        p.xrpl_tx_hash,
+        p.metadata,
+        p.is_batch_group,
+        p.batch_group_id,
+        p.batch_quantity,
+        p.created_at,
+        p.mode,
+        p.is_finalized,
+        p.finalized_at,
+        (SELECT COUNT(*) FROM production_scans ps WHERE ps.product_id = p.id) as checkpoint_count
+       FROM products p
+       WHERE p.user_id = $1 
+       ORDER BY p.created_at DESC`,
       [userId]
     );
 
     const allProducts = result.rows.map(row => ({
+      id: row.id,
       productId: row.product_id,
       productName: row.product_name,
       sku: row.sku,
@@ -60,7 +66,12 @@ module.exports = async (req, res) => {
       isBatchGroup: row.is_batch_group,
       batchGroupId: row.batch_group_id,
       batchQuantity: row.batch_quantity,
-      timestamp: row.created_at,
+      createdAt: row.created_at,
+      timestamp: row.created_at, // Keep for backwards compatibility
+      mode: row.mode || 'live', // Default to 'live' for legacy products
+      isFinalized: row.is_finalized !== false, // Default to true for legacy products
+      finalizedAt: row.finalized_at,
+      checkpointCount: parseInt(row.checkpoint_count) || 0,
       verificationUrl: `https://www.biztrack.io/verify.html?id=${row.product_id}`,
       qrCodeUrl: row.qr_code_ipfs_hash 
         ? `https://gateway.pinata.cloud/ipfs/${row.qr_code_ipfs_hash}`
@@ -88,13 +99,25 @@ module.exports = async (req, res) => {
         // Find the batch group leader (the one with is_batch_group = true)
         const batchLeader = batchItems.find(p => p.isBatchGroup) || batchItems[0];
 
+        // Sum up checkpoint counts for batch
+        const totalCheckpoints = batchItems.reduce((sum, item) => sum + (item.checkpointCount || 0), 0);
+
         displayList.push({
           isBatchGroup: true,
           batchGroupId: product.batchGroupId,
+          productId: batchLeader.productId,
           productName: batchLeader.productName,
+          sku: batchLeader.sku,
           batchNumber: batchLeader.batchNumber,
           quantity: batchLeader.batchQuantity || batchItems.length,
+          createdAt: batchLeader.createdAt,
           timestamp: batchLeader.timestamp,
+          mode: batchLeader.mode,
+          isFinalized: batchLeader.isFinalized,
+          finalizedAt: batchLeader.finalizedAt,
+          checkpointCount: totalCheckpoints,
+          qrCodeUrl: batchLeader.qrCodeUrl,
+          verificationUrl: batchLeader.verificationUrl,
           items: batchItems.sort((a, b) => {
             // Sort by SKU if available (handles BATCH-001, BATCH-002, etc)
             if (a.sku && b.sku) {

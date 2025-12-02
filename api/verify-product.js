@@ -34,23 +34,81 @@ module.exports = async (req, res) => {
 
     const product = result.rows[0];
 
-    // Fetch full data from IPFS
+    // Fetch full data from IPFS (if available)
     let ipfsData = null;
-    try {
-      const ipfsResponse = await axios.get(
-        `https://gateway.pinata.cloud/ipfs/${product.ipfs_hash}`,
-        { timeout: 10000 }
-      );
-      ipfsData = ipfsResponse.data;
-    } catch (ipfsError) {
-      console.error('IPFS fetch error:', ipfsError);
-      // Continue without IPFS data
+    if (product.ipfs_hash) {
+      try {
+        const ipfsResponse = await axios.get(
+          `https://gateway.pinata.cloud/ipfs/${product.ipfs_hash}`,
+          { timeout: 10000 }
+        );
+        ipfsData = ipfsResponse.data;
+      } catch (ipfsError) {
+        console.error('IPFS fetch error:', ipfsError.message);
+        // Continue without IPFS data
+      }
     }
 
-    // Combine database and IPFS data
-    const photoHashes = ipfsData?.photoHashes || [];
-    const photos = photoHashes.map(hash => `https://gateway.pinata.cloud/ipfs/${hash}`);
+    // Get supply chain checkpoints (production scans)
+    let supplyChain = null;
+    const checkpointsResult = await pool.query(
+      `SELECT * FROM production_scans 
+       WHERE product_id = $1 
+       ORDER BY scanned_at ASC`,
+      [product.id]
+    );
+
+    if (checkpointsResult.rows.length > 0) {
+      const checkpoints = checkpointsResult.rows.map((scan, index) => ({
+        step: index + 1,
+        scannedAt: scan.scanned_at,
+        scannedByName: scan.scanned_by_name,
+        scannedByRole: scan.scanned_by_role,
+        locationName: scan.location_name,
+        latitude: scan.latitude ? parseFloat(scan.latitude) : null,
+        longitude: scan.longitude ? parseFloat(scan.longitude) : null,
+        notes: scan.notes,
+        photos: scan.photos || []
+      }));
+
+      supplyChain = {
+        totalCheckpoints: checkpoints.length,
+        timeline: checkpoints,
+        finalizedAt: product.finalized_at
+      };
+    }
+
+    // Combine database and IPFS data for photos
+    let photos = [];
     
+    // First try IPFS photo hashes
+    const photoHashes = ipfsData?.photoHashes || [];
+    if (photoHashes.length > 0) {
+      photos = photoHashes.map(hash => `https://gateway.pinata.cloud/ipfs/${hash}`);
+    }
+    
+    // Also check database photo_hashes column (for production mode products)
+    if (photos.length === 0 && product.photo_hashes) {
+      try {
+        const dbPhotoHashes = JSON.parse(product.photo_hashes);
+        if (Array.isArray(dbPhotoHashes) && dbPhotoHashes.length > 0) {
+          photos = dbPhotoHashes.map(hash => `https://gateway.pinata.cloud/ipfs/${hash}`);
+        }
+      } catch (e) {
+        console.error('Error parsing photo_hashes:', e);
+      }
+    }
+
+    // Get location from IPFS or database
+    let location = ipfsData?.location || null;
+    if (!location && product.location_data) {
+      try {
+        location = JSON.parse(product.location_data);
+      } catch (e) {
+        console.error('Error parsing location_data:', e);
+      }
+    }
+
     const productData = {
       productId: product.product_id,
       productName: product.product_name,
@@ -59,22 +117,28 @@ module.exports = async (req, res) => {
       ipfsHash: product.ipfs_hash,
       qrCodeIpfsHash: product.qr_code_ipfs_hash,
       xrplTxHash: product.xrpl_tx_hash,
-      ipfsUrl: `https://gateway.pinata.cloud/ipfs/${product.ipfs_hash}`,
+      ipfsUrl: product.ipfs_hash ? `https://gateway.pinata.cloud/ipfs/${product.ipfs_hash}` : null,
       timestamp: product.created_at || ipfsData?.createdAt,
+      finalizedAt: product.finalized_at,
+      mode: product.mode,
+      isFinalized: product.is_finalized,
       metadata: product.metadata || ipfsData?.metadata || {},
       photoHashes: photoHashes,
-      photos: photos,  // ✅ Added full photo URLs
-      location: ipfsData?.location || null,
+      photos: photos,
+      location: location,
       mintedBy: ipfsData?.mintedBy || 'BizTrack',
-      batchInfo: ipfsData?.batchInfo || null
+      batchInfo: ipfsData?.batchInfo || null,
+      supplyChain: supplyChain
     };
 
     return res.status(200).json({
       success: true,
       product: productData,
-      verified: true,
-      verifiedOn: 'XRP Ledger',
-      blockchainTx: `https://livenet.xrpl.org/transactions/${product.xrpl_tx_hash}`
+      verified: !!product.xrpl_tx_hash,
+      verifiedOn: product.xrpl_tx_hash ? 'XRP Ledger' : 'Pending',
+      blockchainTx: product.xrpl_tx_hash 
+        ? `https://livenet.xrpl.org/transactions/${product.xrpl_tx_hash}`
+        : null
     });
 
   } catch (error) {

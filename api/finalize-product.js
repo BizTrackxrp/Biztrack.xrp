@@ -1,99 +1,1644 @@
-const { Pool } = require('pg');
-const jwt = require('jsonwebtoken');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
-
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  try {
-    // Authenticate user
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Unauthorized' });
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const { productId } = req.body;
-
-    if (!productId) {
-      return res.status(400).json({ error: 'Product ID is required' });
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
     }
 
-    // Get product and verify ownership
-    const productResult = await pool.query(
-      'SELECT * FROM products WHERE product_id = $1',
-      [productId]
-    );
-
-    if (productResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
+    .sidebar-logo {
+      padding: 0 2rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 2rem;
     }
 
-    const product = productResult.rows[0];
+    .sidebar-logo h1 { color: #fff; font-size: 1.5rem; font-weight: 800; }
 
-    // Verify user owns this product
-    if (product.user_id !== decoded.userId) {
-      return res.status(403).json({ error: 'You do not have permission to finalize this product' });
+    .sidebar-nav { list-style: none; }
+    .sidebar-nav li { margin-bottom: 0.5rem; }
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 2rem;
+      color: #64748B;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .sidebar-nav a:hover { background: #F8FAFC; color: #4F46E5; }
+    .sidebar-nav a.active {
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
+      color: #4F46E5;
+      border-left: 3px solid #4F46E5;
+    }
+    .sidebar-nav a i { margin-right: 0.75rem; width: 20px; }
+
+    .sidebar-logout {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-logout button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .sidebar-logout button:hover { background: rgba(239, 68, 68, 0.2); }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
     }
 
-    if (product.mode !== 'production') {
-      return res.status(400).json({ error: 'Product is not in production mode' });
+    .dashboard-header { margin-bottom: 3rem; }
+    .dashboard-header h1 { font-size: 2.5rem; font-weight: 800; color: #1E293B; margin-bottom: 0.5rem; }
+    .dashboard-header p { font-size: 1.125rem; color: #64748B; }
+
+    .usage-counter {
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .usage-counter h4 { font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem; text-transform: uppercase; }
+    .usage-counter-numbers { font-size: 2.5rem; font-weight: 800; }
+    .usage-counter-numbers small { font-size: 1.25rem; opacity: 0.8; }
+    .usage-counter-upgrade {
+      background: white;
+      color: #4F46E5;
+      border: none;
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .usage-counter-upgrade:hover { transform: translateY(-2px); }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+      margin-bottom: 2rem;
+    }
+    .card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .card h3 i { color: #4F46E5; }
+
+    .batch-toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #E2E8F0;
+    }
+    .batch-toggle-label { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; color: #334155; }
+    .batch-toggle-label i { color: #4F46E5; }
+
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+      background: #CBD5E1;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .toggle-switch.active { background: #4F46E5; }
+    .toggle-switch-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .toggle-switch.active .toggle-switch-slider { transform: translateX(28px); }
+
+    .batch-quantity-section {
+      display: none;
+      padding: 1.5rem;
+      background: #FEF3C7;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #FDE047;
+    }
+    .batch-quantity-section.show { display: block; }
+    .batch-quantity-section h4 { color: #92400E; margin-bottom: 1rem; }
+    .batch-info { margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; font-size: 0.875rem; color: #92400E; }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+    .form-group input:disabled { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; opacity: 0.6; }
+    .form-group input:focus:not(:disabled), .form-group textarea:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      width: 100%;
+      justify-content: center;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+      box-shadow: none;
+      padding: 0.75rem 1.5rem;
+      width: auto;
+    }
+    .btn-secondary:hover { background: #F8FAFC; transform: none; }
+
+    .message { padding: 1rem; border-radius: 12px; margin-top: 1rem; font-weight: 500; display: flex; align-items: flex-start; gap: 0.75rem; }
+    .message.success { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+    .message.error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .message.info { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+
+    .product-list { list-style: none; }
+    .product-list li { padding: 1.5rem; background: #F8FAFC; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #E2E8F0; }
+    .product-list li.production-item { border-color: #10B981; border-width: 2px; }
+    .product-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+
+    .batch-items { display: none; width: 100%; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #E2E8F0; }
+    .batch-items.show { display: block; }
+    .batch-item { background: white; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: #94A3B8; }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+    .batch-badge { background: #4F46E5; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem; }
+    .production-badge { background: #10B981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
+    .checkpoint-count { background: #F59E0B; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
+
+    /* Info Tooltip */
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: #E2E8F0;
+      color: #64748B;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      transition: all 0.2s;
+    }
+    .info-icon:hover { background: #10B981; color: white; }
+    
+    .info-tooltip {
+      display: none;
+      position: absolute;
+      background: #1E293B;
+      color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      width: 300px;
+      z-index: 100;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      line-height: 1.5;
+    }
+    .info-tooltip.show { display: block; }
+    .info-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 20px;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #1E293B;
     }
 
-    if (product.is_finalized) {
-      return res.status(400).json({ error: 'Product is already finalized' });
+    /* 3-Dot Menu */
+    .menu-container {
+      position: relative;
+      display: inline-block;
+    }
+    .menu-dots {
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      color: #64748B;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .menu-dots:hover { background: #E2E8F0; color: #1E293B; }
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border: 1px solid #E2E8F0;
+      min-width: 180px;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .menu-dropdown.show { display: block; }
+    .menu-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #334155;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .menu-dropdown button:hover { background: #F8FAFC; }
+    .menu-dropdown button.danger { color: #DC2626; }
+    .menu-dropdown button.danger:hover { background: #FEF2F2; }
+    .menu-dropdown hr { border: none; border-top: 1px solid #E2E8F0; margin: 0; }
+
+    /* Production Checkpoints */
+    .production-checkpoints {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid #10B981;
+    }
+    .production-checkpoints.show { display: block; }
+    .checkpoint-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .checkpoint-item:last-child { margin-bottom: 0; }
+    .checkpoint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .checkpoint-who {
+      font-weight: 600;
+      color: #1E293B;
+    }
+    .checkpoint-role {
+      font-size: 0.75rem;
+      color: #64748B;
+      background: #F1F5F9;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+    }
+    .checkpoint-when {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+    .checkpoint-location {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-bottom: 0.25rem;
+    }
+    .checkpoint-location i { color: #10B981; margin-right: 0.25rem; }
+    .checkpoint-notes {
+      font-size: 0.9rem;
+      color: #475569;
+    }
+    .checkpoint-photos {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .checkpoint-photos img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #E2E8F0;
+    }
+    .checkpoint-delete {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .checkpoint-delete:hover { color: #DC2626; background: #FEF2F2; }
+    .checkpoint-empty {
+      text-align: center;
+      padding: 1.5rem;
+      color: #94A3B8;
+      font-size: 0.9rem;
+    }
+    .production-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #E2E8F0;
+    }
+    .btn-finalize {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .btn-finalize:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4); }
+    .btn-finalize:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* QR Modal */
+    .qr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .qr-modal-overlay.show { display: flex; }
+    .qr-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .qr-modal-header h2 { font-size: 1.5rem; font-weight: 700; color: #1E293B; }
+    .qr-modal-close {
+      background: none; border: none; font-size: 1.5rem; color: #64748B;
+      cursor: pointer; padding: 0.5rem; border-radius: 8px;
+    }
+    .qr-modal-close:hover { background: #F1F5F9; color: #1E293B; }
+    .qr-modal-sku {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .qr-modal-sku span {
+      background: #F1F5F9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      color: #334155;
+    }
+    .qr-codes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-code-box { text-align: center; }
+    .qr-code-box img {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      padding: 8px;
+      background: white;
+    }
+    .qr-code-box.customer img { border-color: #A5B4FC; }
+    .qr-code-box.inventory img { border-color: #CBD5E1; }
+    .qr-code-label { margin-top: 0.75rem; font-weight: 600; font-size: 0.9rem; }
+    .qr-code-box.customer .qr-code-label { color: #4F46E5; }
+    .qr-code-box.inventory .qr-code-label { color: #64748B; }
+    .qr-download-buttons { display: flex; gap: 0.75rem; justify-content: center; }
+    .qr-download-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white; border: none;
+    }
+    .qr-download-btn.customer:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+    .qr-download-btn.inventory {
+      background: white; color: #64748B; border: 2px solid #CBD5E1;
+    }
+    .qr-download-btn.inventory:hover { background: #F8FAFC; }
+    .qr-download-btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white; border: none;
+    }
+    .qr-download-btn.both:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+
+    /* Confirmation Modal */
+    .confirm-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .confirm-modal-overlay.show { display: flex; }
+    .confirm-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .confirm-modal h3 { font-size: 1.25rem; margin-bottom: 0.75rem; color: #1E293B; }
+    .confirm-modal p { color: #64748B; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .confirm-modal-buttons { display: flex; gap: 0.75rem; justify-content: center; }
+    .confirm-modal-buttons button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-confirm-cancel {
+      background: #F1F5F9;
+      color: #64748B;
+      border: none;
+    }
+    .btn-confirm-cancel:hover { background: #E2E8F0; }
+    .btn-confirm-danger {
+      background: #DC2626;
+      color: white;
+      border: none;
+    }
+    .btn-confirm-danger:hover { background: #B91C1C; }
+    .btn-confirm-success {
+      background: #10B981;
+      color: white;
+      border: none;
+    }
+    .btn-confirm-success:hover { background: #059669; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; height: auto; position: relative; }
+      .main-with-sidebar { margin-left: 0; padding: 1.5rem; }
+      .product-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="sidebar-logo"><h1>🚚 BizTrack</h1></div>
+    <ul class="sidebar-nav">
+      <li><a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+    <div class="sidebar-logout">
+      <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </nav>
+
+  <div class="main-with-sidebar">
+    <div class="dashboard-header">
+      <h1>Welcome to your dashboard</h1>
+      <p>Manage your products and mint to blockchain.</p>
+    </div>
+
+    <div class="usage-counter">
+      <div class="usage-counter-info">
+        <h4>QR Codes Used This Month</h4>
+        <div class="usage-counter-numbers">
+          <span id="qrUsedCount">0</span> <small>/ <span id="qrLimitCount">10</span></small>
+        </div>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;" id="tierName">Free Plan</p>
+      </div>
+      <button class="usage-counter-upgrade" id="planButton" onclick="window.location.href='pricing.html'">
+        <i class="fas fa-arrow-up"></i> <span id="planButtonText">Upgrade Plan</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Mint New Product</h3>
+      
+      <div class="batch-toggle-container">
+        <div class="batch-toggle-label">
+          <i class="fas fa-layer-group"></i>
+          <span id="batchToggleText">Enable Batch Upload</span>
+        </div>
+        <div class="toggle-switch" id="batchToggle" onclick="toggleBatchMode()">
+          <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <div class="batch-toggle-container" style="border-color: #10B981; position: relative;">
+        <div class="batch-toggle-label">
+          <i class="fas fa-route" style="color: #10B981;"></i>
+          <span id="productionToggleText">Production Mode</span>
+          <span class="info-icon" onclick="toggleInfoTooltip(event)"><i class="fas fa-info"></i></span>
+        </div>
+        <div class="info-tooltip" id="productionInfoTooltip">
+          <strong>What is Production Mode?</strong><br><br>
+          Does your product have multiple steps before reaching a consumer? Production Mode lets you track each checkpoint in your supply chain—manufacturing, quality checks, shipping, distribution—before going live.<br><br>
+          Each stop scans the same QR code to log their part of the journey. When ready, hit "Go Live" and customers see the full verified timeline.
+        </div>
+        <div class="toggle-switch" id="productionToggle" onclick="toggleProductionMode()" style="background: #CBD5E1;">
+          <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <div class="production-mode-section" id="productionModeSection" style="display: none; padding: 1.5rem; background: #ECFDF5; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid #10B981;">
+        <h4 style="color: #065F46; margin-bottom: 0.75rem;"><i class="fas fa-info-circle"></i> Production Mode Enabled</h4>
+        <p style="color: #047857; font-size: 0.9rem; margin-bottom: 0;">
+          This product will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing it for customer verification.
+        </p>
+      </div>
+
+      <div class="batch-quantity-section" id="batchQuantitySection">
+        <h4><i class="fas fa-boxes"></i> Batch Order Settings</h4>
+        <div class="form-group">
+          <label for="batchQuantity">
+            Quantity (1-<span id="maxBatchQuantity">10</span>)
+            <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
+          </label>
+          <input id="batchQuantity" type="number" min="1" max="10" value="5" />
+        </div>
+        <div class="batch-info">
+          <strong>Note:</strong> SKUs will be auto-generated (e.g., ORG1234-001, ORG1234-002, ...).
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="dashProdName">Product Name *</label>
+        <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashSku" id="skuLabel">SKU</label>
+        <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashBatch">Batch Number</label>
+        <input id="dashBatch" type="text" placeholder="e.g. 001" />
+      </div>
+      
+      <div class="form-group">
+        <label for="dashMetadata">Additional Info (optional)</label>
+        <textarea id="dashMetadata" placeholder="e.g. Harvest date, origin, certifications" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Photos (optional)</label>
+        <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">
+            <i class="fas fa-camera"></i> Take Photo
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
+            <i class="fas fa-images"></i> Gallery
+          </button>
+          <button type="button" class="btn btn-secondary" id="captureLocationBtn">
+            <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Location</span>
+          </button>
+        </div>
+        <div id="photoPreview" style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;"></div>
+        <p id="locationDisplay" style="margin-top: 0.75rem; color: #10B981; font-size: 0.875rem; display: none;">
+          <i class="fas fa-check-circle"></i> Location captured!
+        </p>
+      </div>
+      
+      <button class="btn" id="dashCreateBtn">
+        <i class="fas fa-rocket"></i>
+        <span id="mintButtonText">Mint to Blockchain</span>
+      </button>
+      
+      <div id="dashMsg"></div>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-box"></i> Your Minted Products</h3>
+      <ul id="batchList" class="product-list"></ul>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
+        <button class="qr-modal-close" onclick="closeQRModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="qr-modal-sku">
+        <span id="modalSku">SKU: ---</span>
+      </div>
+
+      <div class="qr-codes-container">
+        <div class="qr-code-box customer">
+          <img id="modalCustomerQR" src="" alt="Customer QR" />
+          <div class="qr-code-label">Customer</div>
+        </div>
+        <div class="qr-code-box inventory" id="inventoryQRBox">
+          <img id="modalInventoryQR" src="" alt="Inventory QR" />
+          <div class="qr-code-label">Inventory</div>
+        </div>
+      </div>
+
+      <div class="qr-download-buttons">
+        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" target="_blank">
+          <i class="fas fa-mobile-alt"></i> Customer
+        </a>
+        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" target="_blank">
+          <i class="fas fa-barcode"></i> Inventory
+        </a>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
+          <i class="fas fa-layer-group"></i> Both
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="confirm-modal-overlay" id="confirmModalOverlay" onclick="closeConfirmModal()">
+    <div class="confirm-modal" onclick="event.stopPropagation()">
+      <h3 id="confirmModalTitle">Confirm Action</h3>
+      <p id="confirmModalMessage">Are you sure?</p>
+      <div class="confirm-modal-buttons">
+        <button class="btn-confirm-cancel" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-confirm-danger" id="confirmModalBtn" onclick="confirmModalAction()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    let isBatchMode = false;
+    let isProductionMode = false;
+    let selectedPhotos = [];
+    let capturedLocation = null;
+    let qrUsedThisMonth = 0;
+    let qrLimit = 10;
+    let currentTier = 'free';
+    let confirmCallback = null;
+
+    // ==========================================
+    // INFO TOOLTIP
+    // ==========================================
+    function toggleInfoTooltip(event) {
+      event.stopPropagation();
+      const tooltip = document.getElementById('productionInfoTooltip');
+      tooltip.classList.toggle('show');
     }
 
-    // Finalize the product
-    await pool.query(
-      `UPDATE products 
-       SET mode = 'live',
-           is_finalized = true,
-           finalized_at = NOW()
-       WHERE id = $1`,
-      [product.id]
-    );
+    // Close tooltip when clicking outside
+    document.addEventListener('click', function(e) {
+      const tooltip = document.getElementById('productionInfoTooltip');
+      if (!e.target.closest('.info-icon') && !e.target.closest('.info-tooltip')) {
+        tooltip.classList.remove('show');
+      }
+      // Close any open menus
+      document.querySelectorAll('.menu-dropdown.show').forEach(menu => {
+        if (!e.target.closest('.menu-container')) {
+          menu.classList.remove('show');
+        }
+      });
+    });
 
-    // Get checkpoint count
-    const countResult = await pool.query(
-      'SELECT COUNT(*) FROM production_scans WHERE product_id = $1',
-      [product.id]
-    );
+    // ==========================================
+    // CONFIRMATION MODAL
+    // ==========================================
+    function showConfirmModal(title, message, btnText, btnClass, callback) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      const btn = document.getElementById('confirmModalBtn');
+      btn.textContent = btnText;
+      btn.className = btnClass;
+      confirmCallback = callback;
+      document.getElementById('confirmModalOverlay').classList.add('show');
+    }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Product finalized successfully! It is now live for customer verification.',
-      product: {
-        productId: product.product_id,
-        productName: product.product_name,
-        sku: product.sku,
-        mode: 'live',
-        isFinalized: true,
-        finalizedAt: new Date().toISOString(),
-        totalCheckpoints: parseInt(countResult.rows[0].count)
+    function closeConfirmModal() {
+      document.getElementById('confirmModalOverlay').classList.remove('show');
+      confirmCallback = null;
+    }
+
+    function confirmModalAction() {
+      if (confirmCallback) {
+        confirmCallback();
+      }
+      closeConfirmModal();
+    }
+
+    // ==========================================
+    // QR MODAL - Shows both QRs with download options
+    // ==========================================
+    let currentQRData = null;
+    
+    window.openQRModal = function(productJson) {
+      const product = typeof productJson === 'string' ? JSON.parse(productJson) : productJson;
+      currentQRData = product;
+      
+      document.getElementById('modalSku').textContent = 'SKU: ' + (product.sku || product.productId);
+      document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
+      
+      // Customer download button
+      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
+      document.getElementById('downloadCustomerBtn').setAttribute('download', (product.sku || product.productId) + '-customer-qr.png');
+      
+      // Handle inventory QR
+      const inventoryBox = document.getElementById('inventoryQRBox');
+      const inventoryBtn = document.getElementById('downloadInventoryBtn');
+      const bothBtn = document.getElementById('downloadBothBtn');
+      
+      if (product.inventoryQrCodeUrl) {
+        document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
+        inventoryBtn.href = product.inventoryQrCodeUrl;
+        inventoryBtn.setAttribute('download', (product.sku || product.productId) + '-inventory-qr.png');
+        inventoryBox.style.display = 'block';
+        inventoryBtn.style.display = 'flex';
+        bothBtn.style.display = 'flex';
+      } else {
+        inventoryBox.style.display = 'none';
+        inventoryBtn.style.display = 'none';
+        bothBtn.style.display = 'none';
+      }
+      
+      document.getElementById('qrModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+    
+    window.closeQRModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('qrModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentQRData = null;
+    };
+    
+    window.downloadBothQRs = async function() {
+      if (!currentQRData) return;
+      
+      const btn = document.getElementById('downloadBothBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+      btn.disabled = true;
+      
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 380;
+        
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const customerImg = new Image();
+        const inventoryImg = new Image();
+        customerImg.crossOrigin = 'anonymous';
+        inventoryImg.crossOrigin = 'anonymous';
+        
+        await Promise.all([
+          new Promise(function(resolve, reject) {
+            customerImg.onload = resolve;
+            customerImg.onerror = reject;
+            customerImg.src = currentQRData.qrCodeUrl;
+          }),
+          new Promise(function(resolve, reject) {
+            inventoryImg.onload = resolve;
+            inventoryImg.onerror = reject;
+            inventoryImg.src = currentQRData.inventoryQrCodeUrl;
+          })
+        ]);
+        
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 22px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 32);
+        
+        ctx.fillStyle = '#64748B';
+        ctx.font = '14px Inter, Arial, sans-serif';
+        ctx.fillText('SKU: ' + (currentQRData.sku || currentQRData.productId), canvas.width / 2, 55);
+        
+        var qrSize = 140;
+        var qrY = 75;
+        
+        ctx.drawImage(customerImg, 80, qrY, qrSize, qrSize);
+        ctx.drawImage(inventoryImg, 380, qrY, qrSize, qrSize);
+        
+        ctx.fillStyle = '#4F46E5';
+        ctx.font = 'bold 13px Inter, Arial, sans-serif';
+        ctx.fillText('Customer', 150, qrY + qrSize + 22);
+        
+        ctx.fillStyle = '#64748B';
+        ctx.fillText('Inventory', 450, qrY + qrSize + 22);
+        
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(300, qrY + 10);
+        ctx.lineTo(300, qrY + qrSize - 10);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px Inter, Arial, sans-serif';
+        ctx.fillText('Verified by BizTrack', canvas.width / 2, canvas.height - 12);
+        
+        var link = document.createElement('a');
+        link.download = (currentQRData.sku || currentQRData.productId) + '-label.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert('Error creating label: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fas fa-layer-group"></i> Both';
+        btn.disabled = false;
+      }
+    };
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeQRModal();
+        closeConfirmModal();
       }
     });
 
-  } catch (error) {
-    console.error('Finalize product error:', error);
-    
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ error: 'Invalid token' });
+    // ==========================================
+    // SUBSCRIPTION & LIMITS
+    // ==========================================
+    async function loadSubscriptionLimits() {
+      try {
+        const response = await authenticatedFetch('/api/check-limits');
+        const data = await response.json();
+        
+        if (data.success) {
+          qrUsedThisMonth = data.subscription.qrUsed;
+          qrLimit = data.subscription.qrLimit;
+          currentTier = data.subscription.tier;
+          
+          document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
+          document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
+          document.getElementById('tierName').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' Plan';
+          
+          // Update button text for top tier users
+          const topTiers = ['enterprise', 'pharma_enterprise'];
+          if (topTiers.includes(currentTier)) {
+            document.getElementById('planButtonText').textContent = 'View Plan';
+            document.getElementById('planButton').querySelector('i').className = 'fas fa-eye';
+          }
+          
+          const remaining = qrLimit - qrUsedThisMonth;
+          const maxBatch = Math.min(data.subscription.maxBatchSize || 10, remaining);
+          
+          document.getElementById('maxBatchQuantity').textContent = maxBatch;
+          document.getElementById('batchQuantity').max = maxBatch;
+        }
+      } catch (error) {
+        console.error('Failed to load limits:', error);
+      }
     }
-    
-    return res.status(500).json({
-      error: 'Failed to finalize product',
-      details: error.message
+
+    function toggleBatchMode() {
+      isBatchMode = !isBatchMode;
+      const toggle = document.getElementById('batchToggle');
+      const section = document.getElementById('batchQuantitySection');
+      const toggleText = document.getElementById('batchToggleText');
+      const mintText = document.getElementById('mintButtonText');
+      const skuInput = document.getElementById('dashSku');
+      
+      if (isBatchMode) {
+        toggle.classList.add('active');
+        section.classList.add('show');
+        toggleText.textContent = 'Batch Mode Enabled ✓';
+        mintText.textContent = isProductionMode ? 'Mint Batch to Production' : 'Mint Batch to Blockchain';
+        skuInput.disabled = true;
+        skuInput.value = '';
+        skuInput.placeholder = 'Auto-generated';
+        document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
+      } else {
+        toggle.classList.remove('active');
+        section.classList.remove('show');
+        toggleText.textContent = 'Enable Batch Upload';
+        mintText.textContent = isProductionMode ? 'Mint to Production' : 'Mint to Blockchain';
+        skuInput.disabled = false;
+        skuInput.placeholder = 'e.g. HNY1234';
+        document.getElementById('remainingQRs').textContent = '';
+      }
+    }
+
+    function toggleProductionMode() {
+      isProductionMode = !isProductionMode;
+      const toggle = document.getElementById('productionToggle');
+      const section = document.getElementById('productionModeSection');
+      const toggleText = document.getElementById('productionToggleText');
+      const mintText = document.getElementById('mintButtonText');
+      
+      if (isProductionMode) {
+        toggle.classList.add('active');
+        toggle.style.background = '#10B981';
+        section.style.display = 'block';
+        toggleText.textContent = 'Production Mode ✓';
+        mintText.textContent = isBatchMode ? 'Mint Batch to Production' : 'Mint to Production';
+      } else {
+        toggle.classList.remove('active');
+        toggle.style.background = '#CBD5E1';
+        section.style.display = 'none';
+        toggleText.textContent = 'Production Mode';
+        mintText.textContent = isBatchMode ? 'Mint Batch to Blockchain' : 'Mint to Blockchain';
+      }
+    }
+
+    // ==========================================
+    // PHOTO HANDLING
+    // ==========================================
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const MAX = 1200;
+            if (w > h && w > MAX) { h *= MAX / w; w = MAX; }
+            else if (h > MAX) { w *= MAX / h; h = MAX; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('photoInput').addEventListener('change', async (e) => {
+      for (const file of Array.from(e.target.files)) {
+        if (selectedPhotos.length >= 5) break;
+        selectedPhotos.push(await compressImage(file));
+        displayPhotoPreview();
+      }
+      e.target.value = '';
     });
-  }
-};
+
+    document.getElementById('cameraInput').addEventListener('change', async (e) => {
+      for (const file of Array.from(e.target.files)) {
+        if (selectedPhotos.length >= 5) break;
+        selectedPhotos.push(await compressImage(file));
+        displayPhotoPreview();
+      }
+      e.target.value = '';
+    });
+
+    function displayPhotoPreview() {
+      const preview = document.getElementById('photoPreview');
+      preview.innerHTML = '';
+      selectedPhotos.forEach((photo, i) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'position: relative; width: 80px; height: 80px;';
+        div.innerHTML = '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px;border:2px solid #E2E8F0;"/><button onclick="removePhoto(' + i + ')" style="position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:#DC2626;color:white;border:none;cursor:pointer;font-size:10px;">✕</button>';
+        preview.appendChild(div);
+      });
+    }
+
+    window.removePhoto = (i) => { selectedPhotos.splice(i, 1); displayPhotoPreview(); };
+
+    document.getElementById('captureLocationBtn').addEventListener('click', () => {
+      if (!navigator.geolocation) return alert('Geolocation not supported');
+      const btn = document.getElementById('captureLocationBtn');
+      btn.disabled = true;
+      document.getElementById('locationBtnText').textContent = 'Getting...';
+      
+      const options = {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000
+      };
+      
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      function tryGetLocation() {
+        attempts++;
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            capturedLocation = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+            document.getElementById('locationDisplay').style.display = 'block';
+            btn.disabled = false;
+            document.getElementById('locationBtnText').textContent = 'Update';
+          },
+          (err) => {
+            if (err.code === 2 && attempts < maxAttempts) {
+              setTimeout(tryGetLocation, 1000);
+              return;
+            }
+            
+            btn.disabled = false;
+            document.getElementById('locationBtnText').textContent = 'Location';
+            
+            if (err.code === 1) {
+              alert('Location access denied. Please enable location permissions in your browser settings.');
+            } else if (err.code === 2) {
+              alert('Location unavailable. This feature works best on mobile devices.');
+            } else if (err.code === 3) {
+              alert('Location request timed out. Please try again.');
+            } else {
+              alert('Location error: ' + err.message);
+            }
+          },
+          options
+        );
+      }
+      
+      tryGetLocation();
+    });
+
+    // ==========================================
+    // BATCH ZIP DOWNLOAD
+    // ==========================================
+    window.downloadBatchZip = async (batchGroupId) => {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ZIP...';
+
+      try {
+        const response = await authenticatedFetch('/api/list-products');
+        const data = await response.json();
+        const batch = data.products.find(b => b.batchGroupId === batchGroupId);
+        if (!batch) throw new Error('Batch not found');
+        const items = batch.items || [];
+        if (!items.length) throw new Error('No items');
+
+        const zip = new JSZip();
+        const customerFolder = zip.folder('Customer-QR-Codes');
+        const inventoryFolder = zip.folder('Inventory-QR-Codes');
+        
+        for (const p of items) {
+          if (p.qrCodeUrl) {
+            const r = await fetch(p.qrCodeUrl);
+            customerFolder.file(p.sku + '-customer.png', await r.blob());
+          }
+          if (p.inventoryQrCodeUrl) {
+            const r = await fetch(p.inventoryQrCodeUrl);
+            inventoryFolder.file(p.sku + '-inventory.png', await r.blob());
+          }
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(zipBlob);
+        a.download = batch.productName.replace(/[^a-z0-9]/gi, '_') + '_batch.zip';
+        a.click();
+      } catch (err) {
+        alert('ZIP error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> ZIP';
+      }
+    };
+
+    // ==========================================
+    // PRODUCTION MODE FUNCTIONS
+    // ==========================================
+    window.toggleMenu = function(productId, event) {
+      event.stopPropagation();
+      const menu = document.getElementById('menu-' + productId);
+      
+      // Close all other menus first
+      document.querySelectorAll('.menu-dropdown.show').forEach(m => {
+        if (m.id !== 'menu-' + productId) m.classList.remove('show');
+      });
+      
+      menu.classList.toggle('show');
+    };
+
+    window.toggleProductionCheckpoints = async function(productId, btn) {
+      const container = document.getElementById('checkpoints-' + productId);
+      
+      if (container.classList.contains('show')) {
+        container.classList.remove('show');
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Checkpoints';
+      } else {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        await loadProductCheckpoints(productId);
+        container.classList.add('show');
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+      }
+    };
+
+    async function loadProductCheckpoints(productId) {
+      const container = document.getElementById('checkpoints-content-' + productId);
+      
+      try {
+        const response = await authenticatedFetch('/api/get-production-timeline?productId=' + encodeURIComponent(productId));
+        const data = await response.json();
+        
+        if (!data.success) {
+          container.innerHTML = '<div class="checkpoint-empty">Failed to load checkpoints</div>';
+          return;
+        }
+        
+        const checkpoints = data.timeline?.checkpoints || [];
+        
+        if (checkpoints.length === 0) {
+          container.innerHTML = '<div class="checkpoint-empty"><i class="fas fa-route"></i> No checkpoints logged yet.<br>Scan the QR code to add checkpoints.</div>';
+          return;
+        }
+        
+        container.innerHTML = checkpoints.map(cp => `
+          <div class="checkpoint-item" id="checkpoint-${cp.id}">
+            <button class="checkpoint-delete" onclick="deleteCheckpoint(${cp.id}, '${productId}')" title="Delete checkpoint">
+              <i class="fas fa-trash"></i>
+            </button>
+            <div class="checkpoint-header">
+              <div>
+                <span class="checkpoint-who">${escapeHtml(cp.scannedByName || 'Unknown')}</span>
+                ${cp.scannedByRole ? `<span class="checkpoint-role">${escapeHtml(cp.scannedByRole)}</span>` : ''}
+              </div>
+              <span class="checkpoint-when">${formatDate(cp.scannedAt)}</span>
+            </div>
+            ${cp.locationName ? `<div class="checkpoint-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(cp.locationName)}</div>` : ''}
+            ${cp.notes ? `<div class="checkpoint-notes">${escapeHtml(cp.notes)}</div>` : ''}
+            ${cp.photos && cp.photos.length > 0 ? `
+              <div class="checkpoint-photos">
+                ${cp.photos.map(photo => `<img src="${photo}" onclick="window.open('${photo}', '_blank')" alt="Checkpoint photo">`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('Error loading checkpoints:', error);
+        container.innerHTML = '<div class="checkpoint-empty">Error loading checkpoints</div>';
+      }
+    }
+
+    window.finalizeProduct = function(productId, productName) {
+      showConfirmModal(
+        'Go Live?',
+        `Are you sure you want to finalize "${productName}"? Once live, customers will see the full supply chain timeline. This cannot be undone.`,
+        'Go Live',
+        'btn-confirm-success',
+        async () => {
+          try {
+            const response = await authenticatedFetch('/api/finalize-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+              throw new Error(data.error || 'Failed to finalize');
+            }
+            
+            alert('Product is now live! Customers can view the full timeline.');
+            populateBatches();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    window.deleteProductionProduct = function(productId, productName) {
+      showConfirmModal(
+        'Delete Production Entry?',
+        `Are you sure you want to delete "${productName}" and all its checkpoints? This cannot be undone.`,
+        'Delete',
+        'btn-confirm-danger',
+        async () => {
+          try {
+            const response = await authenticatedFetch('/api/delete-production-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+              throw new Error(data.error || 'Failed to delete');
+            }
+            
+            populateBatches();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    window.deleteCheckpoint = function(scanId, productId) {
+      showConfirmModal(
+        'Delete Checkpoint?',
+        'Are you sure you want to delete this checkpoint? This cannot be undone.',
+        'Delete',
+        'btn-confirm-danger',
+        async () => {
+          try {
+            const response = await authenticatedFetch('/api/delete-production-scan', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ scanId })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+              throw new Error(data.error || 'Failed to delete');
+            }
+            
+            // Remove from DOM
+            const el = document.getElementById('checkpoint-' + scanId);
+            if (el) el.remove();
+            
+            // Check if no more checkpoints
+            const container = document.getElementById('checkpoints-content-' + productId);
+            if (container && container.children.length === 0) {
+              container.innerHTML = '<div class="checkpoint-empty"><i class="fas fa-route"></i> No checkpoints logged yet.<br>Scan the QR code to add checkpoints.</div>';
+            }
+            
+            // Refresh to update count
+            populateBatches();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    // ==========================================
+    // PRODUCT LIST
+    // ==========================================
+    function populateBatches() {
+      const list = document.getElementById('batchList');
+      list.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>';
+      
+      authenticatedFetch('/api/list-products')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success || !data.products || !data.products.length) {
+            list.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>No products yet.</p></div>';
+            return;
+          }
+
+          list.innerHTML = '';
+          data.products.forEach(product => {
+            const li = document.createElement('li');
+            const items = product.items || [];
+            const isProduction = product.mode === 'production' && !product.isFinalized;
+            
+            if (isProduction) {
+              li.className = 'production-item';
+            }
+            
+            // Production badge
+            const modeBadge = isProduction 
+              ? '<span class="production-badge">PRODUCTION</span>' 
+              : (product.isFinalized ? '<span style="background:#3B82F6;color:white;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.7rem;font-weight:700;margin-left:0.5rem;">LIVE</span>' : '');
+            
+            // Checkpoint count badge (for production items)
+            const checkpointBadge = isProduction && product.checkpointCount !== undefined
+              ? `<span class="checkpoint-count">${product.checkpointCount} checkpoint${product.checkpointCount !== 1 ? 's' : ''}</span>`
+              : '';
+            
+            if (product.isBatchGroup && items.length > 0) {
+              // BATCH PRODUCT
+              const itemsId = 'items-' + product.batchGroupId;
+              li.innerHTML = `
+                <div class="product-header">
+                  <div>
+                    <strong>${escapeHtml(product.productName)}</strong>${modeBadge}
+                    <span class="batch-badge">BATCH ${product.quantity}</span>${checkpointBadge}
+                    <br><small>Batch: ${product.batchNumber || 'N/A'}</small>
+                  </div>
+                  <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <button class="btn btn-secondary" onclick="toggleBatchItems('${itemsId}',this)">
+                      <i class="fas fa-chevron-down"></i> Items
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadBatchZip('${product.batchGroupId}')">
+                      <i class="fas fa-download"></i> ZIP
+                    </button>
+                  </div>
+                </div>
+                <div id="${itemsId}" class="batch-items">
+                  ${items.map(p => `
+                    <div class="batch-item">
+                      <div><strong>${escapeHtml(p.sku)}</strong></div>
+                      <div style="display:flex;gap:0.5rem;">
+                        <a href="${p.verificationUrl}" class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" target="_blank">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <button class="btn btn-secondary" style="padding:0.5rem 0.75rem;font-size:0.8rem;" onclick='openQRModal(${JSON.stringify(p).replace(/'/g, "\\'")})'>
+                          <i class="fas fa-qrcode"></i>
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            } else if (isProduction) {
+              // PRODUCTION MODE SINGLE PRODUCT
+              li.innerHTML = `
+                <div class="product-header">
+                  <div>
+                    <strong>${escapeHtml(product.productName)}</strong>${modeBadge}${checkpointBadge}
+                    <br><small>SKU: ${product.sku || 'N/A'}</small>
+                  </div>
+                  <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <button class="btn btn-secondary" onclick="toggleProductionCheckpoints('${product.productId}', this)">
+                      <i class="fas fa-chevron-down"></i> Checkpoints
+                    </button>
+                    <button class="btn btn-secondary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                      <i class="fas fa-qrcode"></i> QR
+                    </button>
+                    <div class="menu-container">
+                      <button class="menu-dots" onclick="toggleMenu('${product.productId}', event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <div class="menu-dropdown" id="menu-${product.productId}">
+                        <button onclick="window.open('${product.verificationUrl}', '_blank')">
+                          <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button onclick="window.open('/production-scan.html?id=${product.productId}', '_blank')">
+                          <i class="fas fa-plus"></i> Add Checkpoint
+                        </button>
+                        <hr>
+                        <button class="danger" onclick="deleteProductionProduct('${product.productId}', '${escapeHtml(product.productName)}')">
+                          <i class="fas fa-trash"></i> Delete Entry
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="production-checkpoints" id="checkpoints-${product.productId}">
+                  <div id="checkpoints-content-${product.productId}">
+                    <div class="checkpoint-empty"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                  </div>
+                  <div class="production-actions">
+                    <button class="btn-finalize" onclick="finalizeProduct('${product.productId}', '${escapeHtml(product.productName)}')">
+                      <i class="fas fa-rocket"></i> Go Live
+                    </button>
+                    <a href="/production-scan.html?id=${product.productId}" target="_blank" class="btn btn-secondary" style="padding:0.75rem 1.25rem;">
+                      <i class="fas fa-plus"></i> Add Checkpoint
+                    </a>
+                  </div>
+                </div>
+              `;
+            } else {
+              // REGULAR LIVE PRODUCT
+              li.innerHTML = `
+                <div class="product-header">
+                  <div>
+                    <strong>${escapeHtml(product.productName)}</strong>${modeBadge}
+                    <br><small>SKU: ${product.sku || 'N/A'}</small>
+                  </div>
+                  <div style="display:flex;gap:0.5rem;">
+                    <a href="${product.verificationUrl}" class="btn btn-secondary" target="_blank">
+                      <i class="fas fa-eye"></i> View
+                    </a>
+                    <button class="btn btn-secondary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                      <i class="fas fa-qrcode"></i> QR
+                    </button>
+                  </div>
+                </div>
+              `;
+            }
+            
+            list.appendChild(li);
+          });
+        })
+        .catch(err => {
+          list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error: ' + err.message + '</p></div>';
+        });
+    }
+
+    window.toggleBatchItems = (id, btn) => {
+      const items = document.getElementById(id);
+      if (items.classList.contains('show')) {
+        items.classList.remove('show');
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Items';
+      } else {
+        items.classList.add('show');
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+      }
+    };
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    // ==========================================
+    // MINT PRODUCT
+    // ==========================================
+    document.getElementById('dashCreateBtn').addEventListener('click', async () => {
+      const productName = document.getElementById('dashProdName').value.trim();
+      const sku = document.getElementById('dashSku').value.trim();
+      const batchNumber = document.getElementById('dashBatch').value.trim();
+      const metadata = document.getElementById('dashMetadata').value.trim();
+      const batchQuantity = isBatchMode ? parseInt(document.getElementById('batchQuantity').value) : 1;
+      const msgEl = document.getElementById('dashMsg');
+      const btn = document.getElementById('dashCreateBtn');
+      
+      msgEl.innerHTML = '';
+      if (!productName) { msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Product name required.</div>'; return; }
+      if (!isBatchMode && !sku) { msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> SKU required.</div>'; return; }
+
+      btn.disabled = true;
+      const origText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting...';
+      msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Uploading to blockchain...</div>';
+
+      try {
+        const token = localStorage.getItem('biztrack-auth-token');
+        if (!token) throw new Error('Session expired');
+
+        const response = await fetch('/api/mint-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            productName,
+            sku: isBatchMode ? undefined : sku,
+            batchNumber,
+            metadata: metadata ? { notes: metadata } : {},
+            photos: selectedPhotos.length ? selectedPhotos : null,
+            location: capturedLocation,
+            isBatchOrder: isBatchMode,
+            batchQuantity,
+            mode: isProductionMode ? 'production' : 'live'
+          })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.details || result.error || 'Minting failed');
+
+        const successMsg = isProductionMode 
+          ? (result.isBatch ? 'Batch created in production mode! Add checkpoints before finalizing.' : 'Product created in production mode! Add checkpoints before finalizing.')
+          : (result.isBatch ? 'Batch minted!' : 'Product minted!');
+        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> ' + successMsg + '</div>';
+        
+        document.getElementById('dashProdName').value = '';
+        document.getElementById('dashSku').value = '';
+        document.getElementById('dashBatch').value = '';
+        document.getElementById('dashMetadata').value = '';
+        selectedPhotos = [];
+        capturedLocation = null;
+        document.getElementById('photoPreview').innerHTML = '';
+        document.getElementById('locationDisplay').style.display = 'none';
+
+        await loadSubscriptionLimits();
+        populateBatches();
+      } catch (err) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> ' + err.message + '</div>';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Logout?')) logout();
+    });
+
+    loadSubscriptionLimits();
+    populateBatches();
+  </script>
+</body>
+</html>

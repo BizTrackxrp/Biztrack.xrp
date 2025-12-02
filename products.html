@@ -366,6 +366,70 @@
     .batch-item:last-child { margin-bottom: 0; }
     .batch-item-sku { font-family: monospace; font-weight: 600; }
 
+    /* Batch Modal */
+    .batch-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .batch-modal-overlay.show { display: flex; }
+    .batch-modal {
+      background: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .batch-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem 2rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .batch-modal-header h2 { font-size: 1.5rem; font-weight: 700; color: #1E293B; margin: 0; }
+    .batch-modal-close {
+      background: #F1F5F9; 
+      border: none; 
+      font-size: 1.25rem; 
+      color: #64748B;
+      cursor: pointer; 
+      padding: 0.75rem; 
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    .batch-modal-close:hover { background: #E2E8F0; color: #1E293B; }
+    .batch-modal-body {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .batch-modal-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+    .batch-modal-item:hover { background: #F1F5F9; border-color: #CBD5E1; }
+    .batch-modal-item:last-child { margin-bottom: 0; }
+    .batch-modal-item-info { display: flex; flex-direction: column; gap: 0.25rem; }
+    .batch-modal-item-sku { font-family: monospace; font-weight: 700; font-size: 1rem; color: #1E293B; }
+    .batch-modal-item-id { font-size: 0.8rem; color: #94A3B8; }
+    .batch-modal-item-actions { display: flex; gap: 0.5rem; }
+
     /* Pagination */
     .pagination {
       display: flex;
@@ -490,6 +554,24 @@
         <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
           <i class="fas fa-layer-group"></i> Both
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Items Modal -->
+  <div class="batch-modal-overlay" id="batchModalOverlay" onclick="closeBatchModal(event)">
+    <div class="batch-modal" onclick="event.stopPropagation()">
+      <div class="batch-modal-header">
+        <div>
+          <h2 id="batchModalTitle">Batch Items</h2>
+          <p id="batchModalSubtitle" style="color: #64748B; font-size: 0.9rem; margin-top: 0.25rem;"></p>
+        </div>
+        <button class="batch-modal-close" onclick="closeBatchModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="batch-modal-body" id="batchModalBody">
+        <!-- Items will be populated here -->
       </div>
     </div>
   </div>
@@ -676,24 +758,7 @@
         badges += `<span class="badge badge-batch">Batch ${itemCount}</span>`;
       }
 
-      // Batch items section
-      let batchItemsHtml = '';
-      if (isBatch && items.length > 0) {
-        batchItemsHtml = `
-          <div class="batch-items-section" id="batch-items-${product.batchGroupId || product.productId}">
-            ${items.slice(0, 5).map(item => `
-              <div class="batch-item">
-                <span class="batch-item-sku">${escapeHtml(item.sku)}</span>
-                <button class="btn btn-secondary" onclick='openQRModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>
-                  <i class="fas fa-qrcode"></i>
-                </button>
-              </div>
-            `).join('')}
-            ${items.length > 5 ? `<div class="batch-item" style="justify-content: center; color: #64748B;">...and ${items.length - 5} more</div>` : ''}
-          </div>
-        `;
-      }
-
+      // Batch items section - removed inline, now uses modal
       return `
         <div class="product-card">
           <div class="product-card-header">
@@ -722,15 +787,14 @@
                 <i class="fas fa-qrcode"></i> QR
               </button>
               ${isBatch ? `
-                <button class="btn btn-secondary" onclick="toggleBatchItems('${product.batchGroupId || product.productId}')">
-                  <i class="fas fa-list"></i> Items
+                <button class="btn btn-secondary" onclick='openBatchModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                  <i class="fas fa-list"></i> Items (${itemCount})
                 </button>
                 <button class="btn btn-outline" onclick="downloadBatchZip('${product.batchGroupId}', '${escapeHtml(product.productName)}')">
                   <i class="fas fa-download"></i> ZIP
                 </button>
               ` : ''}
             </div>
-            ${batchItemsHtml}
           </div>
         </div>
       `;
@@ -778,13 +842,42 @@
     }
 
     // ==========================================
-    // BATCH ITEMS
+    // BATCH MODAL
     // ==========================================
-    window.toggleBatchItems = function(batchId) {
-      const section = document.getElementById('batch-items-' + batchId);
-      if (section) {
-        section.classList.toggle('show');
-      }
+    window.openBatchModal = function(product) {
+      if (typeof product === 'string') product = JSON.parse(product);
+      
+      const items = product.items || [];
+      
+      document.getElementById('batchModalTitle').textContent = product.productName;
+      document.getElementById('batchModalSubtitle').textContent = `${items.length} items in batch • Batch #${product.batchNumber || 'N/A'}`;
+      
+      const body = document.getElementById('batchModalBody');
+      body.innerHTML = items.map(item => `
+        <div class="batch-modal-item">
+          <div class="batch-modal-item-info">
+            <span class="batch-modal-item-sku">${escapeHtml(item.sku)}</span>
+            <span class="batch-modal-item-id">${escapeHtml(item.productId)}</span>
+          </div>
+          <div class="batch-modal-item-actions">
+            <a href="${item.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 0.75rem;">
+              <i class="fas fa-eye"></i>
+            </a>
+            <button class="btn btn-primary" style="padding: 0.5rem 0.75rem;" onclick='openQRModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>
+              <i class="fas fa-qrcode"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      
+      document.getElementById('batchModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeBatchModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('batchModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
     };
 
     window.downloadBatchZip = async function(batchGroupId, productName) {
@@ -923,7 +1016,10 @@
     };
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeQRModal();
+      if (e.key === 'Escape') {
+        closeQRModal();
+        closeBatchModal();
+      }
     });
 
     // ==========================================

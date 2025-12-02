@@ -109,6 +109,17 @@ module.exports = async (req, res) => {
       }
     }
 
+    // Parse metadata if it's a string
+    let metadata = product.metadata || ipfsData?.metadata || {};
+    if (typeof metadata === 'string') {
+      try {
+        metadata = JSON.parse(metadata);
+      } catch (e) {
+        console.error('Error parsing metadata:', e);
+        metadata = {};
+      }
+    }
+
     const productData = {
       productId: product.product_id,
       productName: product.product_name,
@@ -122,7 +133,7 @@ module.exports = async (req, res) => {
       finalizedAt: product.finalized_at,
       mode: product.mode,
       isFinalized: product.is_finalized,
-      metadata: product.metadata || ipfsData?.metadata || {},
+      metadata: metadata,
       photoHashes: photoHashes,
       photos: photos,
       location: location,

@@ -590,6 +590,7 @@
     }
     .add-checkpoint-modal-body {
       padding: 1.5rem;
+      padding-bottom: 2.5rem; /* Extra padding at bottom for mobile */
     }
     .add-checkpoint-form-group {
       margin-bottom: 1.25rem;
@@ -756,6 +757,12 @@
       .add-checkpoint-modal {
         max-width: 95%;
         margin: 1rem;
+      }
+      .add-checkpoint-modal-body {
+        padding-bottom: 4rem; /* More space on mobile to avoid browser UI */
+      }
+      .add-checkpoint-submit {
+        margin-bottom: 1rem;
       }
     }
 
@@ -1474,6 +1481,9 @@
         }
 
         msgEl.innerHTML = '<div class="add-checkpoint-message success"><i class="fas fa-check-circle"></i> Checkpoint logged successfully!</div>';
+        
+        // Scroll modal to top so user sees the success message
+        document.querySelector('.add-checkpoint-modal').scrollTop = 0;
         
         // Clear form for another entry
         document.getElementById('acScannerName').value = '';

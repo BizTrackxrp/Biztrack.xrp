@@ -955,7 +955,7 @@
           <div class="checkpoint-detail-row">
             <div class="checkpoint-detail-label">Coordinates</div>
             <div class="checkpoint-detail-value" style="font-family: monospace; font-size: 0.85rem;">
-              ${cp.latitude.toFixed(6)}, ${cp.longitude.toFixed(6)}
+              ${parseFloat(cp.latitude).toFixed(6)}, ${parseFloat(cp.longitude).toFixed(6)}
             </div>
           </div>
         ` : ''}

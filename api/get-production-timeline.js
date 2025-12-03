@@ -46,7 +46,6 @@ export default async function handler(req, res) {
     const checkpointsResult = await client.query(
       `SELECT 
         id,
-        step,
         scanned_at,
         latitude,
         longitude,
@@ -62,9 +61,9 @@ export default async function handler(req, res) {
     );
 
     // Format checkpoints for response
-    const checkpoints = checkpointsResult.rows.map(row => ({
+    const checkpoints = checkpointsResult.rows.map((row, index, arr) => ({
       id: row.id,
-      step: row.step,
+      step: arr.length - index, // Generate step number based on order (oldest = 1)
       scannedAt: row.scanned_at,
       latitude: row.latitude,
       longitude: row.longitude,

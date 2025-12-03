@@ -827,7 +827,15 @@
           throw new Error(data.error || 'Failed to log checkpoint');
         }
 
-        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Checkpoint logged successfully!</div>';
+        msgEl.innerHTML = `
+          <div class="message success">
+            <i class="fas fa-check-circle"></i> 
+            <div>
+              <strong>Checkpoint logged successfully!</strong><br>
+              <span style="font-size: 0.85rem; opacity: 0.9;">Your checkpoint has been added to the timeline below. You can close this window or add another checkpoint.</span>
+            </div>
+          </div>
+        `;
         
         // Clear form
         document.getElementById('scannerName').value = '';

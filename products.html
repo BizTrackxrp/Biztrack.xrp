@@ -256,7 +256,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
+      z-index: 1100;
       align-items: center;
       justify-content: center;
       backdrop-filter: blur(4px);
@@ -861,10 +861,10 @@
           </div>
           <div class="batch-modal-item-actions">
             <a href="${item.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 0.75rem;">
-              <i class="fas fa-eye"></i>
+              <i class="fas fa-eye"></i> View
             </a>
             <button class="btn btn-primary" style="padding: 0.5rem 0.75rem;" onclick='openQRModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>
-              <i class="fas fa-qrcode"></i>
+              <i class="fas fa-qrcode"></i> QR
             </button>
           </div>
         </div>

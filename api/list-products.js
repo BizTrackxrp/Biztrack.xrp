@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
         (SELECT COUNT(*) FROM production_scans ps WHERE ps.product_id = p.id) as checkpoint_count
        FROM products p
        WHERE p.user_id = $1 
-       ORDER BY p.created_at DESC`,
+       ORDER BY COALESCE(p.finalized_at, p.created_at) DESC`,
       [userId]
     );
 

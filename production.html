@@ -544,6 +544,221 @@
       text-decoration: underline;
     }
 
+    /* Add Checkpoint Overlay Modal */
+    .add-checkpoint-modal {
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: left;
+      padding: 0;
+    }
+    .add-checkpoint-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      border-radius: 16px 16px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .add-checkpoint-modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .add-checkpoint-modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .add-checkpoint-modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .add-checkpoint-modal-body {
+      padding: 1.5rem;
+    }
+    .add-checkpoint-form-group {
+      margin-bottom: 1.25rem;
+    }
+    .add-checkpoint-form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+    .add-checkpoint-form-group input,
+    .add-checkpoint-form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+    .add-checkpoint-form-group input:focus,
+    .add-checkpoint-form-group textarea:focus {
+      outline: none;
+      border-color: #10B981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      background: white;
+    }
+    .add-checkpoint-form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .add-checkpoint-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .add-checkpoint-location-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #F8FAFC;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-checkpoint-location-status:hover {
+      background: #F1F5F9;
+    }
+    .add-checkpoint-location-status.success {
+      background: #ECFDF5;
+      color: #059669;
+    }
+    .add-checkpoint-photo-btns {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .add-checkpoint-photo-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+    }
+    .add-checkpoint-photo-btn:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+    .add-checkpoint-photo-preview {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+    .add-checkpoint-photo-item {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+    .add-checkpoint-photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #E2E8F0;
+    }
+    .add-checkpoint-photo-item button {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #DC2626;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .add-checkpoint-submit {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      margin-top: 0.5rem;
+    }
+    .add-checkpoint-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+    .add-checkpoint-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .add-checkpoint-message {
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .add-checkpoint-message.success {
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
+    }
+    .add-checkpoint-message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+    @media (max-width: 500px) {
+      .add-checkpoint-form-row {
+        grid-template-columns: 1fr;
+      }
+      .add-checkpoint-modal {
+        max-width: 95%;
+        margin: 1rem;
+      }
+    }
+
     @media (max-width: 768px) {
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .page-header { flex-direction: column; align-items: flex-start; }
@@ -649,6 +864,64 @@
       </div>
       <div class="modal-buttons" style="margin-top: 1.5rem; border-top: 2px solid #E2E8F0; padding-top: 1rem;">
         <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkpointModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Checkpoint Overlay Modal -->
+  <div class="modal-overlay" id="addCheckpointModal" onclick="closeAddCheckpointModal()">
+    <div class="modal add-checkpoint-modal" onclick="event.stopPropagation()">
+      <div class="add-checkpoint-modal-header">
+        <h3><i class="fas fa-plus-circle"></i> Add Checkpoint</h3>
+        <button class="add-checkpoint-modal-close" onclick="closeAddCheckpointModal()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="add-checkpoint-modal-body">
+        <div id="addCheckpointMessage"></div>
+        
+        <div class="add-checkpoint-form-row">
+          <div class="add-checkpoint-form-group">
+            <label for="acScannerName">Your Name *</label>
+            <input type="text" id="acScannerName" placeholder="e.g. John Smith">
+          </div>
+          <div class="add-checkpoint-form-group">
+            <label for="acScannerRole">Your Role *</label>
+            <input type="text" id="acScannerRole" placeholder="e.g. QC Inspector">
+          </div>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label>Location</label>
+          <div class="add-checkpoint-location-status" id="acLocationStatus" onclick="acRetryLocation()">
+            <i class="fas fa-location-crosshairs"></i>
+            <span>Tap to capture location</span>
+          </div>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label for="acNotes">Notes (optional)</label>
+          <textarea id="acNotes" placeholder="e.g. Passed quality inspection, ready for shipping"></textarea>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label>Photos (optional)</label>
+          <input type="file" id="acPhotoInput" accept="image/*" multiple style="display:none;">
+          <input type="file" id="acCameraInput" accept="image/*" capture="environment" style="display:none;">
+          <div class="add-checkpoint-photo-btns">
+            <button type="button" class="add-checkpoint-photo-btn" onclick="document.getElementById('acCameraInput').click()">
+              <i class="fas fa-camera"></i> Camera
+            </button>
+            <button type="button" class="add-checkpoint-photo-btn" onclick="document.getElementById('acPhotoInput').click()">
+              <i class="fas fa-images"></i> Gallery
+            </button>
+          </div>
+          <div class="add-checkpoint-photo-preview" id="acPhotoPreview"></div>
+        </div>
+
+        <button class="add-checkpoint-submit" id="acSubmitBtn" onclick="acSubmitCheckpoint()">
+          <i class="fas fa-check"></i> Log Checkpoint
+        </button>
       </div>
     </div>
   </div>
@@ -786,9 +1059,9 @@
               <button class="btn btn-finalize" onclick="finalizeProduct('${product.productId}', '${escapeHtml(product.productName)}')">
                 <i class="fas fa-rocket"></i> Go Live
               </button>
-              <a href="/production-scan.html?id=${product.productId}" target="_blank" class="btn btn-secondary">
+              <button class="btn btn-secondary" onclick="openAddCheckpointModal('${product.productId}')">
                 <i class="fas fa-plus"></i> Add Checkpoint
-              </a>
+              </button>
               <button class="btn btn-qr" onclick="showQRModal('${product.qrCodeUrl}', '${escapeHtml(product.sku || product.productId)}')">
                 <i class="fas fa-qrcode"></i> QR Code
               </button>
@@ -993,6 +1266,201 @@
     };
 
     // ==========================================
+    // ADD CHECKPOINT MODAL
+    // ==========================================
+    let acCurrentProductId = null;
+    let acSelectedPhotos = [];
+    let acCapturedLocation = null;
+
+    window.openAddCheckpointModal = function(productId) {
+      acCurrentProductId = productId;
+      acSelectedPhotos = [];
+      acCapturedLocation = null;
+      
+      // Clear form
+      document.getElementById('acScannerName').value = '';
+      document.getElementById('acScannerRole').value = '';
+      document.getElementById('acNotes').value = '';
+      document.getElementById('acPhotoPreview').innerHTML = '';
+      document.getElementById('addCheckpointMessage').innerHTML = '';
+      
+      // Reset location status
+      const statusEl = document.getElementById('acLocationStatus');
+      statusEl.className = 'add-checkpoint-location-status';
+      statusEl.innerHTML = '<i class="fas fa-location-crosshairs"></i> <span>Tap to capture location</span>';
+      
+      // Reset submit button
+      const btn = document.getElementById('acSubmitBtn');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check"></i> Log Checkpoint';
+      
+      // Show modal
+      document.getElementById('addCheckpointModal').classList.add('show');
+      
+      // Auto-get location
+      acAutoGetLocation();
+    };
+
+    window.closeAddCheckpointModal = function() {
+      document.getElementById('addCheckpointModal').classList.remove('show');
+      
+      // Refresh the timeline if a checkpoint was added
+      if (acCurrentProductId) {
+        loadCheckpoints(acCurrentProductId);
+        // Also refresh the product list to update checkpoint counts
+        loadProducts();
+      }
+      acCurrentProductId = null;
+    };
+
+    function acAutoGetLocation() {
+      if (!navigator.geolocation) return;
+
+      const statusEl = document.getElementById('acLocationStatus');
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Getting location...</span>';
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          acCapturedLocation = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          };
+
+          let locationName = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+          try {
+            const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`);
+            const geoData = await geoResponse.json();
+            if (geoData.display_name) {
+              locationName = geoData.display_name.split(',').slice(0, 3).join(',');
+            }
+          } catch (e) {
+            console.log('Reverse geocoding failed');
+          }
+
+          acCapturedLocation.name = locationName;
+          statusEl.className = 'add-checkpoint-location-status success';
+          statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>${locationName}</span>`;
+        },
+        (err) => {
+          console.log('Location error:', err);
+          statusEl.innerHTML = '<i class="fas fa-location-crosshairs"></i> <span>Tap to retry</span>';
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
+      );
+    }
+
+    window.acRetryLocation = function() {
+      acAutoGetLocation();
+    };
+
+    // Photo handling
+    document.getElementById('acPhotoInput').addEventListener('change', acHandlePhotos);
+    document.getElementById('acCameraInput').addEventListener('change', acHandlePhotos);
+
+    async function acHandlePhotos(e) {
+      for (const file of Array.from(e.target.files)) {
+        if (acSelectedPhotos.length >= 3) break;
+        acSelectedPhotos.push(await acCompressImage(file));
+        acRenderPhotoPreview();
+      }
+      e.target.value = '';
+    }
+
+    async function acCompressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const MAX = 1000;
+            if (w > h && w > MAX) { h *= MAX / w; w = MAX; }
+            else if (h > MAX) { w *= MAX / h; h = MAX; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function acRenderPhotoPreview() {
+      const container = document.getElementById('acPhotoPreview');
+      container.innerHTML = acSelectedPhotos.map((photo, i) => `
+        <div class="add-checkpoint-photo-item">
+          <img src="${photo}">
+          <button onclick="acRemovePhoto(${i})"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+    }
+
+    window.acRemovePhoto = function(index) {
+      acSelectedPhotos.splice(index, 1);
+      acRenderPhotoPreview();
+    };
+
+    window.acSubmitCheckpoint = async function() {
+      const name = document.getElementById('acScannerName').value.trim();
+      const role = document.getElementById('acScannerRole').value.trim();
+      const notes = document.getElementById('acNotes').value.trim();
+      const msgEl = document.getElementById('addCheckpointMessage');
+      const btn = document.getElementById('acSubmitBtn');
+
+      msgEl.innerHTML = '';
+
+      if (!name || !role) {
+        msgEl.innerHTML = '<div class="add-checkpoint-message error"><i class="fas fa-exclamation-circle"></i> Name and role are required.</div>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      try {
+        const response = await fetch('/api/log-production-scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: acCurrentProductId,
+            scannedByName: name,
+            scannedByRole: role,
+            latitude: acCapturedLocation?.latitude || null,
+            longitude: acCapturedLocation?.longitude || null,
+            locationName: acCapturedLocation?.name || null,
+            notes: notes || null,
+            photos: acSelectedPhotos.length > 0 ? acSelectedPhotos : null
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to log checkpoint');
+        }
+
+        msgEl.innerHTML = '<div class="add-checkpoint-message success"><i class="fas fa-check-circle"></i> Checkpoint logged successfully!</div>';
+        
+        // Clear form for another entry
+        document.getElementById('acScannerName').value = '';
+        document.getElementById('acScannerRole').value = '';
+        document.getElementById('acNotes').value = '';
+        acSelectedPhotos = [];
+        acRenderPhotoPreview();
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Log Another Checkpoint';
+
+      } catch (error) {
+        msgEl.innerHTML = `<div class="add-checkpoint-message error"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Log Checkpoint';
+      }
+    };
+
+    // ==========================================
     // FINALIZE PRODUCT
     // ==========================================
     window.finalizeProduct = function(productId, productName) {
@@ -1137,6 +1605,9 @@
         closeModal('confirmModal');
         closeModal('qrModal');
         closeModal('checkpointModal');
+        if (document.getElementById('addCheckpointModal').classList.contains('show')) {
+          closeAddCheckpointModal();
+        }
       }
       // Arrow key navigation for checkpoint modal
       if (document.getElementById('checkpointModal').classList.contains('show')) {

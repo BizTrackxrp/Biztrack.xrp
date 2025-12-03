@@ -843,7 +843,7 @@
       <div class="qr-modal-sku" id="qrModalSku">SKU: ---</div>
       <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 1rem;">Scan this QR code at each checkpoint to log progress.</p>
       <div class="modal-buttons">
-        <a id="qrModalDownload" class="modal-btn modal-btn-success" href="#" download style="text-decoration: none;">
+        <a id="qrModalDownload" class="modal-btn modal-btn-success" onclick="downloadQRCode()" style="text-decoration: none; cursor: pointer;">
           <i class="fas fa-download"></i> Download
         </a>
         <button class="modal-btn modal-btn-cancel" onclick="closeModal('qrModal')">Close</button>
@@ -1069,7 +1069,7 @@
               <button class="btn btn-secondary" onclick="openAddCheckpointModal('${product.productId}')">
                 <i class="fas fa-plus"></i> Add Checkpoint
               </button>
-              <button class="btn btn-qr" onclick="showQRModal('${product.qrCodeUrl}', '${escapeHtml(product.sku || product.productId)}')">
+              <button class="btn btn-qr" onclick="showQRModal('${product.qrCodeUrl}', '${escapeHtml(product.sku || product.productId)}', '${escapeHtml(product.productName)}')">
                 <i class="fas fa-qrcode"></i> QR Code
               </button>
               <button class="btn btn-danger" onclick="deleteProduct('${product.productId}', '${escapeHtml(product.productName)}')">
@@ -1635,11 +1635,49 @@
       closeModal('confirmModal');
     };
 
-    window.showQRModal = function(qrUrl, sku) {
+    let currentQrUrl = null;
+    let currentQrFilename = null;
+
+    window.showQRModal = function(qrUrl, sku, productName) {
       document.getElementById('qrModalImage').src = qrUrl;
       document.getElementById('qrModalSku').textContent = 'SKU: ' + sku;
-      document.getElementById('qrModalDownload').href = qrUrl;
+      currentQrUrl = qrUrl;
+      // Create filename from product name (sanitize for file system)
+      const safeName = (productName || sku || 'qr-code').replace(/[^a-z0-9]/gi, '-').toLowerCase();
+      currentQrFilename = safeName + '-qr-code.png';
       document.getElementById('qrModal').classList.add('show');
+    };
+
+    window.downloadQRCode = async function() {
+      if (!currentQrUrl) return;
+      
+      const btn = event.target.closest('button');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+      btn.disabled = true;
+
+      try {
+        // Fetch the image and convert to blob
+        const response = await fetch(currentQrUrl);
+        const blob = await response.blob();
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = currentQrFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback: open in new tab
+        window.open(currentQrUrl, '_blank');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
     };
 
     document.addEventListener('keydown', (e) => {

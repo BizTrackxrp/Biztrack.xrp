@@ -97,6 +97,15 @@
 
     .card h3 i { color: #10B981; }
 
+    .checkpoint-count {
+      background: #F59E0B;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+
     .form-group {
       margin-bottom: 1.25rem;
     }
@@ -149,6 +158,12 @@
       border-radius: 8px;
       font-size: 0.875rem;
       color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .location-status:hover {
+      background: #F1F5F9;
     }
 
     .location-status.success {
@@ -281,7 +296,7 @@
       top: 0;
       bottom: 0;
       width: 2px;
-      background: #E2E8F0;
+      background: linear-gradient(to bottom, #10B981, #3B82F6);
     }
 
     .timeline-item {
@@ -291,6 +306,15 @@
 
     .timeline-item:last-child {
       padding-bottom: 0;
+    }
+
+    .timeline-item.new {
+      animation: highlightNew 2s ease-out;
+    }
+
+    @keyframes highlightNew {
+      0% { background: #ECFDF5; }
+      100% { background: transparent; }
     }
 
     .timeline-dot {
@@ -327,11 +351,12 @@
     }
 
     .timeline-role {
-      font-size: 0.8rem;
-      color: #64748B;
-      background: #E2E8F0;
+      font-size: 0.75rem;
+      color: white;
+      background: #10B981;
       padding: 0.15rem 0.5rem;
       border-radius: 4px;
+      margin-left: 0.5rem;
     }
 
     .timeline-when {
@@ -346,13 +371,17 @@
     }
 
     .timeline-location i {
-      color: #10B981;
+      color: #3B82F6;
       margin-right: 0.25rem;
     }
 
     .timeline-notes {
       font-size: 0.9rem;
       color: #475569;
+      background: white;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border-left: 3px solid #10B981;
     }
 
     .timeline-photos {
@@ -369,6 +398,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: transform 0.2s;
+      border: 1px solid #E2E8F0;
     }
 
     .timeline-photos img:hover {
@@ -476,7 +506,7 @@
 
       <div class="form-group">
         <label>Location</label>
-        <div class="location-status" id="locationStatus">
+        <div class="location-status" id="locationStatus" onclick="retryLocation()">
           <i class="fas fa-location-crosshairs"></i>
           <span>Tap to capture location</span>
         </div>
@@ -510,12 +540,15 @@
     </div>
 
     <!-- Timeline -->
-    <div class="card">
-      <h3><i class="fas fa-history"></i> Checkpoint Timeline</h3>
+    <div class="card" id="timelineCard">
+      <h3>
+        <i class="fas fa-history"></i> Checkpoint Timeline
+        <span class="checkpoint-count" id="checkpointCount" style="display: none;">0</span>
+      </h3>
       <div id="timeline">
         <div class="empty-timeline">
-          <i class="fas fa-route"></i>
-          <p>No checkpoints yet</p>
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading checkpoints...</p>
         </div>
       </div>
     </div>
@@ -538,6 +571,7 @@
 
     if (!productId) {
       document.getElementById('productName').textContent = 'Error: No product ID';
+      document.getElementById('timeline').innerHTML = '<div class="empty-timeline"><i class="fas fa-exclamation-triangle"></i><p>No product ID provided</p></div>';
     } else {
       loadProductInfo();
       loadTimeline();
@@ -551,6 +585,8 @@
       try {
         const response = await fetch(`/api/verify-product?id=${encodeURIComponent(productId)}`);
         const data = await response.json();
+
+        console.log('Product info:', data);
 
         if (!data.success) {
           document.getElementById('productName').textContent = 'Product not found';
@@ -570,13 +606,39 @@
     // LOAD TIMELINE
     // ==========================================
     async function loadTimeline() {
+      const container = document.getElementById('timeline');
+      const countBadge = document.getElementById('checkpointCount');
+      
       try {
+        console.log('Loading timeline for product:', productId);
         const response = await fetch(`/api/get-production-timeline?productId=${encodeURIComponent(productId)}`);
         const data = await response.json();
 
-        const container = document.getElementById('timeline');
+        console.log('Timeline API response:', data);
 
-        if (!data.success || !data.checkpoints || data.checkpoints.length === 0) {
+        if (!data.success) {
+          console.error('Timeline API error:', data.error);
+          container.innerHTML = `
+            <div class="empty-timeline">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Failed to load checkpoints: ${data.error || 'Unknown error'}</p>
+            </div>
+          `;
+          countBadge.style.display = 'none';
+          return;
+        }
+
+        const checkpoints = data.timeline?.checkpoints || [];
+        
+        // Update count badge
+        if (checkpoints.length > 0) {
+          countBadge.textContent = checkpoints.length;
+          countBadge.style.display = 'inline-block';
+        } else {
+          countBadge.style.display = 'none';
+        }
+
+        if (checkpoints.length === 0) {
           container.innerHTML = `
             <div class="empty-timeline">
               <i class="fas fa-route"></i>
@@ -586,8 +648,8 @@
           return;
         }
 
-        container.innerHTML = '<div class="timeline">' + data.checkpoints.map(cp => `
-          <div class="timeline-item">
+        container.innerHTML = '<div class="timeline">' + checkpoints.map((cp, index) => `
+          <div class="timeline-item ${index === 0 ? 'new' : ''}">
             <div class="timeline-dot"></div>
             <div class="timeline-content">
               <div class="timeline-header">
@@ -610,6 +672,13 @@
 
       } catch (error) {
         console.error('Error loading timeline:', error);
+        container.innerHTML = `
+          <div class="empty-timeline">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Error loading checkpoints</p>
+          </div>
+        `;
+        countBadge.style.display = 'none';
       }
     }
 
@@ -648,10 +717,13 @@
           statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>${locationName}</span>`;
         },
         (err) => {
-          console.log('Location error:', err);
-          statusEl.innerHTML = `<i class="fas fa-location-crosshairs"></i> <span>Location unavailable - <a href="#" onclick="retryLocation(); return false;">retry</a></span>`;
+          console.log('Location error:', err.code, err.message);
+          let errorMsg = 'Tap to retry';
+          if (err.code === 1) errorMsg = 'Permission denied - tap to retry';
+          if (err.code === 3) errorMsg = 'Timed out - tap to retry';
+          statusEl.innerHTML = `<i class="fas fa-location-crosshairs"></i> <span>${errorMsg}</span>`;
         },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
       );
     }
 
@@ -731,6 +803,8 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
       try {
+        console.log('Submitting checkpoint for product:', productId);
+        
         const response = await fetch('/api/log-production-scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -747,6 +821,7 @@
         });
 
         const data = await response.json();
+        console.log('Submit response:', data);
 
         if (!data.success) {
           throw new Error(data.error || 'Failed to log checkpoint');
@@ -761,10 +836,16 @@
         selectedPhotos = [];
         renderPhotoPreview();
 
-        // Reload timeline
-        loadTimeline();
+        // Reload timeline and scroll to it
+        await loadTimeline();
+        
+        // Scroll to timeline section after a brief delay
+        setTimeout(() => {
+          document.getElementById('timelineCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
 
       } catch (error) {
+        console.error('Submit error:', error);
         msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
       } finally {
         btn.disabled = false;

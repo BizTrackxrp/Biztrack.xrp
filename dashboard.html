@@ -190,7 +190,6 @@
 
     /* Excel Upload Area */
     .excel-instructions {
-      font-style: italic;
       color: #92400E;
       font-size: 0.9rem;
       margin-bottom: 1rem;
@@ -448,12 +447,12 @@
           <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
         </div>
 
-        <!-- Excel Upload -->
+        <!-- Excel Upload - UPDATED INSTRUCTIONS -->
         <div id="batchExcelInput">
           <p class="excel-instructions">
-            Have a spreadsheet with unique SKUs? Upload it here.<br>
-            Columns: <code>Product Name</code> <code>SKU</code> <code>Batch Number</code> <code>Notes</code><br>
-            <span style="font-size: 0.8rem;">No headers needed—just your data, one product per row.</span>
+            <strong>Do not include headers.</strong> Each row becomes a product entry.<br>
+            Enter data in columns as follows:<br>
+            <code>A: Product Name</code> <code>B: SKU</code> <code>C: Batch #</code> <code>D: Notes</code>
           </p>
           
           <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" style="display: none;" />
@@ -568,7 +567,6 @@
     // ==========================================
     function toggleTooltip(event, tooltipId) {
       event.stopPropagation();
-      // Close all tooltips first
       document.querySelectorAll('.info-tooltip').forEach(t => {
         if (t.id !== tooltipId) t.classList.remove('show');
       });
@@ -590,7 +588,6 @@
       const section = document.getElementById('batchSection');
       const toggleText = document.getElementById('batchToggleText');
       const skuInput = document.getElementById('dashSku');
-      const manualForm = document.getElementById('manualEntryForm');
       
       if (isBatchMode) {
         toggle.classList.add('active');
@@ -635,7 +632,6 @@
       const hasExcel = excelData.length > 0;
       
       if (isProductionMode) {
-        // Production mode - no blockchain yet
         if (hasExcel) {
           text.textContent = 'Create Production Entries';
         } else if (isBatchMode) {
@@ -644,7 +640,6 @@
           text.textContent = 'Create Production Entry';
         }
       } else {
-        // Live mode - mint to blockchain
         if (hasExcel) {
           text.textContent = 'Upload & Mint All';
         } else if (isBatchMode) {
@@ -663,7 +658,6 @@
 
     excelInput.addEventListener('change', handleExcelFile);
 
-    // Drag and drop
     excelUploadArea.addEventListener('dragover', (e) => {
       e.preventDefault();
       excelUploadArea.classList.add('dragover');
@@ -692,7 +686,6 @@
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
           
-          // Filter out empty rows
           excelData = rows.filter(row => row.length > 0 && row[0]);
           
           if (excelData.length === 0) {
@@ -700,7 +693,6 @@
             return;
           }
 
-          // Check if we have enough QR codes (only matters for live mode)
           const remaining = qrLimit - qrUsedThisMonth;
           if (!isProductionMode && excelData.length > remaining) {
             alert(`You have ${remaining} QR codes remaining but are trying to upload ${excelData.length} products. Please upgrade your plan or reduce the number of products.`);
@@ -708,14 +700,12 @@
             return;
           }
 
-          // Show preview
           document.getElementById('excelFileName').textContent = file.name;
           document.getElementById('excelRowCount').textContent = excelData.length;
           
           const tbody = document.getElementById('excelPreviewBody');
           tbody.innerHTML = '';
           
-          // Show first 5 rows as preview
           const previewRows = excelData.slice(0, 5);
           previewRows.forEach(row => {
             const tr = document.createElement('tr');
@@ -736,8 +726,6 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
-          
-          // Update button text to reflect Excel upload
           updateMintButtonText();
         } catch (err) {
           alert('Error reading file: ' + err.message);
@@ -752,6 +740,21 @@
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
       updateMintButtonText();
+    }
+
+    function clearForm() {
+      document.getElementById('dashProdName').value = '';
+      document.getElementById('dashSku').value = '';
+      document.getElementById('dashBatch').value = '';
+      document.getElementById('dashMetadata').value = '';
+      if (document.getElementById('batchQuantity')) {
+        document.getElementById('batchQuantity').value = '5';
+      }
+      selectedPhotos = [];
+      document.getElementById('photoPreview').innerHTML = '';
+      capturedLocation = null;
+      document.getElementById('locationDisplay').style.display = 'none';
+      document.getElementById('locationBtnText').textContent = 'Location';
     }
 
     // ==========================================
@@ -779,8 +782,6 @@
           
           const remaining = qrLimit - qrUsedThisMonth;
           const maxBatch = Math.min(data.subscription.maxBatchSize || 10, remaining);
-          
-          document.getElementById('maxBatchQuantity').textContent = maxBatch;
           document.getElementById('batchQuantity').max = maxBatch;
         }
       } catch (error) {
@@ -795,8 +796,6 @@
       try {
         const response = await authenticatedFetch('/api/list-products');
         const data = await response.json();
-        
-        console.log('API Response:', data);
         
         if (data.success && data.products) {
           let finished = 0;
@@ -903,11 +902,24 @@
       const btn = document.getElementById('dashCreateBtn');
       msgEl.innerHTML = '';
 
-      // Excel mode - if Excel data exists, use that (ignores quantity field)
+      // Excel mode - if Excel data exists, use that
       if (excelData.length > 0) {
         btn.disabled = true;
         const origText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        
+        const batchGroupId = 'batch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        const totalItems = excelData.length;
+        
+        const mintingMessage = isProductionMode 
+          ? `<div class="message info" style="text-align: left;">
+              <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${totalItems} products in Production Mode...</strong><br>
+              <small style="color: #64748B;">Products will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
+            </div>`
+          : `<div class="message info" style="text-align: left;">
+              <i class="fas fa-spinner fa-spin"></i> <strong>Minting ${totalItems} products to blockchain...</strong><br>
+              <small style="color: #64748B;">We're recording each product on IPFS & XRPL for permanent verification. Creating unique QR codes for each item. Please don't refresh the page.</small>
+            </div>`;
+        msgEl.innerHTML = mintingMessage;
         
         let successCount = 0;
         let errorCount = 0;
@@ -924,7 +936,7 @@
             continue;
           }
           
-          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1} / ${excelData.length}...`;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1} / ${totalItems}...`;
           
           try {
             const response = await fetch('/api/mint-product', {
@@ -938,7 +950,11 @@
                 sku,
                 batchNumber,
                 metadata: notes ? { notes } : {},
-                mode: isProductionMode ? 'production' : 'live'
+                mode: isProductionMode ? 'production' : 'live',
+                isExcelBatch: true,
+                excelBatchGroupId: batchGroupId,
+                excelBatchTotal: totalItems,
+                excelBatchIndex: i + 1
               })
             });
             
@@ -956,13 +972,16 @@
         btn.disabled = false;
         btn.innerHTML = origText;
         
+        const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
+        const viewLink = isProductionMode ? 'production.html' : 'products.html';
         if (errorCount === 0) {
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully created ${successCount} products!</div>`;
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully created ${successCount} products as a batch! <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         } else {
-          msgEl.innerHTML = `<div class="message info"><i class="fas fa-info-circle"></i> Created ${successCount} products. ${errorCount} failed (missing name or SKU).</div>`;
+          msgEl.innerHTML = `<div class="message info"><i class="fas fa-info-circle"></i> Created ${successCount} products. ${errorCount} failed (missing name or SKU). <a href="${viewLink}" style="color: #1E40AF; font-weight: 600;">View in ${viewPage} →</a></div>`;
         }
         
         clearExcelUpload();
+        clearForm();
         await loadSubscriptionLimits();
         await loadProductCounts();
         return;
@@ -987,7 +1006,18 @@
       btn.disabled = true;
       const origText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting...';
-      msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Processing...</div>';
+      
+      const itemCount = isBatchMode ? batchQuantity : 1;
+      const mintingMessage = isProductionMode 
+        ? `<div class="message info" style="text-align: left;">
+            <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${itemCount > 1 ? itemCount + ' products' : 'product'} in Production Mode...</strong><br>
+            <small style="color: #64748B;">Your product${itemCount > 1 ? 's' : ''} will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
+          </div>`
+        : `<div class="message info" style="text-align: left;">
+            <i class="fas fa-spinner fa-spin"></i> <strong>Minting ${itemCount > 1 ? itemCount + ' products' : 'product'} to blockchain...</strong><br>
+            <small style="color: #64748B;">We're permanently recording data on IPFS & the XRP Ledger for customer verification. Creating unique QR codes. Please don't refresh.</small>
+          </div>`;
+      msgEl.innerHTML = mintingMessage;
 
       try {
         const token = localStorage.getItem('biztrack-auth-token');
@@ -1012,21 +1042,14 @@
         const result = await response.json();
         if (!response.ok) throw new Error(result.details || result.error || 'Minting failed');
 
+        const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
+        const viewLink = isProductionMode ? 'production.html' : 'products.html';
         const successMsg = isProductionMode 
-          ? (result.isBatch ? 'Batch created in production mode!' : 'Product created in production mode!')
-          : (result.isBatch ? 'Batch minted!' : 'Product minted!');
-        msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> ' + successMsg + '</div>';
+          ? (result.isBatch ? `Batch of ${batchQuantity} created in Production Mode!` : 'Product created in Production Mode!')
+          : (result.isBatch ? `Batch of ${batchQuantity} minted to blockchain!` : 'Product minted to blockchain!');
+        msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         
-        // Clear form
-        document.getElementById('dashProdName').value = '';
-        document.getElementById('dashSku').value = '';
-        document.getElementById('dashBatch').value = '';
-        document.getElementById('dashMetadata').value = '';
-        selectedPhotos = [];
-        capturedLocation = null;
-        document.getElementById('photoPreview').innerHTML = '';
-        document.getElementById('locationDisplay').style.display = 'none';
-
+        clearForm();
         await loadSubscriptionLimits();
         await loadProductCounts();
       } catch (err) {

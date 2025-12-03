@@ -425,6 +425,125 @@
       display: inline-block;
     }
 
+    /* Checkpoint Detail Modal */
+    .checkpoint-modal {
+      max-width: 500px;
+      text-align: left;
+    }
+    .checkpoint-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .checkpoint-modal-header h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-modal-header h3 i { color: #10B981; }
+    .checkpoint-modal-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-modal-nav button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #E2E8F0;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .checkpoint-modal-nav button:hover:not(:disabled) {
+      border-color: #10B981;
+      color: #10B981;
+    }
+    .checkpoint-modal-nav button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .checkpoint-modal-nav span {
+      font-size: 0.85rem;
+      color: #64748B;
+      min-width: 60px;
+      text-align: center;
+    }
+    .checkpoint-detail-row {
+      display: flex;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .checkpoint-detail-label {
+      width: 100px;
+      font-weight: 600;
+      color: #64748B;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .checkpoint-detail-value {
+      flex: 1;
+      color: #1E293B;
+    }
+    .checkpoint-detail-value.role-badge {
+      display: inline-block;
+      background: #10B981;
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .checkpoint-detail-photos {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .checkpoint-detail-photos img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+    .checkpoint-detail-photos img:hover {
+      border-color: #10B981;
+      transform: scale(1.05);
+    }
+    .checkpoint-detail-notes {
+      background: #F8FAFC;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border-left: 3px solid #10B981;
+      font-size: 0.95rem;
+    }
+    .checkpoint-detail-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-detail-location i {
+      color: #3B82F6;
+    }
+    .checkpoint-detail-location a {
+      color: #3B82F6;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .checkpoint-detail-location a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .page-header { flex-direction: column; align-items: flex-start; }
@@ -506,6 +625,30 @@
           <i class="fas fa-download"></i> Download
         </a>
         <button class="modal-btn modal-btn-cancel" onclick="closeModal('qrModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkpoint Detail Modal -->
+  <div class="modal-overlay" id="checkpointModal" onclick="closeModal('checkpointModal')">
+    <div class="modal checkpoint-modal" onclick="event.stopPropagation()">
+      <div class="checkpoint-modal-header">
+        <h3><i class="fas fa-map-marker-alt"></i> Checkpoint Details</h3>
+        <div class="checkpoint-modal-nav">
+          <button onclick="navigateCheckpoint(-1)" id="checkpointPrev" title="Previous">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span id="checkpointCounter">1 of 3</span>
+          <button onclick="navigateCheckpoint(1)" id="checkpointNext" title="Next">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div id="checkpointModalContent">
+        <!-- Content populated by JS -->
+      </div>
+      <div class="modal-buttons" style="margin-top: 1.5rem; border-top: 2px solid #E2E8F0; padding-top: 1rem;">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkpointModal')">Close</button>
       </div>
     </div>
   </div>
@@ -701,11 +844,11 @@
           return;
         }
 
-        timeline.innerHTML = checkpoints.map(cp => `
-          <div class="timeline-item" id="checkpoint-${cp.id}">
+        timeline.innerHTML = checkpoints.map((cp, index) => `
+          <div class="timeline-item" id="checkpoint-${cp.id}" onclick="showCheckpointModal(${index})" style="cursor: pointer;">
             <div class="timeline-dot"></div>
             <div class="timeline-content">
-              <button class="timeline-delete" onclick="deleteCheckpoint(${cp.id}, '${productId}')" title="Delete checkpoint">
+              <button class="timeline-delete" onclick="event.stopPropagation(); deleteCheckpoint(${cp.id}, '${productId}')" title="Delete checkpoint">
                 <i class="fas fa-trash"></i>
               </button>
               <div class="timeline-header">
@@ -719,18 +862,135 @@
               ${cp.notes ? `<div class="timeline-notes">${escapeHtml(cp.notes)}</div>` : ''}
               ${cp.photos && cp.photos.length > 0 ? `
                 <div class="timeline-photos">
-                  ${cp.photos.map(photo => `<img src="${photo}" onclick="window.open('${photo}', '_blank')" alt="Checkpoint photo">`).join('')}
+                  ${cp.photos.map(photo => `<img src="${photo}" onclick="event.stopPropagation(); window.open('${photo}', '_blank')" alt="Checkpoint photo">`).join('')}
                 </div>
               ` : ''}
             </div>
           </div>
         `).join('');
 
+        // Store checkpoints for modal navigation
+        window.currentCheckpoints = checkpoints;
+
       } catch (error) {
         console.error('Error loading checkpoints:', error);
         timeline.innerHTML = '<div class="timeline-empty">Error loading checkpoints</div>';
       }
     }
+
+    // ==========================================
+    // CHECKPOINT DETAIL MODAL
+    // ==========================================
+    let currentCheckpointIndex = 0;
+
+    window.showCheckpointModal = function(index) {
+      const checkpoints = window.currentCheckpoints;
+      if (!checkpoints || checkpoints.length === 0) return;
+
+      currentCheckpointIndex = index;
+      renderCheckpointModal();
+      document.getElementById('checkpointModal').classList.add('show');
+    };
+
+    function renderCheckpointModal() {
+      const checkpoints = window.currentCheckpoints;
+      const cp = checkpoints[currentCheckpointIndex];
+      const total = checkpoints.length;
+
+      // Update counter
+      document.getElementById('checkpointCounter').textContent = `${currentCheckpointIndex + 1} of ${total}`;
+
+      // Update nav buttons
+      document.getElementById('checkpointPrev').disabled = currentCheckpointIndex === 0;
+      document.getElementById('checkpointNext').disabled = currentCheckpointIndex === total - 1;
+
+      // Build content
+      const content = document.getElementById('checkpointModalContent');
+      
+      // Format full date/time
+      const date = new Date(cp.scannedAt);
+      const fullDateTime = date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      content.innerHTML = `
+        <div class="checkpoint-detail-row">
+          <div class="checkpoint-detail-label">Logged By</div>
+          <div class="checkpoint-detail-value">
+            <strong>${escapeHtml(cp.scannedByName || 'Unknown')}</strong>
+            ${cp.scannedByRole ? `<span class="checkpoint-detail-value role-badge" style="margin-left: 0.5rem;">${escapeHtml(cp.scannedByRole)}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="checkpoint-detail-row">
+          <div class="checkpoint-detail-label">Date/Time</div>
+          <div class="checkpoint-detail-value">${fullDateTime}</div>
+        </div>
+
+        ${cp.locationName ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Location</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${escapeHtml(cp.locationName)}</span>
+              </div>
+              ${cp.latitude && cp.longitude ? `
+                <a href="https://www.google.com/maps?q=${cp.latitude},${cp.longitude}" target="_blank" class="checkpoint-detail-location" style="margin-top: 0.25rem;">
+                  <i class="fas fa-external-link-alt"></i>
+                  View on Google Maps
+                </a>
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.latitude && cp.longitude ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Coordinates</div>
+            <div class="checkpoint-detail-value" style="font-family: monospace; font-size: 0.85rem;">
+              ${cp.latitude.toFixed(6)}, ${cp.longitude.toFixed(6)}
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.notes ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Notes</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-notes">${escapeHtml(cp.notes)}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.photos && cp.photos.length > 0 ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Photos</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-photos">
+                ${cp.photos.map(photo => `<img src="${photo}" onclick="window.open('${photo}', '_blank')" alt="Checkpoint photo" title="Click to view full size">`).join('')}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    window.navigateCheckpoint = function(direction) {
+      const checkpoints = window.currentCheckpoints;
+      const newIndex = currentCheckpointIndex + direction;
+      
+      if (newIndex >= 0 && newIndex < checkpoints.length) {
+        currentCheckpointIndex = newIndex;
+        renderCheckpointModal();
+      }
+    };
 
     // ==========================================
     // FINALIZE PRODUCT
@@ -876,6 +1136,12 @@
       if (e.key === 'Escape') {
         closeModal('confirmModal');
         closeModal('qrModal');
+        closeModal('checkpointModal');
+      }
+      // Arrow key navigation for checkpoint modal
+      if (document.getElementById('checkpointModal').classList.contains('show')) {
+        if (e.key === 'ArrowLeft') navigateCheckpoint(-1);
+        if (e.key === 'ArrowRight') navigateCheckpoint(1);
       }
     });
 

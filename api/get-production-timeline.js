@@ -1,4 +1,9 @@
-import { sql } from '@vercel/postgres';
+import pg from 'pg';
+
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -14,6 +19,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
+  const client = await pool.connect();
+  
   try {
     const { productId } = req.query;
 
@@ -22,11 +29,12 @@ export default async function handler(req, res) {
     }
 
     // First, get the product info
-    const productResult = await sql`
-      SELECT id, product_id, product_name, sku, mode, is_finalized
-      FROM products 
-      WHERE product_id = ${productId}
-    `;
+    const productResult = await client.query(
+      `SELECT id, product_id, product_name, sku, mode, is_finalized
+       FROM products 
+       WHERE product_id = $1`,
+      [productId]
+    );
 
     if (productResult.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Product not found' });
@@ -35,8 +43,8 @@ export default async function handler(req, res) {
     const product = productResult.rows[0];
 
     // Get all checkpoints for this product, ordered by scanned_at (newest first)
-    const checkpointsResult = await sql`
-      SELECT 
+    const checkpointsResult = await client.query(
+      `SELECT 
         id,
         step,
         scanned_at,
@@ -47,10 +55,11 @@ export default async function handler(req, res) {
         photos,
         scanned_by_name,
         scanned_by_role
-      FROM production_scans 
-      WHERE product_id = ${product.id}
-      ORDER BY scanned_at DESC
-    `;
+       FROM production_scans 
+       WHERE product_id = $1
+       ORDER BY scanned_at DESC`,
+      [product.id]
+    );
 
     // Format checkpoints for response
     const checkpoints = checkpointsResult.rows.map(row => ({
@@ -75,6 +84,8 @@ export default async function handler(req, res) {
         mode: product.mode,
         isFinalized: product.is_finalized
       },
+      // Both formats for compatibility
+      checkpoints: checkpoints,
       timeline: {
         totalCheckpoints: checkpoints.length,
         checkpoints: checkpoints
@@ -88,5 +99,7 @@ export default async function handler(req, res) {
       error: 'Failed to fetch timeline',
       details: error.message 
     });
+  } finally {
+    client.release();
   }
 }

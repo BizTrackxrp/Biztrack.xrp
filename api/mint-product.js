@@ -206,7 +206,7 @@ module.exports = async (req, res) => {
         width: 300,
         margin: 2,
         color: {
-          dark: '#10B981',  // Green for production mode
+          dark: '#000000',  // Black for reliable printing
           light: '#FFFFFF'
         },
         errorCorrectionLevel: 'M'
@@ -373,7 +373,7 @@ module.exports = async (req, res) => {
         width: 300,
         margin: 2,
         color: {
-          dark: '#1E293B',
+          dark: '#000000',  // Black for reliable printing
           light: '#FFFFFF'
         },
         errorCorrectionLevel: 'M'

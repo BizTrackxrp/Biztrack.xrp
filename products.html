@@ -438,6 +438,114 @@
     .batch-modal-item-id { font-size: 0.8rem; color: #94A3B8; }
     .batch-modal-item-actions { display: flex; gap: 0.5rem; }
 
+    /* ZIP Download Modal */
+    .zip-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1200;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .zip-modal-overlay.show { display: flex; }
+    .zip-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .zip-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .zip-modal-header h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .zip-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+    .zip-modal-close:hover { color: #1E293B; }
+    .zip-modal-subtitle {
+      color: #64748B;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .zip-modal-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .zip-option-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .zip-option-btn:hover {
+      border-color: #10B981;
+      background: #F0FDF4;
+    }
+    .zip-option-btn.both {
+      border-color: #F59E0B;
+      background: #FFFBEB;
+    }
+    .zip-option-btn.both:hover {
+      border-color: #D97706;
+      background: #FEF3C7;
+    }
+    .zip-option-btn i {
+      font-size: 1.5rem;
+      color: #10B981;
+      margin-bottom: 0.5rem;
+    }
+    .zip-option-btn.both i { color: #F59E0B; }
+    .zip-option-btn span {
+      font-weight: 600;
+      color: #1E293B;
+      font-size: 1rem;
+    }
+    .zip-option-btn small {
+      color: #64748B;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    .zip-option-btn.downloading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .zip-cancel-btn {
+      background: none;
+      border: none;
+      color: #64748B;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .zip-cancel-btn:hover { color: #1E293B; }
+
     /* Pagination */
     .pagination {
       display: flex;
@@ -583,6 +691,37 @@
       <div class="batch-modal-body" id="batchModalBody">
         <!-- Items will be populated here -->
       </div>
+    </div>
+  </div>
+
+  <!-- ZIP Download Modal -->
+  <div class="zip-modal-overlay" id="zipModalOverlay" onclick="closeZipModal(event)">
+    <div class="zip-modal" onclick="event.stopPropagation()">
+      <div class="zip-modal-header">
+        <h2><i class="fas fa-file-archive" style="color: #10B981;"></i> Download ZIP</h2>
+        <button class="zip-modal-close" onclick="closeZipModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <p class="zip-modal-subtitle" id="zipModalSubtitle">Choose which QR codes to download</p>
+      <div class="zip-modal-options">
+        <button class="zip-option-btn" onclick="downloadBatchZip('customer')">
+          <i class="fas fa-mobile-alt"></i>
+          <span>Customer QRs</span>
+          <small>Verification links for customers</small>
+        </button>
+        <button class="zip-option-btn" onclick="downloadBatchZip('inventory')">
+          <i class="fas fa-barcode"></i>
+          <span>Inventory QRs</span>
+          <small>Raw SKU codes for internal use</small>
+        </button>
+        <button class="zip-option-btn both" onclick="downloadBatchZip('both')">
+          <i class="fas fa-layer-group"></i>
+          <span>Both</span>
+          <small>All QR codes in one ZIP</small>
+        </button>
+      </div>
+      <button class="zip-cancel-btn" onclick="closeZipModal()">Cancel</button>
     </div>
   </div>
 
@@ -793,14 +932,16 @@
               <a href="${product.verificationUrl || '/verify.html?id=' + product.productId}" target="_blank" class="btn btn-secondary">
                 <i class="fas fa-eye"></i> View
               </a>
-              <button class="btn btn-primary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
-                <i class="fas fa-qrcode"></i> QR
-              </button>
+              ${!isBatch ? `
+                <button class="btn btn-primary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
+                  <i class="fas fa-qrcode"></i> QR
+                </button>
+              ` : ''}
               ${isBatch ? `
                 <button class="btn btn-secondary" onclick='openBatchModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
                   <i class="fas fa-list"></i> Items (${itemCount})
                 </button>
-                <button class="btn btn-outline" onclick="downloadBatchZip('${product.batchGroupId}', '${escapeHtml(product.productName)}')">
+                <button class="btn btn-primary" onclick="openZipModal('${product.batchGroupId}', '${escapeHtml(product.productName)}')">
                   <i class="fas fa-download"></i> ZIP
                 </button>
               ` : ''}
@@ -890,25 +1031,50 @@
       document.body.style.overflow = '';
     };
 
-    window.downloadBatchZip = async function(batchGroupId, productName) {
+    // ==========================================
+    // ZIP MODAL
+    // ==========================================
+    let currentZipBatchGroupId = null;
+    let currentZipProductName = null;
+
+    window.openZipModal = function(batchGroupId, productName) {
+      currentZipBatchGroupId = batchGroupId;
+      currentZipProductName = productName;
+      document.getElementById('zipModalSubtitle').textContent = `Download QR codes for "${productName}"`;
+      document.getElementById('zipModalOverlay').classList.add('show');
+    };
+
+    window.closeZipModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('zipModalOverlay').classList.remove('show');
+      currentZipBatchGroupId = null;
+      currentZipProductName = null;
+    };
+
+    window.downloadBatchZip = async function(type) {
+      if (!currentZipBatchGroupId) return;
+
       const btn = event.target.closest('button');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      const originalHTML = btn.innerHTML;
+      btn.classList.add('downloading');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i><span>Downloading...</span><small>Please wait</small>';
 
       try {
-        const batch = allProducts.find(p => p.batchGroupId === batchGroupId);
+        const batch = allProducts.find(p => p.batchGroupId === currentZipBatchGroupId);
         if (!batch || !batch.items?.length) throw new Error('Batch not found');
 
         const zip = new JSZip();
-        const customerFolder = zip.folder('Customer-QR-Codes');
-        const inventoryFolder = zip.folder('Inventory-QR-Codes');
+        
+        // Create folders based on type
+        const customerFolder = (type === 'customer' || type === 'both') ? zip.folder('Customer-QR-Codes') : null;
+        const inventoryFolder = (type === 'inventory' || type === 'both') ? zip.folder('Inventory-QR-Codes') : null;
 
         for (const item of batch.items) {
-          if (item.qrCodeUrl) {
+          if (customerFolder && item.qrCodeUrl) {
             const r = await fetch(item.qrCodeUrl);
             customerFolder.file(item.sku + '-customer.png', await r.blob());
           }
-          if (item.inventoryQrCodeUrl) {
+          if (inventoryFolder && item.inventoryQrCodeUrl) {
             const r = await fetch(item.inventoryQrCodeUrl);
             inventoryFolder.file(item.sku + '-inventory.png', await r.blob());
           }
@@ -917,13 +1083,16 @@
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(zipBlob);
-        a.download = productName.replace(/[^a-z0-9]/gi, '_') + '_batch.zip';
+        const suffix = type === 'both' ? 'all-qr' : type + '-qr';
+        a.download = currentZipProductName.replace(/[^a-z0-9]/gi, '_') + '_' + suffix + '.zip';
         a.click();
+
+        // Close modal after successful download
+        closeZipModal();
       } catch (err) {
         alert('ZIP error: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-download"></i> ZIP';
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('downloading');
       }
     };
 
@@ -1066,6 +1235,7 @@
       if (e.key === 'Escape') {
         closeQRModal();
         closeBatchModal();
+        closeZipModal();
       }
     });
 

@@ -51,7 +51,12 @@ module.exports = async (req, res) => {
       location,
       isBatchOrder,
       batchQuantity,
-      mode: productMode
+      mode: productMode,
+      // Excel batch grouping
+      isExcelBatch,
+      excelBatchGroupId,
+      excelBatchTotal,
+      excelBatchIndex
     } = req.body;
 
     // Validate mode (default to 'live')
@@ -163,8 +168,12 @@ module.exports = async (req, res) => {
         ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
         : sku;
 
-      // Generate batch group ID
-      const batchGroupId = isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null;
+      // Generate batch group ID - use Excel batch ID if provided
+      const batchGroupId = isExcelBatch ? excelBatchGroupId 
+        : (isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null);
+
+      // For Excel batches, only first item is marked as batch group leader
+      const is_batch_group = isExcelBatch ? (excelBatchIndex === 1) : isBatchOrder;
 
       // Upload photos to IPFS if provided (keep for later use)
       let photoHashes = [];
@@ -262,9 +271,9 @@ module.exports = async (req, res) => {
           trackingQrIpfsHash,
           metadata || {}, 
           user.id,
-          isBatchOrder,
+          is_batch_group,
           batchGroupId,
-          quantity,
+          isExcelBatch ? excelBatchTotal : quantity,
           'production',
           false,
           photoHashes.length > 0 ? JSON.stringify(photoHashes) : null,
@@ -308,8 +317,12 @@ module.exports = async (req, res) => {
       ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
       : sku;
 
-    // Generate batch group ID for batch orders
-    const batchGroupId = isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null;
+    // Generate batch group ID - use Excel batch ID if provided
+    const batchGroupId = isExcelBatch ? excelBatchGroupId 
+      : (isBatchOrder ? `BATCH-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` : null);
+
+    // For Excel batches, only first item is marked as batch group leader
+    const is_batch_group = isExcelBatch ? (excelBatchIndex === 1) : isBatchOrder;
 
     // Step 1: Upload shared photos to IPFS
     let photoHashes = [];
@@ -550,9 +563,9 @@ module.exports = async (req, res) => {
           dumbQrIpfsHash,
           metadata, 
           user.id,
-          isBatchOrder && itemNumber === 1,
+          isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1),
           batchGroupId,
-          isBatchOrder ? quantity : null,
+          isExcelBatch ? excelBatchTotal : (isBatchOrder ? quantity : null),
           'live',
           true  // Live mode products are "finalized" by default
         ]

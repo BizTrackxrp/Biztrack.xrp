@@ -1304,14 +1304,46 @@
     window.closeAddCheckpointModal = function() {
       document.getElementById('addCheckpointModal').classList.remove('show');
       
-      // Refresh the timeline if a checkpoint was added
+      // Only refresh the specific product's timeline, not the whole page
       if (acCurrentProductId) {
+        // Refresh just this product's timeline
         loadCheckpoints(acCurrentProductId);
-        // Also refresh the product list to update checkpoint counts
-        loadProducts();
+        
+        // Update the checkpoint count badge for this product without full reload
+        updateCheckpointBadge(acCurrentProductId);
       }
       acCurrentProductId = null;
     };
+
+    async function updateCheckpointBadge(productId) {
+      try {
+        const response = await authenticatedFetch('/api/get-production-timeline?productId=' + encodeURIComponent(productId));
+        const data = await response.json();
+        
+        if (data.success) {
+          const count = data.timeline?.checkpoints?.length || 0;
+          const card = document.getElementById('card-' + productId);
+          if (card) {
+            const badge = card.querySelector('.badge-checkpoints');
+            if (badge) {
+              badge.textContent = `${count} checkpoint${count !== 1 ? 's' : ''}`;
+            }
+          }
+          
+          // Also update the total checkpoints stat
+          let totalCheckpoints = 0;
+          allProducts.forEach(p => {
+            if (p.productId === productId) {
+              p.checkpointCount = count; // Update local data
+            }
+            totalCheckpoints += (p.checkpointCount || 0);
+          });
+          document.getElementById('totalCheckpoints').textContent = totalCheckpoints;
+        }
+      } catch (error) {
+        console.error('Error updating badge:', error);
+      }
+    }
 
     function acAutoGetLocation() {
       if (!navigator.geolocation) return;

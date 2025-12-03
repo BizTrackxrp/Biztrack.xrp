@@ -358,13 +358,14 @@ module.exports = async (req, res) => {
       // ==========================================
       if (quantity > 1) {
         // Batch: Insert new product records
-        await pool.query(
+        const insertResult = await pool.query(
           `INSERT INTO products (
             product_id, product_name, sku, batch_number, 
             ipfs_hash, xrpl_tx_hash, qr_code_ipfs_hash, inventory_qr_code_ipfs_hash,
             metadata, user_id, is_batch_group, batch_group_id, batch_quantity,
             mode, is_finalized, finalized_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())`,
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())
+          RETURNING id`,
           [
             itemProductId, product.product_name, itemSku, product.batch_number,
             ipfsHash, txHash, customerQrIpfsHash, inventoryQrIpfsHash,
@@ -372,6 +373,29 @@ module.exports = async (req, res) => {
             'live', true
           ]
         );
+
+        // Copy all checkpoints to this new product
+        const newProductId = insertResult.rows[0].id;
+        for (const checkpoint of checkpoints) {
+          await pool.query(
+            `INSERT INTO production_scans (
+              product_id, scanned_at, latitude, longitude, location_name,
+              notes, photos, scanned_by_name, scanned_by_role
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [
+              newProductId,
+              checkpoint.scanned_at,
+              checkpoint.latitude,
+              checkpoint.longitude,
+              checkpoint.location_name,
+              checkpoint.notes,
+              checkpoint.photos,
+              checkpoint.scanned_by_name,
+              checkpoint.scanned_by_role
+            ]
+          );
+        }
+        console.log(`Copied ${checkpoints.length} checkpoints to product ${itemSku}`);
       } else {
         // Single: Update existing record
         await pool.query(
@@ -412,7 +436,12 @@ module.exports = async (req, res) => {
     // ==========================================
     if (quantity > 1) {
       console.log('Cleaning up original production record...');
+      // First delete checkpoints (foreign key constraint)
+      await pool.query('DELETE FROM production_scans WHERE product_id = $1', [product.id]);
+      console.log('Deleted production checkpoints');
+      // Then delete the product
       await pool.query('DELETE FROM products WHERE id = $1', [product.id]);
+      console.log('Deleted original production product');
     }
 
     // ==========================================

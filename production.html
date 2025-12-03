@@ -1651,10 +1651,10 @@
     window.downloadQRCode = async function() {
       if (!currentQrUrl) return;
       
-      const btn = event.target.closest('button');
+      const btn = document.getElementById('qrModalDownload');
       const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-      btn.disabled = true;
+      btn.style.pointerEvents = 'none';
 
       try {
         // Fetch the image and convert to blob
@@ -1676,7 +1676,7 @@
         window.open(currentQrUrl, '_blank');
       } finally {
         btn.innerHTML = originalText;
-        btn.disabled = false;
+        btn.style.pointerEvents = 'auto';
       }
     };
 

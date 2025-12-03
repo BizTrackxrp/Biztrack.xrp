@@ -304,7 +304,15 @@
       gap: 1.5rem;
       margin-bottom: 1.5rem;
     }
-    .qr-code-box { text-align: center; }
+    .qr-code-box { text-align: center; position: relative; }
+    .qr-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #94A3B8;
+    }
     .qr-code-box img {
       width: 140px; height: 140px;
       border-radius: 12px;
@@ -535,22 +543,24 @@
 
       <div class="qr-codes-container">
         <div class="qr-code-box customer">
-          <img id="modalCustomerQR" src="" alt="Customer QR" />
+          <div class="qr-loading" id="customerQRLoading"><i class="fas fa-spinner fa-spin"></i></div>
+          <img id="modalCustomerQR" src="" alt="Customer QR" onload="this.previousElementSibling.style.display='none'" />
           <div class="qr-code-label">Customer</div>
         </div>
         <div class="qr-code-box inventory" id="inventoryQRBox">
-          <img id="modalInventoryQR" src="" alt="Inventory QR" />
+          <div class="qr-loading" id="inventoryQRLoading"><i class="fas fa-spinner fa-spin"></i></div>
+          <img id="modalInventoryQR" src="" alt="Inventory QR" onload="this.previousElementSibling.style.display='none'" />
           <div class="qr-code-label">Inventory</div>
         </div>
       </div>
 
       <div class="qr-download-buttons">
-        <a id="downloadCustomerBtn" class="qr-download-btn customer" href="#" download>
-          <i class="fas fa-mobile-alt"></i> Customer
-        </a>
-        <a id="downloadInventoryBtn" class="qr-download-btn inventory" href="#" download>
-          <i class="fas fa-barcode"></i> Inventory
-        </a>
+        <button id="downloadCustomerBtn" class="qr-download-btn customer" onclick="downloadQR('customer')">
+          <i class="fas fa-download"></i> Customer
+        </button>
+        <button id="downloadInventoryBtn" class="qr-download-btn inventory" onclick="downloadQR('inventory')">
+          <i class="fas fa-download"></i> Inventory
+        </button>
         <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
           <i class="fas fa-layer-group"></i> Both
         </button>
@@ -925,8 +935,13 @@
       currentQRData = product;
 
       document.getElementById('modalSku').textContent = 'SKU: ' + (product.sku || product.productId);
+      
+      // Show loading spinners
+      document.getElementById('customerQRLoading').style.display = 'block';
+      document.getElementById('inventoryQRLoading').style.display = 'block';
+      
+      // Load images
       document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
-      document.getElementById('downloadCustomerBtn').href = product.qrCodeUrl;
 
       const inventoryBox = document.getElementById('inventoryQRBox');
       const inventoryBtn = document.getElementById('downloadInventoryBtn');
@@ -934,7 +949,6 @@
 
       if (product.inventoryQrCodeUrl) {
         document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
-        inventoryBtn.href = product.inventoryQrCodeUrl;
         inventoryBox.style.display = 'block';
         inventoryBtn.style.display = 'flex';
         bothBtn.style.display = 'flex';
@@ -953,6 +967,39 @@
       document.getElementById('qrModalOverlay').classList.remove('show');
       document.body.style.overflow = '';
       currentQRData = null;
+    };
+
+    // Download individual QR code
+    window.downloadQR = async function(type) {
+      if (!currentQRData) return;
+      
+      const btn = document.getElementById(type === 'customer' ? 'downloadCustomerBtn' : 'downloadInventoryBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      btn.disabled = true;
+
+      try {
+        const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.inventoryQrCodeUrl;
+        const response = await fetch(url);
+        const blob = await response.blob();
+        
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = (currentQRData.sku || currentQRData.productId) + '-' + type + '-qr.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback: open in new tab
+        const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.inventoryQrCodeUrl;
+        window.open(url, '_blank');
+      } finally {
+        btn.innerHTML = '<i class="fas fa-download"></i> ' + (type === 'customer' ? 'Customer' : 'Inventory');
+        btn.disabled = false;
+      }
     };
 
     window.downloadBothQRs = async function() {

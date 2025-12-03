@@ -364,6 +364,50 @@
       color: #1E293B;
     }
 
+    /* Batch Item Badge */
+    .batch-item-badge {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+      border: 2px solid #A5B4FC;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .batch-item-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .batch-item-info {
+      flex: 1;
+    }
+
+    .batch-item-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6366F1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .batch-item-number {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1E293B;
+    }
+
     /* Supply Chain Timeline */
     .supply-chain-section {
       background: white;
@@ -963,6 +1007,20 @@
       .timeline-step {
         display: none;
       }
+
+      .batch-item-badge {
+        padding: 1rem;
+      }
+
+      .batch-item-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .batch-item-number {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -1052,6 +1110,17 @@
         <div class="info-card">
           <div class="info-card-label">Minted On</div>
           <div class="info-card-value" id="mintedOn">-</div>
+        </div>
+      </div>
+
+      <!-- Batch Item Badge (for items from batch orders) -->
+      <div class="batch-item-badge" id="batchItemBadge" style="display: none;">
+        <div class="batch-item-icon">
+          <i class="fas fa-box"></i>
+        </div>
+        <div class="batch-item-info">
+          <div class="batch-item-label">Item from Batch Production</div>
+          <div class="batch-item-number" id="batchItemNumber">Item 1 of 1</div>
         </div>
       </div>
 
@@ -1194,6 +1263,14 @@
           month: 'short',
           day: 'numeric'
         });
+
+        // Show batch item badge if this is from a batch order
+        if (product.batchInfo && product.batchInfo.isBatchOrder) {
+          const badge = document.getElementById('batchItemBadge');
+          const numberText = document.getElementById('batchItemNumber');
+          badge.style.display = 'flex';
+          numberText.textContent = `Item ${product.batchInfo.itemNumber} of ${product.batchInfo.totalInBatch}`;
+        }
 
         // Set blockchain links
         document.getElementById('blockchainLink').href = `https://livenet.xrpl.org/transactions/${product.xrplTxHash}`;

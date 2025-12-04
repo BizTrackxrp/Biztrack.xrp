@@ -523,6 +523,15 @@
         <div class="form-group" id="skuGroup">
           <label for="dashSku" id="skuLabel">SKU *</label>
           <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
+          <div id="skuBatchOptions" style="display: none; margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; color: #475569; cursor: pointer;">
+              <input type="checkbox" id="sameSku" style="width: 16px; height: 16px; cursor: pointer;" />
+              Give all items the same SKU
+            </label>
+            <p id="skuHelpText" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
+              We'll add -001, -002, etc. to make each item unique
+            </p>
+          </div>
         </div>
         
         <div class="form-group">
@@ -605,6 +614,8 @@
       const section = document.getElementById('batchSection');
       const toggleText = document.getElementById('batchToggleText');
       const skuInput = document.getElementById('dashSku');
+      const skuLabel = document.getElementById('skuLabel');
+      const skuBatchOptions = document.getElementById('skuBatchOptions');
       const prodNameLabel = document.getElementById('prodNameLabel');
       const prodNameInput = document.getElementById('dashProdName');
       
@@ -612,9 +623,13 @@
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Upload ✓';
-        skuInput.disabled = true;
-        skuInput.value = '';
-        skuInput.placeholder = 'Auto-generated from batch';
+        // SKU stays enabled but becomes optional
+        skuInput.disabled = false;
+        skuLabel.textContent = 'SKU (optional)';
+        skuInput.placeholder = 'e.g. WHT-MED-SHIRT';
+        skuBatchOptions.style.display = 'block';
+        document.getElementById('sameSku').checked = false;
+        updateSkuHelpText();
         prodNameLabel.textContent = 'Batch Name *';
         prodNameInput.placeholder = 'e.g. Summer 2025 Collection';
         document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
@@ -623,7 +638,9 @@
         section.classList.remove('show');
         toggleText.textContent = 'Batch Upload';
         skuInput.disabled = false;
+        skuLabel.textContent = 'SKU *';
         skuInput.placeholder = 'e.g. HNY1234';
+        skuBatchOptions.style.display = 'none';
         prodNameLabel.textContent = 'Product Name *';
         prodNameInput.placeholder = 'e.g. Organic Honey';
         document.getElementById('remainingQRs').textContent = '';
@@ -631,6 +648,19 @@
       }
       updateMintButtonText();
     }
+    
+    function updateSkuHelpText() {
+      const sameSku = document.getElementById('sameSku').checked;
+      const helpText = document.getElementById('skuHelpText');
+      if (sameSku) {
+        helpText.textContent = 'All items will have the exact same SKU';
+      } else {
+        helpText.textContent = "We'll add -001, -002, etc. to make each item unique";
+      }
+    }
+    
+    // Add event listener for checkbox
+    document.getElementById('sameSku').addEventListener('change', updateSkuHelpText);
 
     function toggleProductionMode() {
       isProductionMode = !isProductionMode;
@@ -749,9 +779,13 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
-          // Disable batch toggle and batch # field when Excel is loaded (they're in the Excel)
+          // Disable batch toggle, SKU, and batch # field when Excel is loaded (they're in the Excel)
           document.getElementById('batchToggle').style.pointerEvents = 'none';
           document.getElementById('batchToggle').style.opacity = '0.5';
+          document.getElementById('dashSku').disabled = true;
+          document.getElementById('dashSku').value = '';
+          document.getElementById('dashSku').placeholder = 'Provided in Excel';
+          document.getElementById('skuBatchOptions').style.display = 'none';
           document.getElementById('dashBatch').disabled = true;
           document.getElementById('dashBatch').placeholder = 'Provided in Excel';
           updateMintButtonText();
@@ -767,9 +801,13 @@
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
-      // Re-enable batch toggle and batch # field
+      // Re-enable batch toggle, SKU, and batch # field
       document.getElementById('batchToggle').style.pointerEvents = 'auto';
       document.getElementById('batchToggle').style.opacity = '1';
+      document.getElementById('dashSku').disabled = false;
+      document.getElementById('skuLabel').textContent = 'SKU (optional)';
+      document.getElementById('dashSku').placeholder = 'e.g. WHT-MED-SHIRT';
+      document.getElementById('skuBatchOptions').style.display = 'block';
       document.getElementById('dashBatch').disabled = false;
       document.getElementById('dashBatch').placeholder = 'e.g. 001';
       updateMintButtonText();
@@ -1060,13 +1098,14 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
             productName,
-            sku: isBatchMode ? undefined : sku,
+            sku: isBatchMode ? (sku || undefined) : sku,
             batchNumber,
             metadata: metadata ? { notes: metadata } : {},
             photos: selectedPhotos.length ? selectedPhotos : null,
             location: capturedLocation,
             isBatchOrder: isBatchMode,
             batchQuantity,
+            sameSku: isBatchMode ? document.getElementById('sameSku').checked : false,
             mode: isProductionMode ? 'production' : 'live'
           })
         });

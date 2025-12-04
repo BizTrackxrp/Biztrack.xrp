@@ -380,7 +380,7 @@
     <div class="header-bar">
       <div class="header-left">
         <h1>Create Products</h1>
-        <p>Mint new products to blockchain or start production tracking.</p>
+        <p>Register products for supply chain tracking and customer verification.</p>
       </div>
       <div class="header-right">
         <div class="quick-links">
@@ -406,10 +406,10 @@
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-plus-circle"></i> Mint New Product</h3>
+      <h3><i class="fas fa-plus-circle"></i> New Product</h3>
       
       <!-- Batch Toggle -->
-      <div class="toggle-container">
+      <div class="toggle-container" id="batchToggleContainer">
         <div class="toggle-label">
           <i class="fas fa-layer-group"></i>
           <span id="batchToggleText">Batch Upload</span>
@@ -516,7 +516,7 @@
       <!-- Manual Entry Form (hidden when Excel mode is on) -->
       <div id="manualEntryForm">
         <div class="form-group">
-          <label for="dashProdName">Product Name *</label>
+          <label for="dashProdName" id="prodNameLabel">Product Name *</label>
           <input id="dashProdName" type="text" placeholder="e.g. Organic Honey" />
         </div>
         
@@ -605,6 +605,8 @@
       const section = document.getElementById('batchSection');
       const toggleText = document.getElementById('batchToggleText');
       const skuInput = document.getElementById('dashSku');
+      const prodNameLabel = document.getElementById('prodNameLabel');
+      const prodNameInput = document.getElementById('dashProdName');
       
       if (isBatchMode) {
         toggle.classList.add('active');
@@ -613,6 +615,8 @@
         skuInput.disabled = true;
         skuInput.value = '';
         skuInput.placeholder = 'Auto-generated from batch';
+        prodNameLabel.textContent = 'Batch Name *';
+        prodNameInput.placeholder = 'e.g. Summer 2025 Collection';
         document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
       } else {
         toggle.classList.remove('active');
@@ -620,6 +624,8 @@
         toggleText.textContent = 'Batch Upload';
         skuInput.disabled = false;
         skuInput.placeholder = 'e.g. HNY1234';
+        prodNameLabel.textContent = 'Product Name *';
+        prodNameInput.placeholder = 'e.g. Organic Honey';
         document.getElementById('remainingQRs').textContent = '';
         clearExcelUpload();
       }
@@ -743,6 +749,9 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
+          // Disable batch toggle when Excel is loaded (it's implied)
+          document.getElementById('batchToggle').style.pointerEvents = 'none';
+          document.getElementById('batchToggle').style.opacity = '0.5';
           updateMintButtonText();
         } catch (err) {
           alert('Error reading file: ' + err.message);
@@ -756,6 +765,9 @@
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
+      // Re-enable batch toggle
+      document.getElementById('batchToggle').style.pointerEvents = 'auto';
+      document.getElementById('batchToggle').style.opacity = '1';
       updateMintButtonText();
     }
 
@@ -920,6 +932,9 @@
         
         const batchGroupId = 'batch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         const totalItems = excelData.length;
+        // Get batch name from form field (or use default)
+        const batchName = document.getElementById('dashProdName').value.trim() || 'Excel Batch Upload';
+        const batchNumberFromForm = document.getElementById('dashBatch').value.trim();
         
         const mintingMessage = isProductionMode 
           ? `<div class="message info" style="text-align: left;">
@@ -960,13 +975,14 @@
               body: JSON.stringify({
                 productName,
                 sku,
-                batchNumber,
+                batchNumber: batchNumber || batchNumberFromForm,
                 metadata: notes ? { notes } : {},
                 mode: isProductionMode ? 'production' : 'live',
                 isExcelBatch: true,
                 excelBatchGroupId: batchGroupId,
                 excelBatchTotal: totalItems,
-                excelBatchIndex: i + 1
+                excelBatchIndex: i + 1,
+                excelBatchName: batchName
               })
             });
             

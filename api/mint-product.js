@@ -383,14 +383,15 @@ module.exports = async (req, res) => {
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
       // Generate SKU for batch orders
-      // - If sameSku is true and SKU provided: all items get same SKU
-      // - If sameSku is false and SKU provided: add sequential suffix (-001, -002)
-      // - If no SKU provided: auto-generate with sequential suffix
+      // - If sameSku is true: all items get same SKU (user-provided or auto-generated, no suffix)
+      // - If sameSku is false: add sequential suffix (-001, -002)
       let productSku;
       if (isBatchOrder) {
-        if (sameSku && sku) {
-          productSku = String(sku);
+        if (sameSku) {
+          // All items get the same SKU (skuPrefix is either user-provided or auto-generated)
+          productSku = String(skuPrefix);
         } else {
+          // Each item gets a unique suffix
           productSku = `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`;
         }
       } else {

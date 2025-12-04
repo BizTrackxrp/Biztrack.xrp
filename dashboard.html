@@ -623,10 +623,10 @@
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Upload ✓';
-        // SKU stays enabled but becomes optional
+        // SKU stays enabled - will auto-generate if blank
         skuInput.disabled = false;
-        skuLabel.textContent = 'SKU (optional)';
-        skuInput.placeholder = 'e.g. WHT-MED-SHIRT';
+        skuLabel.textContent = 'SKU';
+        skuInput.placeholder = 'Leave blank to auto-generate';
         skuBatchOptions.style.display = 'block';
         document.getElementById('sameSku').checked = false;
         updateSkuHelpText();
@@ -655,7 +655,7 @@
       if (sameSku) {
         helpText.textContent = 'All items will have the exact same SKU';
       } else {
-        helpText.textContent = "We'll add -001, -002, etc. to make each item unique";
+        helpText.textContent = "If unchecked, we'll add -001, -002, etc. to make each item unique";
       }
     }
     
@@ -805,8 +805,8 @@
       document.getElementById('batchToggle').style.pointerEvents = 'auto';
       document.getElementById('batchToggle').style.opacity = '1';
       document.getElementById('dashSku').disabled = false;
-      document.getElementById('skuLabel').textContent = 'SKU (optional)';
-      document.getElementById('dashSku').placeholder = 'e.g. WHT-MED-SHIRT';
+      document.getElementById('skuLabel').textContent = 'SKU';
+      document.getElementById('dashSku').placeholder = 'Leave blank to auto-generate';
       document.getElementById('skuBatchOptions').style.display = 'block';
       document.getElementById('dashBatch').disabled = false;
       document.getElementById('dashBatch').placeholder = 'e.g. 001';

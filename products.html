@@ -913,12 +913,17 @@
         ? product.metadata.batchDisplayName 
         : product.productName;
       
+      // For batches, show the base SKU prefix if available, otherwise first item's SKU
+      const displaySku = (isBatch && product.metadata?.batchSkuPrefix) 
+        ? product.metadata.batchSkuPrefix 
+        : (product.sku || product.productId);
+      
       return `
         <div class="product-card">
           <div class="product-card-header">
             <div>
               <div class="product-card-title">${escapeHtml(displayTitle)}</div>
-              <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
+              <div class="product-card-sku">${escapeHtml(displaySku)}</div>
             </div>
             <div class="product-card-badges">${badges}</div>
           </div>

@@ -109,6 +109,7 @@ module.exports = async (req, res) => {
           productName: batchLeader.productName,
           sku: batchLeader.sku,
           batchNumber: batchLeader.batchNumber,
+          metadata: batchLeader.metadata,
           quantity: batchLeader.batchQuantity || batchItems.length,
           createdAt: batchLeader.createdAt,
           timestamp: batchLeader.timestamp,
@@ -119,11 +120,8 @@ module.exports = async (req, res) => {
           qrCodeUrl: batchLeader.qrCodeUrl,
           verificationUrl: batchLeader.verificationUrl,
           items: batchItems.sort((a, b) => {
-            // Sort by SKU if available (handles BATCH-001, BATCH-002, etc)
-            if (a.sku && b.sku) {
-              return a.sku.localeCompare(b.sku);
-            }
-            return 0;
+            // Sort by creation time to preserve Excel upload order
+            return new Date(a.createdAt) - new Date(b.createdAt);
           })
         });
 

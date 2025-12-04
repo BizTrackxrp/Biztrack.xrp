@@ -373,10 +373,10 @@ module.exports = async (req, res) => {
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Auto-generate SKU for batch orders
+      // Auto-generate SKU for batch orders, ensure it's a string
       const productSku = isBatchOrder 
         ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
-        : (sku || null);
+        : (sku ? String(sku) : null);
 
       // ==========================================
       // GENERATE SMART QR (Customer - Verification URL)
@@ -419,9 +419,12 @@ module.exports = async (req, res) => {
       // ==========================================
       let dumbQrIpfsHash = null;
       
-      if (productSku) {
-        console.log(`Generating DUMB QR code (SKU: ${productSku})...`);
-        const dumbQrBuffer = await QRCode.toBuffer(productSku, {
+      // Ensure SKU is a valid string for QR generation (must be at least 2 chars)
+      const skuForQr = productSku && String(productSku).length >= 2 ? String(productSku) : null;
+      
+      if (skuForQr) {
+        console.log(`Generating DUMB QR code (SKU: ${skuForQr})...`);
+        const dumbQrBuffer = await QRCode.toBuffer(skuForQr, {
           width: 300,
           margin: 2,
           color: {

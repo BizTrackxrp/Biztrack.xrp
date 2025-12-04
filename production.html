@@ -828,6 +828,155 @@
     }
     .minting-warning {
       font-size: 0.8rem;
+
+    /* Manage Items Modal */
+    .manage-items-modal {
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+      text-align: left;
+      padding: 0;
+    }
+    .manage-items-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+      color: white;
+      border-radius: 16px 16px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .manage-items-modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .manage-items-modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .manage-items-modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .manage-items-modal-body {
+      padding: 1.5rem;
+    }
+    .manage-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .manage-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
+    }
+    .manage-item-info {
+      flex: 1;
+    }
+    .manage-item-name {
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+    .manage-item-sku {
+      font-size: 0.85rem;
+      color: #64748B;
+    }
+    .manage-item-checkpoints {
+      font-size: 0.75rem;
+      color: #10B981;
+      margin-top: 0.25rem;
+    }
+    .manage-item-delete {
+      background: #FEE2E2;
+      color: #DC2626;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .manage-item-delete:hover {
+      background: #DC2626;
+      color: white;
+    }
+    .manage-items-add {
+      border-top: 2px solid #E2E8F0;
+      padding-top: 1.5rem;
+    }
+    .manage-items-add h4 {
+      font-size: 1rem;
+      color: #1E293B;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .manage-items-add h4 i { color: #10B981; }
+    .add-item-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .add-item-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .add-item-row input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .add-item-row input:focus {
+      outline: none;
+      border-color: #10B981;
+    }
+    .add-item-btn {
+      background: #10B981;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .add-item-btn:hover {
+      background: #059669;
+    }
+    .add-item-btn:disabled {
+      background: #94A3B8;
+      cursor: not-allowed;
+    }
+
       color: #DC2626;
       margin-top: 1rem;
     }
@@ -1000,6 +1149,35 @@
     </div>
   </div>
 
+  <!-- Manage Items Modal -->
+  <div class="modal-overlay" id="manageItemsModal" onclick="closeModal('manageItemsModal')">
+    <div class="modal manage-items-modal" onclick="event.stopPropagation()">
+      <div class="manage-items-modal-header">
+        <h3><i class="fas fa-boxes"></i> Manage Batch Items</h3>
+        <button class="manage-items-modal-close" onclick="closeModal('manageItemsModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="manage-items-modal-body">
+        <div class="manage-items-list" id="manageItemsList">
+          <!-- Items populated by JS -->
+        </div>
+        <div class="manage-items-add">
+          <h4><i class="fas fa-plus-circle"></i> Add New Item</h4>
+          <div class="add-item-form">
+            <div class="add-item-row">
+              <input type="text" id="newItemName" placeholder="Product Name *" />
+              <input type="text" id="newItemSku" placeholder="SKU (optional)" />
+            </div>
+            <button class="add-item-btn" id="addItemBtn" onclick="addItemToBatch()">
+              <i class="fas fa-plus"></i> Add Item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/auth.js"></script>
   <script>
     requireAuth();
@@ -1136,6 +1314,11 @@
               <button class="btn btn-secondary" onclick="openAddCheckpointModal('${product.productId}')">
                 <i class="fas fa-plus"></i> Add Checkpoint
               </button>
+              ${isBatch ? `
+              <button class="btn btn-secondary" onclick="openManageItemsModal('${product.productId}', '${escapeHtml(product.productName)}', '${product.batchGroupId}')">
+                <i class="fas fa-boxes"></i> Items (${itemCount})
+              </button>
+              ` : ''}
               <button class="btn btn-qr" onclick="showQRModal('${product.qrCodeUrl}', '${escapeHtml(product.sku || product.productId)}', '${escapeHtml(product.productName)}')">
                 <i class="fas fa-qrcode"></i> QR Code
               </button>
@@ -1780,6 +1963,7 @@
         closeModal('confirmModal');
         closeModal('qrModal');
         closeModal('checkpointModal');
+        closeModal('manageItemsModal');
         if (document.getElementById('addCheckpointModal').classList.contains('show')) {
           closeAddCheckpointModal();
         }
@@ -1790,6 +1974,186 @@
         if (e.key === 'ArrowRight') navigateCheckpoint(1);
       }
     });
+
+    // ==========================================
+    // MANAGE ITEMS MODAL
+    // ==========================================
+    let currentBatchProductId = null;
+    let currentBatchGroupId = null;
+    let currentBatchName = null;
+    let batchItems = [];
+
+    window.openManageItemsModal = async function(productId, productName, batchGroupId) {
+      currentBatchProductId = productId;
+      currentBatchGroupId = batchGroupId;
+      currentBatchName = productName;
+      
+      // Clear form
+      document.getElementById('newItemName').value = '';
+      document.getElementById('newItemSku').value = '';
+      
+      // Show modal with loading state
+      document.getElementById('manageItemsList').innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: #64748B;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+          <p style="margin-top: 0.5rem;">Loading items...</p>
+        </div>
+      `;
+      document.getElementById('manageItemsModal').classList.add('show');
+      
+      // Fetch batch items
+      await loadBatchItems();
+    };
+
+    async function loadBatchItems() {
+      try {
+        const response = await authenticatedFetch(`/api/get-batch-items?batchGroupId=${encodeURIComponent(currentBatchGroupId)}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to load items');
+        }
+        
+        batchItems = data.items || [];
+        renderBatchItems();
+      } catch (error) {
+        console.error('Error loading batch items:', error);
+        document.getElementById('manageItemsList').innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #DC2626;">
+            <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i>
+            <p style="margin-top: 0.5rem;">Failed to load items</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderBatchItems() {
+      const list = document.getElementById('manageItemsList');
+      
+      if (batchItems.length === 0) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: #64748B;">
+            <i class="fas fa-box-open" style="font-size: 1.5rem;"></i>
+            <p style="margin-top: 0.5rem;">No items in this batch</p>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = batchItems.map(item => `
+        <div class="manage-item" id="manage-item-${item.productId}">
+          <div class="manage-item-info">
+            <div class="manage-item-name">${escapeHtml(item.productName)}</div>
+            <div class="manage-item-sku">SKU: ${escapeHtml(item.sku || 'N/A')}</div>
+            ${item.checkpointCount > 0 ? `<div class="manage-item-checkpoints"><i class="fas fa-route"></i> ${item.checkpointCount} checkpoint${item.checkpointCount !== 1 ? 's' : ''}</div>` : ''}
+          </div>
+          <button class="manage-item-delete" onclick="deleteItemFromBatch('${item.productId}', '${escapeHtml(item.productName)}', ${item.checkpointCount || 0})">
+            <i class="fas fa-trash"></i> Remove
+          </button>
+        </div>
+      `).join('');
+    }
+
+    window.deleteItemFromBatch = async function(itemProductId, itemName, checkpointCount) {
+      // Confirm deletion
+      let message = `Remove "${itemName}" from this batch?`;
+      if (checkpointCount > 0) {
+        message = `⚠️ "${itemName}" has ${checkpointCount} checkpoint${checkpointCount !== 1 ? 's' : ''} recorded. Remove anyway?`;
+      }
+      
+      if (!confirm(message)) return;
+      
+      // Disable button while deleting
+      const itemEl = document.getElementById('manage-item-' + itemProductId);
+      if (itemEl) {
+        const btn = itemEl.querySelector('.manage-item-delete');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+      
+      try {
+        const response = await authenticatedFetch('/api/delete-batch-item', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: itemProductId,
+            batchGroupId: currentBatchGroupId
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to delete item');
+        }
+        
+        // Refresh items list
+        await loadBatchItems();
+        
+        // Refresh main products list to update count
+        await loadProducts();
+        
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        alert('Failed to remove item: ' + error.message);
+        // Re-enable button
+        if (itemEl) {
+          const btn = itemEl.querySelector('.manage-item-delete');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+        }
+      }
+    };
+
+    window.addItemToBatch = async function() {
+      const name = document.getElementById('newItemName').value.trim();
+      const sku = document.getElementById('newItemSku').value.trim();
+      
+      if (!name) {
+        alert('Product name is required');
+        return;
+      }
+      
+      const btn = document.getElementById('addItemBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+      
+      try {
+        const response = await authenticatedFetch('/api/add-batch-item', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            batchGroupId: currentBatchGroupId,
+            batchProductId: currentBatchProductId,
+            productName: name,
+            sku: sku || null
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to add item');
+        }
+        
+        // Clear form
+        document.getElementById('newItemName').value = '';
+        document.getElementById('newItemSku').value = '';
+        
+        // Refresh items list
+        await loadBatchItems();
+        
+        // Refresh main products list to update count
+        await loadProducts();
+        
+      } catch (error) {
+        console.error('Error adding item:', error);
+        alert('Failed to add item: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-plus"></i> Add Item';
+      }
+    };
 
     // ==========================================
     // HELPERS

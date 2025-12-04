@@ -749,9 +749,11 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
-          // Disable batch toggle when Excel is loaded (it's implied)
+          // Disable batch toggle and batch # field when Excel is loaded (they're in the Excel)
           document.getElementById('batchToggle').style.pointerEvents = 'none';
           document.getElementById('batchToggle').style.opacity = '0.5';
+          document.getElementById('dashBatch').disabled = true;
+          document.getElementById('dashBatch').placeholder = 'Provided in Excel';
           updateMintButtonText();
         } catch (err) {
           alert('Error reading file: ' + err.message);
@@ -765,9 +767,11 @@
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
-      // Re-enable batch toggle
+      // Re-enable batch toggle and batch # field
       document.getElementById('batchToggle').style.pointerEvents = 'auto';
       document.getElementById('batchToggle').style.opacity = '1';
+      document.getElementById('dashBatch').disabled = false;
+      document.getElementById('dashBatch').placeholder = 'e.g. 001';
       updateMintButtonText();
     }
 

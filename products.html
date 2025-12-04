@@ -434,8 +434,8 @@
     .batch-modal-item:hover { background: #F1F5F9; border-color: #CBD5E1; }
     .batch-modal-item:last-child { margin-bottom: 0; }
     .batch-modal-item-info { display: flex; flex-direction: column; gap: 0.25rem; }
-    .batch-modal-item-sku { font-family: monospace; font-weight: 700; font-size: 1rem; color: #1E293B; }
-    .batch-modal-item-id { font-size: 0.8rem; color: #94A3B8; }
+    .batch-modal-item-name { font-weight: 700; font-size: 1rem; color: #1E293B; }
+    .batch-modal-item-sku { font-size: 0.8rem; color: #64748B; }
     .batch-modal-item-actions { display: flex; gap: 0.5rem; }
 
     /* ZIP Download Modal */
@@ -1007,8 +1007,8 @@
       body.innerHTML = items.map(item => `
         <div class="batch-modal-item">
           <div class="batch-modal-item-info">
-            <span class="batch-modal-item-sku">${escapeHtml(item.sku)}</span>
-            <span class="batch-modal-item-id">${escapeHtml(item.productId)}</span>
+            <span class="batch-modal-item-name">${escapeHtml(item.productName)}</span>
+            <span class="batch-modal-item-sku">SKU: ${escapeHtml(item.sku)}${item.batchNumber ? ' • Batch #' + escapeHtml(item.batchNumber) : ''}</span>
           </div>
           <div class="batch-modal-item-actions">
             <a href="${item.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 0.75rem;">

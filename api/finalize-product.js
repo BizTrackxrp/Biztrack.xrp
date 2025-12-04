@@ -158,6 +158,7 @@ module.exports = async (req, res) => {
 
     const mintedProducts = [];
     const skuPrefix = product.sku;
+    const sameSku = product.metadata?.sameSku || false;
 
     // ==========================================
     // MINT EACH PRODUCT IN BATCH (or single)
@@ -174,9 +175,18 @@ module.exports = async (req, res) => {
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${itemProductId}`;
 
       // Generate SKU
-      const itemSku = quantity > 1
-        ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
-        : skuPrefix;
+      // - If sameSku is true: all items get same SKU (no suffix)
+      // - If sameSku is false: add sequential suffix (-001, -002)
+      let itemSku;
+      if (quantity > 1) {
+        if (sameSku) {
+          itemSku = skuPrefix;
+        } else {
+          itemSku = `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`;
+        }
+      } else {
+        itemSku = skuPrefix;
+      }
 
       // ==========================================
       // GENERATE CUSTOMER QR (Verification URL)
@@ -358,6 +368,12 @@ module.exports = async (req, res) => {
       // ==========================================
       if (quantity > 1) {
         // Batch: Insert new product records
+        // For first item (batch leader), add batchSkuPrefix for display if not sameSku
+        const itemMetadata = { ...(product.metadata || {}) };
+        if (itemNumber === 1 && !sameSku && skuPrefix) {
+          itemMetadata.batchSkuPrefix = skuPrefix;
+        }
+        
         const insertResult = await pool.query(
           `INSERT INTO products (
             product_id, product_name, sku, batch_number, 
@@ -369,7 +385,7 @@ module.exports = async (req, res) => {
           [
             itemProductId, product.product_name, itemSku, product.batch_number,
             ipfsHash, txHash, customerQrIpfsHash, inventoryQrIpfsHash,
-            product.metadata, user.id, itemNumber === 1, product.batch_group_id, quantity,
+            itemMetadata, user.id, itemNumber === 1, product.batch_group_id, quantity,
             'live', true
           ]
         );

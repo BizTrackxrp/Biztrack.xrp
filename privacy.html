@@ -22,6 +22,7 @@
       line-height: 1.6;
     }
 
+    /* Sidebar */
     .sidebar {
       position: fixed;
       left: 0;
@@ -31,13 +32,18 @@
       background: #0f172a;
       padding: 2rem 1.5rem;
       z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
     }
 
     .sidebar-logo h1 {
       color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
-      margin-bottom: 3rem;
     }
 
     .sidebar-nav {
@@ -59,7 +65,8 @@
       transition: all 0.2s;
     }
 
-    .sidebar-nav a:hover {
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
       background: #1e293b;
       color: #3b82f6;
     }
@@ -129,6 +136,15 @@
       margin-bottom: 0.5rem;
     }
 
+    .content a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .content a:hover {
+      text-decoration: underline;
+    }
+
     .footer {
       background: #0f172a;
       color: #94a3b8;
@@ -166,19 +182,8 @@
       font-size: 0.875rem;
     }
 
+    /* Responsive - NO horizontal sidebar (let sidebar.js handle mobile) */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 1.5rem;
-      }
-
-      .sidebar-nav {
-        flex-direction: row;
-        overflow-x: auto;
-      }
-
       .main-content,
       .footer {
         margin-left: 0;
@@ -193,34 +198,27 @@
   </style>
 </head>
 <body>
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-    </ul>
-  </nav>
+  <!-- Sidebar -->
+  <div id="sidebar-container" data-page="privacy"></div>
 
   <main class="main-content">
     <header class="page-header">
       <h1>Privacy Policy</h1>
-      <p>Last updated: January 2025</p>
+      <p>Last updated: December 2025</p>
     </header>
 
     <div class="content">
       <h2>Introduction</h2>
-      <p>At BizTrack, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our decentralized supply chain tracking platform.</p>
+      <p>At BizTrack (operated by Aventra LLC), we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our decentralized supply chain tracking platform.</p>
 
       <h2>Information We Collect</h2>
       <p>We collect the following types of information:</p>
       <ul>
         <li><strong>Account Information:</strong> When you create an account, we collect your name, email address, and password.</li>
+        <li><strong>Business Information:</strong> Company name, industry, and contact details you provide during registration.</li>
         <li><strong>Product Data:</strong> Information about products you register on the blockchain, including product names, SKUs, batch numbers, and optional metadata.</li>
         <li><strong>Usage Data:</strong> Information about how you interact with our platform, including IP addresses, browser type, and access times.</li>
+        <li><strong>Payment Information:</strong> Billing details processed securely through our payment provider (we do not store full credit card numbers).</li>
         <li><strong>Blockchain Data:</strong> All product tracking data is stored on the XRP Ledger, which is a public blockchain.</li>
       </ul>
 
@@ -230,8 +228,10 @@
         <li>Provide and maintain our supply chain tracking services</li>
         <li>Authenticate your identity and manage your account</li>
         <li>Process and record product information on the blockchain</li>
-        <li>Send you important updates and notifications</li>
+        <li>Process subscription payments and manage billing</li>
+        <li>Send you important updates, notifications, and service announcements</li>
         <li>Improve our platform and develop new features</li>
+        <li>Provide customer support</li>
         <li>Comply with legal obligations and prevent fraud</li>
       </ul>
 
@@ -241,21 +241,32 @@
         <li>Product tracking data stored on the blockchain is publicly visible and immutable</li>
         <li>Blockchain transactions cannot be deleted or modified once recorded</li>
         <li>You should only store information on the blockchain that you're comfortable making public</li>
+        <li>Your account information (name, email, password) is NOT stored on the blockchain</li>
+      </ul>
+
+      <h2>Data Storage</h2>
+      <p>Your data is stored in multiple locations:</p>
+      <ul>
+        <li><strong>Account Data:</strong> Stored securely in our databases with encryption</li>
+        <li><strong>Product Data:</strong> Stored on IPFS (InterPlanetary File System) for decentralized, permanent storage</li>
+        <li><strong>Blockchain Records:</strong> Stored permanently on the XRP Ledger</li>
       </ul>
 
       <h2>Data Security</h2>
       <p>We implement industry-standard security measures to protect your personal information, including:</p>
       <ul>
-        <li>Encryption of data in transit and at rest</li>
-        <li>Secure password hashing</li>
+        <li>Encryption of data in transit (HTTPS/TLS) and at rest</li>
+        <li>Secure password hashing using modern algorithms</li>
         <li>Regular security audits and updates</li>
         <li>Limited access to personal information by authorized personnel only</li>
+        <li>Secure cloud infrastructure with regular backups</li>
       </ul>
 
       <h2>Data Sharing</h2>
       <p>We do not sell your personal information to third parties. We may share your information only in the following circumstances:</p>
       <ul>
         <li>With service providers who help us operate our platform (under strict confidentiality agreements)</li>
+        <li>With payment processors to handle subscription billing</li>
         <li>When required by law or to comply with legal processes</li>
         <li>To protect the rights, property, or safety of BizTrack, our users, or others</li>
         <li>With your explicit consent</li>
@@ -268,21 +279,52 @@
         <li>Export your data in a portable format</li>
         <li>Opt-out of marketing communications</li>
         <li>Request information about how your data is processed</li>
+        <li>Cancel your subscription at any time</li>
       </ul>
-      <p>To exercise these rights, please contact us at aventrallc@proton.me.</p>
+      <p>To exercise these rights, please contact us at <a href="mailto:info@biztrack.io">info@biztrack.io</a>.</p>
+      <p><strong>Note:</strong> Due to the immutable nature of blockchain technology, product data that has been minted to the XRP Ledger cannot be deleted.</p>
+
+      <h2>Data Retention</h2>
+      <p>We retain your data as follows:</p>
+      <ul>
+        <li><strong>Account Data:</strong> Retained while your account is active and for a reasonable period after deletion for legal compliance</li>
+        <li><strong>Blockchain Data:</strong> Permanently stored on the XRP Ledger (cannot be deleted)</li>
+        <li><strong>IPFS Data:</strong> Permanently stored on the IPFS network</li>
+        <li><strong>Usage Logs:</strong> Retained for up to 12 months for analytics and security purposes</li>
+      </ul>
 
       <h2>Cookies and Tracking</h2>
-      <p>We use cookies and similar tracking technologies to enhance your experience on our platform. You can control cookie preferences through your browser settings.</p>
+      <p>We use cookies and similar tracking technologies to:</p>
+      <ul>
+        <li>Keep you logged into your account</li>
+        <li>Remember your preferences</li>
+        <li>Analyze how our platform is used</li>
+        <li>Improve our services</li>
+      </ul>
+      <p>You can control cookie preferences through your browser settings. Disabling cookies may affect some platform functionality.</p>
+
+      <h2>Third-Party Services</h2>
+      <p>Our platform may integrate with third-party services including:</p>
+      <ul>
+        <li>Payment processors for subscription billing</li>
+        <li>Analytics services to understand platform usage</li>
+        <li>Cloud hosting providers</li>
+      </ul>
+      <p>These services have their own privacy policies governing their use of your data.</p>
 
       <h2>Children's Privacy</h2>
-      <p>BizTrack is not intended for users under the age of 13. We do not knowingly collect personal information from children under 13. If you believe we have collected such information, please contact us immediately.</p>
+      <p>BizTrack is not intended for users under the age of 18. We do not knowingly collect personal information from children under 18. If you believe we have collected such information, please contact us immediately.</p>
+
+      <h2>International Data Transfers</h2>
+      <p>Your data may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data in compliance with applicable laws.</p>
 
       <h2>Changes to This Policy</h2>
-      <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the "Last updated" date.</p>
+      <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the "Last updated" date. We encourage you to review this policy periodically.</p>
 
       <h2>Contact Us</h2>
       <p>If you have any questions or concerns about this Privacy Policy, please contact us at:</p>
-      <p><strong>Email:</strong> aventrallc@proton.me</p>
+      <p><strong>Email:</strong> <a href="mailto:info@biztrack.io">info@biztrack.io</a></p>
+      <p><strong>Phone:</strong> <a href="tel:+13606700852">(360) 670-0852</a></p>
     </div>
   </main>
 
@@ -290,14 +332,16 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
+        <a href="mailto:info@biztrack.io">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
       </div>
       <div class="footer-copyright">
-        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
       </div>
     </div>
   </footer>
+
+  <script src="js/sidebar.js"></script>
 </body>
 </html>

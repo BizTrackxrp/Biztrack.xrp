@@ -32,11 +32,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -306,6 +301,17 @@
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
     }
 
+    .btn-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
     /* Stats */
     .stats-grid {
       display: grid;
@@ -444,9 +450,14 @@
             They scan → see photos, GPS, timestamps → from factory to their hands.
           </p>
 
-          <p style="font-size: 1.5rem; color: #10b981; font-weight: 700; margin: 0;">
+          <p style="font-size: 1.5rem; color: #10b981; font-weight: 700; margin-bottom: 2rem;">
             No fakes. No doubts. Just trust.
           </p>
+
+          <a href="login.html" class="btn btn-green" style="font-size: 1.25rem; padding: 1rem 2.5rem;">
+            <i class="fas fa-arrow-right"></i> Get Started Free
+          </a>
+          <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #64748b;">10 free QR codes • No credit card required</p>
         </div>
       </section>
 

@@ -91,6 +91,13 @@
         transition: all 0.3s ease;
       }
 
+      /* When sidebar is open, move X button to top-right of sidebar */
+      .si-hamburger.active {
+        left: 232px;
+        background: transparent;
+        box-shadow: none;
+      }
+
       .si-hamburger span {
         display: block;
         width: 24px;

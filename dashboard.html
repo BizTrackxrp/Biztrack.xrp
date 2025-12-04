@@ -521,15 +521,18 @@
         </div>
         
         <div class="form-group" id="skuGroup">
-          <label for="dashSku" id="skuLabel">SKU *</label>
-          <input id="dashSku" type="text" placeholder="e.g. HNY1234" />
+          <label for="dashSku" id="skuLabel">SKU</label>
+          <input id="dashSku" type="text" placeholder="Leave blank to auto-generate" />
+          <p id="skuSingleHelp" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
+            This is encoded in your inventory barcode for internal tracking
+          </p>
           <div id="skuBatchOptions" style="display: none; margin-top: 0.5rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; color: #475569; cursor: pointer;">
               <input type="checkbox" id="sameSku" style="width: 16px; height: 16px; cursor: pointer;" />
               Give all items the same SKU
             </label>
             <p id="skuHelpText" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
-              We'll add -001, -002, etc. to make each item unique
+              If unchecked, we'll add -001, -002, etc. to make each item unique
             </p>
           </div>
         </div>
@@ -616,6 +619,7 @@
       const skuInput = document.getElementById('dashSku');
       const skuLabel = document.getElementById('skuLabel');
       const skuBatchOptions = document.getElementById('skuBatchOptions');
+      const skuSingleHelp = document.getElementById('skuSingleHelp');
       const prodNameLabel = document.getElementById('prodNameLabel');
       const prodNameInput = document.getElementById('dashProdName');
       
@@ -628,6 +632,7 @@
         skuLabel.textContent = 'SKU';
         skuInput.placeholder = 'Leave blank to auto-generate';
         skuBatchOptions.style.display = 'block';
+        skuSingleHelp.style.display = 'none';
         document.getElementById('sameSku').checked = false;
         updateSkuHelpText();
         prodNameLabel.textContent = 'Batch Name *';
@@ -638,9 +643,10 @@
         section.classList.remove('show');
         toggleText.textContent = 'Batch Upload';
         skuInput.disabled = false;
-        skuLabel.textContent = 'SKU *';
-        skuInput.placeholder = 'e.g. HNY1234';
+        skuLabel.textContent = 'SKU';
+        skuInput.placeholder = 'Leave blank to auto-generate';
         skuBatchOptions.style.display = 'none';
+        skuSingleHelp.style.display = 'block';
         prodNameLabel.textContent = 'Product Name *';
         prodNameInput.placeholder = 'e.g. Organic Honey';
         document.getElementById('remainingQRs').textContent = '';
@@ -1066,10 +1072,6 @@
       
       if (!productName) {
         msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Product name required.</div>';
-        return;
-      }
-      if (!isBatchMode && !sku) {
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> SKU required.</div>';
         return;
       }
 

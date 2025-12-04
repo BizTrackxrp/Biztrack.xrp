@@ -556,11 +556,15 @@ module.exports = async (req, res) => {
 
       console.log('Saving to database...');
       
-      // For Excel batch leaders, store batch name in metadata for group display
+      // For batch leaders, store display info in metadata
       const isBatchLeader = isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1);
       const productMetadata = { ...(metadata || {}) };
       if (isExcelBatch && isBatchLeader && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
+      }
+      // Store the base SKU prefix for batch display (without -001 suffix)
+      if (isBatchOrder && isBatchLeader && !sameSku) {
+        productMetadata.batchSkuPrefix = skuPrefix;
       }
       
       await pool.query(

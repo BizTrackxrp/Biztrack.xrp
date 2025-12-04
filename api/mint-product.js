@@ -253,6 +253,10 @@ module.exports = async (req, res) => {
       if (isExcelBatch && excelBatchIndex === 1 && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
       }
+      // Store sameSku preference for finalization
+      if (isBatchOrder && sameSku) {
+        productMetadata.sameSku = true;
+      }
       
       await pool.query(
         `INSERT INTO products (

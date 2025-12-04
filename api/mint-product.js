@@ -165,8 +165,8 @@ module.exports = async (req, res) => {
       const scanUrl = `https://www.biztrack.io/scan.html?id=${productId}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Generate SKU prefix for batch
-      const skuPrefix = isBatchOrder && !sku 
+      // Generate SKU - for batch or single, auto-generate if not provided
+      const skuPrefix = !sku 
         ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
         : sku;
 
@@ -325,8 +325,8 @@ module.exports = async (req, res) => {
 
     const products = [];
 
-    // Generate auto SKU prefix for batch orders if not provided
-    const skuPrefix = isBatchOrder && !sku 
+    // Generate SKU prefix - auto-generate if not provided (for batch or single)
+    const skuPrefix = !sku 
       ? `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`
       : sku;
 
@@ -386,9 +386,10 @@ module.exports = async (req, res) => {
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Generate SKU for batch orders
-      // - If sameSku is true: all items get same SKU (user-provided or auto-generated, no suffix)
-      // - If sameSku is false: add sequential suffix (-001, -002)
+      // Generate SKU
+      // - Batch + sameSku true: all items get same SKU (user-provided or auto-generated, no suffix)
+      // - Batch + sameSku false: add sequential suffix (-001, -002)
+      // - Single product: use provided SKU or auto-generate one
       let productSku;
       if (isBatchOrder) {
         if (sameSku) {
@@ -399,7 +400,10 @@ module.exports = async (req, res) => {
           productSku = `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`;
         }
       } else {
-        productSku = sku ? String(sku) : null;
+        // Single product: use provided SKU or auto-generate
+        productSku = sku 
+          ? String(sku) 
+          : `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`;
       }
 
       // ==========================================

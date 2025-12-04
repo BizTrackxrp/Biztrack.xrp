@@ -247,10 +247,11 @@ module.exports = async (req, res) => {
       // Save to database (NO xrpl_tx_hash, NO ipfs_hash for product data yet)
       console.log('Saving production entry to database...');
       
-      // For Excel batch leaders, use the batch name instead of first product name
-      const displayName = (isExcelBatch && excelBatchIndex === 1 && excelBatchName) 
-        ? excelBatchName 
-        : productName;
+      // For Excel batch leaders, store batch name in metadata for group display
+      const productMetadata = { ...(metadata || {}) };
+      if (isExcelBatch && excelBatchIndex === 1 && excelBatchName) {
+        productMetadata.batchDisplayName = excelBatchName;
+      }
       
       await pool.query(
         `INSERT INTO products (
@@ -272,11 +273,11 @@ module.exports = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           productId, 
-          displayName, 
+          productName, 
           skuPrefix || null, 
           batchNumber || null, 
           trackingQrIpfsHash,
-          metadata || {}, 
+          productMetadata, 
           user.id,
           is_batch_group,
           batchGroupId,
@@ -544,11 +545,12 @@ module.exports = async (req, res) => {
 
       console.log('Saving to database...');
       
-      // For Excel batch leaders, use the batch name for the group display
+      // For Excel batch leaders, store batch name in metadata for group display
       const isBatchLeader = isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1);
-      const displayName = (isExcelBatch && isBatchLeader && excelBatchName) 
-        ? excelBatchName 
-        : productName;
+      const productMetadata = { ...(metadata || {}) };
+      if (isExcelBatch && isBatchLeader && excelBatchName) {
+        productMetadata.batchDisplayName = excelBatchName;
+      }
       
       await pool.query(
         `INSERT INTO products (
@@ -571,14 +573,14 @@ module.exports = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
         [
           productId, 
-          displayName, 
+          productName, 
           productSku, 
           batchNumber, 
           ipfsHash, 
           txHash, 
           smartQrIpfsHash,
           dumbQrIpfsHash,
-          metadata, 
+          productMetadata, 
           user.id,
           isBatchLeader,
           batchGroupId,

@@ -28,63 +28,58 @@
       position: fixed;
       left: 0;
       top: 0;
-      width: 280px;
-      height: 100vh;
-      background: white;
-      border-right: 1px solid #E2E8F0;
-      padding: 2rem 0;
-      z-index: 100;
-      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.02);
+      bottom: 0;
+      width: 260px;
+      background: #0f172a;
+      padding: 2rem 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar-logo {
-      padding: 0 2rem 2rem;
-      border-bottom: 1px solid #E2E8F0;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
 
-    .sidebar-logo img {
-      max-width: 160px;
-      height: auto;
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
     }
 
     .sidebar-nav {
       list-style: none;
-    }
-
-    .sidebar-nav li {
-      margin-bottom: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .sidebar-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.875rem 1rem;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      padding: 0.875rem 2rem;
-      color: #64748B;
-      text-decoration: none;
-      font-weight: 600;
+      gap: 0.75rem;
+      font-weight: 500;
       transition: all 0.2s;
     }
 
-    .sidebar-nav a:hover {
-      background: #F8FAFC;
-      color: #4F46E5;
-    }
-
+    .sidebar-nav a:hover,
     .sidebar-nav a.active {
-      background: linear-gradient(90deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
-      color: #4F46E5;
-      border-left: 3px solid #4F46E5;
+      background: #1e293b;
+      color: #3b82f6;
     }
 
-    .sidebar-nav a i {
-      margin-right: 0.75rem;
+    .sidebar-nav i {
       width: 20px;
+      font-size: 1.1rem;
     }
 
     /* Main Content */
     .main-with-sidebar {
-      margin-left: 280px;
+      margin-left: 260px;
       padding: 2rem 3rem 4rem;
     }
 
@@ -350,21 +345,8 @@
       font-weight: 600;
     }
 
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: 240px;
-      }
-      .main-with-sidebar {
-        margin-left: 240px;
-        padding: 2rem;
-      }
-    }
-
+    /* Responsive - NO horizontal sidebar (let sidebar.js handle mobile) */
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
       .main-with-sidebar {
         margin-left: 0;
         padding: 1.5rem;
@@ -386,19 +368,8 @@
   </style>
 </head>
 <body>
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <img src="8bd1b1ec-0edc-4581-92b8-51ac2db94afe-removebg-preview.png" alt="BizTrack">
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-      <li><a href="faq.html" class="active"><i class="fas fa-question-circle"></i> FAQ</a></li>
-      <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
-    </ul>
-  </nav>
+  <!-- Sidebar -->
+  <div id="sidebar-container" data-page="faq"></div>
 
   <div class="main-with-sidebar">
     <div class="faq-container">
@@ -435,7 +406,7 @@
             <li>Generate QR codes for instant customer verification</li>
             <li>Prove authenticity without expensive enterprise software</li>
           </ul>
-          <p><strong>Cost:</strong> $79-$249/month. <strong>Per-product cost:</strong> $0.00003 (yes, three hundred-thousandths of a penny).</p>
+          <p><strong>Cost:</strong> $49-$399/month. <strong>Per-product cost:</strong> $0.00003 (yes, three hundred-thousandths of a penny).</p>
         </div>
       </div>
 
@@ -502,7 +473,7 @@
                 <td><strong>Monthly cost</strong></td>
                 <td>$5K-$50K</td>
                 <td>$10K+</td>
-                <td class="highlight">$79-$249</td>
+                <td class="highlight">$49-$399</td>
               </tr>
               <tr>
                 <td><strong>Per-product</strong></td>
@@ -607,7 +578,7 @@
         
         <div class="faq-item">
           <h3>We're too small for this, right?</h3>
-          <p><strong>That's exactly WHY we built BizTrack.</strong> Enterprise solutions ignore businesses under $10M revenue. You can start minting products today for $79/month. Size doesn't matter—authenticity and transparency do.</p>
+          <p><strong>That's exactly WHY we built BizTrack.</strong> Enterprise solutions ignore businesses under $10M revenue. You can start minting products today for $49/month. Size doesn't matter—authenticity and transparency do.</p>
         </div>
 
         <div class="faq-item">
@@ -634,7 +605,7 @@
 
         <div class="faq-item">
           <h3>Do I need to buy cryptocurrency?</h3>
-          <p><strong>No.</strong> We handle all blockchain transactions. You pay us in USD ($79-$249/month), and we cover the blockchain fees (which are $0.00003 per product anyway).</p>
+          <p><strong>No.</strong> We handle all blockchain transactions. You pay us in USD ($49-$399/month), and we cover the blockchain fees (which are $0.00003 per product anyway).</p>
         </div>
 
         <div class="faq-item">
@@ -685,8 +656,16 @@
       <div class="cta-box">
         <h2>Ready to Get Started?</h2>
         <p>Start minting products to the blockchain in 5 minutes. No credit card required.</p>
-        <a href="dashboard.html" class="btn">
+        <a href="login.html" class="btn">
           <i class="fas fa-rocket"></i>
           Start Free Trial
         </a>
-        <p style="margin-top: 1
+        <p style="margin-top: 1.5rem;">Questions? Email us at <a href="mailto:info@biztrack.io">info@biztrack.io</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+</body>
+</html>

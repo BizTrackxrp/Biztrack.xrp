@@ -22,6 +22,7 @@
       line-height: 1.6;
     }
 
+    /* Sidebar */
     .sidebar {
       position: fixed;
       left: 0;
@@ -31,13 +32,18 @@
       background: #0f172a;
       padding: 2rem 1.5rem;
       z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      margin-bottom: 3rem;
     }
 
     .sidebar-logo h1 {
       color: #fff;
       font-size: 1.5rem;
       font-weight: 800;
-      margin-bottom: 3rem;
     }
 
     .sidebar-nav {
@@ -59,7 +65,8 @@
       transition: all 0.2s;
     }
 
-    .sidebar-nav a:hover {
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
       background: #1e293b;
       color: #3b82f6;
     }
@@ -129,6 +136,34 @@
       margin-bottom: 0.5rem;
     }
 
+    /* Highlight box for important terms */
+    .important-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+
+    .important-box h3 {
+      color: #92400e;
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .important-box ul {
+      color: #78350f;
+      margin-bottom: 0;
+    }
+
+    .important-box li {
+      margin-bottom: 0.5rem;
+    }
+
     .footer {
       background: #0f172a;
       color: #94a3b8;
@@ -166,19 +201,8 @@
       font-size: 0.875rem;
     }
 
+    /* Responsive - NO horizontal sidebar (let sidebar.js handle mobile) */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 1.5rem;
-      }
-
-      .sidebar-nav {
-        flex-direction: row;
-        overflow-x: auto;
-      }
-
       .main-content,
       .footer {
         margin-left: 0;
@@ -193,22 +217,13 @@
   </style>
 </head>
 <body>
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="business.html"><i class="fas fa-briefcase"></i> For Businesses</a></li>
-      <li><a href="verify.html"><i class="fas fa-check-circle"></i> Verify Product</a></li>
-      <li><a href="login.html"><i class="fas fa-user"></i> Login/Signup</a></li>
-    </ul>
-  </nav>
+  <!-- Sidebar -->
+  <div id="sidebar-container" data-page="terms"></div>
 
   <main class="main-content">
     <header class="page-header">
       <h1>Terms of Service</h1>
-      <p>Last updated: January 2025</p>
+      <p>Last updated: December 2025</p>
     </header>
 
     <div class="content">
@@ -222,6 +237,41 @@
         <li>Generate QR codes for product authentication</li>
         <li>Track supply chain events and updates</li>
         <li>Verify product authenticity and history</li>
+      </ul>
+
+      <h2>Subscription Plans & QR Code Limits</h2>
+      <p>BizTrack offers tiered subscription plans with monthly QR code allocations:</p>
+      
+      <div class="important-box">
+        <h3><i class="fas fa-exclamation-triangle"></i> Important: QR Code Allocation Policy</h3>
+        <ul>
+          <li><strong>Monthly Reset:</strong> Your QR code allocation resets on the first day of each billing cycle</li>
+          <li><strong>No Rollover:</strong> Unused QR codes do NOT roll over to the next month — use them or lose them</li>
+          <li><strong>Plan Limits:</strong> Each plan includes a specific number of QR codes per month (e.g., Essential: 500, Scale: 2,500, Enterprise: 10,000+)</li>
+          <li><strong>Overage:</strong> If you exceed your monthly limit, additional QR codes may be purchased or you may upgrade your plan</li>
+          <li><strong>Free Tier:</strong> Free accounts receive 10 QR codes total (not monthly) to test the platform</li>
+        </ul>
+      </div>
+
+      <h2>Subscription Terms</h2>
+      <p>By subscribing to a paid plan, you agree to the following:</p>
+      <ul>
+        <li><strong>Billing Cycle:</strong> Subscriptions are billed monthly on the date you subscribed</li>
+        <li><strong>Auto-Renewal:</strong> Subscriptions automatically renew each month unless cancelled</li>
+        <li><strong>Cancellation:</strong> You may cancel at any time; access continues until the end of your current billing period</li>
+        <li><strong>Downgrades:</strong> Plan downgrades take effect at the start of the next billing cycle</li>
+        <li><strong>Upgrades:</strong> Plan upgrades take effect immediately; you'll be charged the prorated difference</li>
+        <li><strong>Refunds:</strong> Subscription fees are non-refundable except as required by law</li>
+      </ul>
+
+      <h2>Usage Policies</h2>
+      <p>To ensure fair use of the platform for all users:</p>
+      <ul>
+        <li><strong>One Account Per Business:</strong> Each business entity should maintain one account</li>
+        <li><strong>No Reselling:</strong> QR codes and verification services may not be resold to third parties</li>
+        <li><strong>API Rate Limits:</strong> API access is subject to rate limits based on your subscription tier</li>
+        <li><strong>Batch Uploads:</strong> Batch processing is subject to reasonable limits to ensure platform stability</li>
+        <li><strong>Storage:</strong> Product data and images are stored on IPFS; excessive storage use may require an upgraded plan</li>
       </ul>
 
       <h2>User Accounts</h2>
@@ -242,6 +292,8 @@
         <li>Interfere with or disrupt the service</li>
         <li>Use the platform for any illegal activities</li>
         <li>Impersonate another person or entity</li>
+        <li>Create fake or counterfeit product verifications</li>
+        <li>Abuse the free tier by creating multiple accounts</li>
       </ul>
 
       <h2>Blockchain Data</h2>
@@ -251,6 +303,7 @@
         <li>Once recorded, blockchain transactions cannot be modified or deleted</li>
         <li>You are solely responsible for the accuracy of information you submit</li>
         <li>BizTrack cannot remove or alter data once it's written to the blockchain</li>
+        <li>Minting a product to the blockchain is permanent and irreversible</li>
       </ul>
 
       <h2>Intellectual Property</h2>
@@ -262,11 +315,12 @@
       </ul>
 
       <h2>Fees and Payment</h2>
-      <p>BizTrack may charge fees for certain services. You agree to:</p>
+      <p>BizTrack charges fees for subscription services. You agree to:</p>
       <ul>
-        <li>Pay all applicable fees as described on our platform</li>
-        <li>Pay blockchain transaction fees (gas fees) for XRPL operations</li>
-        <li>Accept that fees are non-refundable except as required by law</li>
+        <li>Pay all applicable subscription fees as described on our pricing page</li>
+        <li>Provide valid payment information and keep it up to date</li>
+        <li>Accept that blockchain transaction fees are included in your subscription</li>
+        <li>Accept that subscription fees are non-refundable except as required by law</li>
       </ul>
 
       <h2>Disclaimer of Warranties</h2>
@@ -285,10 +339,11 @@
         <li>Loss of profits, data, or business opportunities</li>
         <li>Damages resulting from unauthorized access to your account</li>
         <li>Issues arising from blockchain network performance</li>
+        <li>Unused QR codes that expire at the end of your billing cycle</li>
       </ul>
 
       <h2>Indemnification</h2>
-      <p>You agree to indemnify and hold harmless BizTrack from any claims, damages, or expenses arising from:</p>
+      <p>You agree to indemnify and hold harmless BizTrack and Aventra LLC from any claims, damages, or expenses arising from:</p>
       <ul>
         <li>Your violation of these Terms of Service</li>
         <li>Your use of the platform</li>
@@ -303,24 +358,26 @@
         <li>Engage in fraudulent or illegal activities</li>
         <li>Provide false information</li>
         <li>Fail to pay applicable fees</li>
+        <li>Abuse the platform or its resources</li>
       </ul>
-      <p>You may terminate your account at any time by contacting us. Note that blockchain data cannot be deleted after termination.</p>
+      <p>You may terminate your account at any time by contacting us. Note that blockchain data cannot be deleted after termination, and no refunds will be issued for the current billing period.</p>
 
       <h2>Changes to Terms</h2>
-      <p>We may update these Terms of Service from time to time. We will notify you of significant changes by posting the updated terms on our platform. Your continued use of BizTrack after changes constitutes acceptance of the new terms.</p>
+      <p>We may update these Terms of Service from time to time. We will notify you of significant changes by posting the updated terms on our platform and updating the "Last updated" date. Your continued use of BizTrack after changes constitutes acceptance of the new terms.</p>
 
       <h2>Governing Law</h2>
-      <p>These Terms of Service shall be governed by and construed in accordance with the laws of the United States, without regard to conflict of law principles.</p>
+      <p>These Terms of Service shall be governed by and construed in accordance with the laws of the State of Washington, United States, without regard to conflict of law principles.</p>
 
       <h2>Dispute Resolution</h2>
-      <p>Any disputes arising from these terms or your use of BizTrack shall be resolved through binding arbitration, except where prohibited by law.</p>
+      <p>Any disputes arising from these terms or your use of BizTrack shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, except where prohibited by law.</p>
 
       <h2>Contact Information</h2>
       <p>If you have questions about these Terms of Service, please contact us at:</p>
-      <p><strong>Email:</strong> aventrallc@proton.me</p>
+      <p><strong>Email:</strong> <a href="mailto:info@biztrack.io" style="color: #3b82f6;">info@biztrack.io</a></p>
+      <p><strong>Phone:</strong> <a href="tel:+13606700852" style="color: #3b82f6;">(360) 670-0852</a></p>
 
       <h2>Entire Agreement</h2>
-      <p>These Terms of Service, along with our Privacy Policy, constitute the entire agreement between you and BizTrack regarding your use of the platform.</p>
+      <p>These Terms of Service, along with our Privacy Policy, constitute the entire agreement between you and BizTrack (operated by Aventra LLC) regarding your use of the platform.</p>
     </div>
   </main>
 
@@ -328,14 +385,16 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
+        <a href="mailto:info@biztrack.io">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
       </div>
       <div class="footer-copyright">
-        <p>&copy; 2025 BizTrack - Built for decentralized product tracking on XRPL</p>
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
       </div>
     </div>
   </footer>
+
+  <script src="js/sidebar.js"></script>
 </body>
 </html>

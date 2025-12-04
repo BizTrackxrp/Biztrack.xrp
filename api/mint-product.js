@@ -56,7 +56,8 @@ module.exports = async (req, res) => {
       isExcelBatch,
       excelBatchGroupId,
       excelBatchTotal,
-      excelBatchIndex
+      excelBatchIndex,
+      excelBatchName
     } = req.body;
 
     // Validate mode (default to 'live')
@@ -245,6 +246,12 @@ module.exports = async (req, res) => {
 
       // Save to database (NO xrpl_tx_hash, NO ipfs_hash for product data yet)
       console.log('Saving production entry to database...');
+      
+      // For Excel batch leaders, use the batch name instead of first product name
+      const displayName = (isExcelBatch && excelBatchIndex === 1 && excelBatchName) 
+        ? excelBatchName 
+        : productName;
+      
       await pool.query(
         `INSERT INTO products (
           product_id, 
@@ -265,7 +272,7 @@ module.exports = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           productId, 
-          productName, 
+          displayName, 
           skuPrefix || null, 
           batchNumber || null, 
           trackingQrIpfsHash,
@@ -536,6 +543,13 @@ module.exports = async (req, res) => {
       }
 
       console.log('Saving to database...');
+      
+      // For Excel batch leaders, use the batch name for the group display
+      const isBatchLeader = isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1);
+      const displayName = (isExcelBatch && isBatchLeader && excelBatchName) 
+        ? excelBatchName 
+        : productName;
+      
       await pool.query(
         `INSERT INTO products (
           product_id, 
@@ -557,7 +571,7 @@ module.exports = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
         [
           productId, 
-          productName, 
+          displayName, 
           productSku, 
           batchNumber, 
           ipfsHash, 
@@ -566,7 +580,7 @@ module.exports = async (req, res) => {
           dumbQrIpfsHash,
           metadata, 
           user.id,
-          isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1),
+          isBatchLeader,
           batchGroupId,
           isExcelBatch ? excelBatchTotal : (isBatchOrder ? quantity : null),
           'live',

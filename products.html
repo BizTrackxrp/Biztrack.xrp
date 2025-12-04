@@ -908,11 +908,16 @@
       }
 
       // Batch items section - removed inline, now uses modal
+      // Use batchDisplayName from metadata if available for batch groups
+      const displayTitle = (isBatch && product.metadata?.batchDisplayName) 
+        ? product.metadata.batchDisplayName 
+        : product.productName;
+      
       return `
         <div class="product-card">
           <div class="product-card-header">
             <div>
-              <div class="product-card-title">${escapeHtml(product.productName)}</div>
+              <div class="product-card-title">${escapeHtml(displayTitle)}</div>
               <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
             </div>
             <div class="product-card-badges">${badges}</div>
@@ -941,7 +946,7 @@
                 <button class="btn btn-secondary" onclick='openBatchModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
                   <i class="fas fa-list"></i> Items (${itemCount})
                 </button>
-                <button class="btn btn-primary" onclick="openZipModal('${product.batchGroupId}', '${escapeHtml(product.productName)}')">
+                <button class="btn btn-primary" onclick="openZipModal('${product.batchGroupId}', '${escapeHtml(displayTitle)}')">
                   <i class="fas fa-download"></i> ZIP
                 </button>
               ` : ''}
@@ -1000,7 +1005,9 @@
       
       const items = product.items || [];
       
-      document.getElementById('batchModalTitle').textContent = product.productName;
+      // Use batchDisplayName from metadata if available, otherwise use productName
+      const batchTitle = product.metadata?.batchDisplayName || product.productName;
+      document.getElementById('batchModalTitle').textContent = batchTitle;
       document.getElementById('batchModalSubtitle').textContent = `${items.length} items in batch • Batch #${product.batchNumber || 'N/A'}`;
       
       const body = document.getElementById('batchModalBody');

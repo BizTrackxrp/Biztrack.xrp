@@ -51,6 +51,7 @@ module.exports = async (req, res) => {
       location,
       isBatchOrder,
       batchQuantity,
+      sameSku,
       mode: productMode,
       // Excel batch grouping
       isExcelBatch,
@@ -381,10 +382,20 @@ module.exports = async (req, res) => {
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
-      // Auto-generate SKU for batch orders, ensure it's a string
-      const productSku = isBatchOrder 
-        ? `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`
-        : (sku ? String(sku) : null);
+      // Generate SKU for batch orders
+      // - If sameSku is true and SKU provided: all items get same SKU
+      // - If sameSku is false and SKU provided: add sequential suffix (-001, -002)
+      // - If no SKU provided: auto-generate with sequential suffix
+      let productSku;
+      if (isBatchOrder) {
+        if (sameSku && sku) {
+          productSku = String(sku);
+        } else {
+          productSku = `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`;
+        }
+      } else {
+        productSku = sku ? String(sku) : null;
+      }
 
       // ==========================================
       // GENERATE SMART QR (Customer - Verification URL)

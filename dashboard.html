@@ -135,6 +135,13 @@
       border-right: 8px solid transparent;
       border-bottom: 8px solid #1E293B;
     }
+    .info-tooltip code {
+      background: rgba(255,255,255,0.15);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
 
     /* Expandable Sections */
     .expandable-section {
@@ -521,8 +528,18 @@
         </div>
         
         <div class="form-group" id="skuGroup">
-          <label for="dashSku" id="skuLabel">SKU</label>
-          <input id="dashSku" type="text" placeholder="Leave blank to auto-generate" />
+          <label for="dashSku" id="skuLabel">
+            SKU <span style="color: #64748B; font-weight: 400;">(optional)</span>
+            <span class="info-icon" onclick="toggleTooltip(event, 'skuTooltip')"><i class="fas fa-info"></i></span>
+          </label>
+          <div class="info-tooltip" id="skuTooltip">
+            <strong>What is a SKU?</strong><br><br>
+            SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>
+            • <code>STRAW-LEM-001</code><br>
+            • <code>HONEY-RAW-16OZ</code><br><br>
+            <strong>Leave blank</strong> and we'll auto-generate one for you!
+          </div>
+          <input id="dashSku" type="text" placeholder="e.g. MANGO-001 or leave blank to auto-generate" />
           <p id="skuSingleHelp" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
             This is encoded in your inventory barcode for internal tracking
           </p>
@@ -538,13 +555,26 @@
         </div>
         
         <div class="form-group">
-          <label for="dashBatch">Batch Number</label>
-          <input id="dashBatch" type="text" placeholder="e.g. 001" />
+          <label for="dashBatch">
+            Batch Number <span style="color: #64748B; font-weight: 400;">(optional)</span>
+            <span class="info-icon" onclick="toggleTooltip(event, 'batchTooltip2')"><i class="fas fa-info"></i></span>
+          </label>
+          <div class="info-tooltip" id="batchTooltip2">
+            <strong>What is a Batch Number?</strong><br><br>
+            Use this to group products made together. Examples:<br>
+            • Date made: <code>120524</code><br>
+            • Batch ID: <code>BATCH-042</code><br>
+            • Or just: <code>1</code><br><br>
+            <strong>Skip it</strong> if you make products fresh/individually!
+          </div>
+          <input id="dashBatch" type="text" placeholder="e.g. 120524, BATCH-001, or skip" />
         </div>
         
         <div class="form-group">
-          <label for="dashMetadata">Additional Info (optional)</label>
-          <textarea id="dashMetadata" placeholder="e.g. Harvest date, origin, certifications" rows="3"></textarea>
+          <label for="dashMetadata">
+            Additional Info <span style="color: #64748B; font-weight: 400;">(optional)</span>
+          </label>
+          <textarea id="dashMetadata" placeholder="e.g. Made with real fruit, Fresh squeezed daily, Local pickup available, Ingredients: lemon, sugar, water" rows="3"></textarea>
         </div>
 
         <div class="form-group">

@@ -275,6 +275,57 @@
       text-decoration: none;
     }
 
+    .lost-2fa-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .lost-2fa-link a {
+      color: #64748B;
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+
+    .lost-2fa-link a:hover {
+      color: #4F46E5;
+      text-decoration: underline;
+    }
+
+    .locked-message {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .locked-message p {
+      color: #64748B;
+      line-height: 1.6;
+    }
+
+    .support-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 1rem;
+      transition: all 0.2s;
+    }
+
+    .support-email:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
     @media (max-width: 500px) {
       .back-home {
         top: 1rem;
@@ -372,6 +423,59 @@
         Didn't receive the code? 
         <button id="resendBtn" onclick="resend2FACode()">Resend Code</button>
       </div>
+
+      <div class="lost-2fa-link">
+        <a href="#" onclick="showLost2FA(); return false;">Lost access to 2FA?</a>
+      </div>
+    </div>
+
+    <!-- LOCKED OUT SECTION -->
+    <div id="lockedOutSection" class="twofa-section">
+      <div class="twofa-icon" style="color: #DC2626;">
+        <i class="fas fa-lock"></i>
+      </div>
+      
+      <h1>Account Locked</h1>
+      <p class="subtitle">Too many failed verification attempts</p>
+
+      <div class="locked-message">
+        <p>For your security, this account has been temporarily locked due to multiple failed 2FA attempts.</p>
+        <p style="margin-top: 1rem;"><strong>To unlock your account, please contact:</strong></p>
+        <a href="mailto:info@biztrack.io" class="support-email">
+          <i class="fas fa-envelope"></i>
+          info@biztrack.io
+        </a>
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="backToLoginFromLocked()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Login
+      </button>
+    </div>
+
+    <!-- LOST 2FA SECTION -->
+    <div id="lost2faSection" class="twofa-section">
+      <div class="twofa-icon" style="color: #F59E0B;">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      
+      <h1>Lost 2FA Access?</h1>
+      <p class="subtitle">We can help you regain access to your account</p>
+
+      <div class="locked-message">
+        <p>If you've lost access to your authenticator app or email, please contact our support team to verify your identity and disable 2FA on your account.</p>
+        <p style="margin-top: 1rem;"><strong>Email us at:</strong></p>
+        <a href="mailto:info@biztrack.io" class="support-email">
+          <i class="fas fa-envelope"></i>
+          info@biztrack.io
+        </a>
+        <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748B;">Please include your account email and any verification details to help us confirm your identity.</p>
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="backToTwoFA()">
+        <i class="fas fa-arrow-left"></i>
+        Back
+      </button>
     </div>
   </div>
 
@@ -456,6 +560,39 @@
       loginBtn.disabled = false;
       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
     });
+
+    // Show lost 2FA section
+    function showLost2FA() {
+      document.getElementById('twofaSection').classList.remove('show');
+      document.getElementById('lost2faSection').classList.add('show');
+    }
+
+    // Back to 2FA from lost 2FA
+    function backToTwoFA() {
+      document.getElementById('lost2faSection').classList.remove('show');
+      document.getElementById('twofaSection').classList.add('show');
+    }
+
+    // Show locked out section
+    function showLockedOut() {
+      document.getElementById('twofaSection').classList.remove('show');
+      document.getElementById('lockedOutSection').classList.add('show');
+    }
+
+    // Back to login from locked out
+    function backToLoginFromLocked() {
+      document.getElementById('lockedOutSection').classList.remove('show');
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('twofaCode').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('password').value = '';
+      tempToken = null;
+      twoFAMethod = null;
+      
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+    }
 
     // Login form
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -627,10 +764,15 @@
           
           setTimeout(() => window.location.href = dashboardUrl, 1000);
 
+        } else if (data.locked) {
+          // Account locked due to too many attempts
+          showLockedOut();
         } else {
           showMessage(data.error || 'Invalid code. Please try again.', 'error', 'twofaMessage');
           verifyBtn.disabled = false;
           verifyBtn.innerHTML = '<i class="fas fa-check"></i> Verify';
+          document.getElementById('twofaCode').value = '';
+          document.getElementById('twofaCode').focus();
         }
 
       } catch (error) {

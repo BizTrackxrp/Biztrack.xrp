@@ -1,18 +1,26 @@
 // api/2fa-login.js
 // Consolidated 2FA login endpoint - handles sending code and verifying during login
+// Uses PostgreSQL
 
-import { getDatabase } from '../lib/database.js';
-import { Resend } from 'resend';
-import { authenticator } from 'otplib';
-import jwt from 'jsonwebtoken';
+const { Pool } = require('pg');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { Resend } = require('resend');
+const { authenticator } = require('otplib');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -22,7 +30,7 @@ export default async function handler(req, res) {
   // Verify temp token (issued after password check)
   let decoded;
   try {
-    decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+    decoded = jwt.verify(tempToken, JWT_SECRET);
     if (decoded.email !== email || !decoded.pending2FA) {
       return res.status(401).json({ error: 'Invalid session' });
     }
@@ -30,14 +38,19 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Session expired. Please login again.' });
   }
 
-  const db = await getDatabase();
-  const userRecord = await db.collection('users').findOne({ email });
+  // Find user
+  const userResult = await pool.query(
+    'SELECT * FROM users WHERE email = $1',
+    [email]
+  );
 
-  if (!userRecord) {
+  if (userResult.rows.length === 0) {
     return res.status(404).json({ error: 'User not found' });
   }
 
-  if (!userRecord.twoFactorEnabled) {
+  const userRecord = userResult.rows[0];
+
+  if (!userRecord.two_factor_enabled) {
     return res.status(400).json({ error: '2FA is not enabled for this account' });
   }
 
@@ -45,16 +58,16 @@ export default async function handler(req, res) {
   // ACTION: send-code (send email code during login)
   // =============================================
   if (action === 'send-code') {
-    if (userRecord.twoFactorMethod !== 'email') {
+    if (userRecord.two_factor_method !== 'email') {
       return res.status(200).json({ success: true, message: 'Use your authenticator app' });
     }
 
     const newCode = generateCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await db.collection('users').updateOne(
-      { email },
-      { $set: { twoFactorCode: newCode, twoFactorCodeExpires: expiresAt } }
+    await pool.query(
+      'UPDATE users SET two_factor_code = $1, two_factor_code_expires = $2 WHERE email = $3',
+      [newCode, expiresAt, email]
     );
 
     await resend.emails.send({
@@ -94,24 +107,24 @@ export default async function handler(req, res) {
 
     let isValid = false;
 
-    if (userRecord.twoFactorMethod === 'email') {
-      if (!userRecord.twoFactorCode || new Date() > new Date(userRecord.twoFactorCodeExpires)) {
+    if (userRecord.two_factor_method === 'email') {
+      if (!userRecord.two_factor_code || new Date() > new Date(userRecord.two_factor_code_expires)) {
         return res.status(400).json({ error: 'Code expired. Please request a new one.' });
       }
-      isValid = userRecord.twoFactorCode === code;
+      isValid = userRecord.two_factor_code === code;
 
       // Clear used code
       if (isValid) {
-        await db.collection('users').updateOne(
-          { email },
-          { $set: { twoFactorCode: null, twoFactorCodeExpires: null } }
+        await pool.query(
+          'UPDATE users SET two_factor_code = NULL, two_factor_code_expires = NULL WHERE email = $1',
+          [email]
         );
       }
-    } else if (userRecord.twoFactorMethod === 'totp') {
-      if (!userRecord.twoFactorSecret) {
+    } else if (userRecord.two_factor_method === 'totp') {
+      if (!userRecord.two_factor_secret) {
         return res.status(400).json({ error: 'TOTP not configured properly' });
       }
-      isValid = authenticator.verify({ token: code, secret: userRecord.twoFactorSecret });
+      isValid = authenticator.verify({ token: code, secret: userRecord.two_factor_secret });
     }
 
     if (!isValid) {
@@ -121,30 +134,50 @@ export default async function handler(req, res) {
     // Issue full auth token
     const token = jwt.sign(
       {
-        userId: userRecord._id.toString(),
+        userId: userRecord.id,
         email: userRecord.email,
-        tier: userRecord.tier || 'free'
+        businessType: userRecord.business_type
       },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 
     // Update last login
-    await db.collection('users').updateOne(
-      { email },
-      { $set: { lastLogin: new Date() } }
+    await pool.query(
+      'UPDATE users SET last_login = NOW() WHERE email = $1',
+      [email]
     );
+
+    // Create session record (same as regular login)
+    try {
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+      await pool.query(
+        `INSERT INTO sessions (
+          user_id,
+          token_hash,
+          device_name,
+          ip_address,
+          user_agent,
+          created_at,
+          last_active
+        ) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())`,
+        [userRecord.id, tokenHash, '2FA Login', 'Unknown', '']
+      );
+    } catch (sessionError) {
+      console.error('[2FA-LOGIN] Session creation failed:', sessionError);
+    }
 
     return res.status(200).json({
       success: true,
       token,
       user: {
+        id: userRecord.id,
         email: userRecord.email,
-        companyName: userRecord.companyName,
-        tier: userRecord.tier || 'free'
+        companyName: userRecord.company_name,
+        businessType: userRecord.business_type
       }
     });
   }
 
   return res.status(400).json({ error: 'Invalid action' });
-}
+};

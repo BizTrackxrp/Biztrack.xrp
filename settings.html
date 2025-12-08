@@ -596,6 +596,7 @@
     }
 
     function show2FAEnabled(method) {
+      current2FAMethod = method; // Track for disable flow
       document.getElementById('email2faSetup').style.display = 'none';
       document.getElementById('authenticator2faSetup').style.display = 'none';
       document.getElementById('2faMethodSelection').style.display = 'none';
@@ -603,18 +604,32 @@
       document.getElementById('2faMethodDisplay').textContent = method === 'email' ? 'via Email' : 'via Authenticator App';
     }
 
+    // Track current 2FA method
+    let current2FAMethod = null;
+
     document.getElementById('disable2faBtn').addEventListener('click', async () => {
       document.getElementById('2faStatus').style.display = 'none';
       document.getElementById('disable2faConfirm').style.display = 'block';
-      try {
-        const response = await authenticatedFetch('/api/2fa-setup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'send-code' })
-        });
-        const data = await response.json();
-        if (data.success) document.getElementById('disableCodeSent').style.display = 'block';
-      } catch (error) { console.error(error); }
+      
+      // Only send email code if using email method
+      if (current2FAMethod === 'email') {
+        try {
+          const response = await authenticatedFetch('/api/2fa-setup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'send-code' })
+          });
+          const data = await response.json();
+          if (data.success) {
+            document.getElementById('disableCodeSent').style.display = 'block';
+            document.getElementById('disableCodeSent').innerHTML = '<p style="color: #10B981; margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Code sent to your email!</p>';
+          }
+        } catch (error) { console.error(error); }
+      } else {
+        // Authenticator - just show instruction
+        document.getElementById('disableCodeSent').style.display = 'block';
+        document.getElementById('disableCodeSent').innerHTML = '<p style="color: #64748B; margin-bottom: 1rem;"><i class="fas fa-mobile-alt"></i> Enter the code from your authenticator app</p>';
+      }
     });
 
     document.getElementById('confirmDisable2faBtn').addEventListener('click', async () => {
@@ -677,7 +692,10 @@
       try {
         const response = await authenticatedFetch('/api/2fa-setup');
         const data = await response.json();
-        if (data.success && data.enabled) show2FAEnabled(data.method);
+        if (data.success && data.enabled) {
+          current2FAMethod = data.method; // Track for disable flow
+          show2FAEnabled(data.method);
+        }
       } catch (error) { console.error(error); }
     }
 

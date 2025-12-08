@@ -9,11 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -23,119 +19,16 @@
       min-height: 100vh;
     }
 
-    /* Dark Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 280px;
-      height: 100vh;
-      background: #0f172a;
-      padding: 2rem 1.5rem;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-logo {
-      padding: 0 0 2rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    .sidebar-logo h1 {
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      flex: 1;
-    }
-
-    .sidebar-nav a {
-      display: flex;
-      align-items: center;
-      padding: 0.875rem 1rem;
-      color: #94a3b8;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s;
-      border-radius: 8px;
-      gap: 0.75rem;
-    }
-
-    .sidebar-nav a:hover {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav a.active {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav a i {
-      width: 20px;
-      font-size: 1.1rem;
-    }
-
-    .sidebar-logout {
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-logout button {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .sidebar-logout button:hover {
-      background: rgba(239, 68, 68, 0.2);
-      transform: translateY(-2px);
-    }
-
-    /* Main content */
     .main-with-sidebar {
       margin-left: 280px;
       padding: 2rem 3rem;
       min-height: 100vh;
     }
 
-    /* Header */
-    .settings-header {
-      margin-bottom: 3rem;
-    }
+    .settings-header { margin-bottom: 3rem; }
+    .settings-header h1 { font-size: 2.5rem; font-weight: 800; color: #1E293B; margin-bottom: 0.5rem; }
+    .settings-header p { font-size: 1.125rem; color: #64748B; }
 
-    .settings-header h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #1E293B;
-      margin-bottom: 0.5rem;
-    }
-
-    .settings-header p {
-      font-size: 1.125rem;
-      color: #64748B;
-    }
-
-    /* Settings Sections */
     .settings-section {
       background: white;
       border-radius: 20px;
@@ -144,7 +37,6 @@
       border: 1px solid #E2E8F0;
       margin-bottom: 2rem;
     }
-
     .settings-section h2 {
       font-size: 1.5rem;
       font-weight: 700;
@@ -154,40 +46,13 @@
       align-items: center;
       gap: 0.75rem;
     }
+    .settings-section h2 i { color: #4F46E5; }
+    .settings-section .section-description { color: #64748B; margin-bottom: 2rem; font-size: 1rem; }
+    .settings-section h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 1.5rem; color: #334155; padding-top: 1rem; }
 
-    .settings-section h2 i {
-      color: #4F46E5;
-    }
-
-    .settings-section .section-description {
-      color: #64748B;
-      margin-bottom: 2rem;
-      font-size: 1rem;
-    }
-
-    .settings-section h3 {
-      font-size: 1.125rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      color: #334155;
-      padding-top: 1rem;
-    }
-
-    /* Form Groups */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #334155;
-      font-size: 0.95rem;
-    }
-
-    .form-group input,
-    .form-group select {
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155; font-size: 0.95rem; }
+    .form-group input, .form-group select {
       width: 100%;
       max-width: 600px;
       padding: 0.875rem 1rem;
@@ -198,400 +63,134 @@
       transition: all 0.2s;
       background: #F8FAFC;
     }
-
-    .form-group input:focus,
-    .form-group select:focus {
+    .form-group input:focus, .form-group select:focus {
       outline: none;
       border-color: #4F46E5;
       box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
       background: white;
     }
+    .form-group small { display: block; margin-top: 0.5rem; color: #64748B; font-size: 0.875rem; }
 
-    .form-group small {
-      display: block;
-      margin-top: 0.5rem;
-      color: #64748B;
-      font-size: 0.875rem;
-    }
-
-    /* Password Input Wrapper with Eye Toggle */
-    .password-input-wrapper {
-      position: relative;
-      max-width: 600px;
-    }
-
-    .password-input-wrapper input {
-      padding-right: 3rem;
-    }
-
+    .password-input-wrapper { position: relative; max-width: 600px; }
+    .password-input-wrapper input { padding-right: 3rem; }
     .password-toggle {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #64748B;
-      cursor: pointer;
-      font-size: 1.125rem;
-      padding: 0.5rem;
-      transition: color 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #64748B; cursor: pointer;
+      font-size: 1.125rem; padding: 0.5rem; transition: color 0.2s;
     }
+    .password-toggle:hover { color: #4F46E5; }
 
-    .password-toggle:hover {
-      color: #4F46E5;
-    }
-
-    /* Toggle Switch */
     .toggle-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem;
-      background: #F8FAFC;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      max-width: 600px;
-      border: 1px solid #E2E8F0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem; background: #F8FAFC; border-radius: 12px;
+      margin-bottom: 1rem; max-width: 600px; border: 1px solid #E2E8F0;
     }
-
-    .toggle-label {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .toggle-label strong {
-      color: #1E293B;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .toggle-label small {
-      color: #64748B;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 52px;
-      height: 28px;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
+    .toggle-label { display: flex; flex-direction: column; }
+    .toggle-label strong { color: #1E293B; font-weight: 600; font-size: 1rem; }
+    .toggle-label small { color: #64748B; font-size: 0.875rem; margin-top: 0.25rem; }
+    .toggle-switch { position: relative; width: 52px; height: 28px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #CBD5E1;
-      transition: 0.3s;
-      border-radius: 28px;
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: #CBD5E1; transition: 0.3s; border-radius: 28px;
     }
-
     .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 4px;
-      bottom: 4px;
-      background: white;
-      transition: 0.3s;
-      border-radius: 50%;
+      position: absolute; content: ""; height: 20px; width: 20px;
+      left: 4px; bottom: 4px; background: white; transition: 0.3s; border-radius: 50%;
     }
+    input:checked + .slider { background: #4F46E5; }
+    input:checked + .slider:before { transform: translateX(24px); }
 
-    input:checked + .slider {
-      background: #4F46E5;
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(24px);
-    }
-
-    /* Buttons */
     .btn {
       padding: 1rem 2rem;
       background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      color: white; border: none; border-radius: 12px;
+      font-weight: 700; font-size: 1rem; cursor: pointer;
+      transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background: white; color: #4F46E5; border: 2px solid #E2E8F0; box-shadow: none; }
+    .btn-secondary:hover:not(:disabled) { background: #F8FAFC; border-color: #4F46E5; transform: none; box-shadow: none; }
+    .btn-danger { background: linear-gradient(135deg, #DC2626, #B91C1C); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); }
 
-    .btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    .message { padding: 1rem; border-radius: 12px; margin-top: 1rem; font-weight: 500; display: none; align-items: center; gap: 0.75rem; }
+    .message.show { display: flex; }
+    .message-success { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+    .message-error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .message-info { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+
+    /* 2FA Styles */
+    .twofa-options { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; }
+    .twofa-option {
+      display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
+      background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px;
+      cursor: pointer; transition: all 0.2s;
     }
+    .twofa-option:hover { border-color: #CBD5E1; background: white; }
+    .twofa-option.selected { border-color: #4F46E5; background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05)); }
+    .twofa-option-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .twofa-option-icon.email { background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; }
+    .twofa-option-icon.authenticator { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+    .twofa-option-info { flex: 1; }
+    .twofa-option-info strong { display: block; color: #1E293B; font-size: 1rem; margin-bottom: 0.25rem; }
+    .twofa-option-info small { color: #64748B; font-size: 0.875rem; }
+    .twofa-option-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #E2E8F0; display: flex; align-items: center; justify-content: center; color: transparent; }
+    .twofa-option.selected .twofa-option-check { background: #4F46E5; border-color: #4F46E5; color: white; }
+    .twofa-option.selected .twofa-option-check i { font-size: 0.75rem; }
 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .twofa-setup { background: #F8FAFC; padding: 2rem; border-radius: 16px; margin-top: 1.5rem; border: 2px solid #E2E8F0; max-width: 600px; }
+    .setup-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .setup-header i { font-size: 1.5rem; }
+    .setup-header h4 { font-size: 1.25rem; font-weight: 700; color: #1E293B; }
+
+    .twofa-enabled-badge {
+      display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+      border: 2px solid #10B981; border-radius: 12px; max-width: 600px;
     }
+    .twofa-enabled-badge > i { font-size: 2rem; color: #10B981; }
+    .twofa-enabled-badge > div { flex: 1; }
+    .twofa-enabled-badge strong { display: block; color: #065F46; font-size: 1.125rem; }
+    .twofa-enabled-badge span { color: #047857; font-size: 0.875rem; }
+    .connected-badge { background: #10B981; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
 
-    /* Messages */
-    .message {
-      padding: 1rem;
-      border-radius: 12px;
-      margin-top: 1rem;
-      font-weight: 500;
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    .qr-code { text-align: center; margin: 1.5rem 0; }
+    .qr-code img { max-width: 200px; border-radius: 12px; background: white; padding: 1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    .secret-code { font-family: 'Courier New', monospace; background: white; padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 2px solid #E2E8F0; font-weight: 600; color: #4F46E5; text-align: center; letter-spacing: 0.1rem; }
+    .code-input { max-width: 200px !important; text-align: center; font-size: 1.5rem !important; letter-spacing: 0.5rem; font-weight: 700; }
 
-    .message.show {
-      display: flex;
-    }
+    .section-divider { margin: 2.5rem 0; border: none; border-top: 2px solid #E2E8F0; }
 
-    .message-success {
-      background: #F0FDF4;
-      color: #16A34A;
-      border: 1px solid #BBF7D0;
-    }
+    /* Sessions */
+    .sessions-container { display: flex; flex-direction: column; gap: 1rem; }
+    .session-card { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: all 0.3s; }
+    .session-card:hover { border-color: #CBD5E1; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+    .session-card.current-session { background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05)); border-color: #4F46E5; }
+    .session-info { flex: 1; }
+    .session-device { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+    .session-device i { font-size: 1.5rem; color: #4F46E5; }
+    .session-device strong { font-size: 1.125rem; color: #1E293B; }
+    .current-badge { display: inline-block; background: #4F46E5; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem; }
+    .session-details { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .session-detail { display: flex; align-items: center; gap: 0.5rem; color: #64748B; font-size: 0.875rem; }
+    .revoke-btn { padding: 0.75rem 1.5rem; background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 8px; font-weight: 600; font-size: 0.875rem; cursor: pointer; }
+    .revoke-btn:hover { background: #FCA5A5; }
+    .revoke-all-btn { background: #DC2626; color: white; }
+    .revoke-all-btn:hover { background: #B91C1C; }
 
-    .message-error {
-      background: #FEF2F2;
-      color: #DC2626;
-      border: 1px solid #FECACA;
-    }
-
-    .message-info {
-      background: #EFF6FF;
-      color: #2563EB;
-      border: 1px solid #BFDBFE;
-    }
-
-    /* 2FA Setup */
-    .twofa-setup {
-      background: #F8FAFC;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-top: 1rem;
-      border: 2px solid #E2E8F0;
-    }
-
-    .qr-code {
-      text-align: center;
-      margin: 1.5rem 0;
-    }
-
-    .qr-code img {
-      max-width: 200px;
-      border-radius: 12px;
-      background: white;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .secret-code {
-      font-family: 'Courier New', monospace;
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      word-break: break-all;
-      margin: 1rem 0;
-      border: 2px solid #E2E8F0;
-      font-weight: 600;
-      color: #4F46E5;
-    }
-
-    /* Section Divider */
-    .section-divider {
-      margin: 2.5rem 0;
-      border: none;
-      border-top: 2px solid #E2E8F0;
-    }
-
-    /* Session Cards */
-    .sessions-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .session-card {
-      background: #F8FAFC;
-      border: 2px solid #E2E8F0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      transition: all 0.3s;
-    }
-
-    .session-card:hover {
-      border-color: #CBD5E1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .session-card.current-session {
-      background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05));
-      border-color: #4F46E5;
-    }
-
-    .session-info {
-      flex: 1;
-    }
-
-    .session-device {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .session-device i {
-      font-size: 1.5rem;
-      color: #4F46E5;
-    }
-
-    .session-device strong {
-      font-size: 1.125rem;
-      color: #1E293B;
-    }
-
-    .current-badge {
-      display: inline-block;
-      background: #4F46E5;
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-left: 0.5rem;
-    }
-
-    .session-details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
-
-    .session-detail {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #64748B;
-      font-size: 0.875rem;
-    }
-
-    .session-detail i {
-      font-size: 0.875rem;
-    }
-
-    .session-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .session-btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .revoke-btn {
-      background: #FEE2E2;
-      color: #DC2626;
-      border: 1px solid #FCA5A5;
-    }
-
-    .revoke-btn:hover {
-      background: #FCA5A5;
-      transform: translateY(-2px);
-    }
-
-    .current-btn {
-      background: #E0E7FF;
-      color: #4F46E5;
-      cursor: default;
-    }
-
-    .revoke-all-btn {
-      margin-top: 1rem;
-      background: #DC2626;
-      color: white;
-    }
-
-    .revoke-all-btn:hover {
-      background: #B91C1C;
-    }
-
-    /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-
-      .main-with-sidebar {
-        margin-left: 0;
-        padding: 1.5rem;
-      }
-
-      .settings-header h1 {
-        font-size: 2rem;
-      }
-
-      .toggle-container {
-        max-width: 100%;
-      }
-
-      .form-group input,
-      .form-group select {
-        max-width: 100%;
-      }
+      .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
+      .settings-header h1 { font-size: 2rem; }
+      .toggle-container, .twofa-options, .twofa-setup, .twofa-enabled-badge { max-width: 100%; }
+      .form-group input, .form-group select { max-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <!-- Dark Sidebar -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>🚚 BizTrack</h1>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="pricing.html"><i class="fas fa-credit-card"></i> Subscription</a></li>
-      <li><a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
-    </ul>
-    <div class="sidebar-logout">
-      <button id="logoutBtn">
-        <i class="fas fa-sign-out-alt"></i>
-        Logout
-      </button>
-    </div>
-  </nav>
+  <script src="js/SI-sidebar.js"></script>
 
-  <!-- Main Content -->
   <div class="main-with-sidebar">
     <div class="settings-header">
       <h1>Account Settings</h1>
@@ -610,18 +209,14 @@
           <label for="current-password">Current Password</label>
           <div class="password-input-wrapper">
             <input type="password" id="current-password" placeholder="Enter current password" required>
-            <button type="button" class="password-toggle" onclick="togglePassword('current-password', this)">
-              <i class="fas fa-eye"></i>
-            </button>
+            <button type="button" class="password-toggle" onclick="togglePassword('current-password', this)"><i class="fas fa-eye"></i></button>
           </div>
         </div>
         <div class="form-group">
           <label for="new-password">New Password</label>
           <div class="password-input-wrapper">
             <input type="password" id="new-password" placeholder="Enter new password" required>
-            <button type="button" class="password-toggle" onclick="togglePassword('new-password', this)">
-              <i class="fas fa-eye"></i>
-            </button>
+            <button type="button" class="password-toggle" onclick="togglePassword('new-password', this)"><i class="fas fa-eye"></i></button>
           </div>
           <div id="password-feedback"></div>
         </div>
@@ -629,49 +224,117 @@
           <label for="confirm-password">Confirm New Password</label>
           <div class="password-input-wrapper">
             <input type="password" id="confirm-password" placeholder="Confirm new password" required>
-            <button type="button" class="password-toggle" onclick="togglePassword('confirm-password', this)">
-              <i class="fas fa-eye"></i>
-            </button>
+            <button type="button" class="password-toggle" onclick="togglePassword('confirm-password', this)"><i class="fas fa-eye"></i></button>
           </div>
           <div id="password-match"></div>
         </div>
-        <button type="submit" class="btn" id="password-submit-btn">
-          <i class="fas fa-key"></i>
-          Update Password
-        </button>
+        <button type="submit" class="btn" id="password-submit-btn"><i class="fas fa-key"></i> Update Password</button>
         <div id="password-message" class="message"></div>
       </form>
 
       <hr class="section-divider">
 
-      <!-- 2FA Toggle -->
+      <!-- 2FA Section -->
       <h3>Two-Factor Authentication</h3>
-      <div class="toggle-container">
-        <div class="toggle-label">
-          <strong>Enable 2FA</strong>
-          <small>Add an extra layer of security to your account</small>
+      <p style="color: #64748B; margin-bottom: 1.5rem;">Add an extra layer of security. After enabling, you'll need to verify your identity when logging in.</p>
+
+      <!-- 2FA Status (shown when enabled) -->
+      <div id="2faStatus" style="display: none;">
+        <div class="twofa-enabled-badge">
+          <i class="fas fa-shield-alt"></i>
+          <div>
+            <strong>2FA is Enabled</strong>
+            <span id="2faMethodDisplay">via Email</span>
+          </div>
+          <span class="connected-badge"><i class="fas fa-check"></i> Connected</span>
         </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle2fa">
-          <span class="slider"></span>
-        </label>
+        <button class="btn btn-danger" id="disable2faBtn" style="margin-top: 1rem;"><i class="fas fa-times"></i> Disable 2FA</button>
       </div>
 
-      <div id="2faSetup" class="twofa-setup" style="display:none;">
-        <p style="margin-bottom: 1rem;">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.) or manually enter the code below.</p>
-        <div class="qr-code">
-          <img id="qrImage" src="" alt="2FA QR Code" />
-          <div class="secret-code" id="secretContainer"></div>
+      <!-- 2FA Method Selection -->
+      <div id="2faMethodSelection">
+        <div class="twofa-options">
+          <div class="twofa-option" id="emailOption" onclick="select2FAMethod('email')">
+            <div class="twofa-option-icon email"><i class="fas fa-envelope"></i></div>
+            <div class="twofa-option-info">
+              <strong>Email Verification</strong>
+              <small>We'll send a code to your email each time you log in</small>
+            </div>
+            <div class="twofa-option-check" id="emailCheck"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="twofa-option" id="authenticatorOption" onclick="select2FAMethod('authenticator')">
+            <div class="twofa-option-icon authenticator"><i class="fas fa-mobile-alt"></i></div>
+            <div class="twofa-option-info">
+              <strong>Authenticator App</strong>
+              <small>Use Google Authenticator, Authy, or similar app</small>
+            </div>
+            <div class="twofa-option-check" id="authenticatorCheck"><i class="fas fa-check"></i></div>
+          </div>
+        </div>
+        <button class="btn" id="setup2faBtn" style="margin-top: 1.5rem;" disabled>
+          <i class="fas fa-lock"></i> <span id="setup2faBtnText">Select a Method</span>
+        </button>
+      </div>
+
+      <!-- Email 2FA Setup -->
+      <div id="email2faSetup" class="twofa-setup" style="display: none;">
+        <div class="setup-header">
+          <i class="fas fa-envelope" style="color: #3B82F6;"></i>
+          <h4>Email Verification Setup</h4>
+        </div>
+        <p style="margin-bottom: 1rem; color: #64748B;">We'll send a 6-digit code to <strong id="setupEmailDisplay"></strong></p>
+        <button class="btn" id="sendEmailCodeBtn"><i class="fas fa-paper-plane"></i> Send Verification Code</button>
+        <div id="emailCodeEntry" style="display: none; margin-top: 1.5rem;">
+          <p style="color: #10B981; margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Code sent! Check your inbox.</p>
+          <div class="form-group">
+            <label for="emailVerifyCode">Enter 6-digit code</label>
+            <input type="text" id="emailVerifyCode" class="code-input" maxlength="6" placeholder="000000" />
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn" id="verifyEmailCodeBtn"><i class="fas fa-check"></i> Verify & Enable 2FA</button>
+            <button class="btn btn-secondary" id="resendEmailCodeBtn"><i class="fas fa-redo"></i> Resend</button>
+          </div>
+        </div>
+        <div id="email2faMsg" class="message"></div>
+        <button class="btn btn-secondary" onclick="cancel2FASetup()" style="margin-top: 1rem;"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
+
+      <!-- Authenticator 2FA Setup -->
+      <div id="authenticator2faSetup" class="twofa-setup" style="display: none;">
+        <div class="setup-header">
+          <i class="fas fa-mobile-alt" style="color: #10B981;"></i>
+          <h4>Authenticator App Setup</h4>
+        </div>
+        <p style="margin-bottom: 1rem; color: #64748B;">Scan this QR code with your authenticator app</p>
+        <div class="qr-code"><img id="qrImage" src="" alt="2FA QR Code" /></div>
+        <p style="margin: 1rem 0; color: #64748B; font-size: 0.9rem;">Or manually enter this code:</p>
+        <div class="secret-code" id="secretContainer"></div>
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label for="verifyTotp">Enter 6-digit code from your app</label>
+          <input id="verifyTotp" type="text" class="code-input" maxlength="6" placeholder="000000" />
+        </div>
+        <button class="btn" id="verifyTotpBtn"><i class="fas fa-check"></i> Verify & Enable 2FA</button>
+        <div id="authenticator2faMsg" class="message"></div>
+        <button class="btn btn-secondary" onclick="cancel2FASetup()" style="margin-top: 1rem;"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
+
+      <!-- Disable 2FA Confirmation -->
+      <div id="disable2faConfirm" class="twofa-setup" style="display: none;">
+        <div class="setup-header">
+          <i class="fas fa-exclamation-triangle" style="color: #DC2626;"></i>
+          <h4>Disable Two-Factor Authentication</h4>
+        </div>
+        <p style="margin-bottom: 1rem; color: #64748B;">Enter a verification code to disable 2FA.</p>
+        <div id="disableCodeSent" style="display: none;">
+          <p style="color: #10B981; margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Code sent to your email!</p>
         </div>
         <div class="form-group">
-          <label for="verifyTotp">Enter 6-digit code from authenticator</label>
-          <input id="verifyTotp" type="text" maxlength="6" placeholder="000000" />
+          <label for="disable2faCode">Enter 6-digit code</label>
+          <input type="text" id="disable2faCode" class="code-input" maxlength="6" placeholder="000000" />
         </div>
-        <button class="btn" id="verifyTotpBtn">
-          <i class="fas fa-check"></i>
-          Verify & Enable 2FA
-        </button>
-        <div id="verifyMsg"></div>
+        <button class="btn btn-danger" id="confirmDisable2faBtn"><i class="fas fa-times"></i> Disable 2FA</button>
+        <div id="disable2faMsg" class="message"></div>
+        <button class="btn btn-secondary" onclick="cancelDisable2FA()" style="margin-top: 1rem;"><i class="fas fa-arrow-left"></i> Cancel</button>
       </div>
     </div>
 
@@ -679,7 +342,6 @@
     <div class="settings-section">
       <h2><i class="fas fa-user"></i> Account Information</h2>
       <p class="section-description">Update your account details.</p>
-
       <form id="accountInfoForm">
         <div class="form-group">
           <label for="accountEmail">Email Address</label>
@@ -690,10 +352,7 @@
           <input type="text" id="companyName" placeholder="Your Company Name">
           <small>Optional - appears on your account</small>
         </div>
-        <button type="submit" class="btn">
-          <i class="fas fa-save"></i>
-          Save Changes
-        </button>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> Save Changes</button>
         <div id="accountMsg"></div>
       </form>
     </div>
@@ -702,7 +361,6 @@
     <div class="settings-section">
       <h2><i class="fas fa-sliders-h"></i> Preferences</h2>
       <p class="section-description">Customize your BizTrack experience.</p>
-
       <form id="preferencesForm">
         <div class="form-group">
           <label for="language">Language</label>
@@ -717,7 +375,7 @@
         <div class="form-group">
           <label for="timezone">Time Zone</label>
           <select id="timezone">
-            <option value="UTC">UTC (Coordinated Universal Time)</option>
+            <option value="UTC">UTC</option>
             <option value="America/New_York">Eastern Time (ET)</option>
             <option value="America/Chicago">Central Time (CT)</option>
             <option value="America/Denver">Mountain Time (MT)</option>
@@ -725,8 +383,6 @@
             <option value="Europe/London">London (GMT)</option>
             <option value="Europe/Paris">Paris (CET)</option>
             <option value="Asia/Tokyo">Tokyo (JST)</option>
-            <option value="Asia/Shanghai">Shanghai (CST)</option>
-            <option value="Australia/Sydney">Sydney (AEDT)</option>
           </select>
         </div>
         <div class="toggle-container">
@@ -739,10 +395,7 @@
             <span class="slider"></span>
           </label>
         </div>
-        <button type="submit" class="btn">
-          <i class="fas fa-save"></i>
-          Save Preferences
-        </button>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> Save Preferences</button>
         <div id="preferencesMsg"></div>
       </form>
     </div>
@@ -750,20 +403,13 @@
     <!-- Active Sessions -->
     <div class="settings-section">
       <h2><i class="fas fa-laptop"></i> Active Sessions</h2>
-      <p class="section-description">Manage devices that are signed into your account. Sign out any sessions you don't recognize.</p>
-
-      <div id="sessions-container" class="sessions-container">
-        <!-- Sessions loaded dynamically -->
-      </div>
-
+      <p class="section-description">Manage devices signed into your account.</p>
+      <div id="sessions-container" class="sessions-container"></div>
       <div id="session-message" class="message"></div>
-
       <button class="btn revoke-all-btn" onclick="SessionManager.revokeAllSessions('sessions-container')" style="margin-top: 1.5rem;">
-        <i class="fas fa-sign-out-alt"></i>
-        Sign Out All Other Devices
+        <i class="fas fa-sign-out-alt"></i> Sign Out All Other Devices
       </button>
     </div>
-
   </div>
 
   <script src="js/auth.js"></script>
@@ -771,13 +417,9 @@
   <script src="js/password-reset.js"></script>
   <script src="js/sessions.js"></script>
   <script>
-    // ==========================================
-    // PASSWORD VISIBILITY TOGGLE
-    // ==========================================
     function togglePassword(inputId, button) {
       const input = document.getElementById(inputId);
       const icon = button.querySelector('i');
-      
       if (input.type === 'password') {
         input.type = 'text';
         icon.classList.remove('fa-eye');
@@ -789,106 +431,288 @@
       }
     }
 
-    // Ensure user is authenticated
     requireAuth();
-
-    // Get user info from token
     const user = getUserFromToken();
+    let userEmail = '';
     if (user) {
-      document.getElementById('accountEmail').value = user.email || '';
+      userEmail = user.email || '';
+      document.getElementById('accountEmail').value = userEmail;
     }
 
-    // Try to get company name from API
+    // ==========================================
+    // 2FA VARIABLES & FUNCTIONS
+    // ==========================================
+    let selected2FAMethod = null;
+    let totpSecret = null;
+
+    function select2FAMethod(method) {
+      selected2FAMethod = method;
+      document.getElementById('emailOption').classList.toggle('selected', method === 'email');
+      document.getElementById('authenticatorOption').classList.toggle('selected', method === 'authenticator');
+      document.getElementById('setup2faBtn').disabled = false;
+      document.getElementById('setup2faBtnText').textContent = method === 'email' ? 'Set Up Email 2FA' : 'Set Up Authenticator';
+    }
+
+    document.getElementById('setup2faBtn').addEventListener('click', async () => {
+      if (!selected2FAMethod) return;
+      document.getElementById('2faMethodSelection').style.display = 'none';
+      
+      if (selected2FAMethod === 'email') {
+        document.getElementById('email2faSetup').style.display = 'block';
+        document.getElementById('setupEmailDisplay').textContent = userEmail;
+      } else {
+        try {
+          const response = await authenticatedFetch('/api/2fa-setup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'setup-totp' })
+          });
+          const data = await response.json();
+          if (data.success) {
+            totpSecret = data.secret;
+            document.getElementById('qrImage').src = data.qrCode;
+            document.getElementById('secretContainer').textContent = data.secret.match(/.{1,4}/g).join(' ');
+            document.getElementById('authenticator2faSetup').style.display = 'block';
+          } else {
+            alert('Failed: ' + data.error);
+            cancel2FASetup();
+          }
+        } catch (error) {
+          alert('Error: ' + error.message);
+          cancel2FASetup();
+        }
+      }
+    });
+
+    document.getElementById('sendEmailCodeBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('sendEmailCodeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send-code' })
+        });
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('emailCodeEntry').style.display = 'block';
+          btn.style.display = 'none';
+        } else {
+          showMessage('email2faMsg', 'error', data.error);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Verification Code';
+        }
+      } catch (error) {
+        showMessage('email2faMsg', 'error', error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Verification Code';
+      }
+    });
+
+    document.getElementById('resendEmailCodeBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('resendEmailCodeBtn');
+      btn.disabled = true;
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send-code' })
+        });
+        const data = await response.json();
+        showMessage('email2faMsg', data.success ? 'success' : 'error', data.success ? 'Code sent!' : data.error);
+      } catch (error) {
+        showMessage('email2faMsg', 'error', error.message);
+      }
+      btn.disabled = false;
+    });
+
+    document.getElementById('verifyEmailCodeBtn').addEventListener('click', async () => {
+      const code = document.getElementById('emailVerifyCode').value.trim();
+      if (code.length !== 6) { showMessage('email2faMsg', 'error', 'Enter 6-digit code'); return; }
+      const btn = document.getElementById('verifyEmailCodeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'enable', code, method: 'email' })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showMessage('email2faMsg', 'success', '2FA enabled!');
+          setTimeout(() => show2FAEnabled('email'), 1500);
+        } else {
+          showMessage('email2faMsg', 'error', data.error);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check"></i> Verify & Enable 2FA';
+        }
+      } catch (error) {
+        showMessage('email2faMsg', 'error', error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Verify & Enable 2FA';
+      }
+    });
+
+    document.getElementById('verifyTotpBtn').addEventListener('click', async () => {
+      const code = document.getElementById('verifyTotp').value.trim();
+      if (code.length !== 6) { showMessage('authenticator2faMsg', 'error', 'Enter 6-digit code'); return; }
+      const btn = document.getElementById('verifyTotpBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'enable', code, method: 'totp', secret: totpSecret })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showMessage('authenticator2faMsg', 'success', '2FA enabled!');
+          setTimeout(() => show2FAEnabled('authenticator'), 1500);
+        } else {
+          showMessage('authenticator2faMsg', 'error', data.error);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-check"></i> Verify & Enable 2FA';
+        }
+      } catch (error) {
+        showMessage('authenticator2faMsg', 'error', error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Verify & Enable 2FA';
+      }
+    });
+
+    function cancel2FASetup() {
+      document.getElementById('email2faSetup').style.display = 'none';
+      document.getElementById('authenticator2faSetup').style.display = 'none';
+      document.getElementById('2faMethodSelection').style.display = 'block';
+      document.getElementById('emailCodeEntry').style.display = 'none';
+      document.getElementById('sendEmailCodeBtn').style.display = 'block';
+      document.getElementById('sendEmailCodeBtn').disabled = false;
+      document.getElementById('sendEmailCodeBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Send Verification Code';
+      document.getElementById('emailVerifyCode').value = '';
+      document.getElementById('verifyTotp').value = '';
+    }
+
+    function show2FAEnabled(method) {
+      document.getElementById('email2faSetup').style.display = 'none';
+      document.getElementById('authenticator2faSetup').style.display = 'none';
+      document.getElementById('2faMethodSelection').style.display = 'none';
+      document.getElementById('2faStatus').style.display = 'block';
+      document.getElementById('2faMethodDisplay').textContent = method === 'email' ? 'via Email' : 'via Authenticator App';
+    }
+
+    document.getElementById('disable2faBtn').addEventListener('click', async () => {
+      document.getElementById('2faStatus').style.display = 'none';
+      document.getElementById('disable2faConfirm').style.display = 'block';
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send-code' })
+        });
+        const data = await response.json();
+        if (data.success) document.getElementById('disableCodeSent').style.display = 'block';
+      } catch (error) { console.error(error); }
+    });
+
+    document.getElementById('confirmDisable2faBtn').addEventListener('click', async () => {
+      const code = document.getElementById('disable2faCode').value.trim();
+      if (code.length !== 6) { showMessage('disable2faMsg', 'error', 'Enter 6-digit code'); return; }
+      const btn = document.getElementById('confirmDisable2faBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Disabling...';
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'disable', code })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showMessage('disable2faMsg', 'success', '2FA disabled');
+          setTimeout(() => {
+            cancelDisable2FA();
+            document.getElementById('2faMethodSelection').style.display = 'block';
+            selected2FAMethod = null;
+            document.getElementById('emailOption').classList.remove('selected');
+            document.getElementById('authenticatorOption').classList.remove('selected');
+            document.getElementById('setup2faBtn').disabled = true;
+            document.getElementById('setup2faBtnText').textContent = 'Select a Method';
+          }, 1500);
+        } else {
+          showMessage('disable2faMsg', 'error', data.error);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-times"></i> Disable 2FA';
+        }
+      } catch (error) {
+        showMessage('disable2faMsg', 'error', error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-times"></i> Disable 2FA';
+      }
+    });
+
+    function cancelDisable2FA() {
+      document.getElementById('disable2faConfirm').style.display = 'none';
+      document.getElementById('2faStatus').style.display = 'block';
+      document.getElementById('disable2faCode').value = '';
+      document.getElementById('disableCodeSent').style.display = 'none';
+    }
+
+    async function check2FAStatus() {
+      try {
+        const response = await authenticatedFetch('/api/2fa-setup');
+        const data = await response.json();
+        if (data.success && data.enabled) show2FAEnabled(data.method);
+      } catch (error) { console.error(error); }
+    }
+
+    function showMessage(elementId, type, text) {
+      const el = document.getElementById(elementId);
+      el.className = `message message-${type} show`;
+      el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${text}`;
+    }
+
+    // ==========================================
+    // EXISTING FUNCTIONALITY
+    // ==========================================
     async function loadUserData() {
       try {
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
-        if (data.success && data.user) {
-          document.getElementById('companyName').value = data.user.companyName || '';
-        }
-      } catch (error) {
-        console.error('Failed to load user data:', error);
-      }
+        if (data.success && data.user) document.getElementById('companyName').value = data.user.companyName || '';
+      } catch (error) { console.error(error); }
     }
     loadUserData();
+    check2FAStatus();
 
-    // Load preferences from localStorage
     const prefs = JSON.parse(localStorage.getItem('biztrack-preferences') || '{}');
     if (prefs.language) document.getElementById('language').value = prefs.language;
     if (prefs.timezone) document.getElementById('timezone').value = prefs.timezone;
     if (prefs.darkMode) document.getElementById('darkMode').checked = prefs.darkMode;
 
-    // ==========================================
-    // PASSWORD RESET IS HANDLED BY password-reset.js
-    // No custom code needed! It auto-initializes.
-    // ==========================================
-
-    // Update Account Info
     document.getElementById('accountInfoForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msgEl = document.getElementById('accountMsg');
-      msgEl.innerHTML = '<div class="message message-info show"><i class="fas fa-spinner fa-spin"></i> Saving changes...</div>';
-
-      // TODO: Call your API to update account info
+      msgEl.innerHTML = '<div class="message message-info show"><i class="fas fa-spinner fa-spin"></i> Saving...</div>';
       setTimeout(() => {
-        msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Account information updated!</div>';
+        msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Account updated!</div>';
       }, 1000);
     });
 
-    // Save Preferences
     document.getElementById('preferencesForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const msgEl = document.getElementById('preferencesMsg');
-      
       const preferences = {
         language: document.getElementById('language').value,
         timezone: document.getElementById('timezone').value,
         darkMode: document.getElementById('darkMode').checked
       };
-      
       localStorage.setItem('biztrack-preferences', JSON.stringify(preferences));
-      msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Preferences saved!</div>';
+      document.getElementById('preferencesMsg').innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> Preferences saved!</div>';
     });
 
-    // 2FA Toggle (placeholder - implement with your backend)
-    document.getElementById('toggle2fa').addEventListener('change', (e) => {
-      const setup = document.getElementById('2faSetup');
-      if (e.target.checked) {
-        setup.style.display = 'block';
-        // TODO: Call API to generate 2FA secret and QR code
-        document.getElementById('qrImage').src = 'https://via.placeholder.com/200x200?text=2FA+QR+Code';
-        document.getElementById('secretContainer').textContent = 'ABCD EFGH IJKL MNOP';
-      } else {
-        setup.style.display = 'none';
-      }
-    });
-
-    // Verify 2FA
-    document.getElementById('verifyTotpBtn').addEventListener('click', () => {
-      const code = document.getElementById('verifyTotp').value;
-      const msgEl = document.getElementById('verifyMsg');
-      
-      if (code.length !== 6) {
-        msgEl.innerHTML = '<div class="message message-error show"><i class="fas fa-exclamation-circle"></i> Please enter a 6-digit code</div>';
-        return;
-      }
-
-      // TODO: Verify with your backend
-      msgEl.innerHTML = '<div class="message message-success show"><i class="fas fa-check-circle"></i> 2FA enabled successfully!</div>';
-    });
-
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      if (confirm('Are you sure you want to logout?')) {
-        logout();
-      }
-    });
-
-    // ==========================================
-    // LOAD ACTIVE SESSIONS
-    // ==========================================
-    SessionManager.loadSessions('sessions-container');
+    if (typeof SessionManager !== 'undefined') SessionManager.loadSessions('sessions-container');
   </script>
 </body>
 </html>

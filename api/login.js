@@ -121,7 +121,7 @@ module.exports = async (req, res) => {
       const tempToken = jwt.sign(
         {
           email: user.email,
-          odne2FA: true  // Flag to indicate this is not a full auth token
+          pending2FA: true  // Flag to indicate this is not a full auth token
         },
         JWT_SECRET,
         { expiresIn: '10m' }  // Only valid for 10 minutes

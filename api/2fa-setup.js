@@ -1,9 +1,10 @@
 // api/2fa-setup.js
 // Consolidated 2FA setup endpoint - handles status, enable, and disable
-// Uses PostgreSQL
+// Uses PostgreSQL + AES-256 encryption for TOTP secrets
 
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { Resend } = require('resend');
 const { authenticator } = require('otplib');
 const QRCode = require('qrcode');
@@ -15,6 +16,43 @@ const pool = new Pool({
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+const TOTP_ENCRYPTION_KEY = process.env.TOTP_ENCRYPTION_KEY || 'default-32-char-key-change-this!'; // Must be 32 chars
+
+// ==========================================
+// ENCRYPTION HELPERS (AES-256-GCM)
+// ==========================================
+function encryptSecret(plaintext) {
+  const iv = crypto.randomBytes(16);
+  const key = Buffer.from(TOTP_ENCRYPTION_KEY.padEnd(32).slice(0, 32));
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  
+  let encrypted = cipher.update(plaintext, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag().toString('hex');
+  
+  // Format: iv:authTag:encryptedData
+  return `${iv.toString('hex')}:${authTag}:${encrypted}`;
+}
+
+function decryptSecret(encryptedData) {
+  try {
+    const [ivHex, authTagHex, encrypted] = encryptedData.split(':');
+    const iv = Buffer.from(ivHex, 'hex');
+    const authTag = Buffer.from(authTagHex, 'hex');
+    const key = Buffer.from(TOTP_ENCRYPTION_KEY.padEnd(32).slice(0, 32));
+    
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(authTag);
+    
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    
+    return decrypted;
+  } catch (err) {
+    console.error('[2FA] Failed to decrypt secret:', err.message);
+    return null;
+  }
+}
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -152,6 +190,8 @@ module.exports = async (req, res) => {
 
       // Enable 2FA
       if (method === 'totp') {
+        // Encrypt the secret before storing
+        const encryptedSecret = encryptSecret(secret);
         await pool.query(
           `UPDATE users SET 
             two_factor_enabled = true, 
@@ -161,7 +201,7 @@ module.exports = async (req, res) => {
             two_factor_code_expires = NULL,
             two_factor_enabled_at = NOW()
           WHERE email = $3`,
-          [method, secret, user.email]
+          [method, encryptedSecret, user.email]
         );
       } else {
         await pool.query(
@@ -199,7 +239,12 @@ module.exports = async (req, res) => {
         }
         isValid = userRecord.two_factor_code === code;
       } else if (userRecord.two_factor_method === 'totp') {
-        isValid = authenticator.verify({ token: code, secret: userRecord.two_factor_secret });
+        // Decrypt the secret before verifying
+        const decryptedSecret = decryptSecret(userRecord.two_factor_secret);
+        if (!decryptedSecret) {
+          return res.status(500).json({ error: 'Failed to verify. Please contact support.' });
+        }
+        isValid = authenticator.verify({ token: code, secret: decryptedSecret });
       }
 
       if (!isValid) {

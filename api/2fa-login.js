@@ -142,12 +142,6 @@ module.exports = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    // Update last login
-    await pool.query(
-      'UPDATE users SET last_login = NOW() WHERE email = $1',
-      [email]
-    );
-
     // Create session record (same as regular login)
     try {
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');

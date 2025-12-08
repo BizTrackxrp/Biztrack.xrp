@@ -1,37 +1,63 @@
 // api/2fa-setup.js
 // Consolidated 2FA setup endpoint - handles status, enable, and disable
+// Uses PostgreSQL
 
-import { verifyToken } from '../lib/auth.js';
-import { getDatabase } from '../lib/database.js';
-import { Resend } from 'resend';
-import { authenticator } from 'otplib';
-import QRCode from 'qrcode';
+const { Pool } = require('pg');
+const jwt = require('jsonwebtoken');
+const { Resend } = require('resend');
+const { authenticator } = require('otplib');
+const QRCode = require('qrcode');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export default async function handler(req, res) {
+// Verify JWT token from Authorization header (inline, no external lib)
+function verifyToken(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+  try {
+    const token = authHeader.split(' ')[1];
+    return jwt.verify(token, JWT_SECRET);
+  } catch (err) {
+    return null;
+  }
+}
+
+module.exports = async (req, res) => {
   const user = verifyToken(req);
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const db = await getDatabase();
-  const userRecord = await db.collection('users').findOne({ email: user.email });
+  // Find user in database
+  const userResult = await pool.query(
+    'SELECT * FROM users WHERE email = $1',
+    [user.email]
+  );
 
-  if (!userRecord) {
+  if (userResult.rows.length === 0) {
     return res.status(404).json({ error: 'User not found' });
   }
+
+  const userRecord = userResult.rows[0];
 
   // GET - Check 2FA status
   if (req.method === 'GET') {
     return res.status(200).json({
       success: true,
-      enabled: userRecord.twoFactorEnabled || false,
-      method: userRecord.twoFactorMethod || null
+      enabled: userRecord.two_factor_enabled || false,
+      method: userRecord.two_factor_method || null
     });
   }
 
@@ -46,9 +72,9 @@ export default async function handler(req, res) {
       const newCode = generateCode();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-      await db.collection('users').updateOne(
-        { email: user.email },
-        { $set: { twoFactorCode: newCode, twoFactorCodeExpires: expiresAt } }
+      await pool.query(
+        'UPDATE users SET two_factor_code = $1, two_factor_code_expires = $2 WHERE email = $3',
+        [newCode, expiresAt, user.email]
       );
 
       await resend.emails.send({
@@ -109,10 +135,10 @@ export default async function handler(req, res) {
       let isValid = false;
 
       if (method === 'email') {
-        if (!userRecord.twoFactorCode || new Date() > new Date(userRecord.twoFactorCodeExpires)) {
+        if (!userRecord.two_factor_code || new Date() > new Date(userRecord.two_factor_code_expires)) {
           return res.status(400).json({ error: 'Code expired. Please request a new one.' });
         }
-        isValid = userRecord.twoFactorCode === code;
+        isValid = userRecord.two_factor_code === code;
       } else if (method === 'totp') {
         if (!secret) {
           return res.status(400).json({ error: 'Secret required for TOTP' });
@@ -124,19 +150,31 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid verification code' });
       }
 
-      const updateData = {
-        twoFactorEnabled: true,
-        twoFactorMethod: method,
-        twoFactorEnabledAt: new Date(),
-        twoFactorCode: null,
-        twoFactorCodeExpires: null
-      };
-
+      // Enable 2FA
       if (method === 'totp') {
-        updateData.twoFactorSecret = secret;
+        await pool.query(
+          `UPDATE users SET 
+            two_factor_enabled = true, 
+            two_factor_method = $1, 
+            two_factor_secret = $2,
+            two_factor_code = NULL,
+            two_factor_code_expires = NULL,
+            two_factor_enabled_at = NOW()
+          WHERE email = $3`,
+          [method, secret, user.email]
+        );
+      } else {
+        await pool.query(
+          `UPDATE users SET 
+            two_factor_enabled = true, 
+            two_factor_method = $1, 
+            two_factor_code = NULL,
+            two_factor_code_expires = NULL,
+            two_factor_enabled_at = NOW()
+          WHERE email = $2`,
+          [method, user.email]
+        );
       }
-
-      await db.collection('users').updateOne({ email: user.email }, { $set: updateData });
 
       return res.status(200).json({ success: true, message: '2FA enabled successfully' });
     }
@@ -145,7 +183,7 @@ export default async function handler(req, res) {
     // ACTION: disable (verify code and disable 2FA)
     // =============================================
     if (action === 'disable') {
-      if (!userRecord.twoFactorEnabled) {
+      if (!userRecord.two_factor_enabled) {
         return res.status(400).json({ error: '2FA is not enabled' });
       }
 
@@ -155,31 +193,29 @@ export default async function handler(req, res) {
 
       let isValid = false;
 
-      if (userRecord.twoFactorMethod === 'email') {
-        if (!userRecord.twoFactorCode || new Date() > new Date(userRecord.twoFactorCodeExpires)) {
+      if (userRecord.two_factor_method === 'email') {
+        if (!userRecord.two_factor_code || new Date() > new Date(userRecord.two_factor_code_expires)) {
           return res.status(400).json({ error: 'Code expired. Please request a new one.' });
         }
-        isValid = userRecord.twoFactorCode === code;
-      } else if (userRecord.twoFactorMethod === 'totp') {
-        isValid = authenticator.verify({ token: code, secret: userRecord.twoFactorSecret });
+        isValid = userRecord.two_factor_code === code;
+      } else if (userRecord.two_factor_method === 'totp') {
+        isValid = authenticator.verify({ token: code, secret: userRecord.two_factor_secret });
       }
 
       if (!isValid) {
         return res.status(400).json({ error: 'Invalid verification code' });
       }
 
-      await db.collection('users').updateOne(
-        { email: user.email },
-        {
-          $set: {
-            twoFactorEnabled: false,
-            twoFactorMethod: null,
-            twoFactorSecret: null,
-            twoFactorCode: null,
-            twoFactorCodeExpires: null,
-            twoFactorDisabledAt: new Date()
-          }
-        }
+      // Disable 2FA
+      await pool.query(
+        `UPDATE users SET 
+          two_factor_enabled = false, 
+          two_factor_method = NULL, 
+          two_factor_secret = NULL,
+          two_factor_code = NULL,
+          two_factor_code_expires = NULL
+        WHERE email = $1`,
+        [user.email]
       );
 
       return res.status(200).json({ success: true, message: '2FA disabled successfully' });
@@ -189,4 +225,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
-}
+};

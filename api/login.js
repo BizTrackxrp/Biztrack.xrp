@@ -1,4 +1,4 @@
-// api/login.js - User login with session tracking
+// api/login.js - User login with session tracking + 2FA
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -110,6 +110,34 @@ module.exports = async (req, res) => {
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
+
+    // ==========================================
+    // 2FA CHECK - NEW CODE
+    // ==========================================
+    if (user.two_factor_enabled) {
+      console.log('[LOGIN] 🔐 2FA enabled for user, requiring verification');
+      
+      // Issue a temporary token (short-lived, only for 2FA verification)
+      const tempToken = jwt.sign(
+        {
+          email: user.email,
+          odne2FA: true  // Flag to indicate this is not a full auth token
+        },
+        JWT_SECRET,
+        { expiresIn: '10m' }  // Only valid for 10 minutes
+      );
+
+      return res.status(200).json({
+        success: true,
+        requires2FA: true,
+        method: user.two_factor_method,  // 'email' or 'totp'
+        tempToken: tempToken,
+        message: '2FA verification required'
+      });
+    }
+    // ==========================================
+    // END 2FA CHECK
+    // ==========================================
 
     // Generate JWT token WITH business_type
     const token = jwt.sign(

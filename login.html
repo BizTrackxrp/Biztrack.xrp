@@ -110,7 +110,6 @@
       box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     }
 
-    /* Password Input Wrapper with Eye Toggle */
     .password-input-wrapper {
       position: relative;
     }
@@ -167,6 +166,20 @@
       cursor: not-allowed;
     }
 
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #E2E8F0;
+      margin-top: 0.75rem;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #F8FAFC;
+      border-color: #4F46E5;
+      transform: none;
+      box-shadow: none;
+    }
+
     .message {
       padding: 1rem;
       border-radius: 12px;
@@ -193,6 +206,12 @@
       border: 1px solid #6EE7B7;
     }
 
+    .message.info {
+      background: #EFF6FF;
+      color: #2563EB;
+      border: 1px solid #BFDBFE;
+    }
+
     .links {
       text-align: center;
       margin-top: 1.5rem;
@@ -207,6 +226,53 @@
 
     .links a:hover {
       text-decoration: underline;
+    }
+
+    /* 2FA Styles */
+    .twofa-section {
+      display: none;
+    }
+
+    .twofa-section.show {
+      display: block;
+    }
+
+    .twofa-icon {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .twofa-icon i {
+      font-size: 3rem;
+      color: #4F46E5;
+    }
+
+    .code-input {
+      text-align: center;
+      font-size: 1.75rem !important;
+      letter-spacing: 0.5rem;
+      font-weight: 700;
+    }
+
+    .resend-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .resend-link button {
+      background: none;
+      border: none;
+      color: #4F46E5;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .resend-link button:disabled {
+      color: #94A3B8;
+      cursor: not-allowed;
+      text-decoration: none;
     }
 
     @media (max-width: 500px) {
@@ -238,46 +304,85 @@
       <h2>🚚 BizTrack</h2>
     </div>
 
-    <h1>Welcome Back</h1>
-    <p class="subtitle">Login to your BizTrack account</p>
+    <!-- LOGIN FORM SECTION -->
+    <div id="loginSection">
+      <h1>Welcome Back</h1>
+      <p class="subtitle">Login to your BizTrack account</p>
 
-    <div id="message" class="message"></div>
+      <div id="message" class="message"></div>
 
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" required autocomplete="email">
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="password-input-wrapper">
-          <input type="password" id="password" required autocomplete="current-password">
-          <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
-            <i class="fas fa-eye"></i>
-          </button>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required autocomplete="email">
         </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="password" required autocomplete="current-password">
+            <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i>
+          Login
+        </button>
+      </form>
+
+      <div class="links">
+        Don't have an account? <a href="register.html">Sign up</a>
+        <br><br>
+        <a href="forgot-password.html">Forgot password?</a>
       </div>
+    </div>
 
-      <button type="submit" class="btn" id="loginBtn">
-        <i class="fas fa-sign-in-alt"></i>
-        Login
-      </button>
-    </form>
+    <!-- 2FA VERIFICATION SECTION -->
+    <div id="twofaSection" class="twofa-section">
+      <div class="twofa-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      
+      <h1>Two-Factor Authentication</h1>
+      <p class="subtitle" id="twofaSubtitle">Enter the 6-digit code from your email</p>
 
-    <div class="links">
-      Don't have an account? <a href="register.html">Sign up</a>
-      <br><br>
-      <a href="forgot-password.html">Forgot password?</a>
+      <div id="twofaMessage" class="message"></div>
+
+      <form id="twofaForm">
+        <div class="form-group">
+          <label for="twofaCode">Verification Code</label>
+          <input type="text" id="twofaCode" class="code-input" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric">
+        </div>
+
+        <button type="submit" class="btn" id="verifyBtn">
+          <i class="fas fa-check"></i>
+          Verify
+        </button>
+
+        <button type="button" class="btn btn-secondary" id="backToLoginBtn">
+          <i class="fas fa-arrow-left"></i>
+          Back to Login
+        </button>
+      </form>
+
+      <div class="resend-link" id="resendSection" style="display: none;">
+        Didn't receive the code? 
+        <button id="resendBtn" onclick="resend2FACode()">Resend Code</button>
+      </div>
     </div>
   </div>
 
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
-    // ==========================================
-    // PASSWORD VISIBILITY TOGGLE
-    // ==========================================
+    // 2FA state
+    let tempToken = null;
+    let twoFAMethod = null;
+    let userEmail = null;
+
     function togglePassword(inputId, button) {
       const input = document.getElementById(inputId);
       const icon = button.querySelector('i');
@@ -296,53 +401,72 @@
     // Check if already logged in
     const existingToken = localStorage.getItem('biztrack-auth-token');
     if (existingToken) {
-      // Verify token is still valid
       fetch(`${API_BASE}/api/verify-session`, {
-        headers: {
-          'Authorization': `Bearer ${existingToken}`
-        }
+        headers: { 'Authorization': `Bearer ${existingToken}` }
       })
       .then(res => res.json())
       .then(data => {
         if (data.valid) {
-          // Token is valid, redirect to correct dashboard
           const businessType = localStorage.getItem('biztrack-business-type') || 'general';
-          const dashboardUrl = businessType === 'pharma' ? '/pharma-dashboard.html' : '/dashboard.html';
-          window.location.href = dashboardUrl;
+          window.location.href = businessType === 'pharma' ? '/pharma-dashboard.html' : '/dashboard.html';
         } else {
-          // Token invalid, clear it
           localStorage.removeItem('biztrack-auth-token');
         }
       })
-      .catch(() => {
-        // Error checking, clear token
-        localStorage.removeItem('biztrack-auth-token');
-      });
+      .catch(() => localStorage.removeItem('biztrack-auth-token'));
     }
 
-    function showMessage(text, type = 'error') {
-      const messageEl = document.getElementById('message');
+    function showMessage(text, type = 'error', elementId = 'message') {
+      const messageEl = document.getElementById(elementId);
       messageEl.className = `message ${type} show`;
-      messageEl.innerHTML = `
-        <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
-        ${text}
-      `;
+      messageEl.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${text}`;
     }
 
-    function hideMessage() {
-      const messageEl = document.getElementById('message');
-      messageEl.classList.remove('show');
+    function hideMessage(elementId = 'message') {
+      document.getElementById(elementId).classList.remove('show');
     }
 
+    // Show 2FA section
+    function show2FASection(method) {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('twofaSection').classList.add('show');
+      
+      if (method === 'email') {
+        document.getElementById('twofaSubtitle').textContent = 'Enter the 6-digit code sent to your email';
+        document.getElementById('resendSection').style.display = 'block';
+      } else {
+        document.getElementById('twofaSubtitle').textContent = 'Enter the 6-digit code from your authenticator app';
+        document.getElementById('resendSection').style.display = 'none';
+      }
+      
+      document.getElementById('twofaCode').focus();
+    }
+
+    // Back to login
+    document.getElementById('backToLoginBtn').addEventListener('click', () => {
+      document.getElementById('twofaSection').classList.remove('show');
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('twofaCode').value = '';
+      hideMessage('twofaMessage');
+      tempToken = null;
+      twoFAMethod = null;
+      
+      // Re-enable login button
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+    });
+
+    // Login form
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessage();
 
-      const email = document.getElementById('email').value.trim();
+      userEmail = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const loginBtn = document.getElementById('loginBtn');
 
-      if (!email || !password) {
+      if (!userEmail || !password) {
         showMessage('Please fill in all fields', 'error');
         return;
       }
@@ -351,60 +475,62 @@
       loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
       try {
-        console.log('Attempting login for:', email);
+        console.log('Attempting login for:', userEmail);
 
         const response = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, password })
         });
 
         const data = await response.json();
         console.log('Login response:', response.status, data);
 
+        // ==========================================
+        // 2FA REQUIRED
+        // ==========================================
+        if (response.ok && data.requires2FA) {
+          console.log('🔐 2FA required, method:', data.method);
+          tempToken = data.tempToken;
+          twoFAMethod = data.method;
+          
+          // Show 2FA section
+          show2FASection(data.method);
+          
+          // Auto-send email code if email method
+          if (data.method === 'email') {
+            await send2FACode();
+          }
+          return;
+        }
+
+        // ==========================================
+        // NORMAL LOGIN SUCCESS
+        // ==========================================
         if (response.ok && data.success && data.token) {
-          // Success
           showMessage('Login successful! Redirecting...', 'success');
           
-          // ✅ SAVE ALL USER DATA INCLUDING BUSINESSTYPE
           localStorage.setItem('biztrack-auth-token', data.token);
-          localStorage.setItem('biztrack-user-email', email);
+          localStorage.setItem('biztrack-user-email', userEmail);
           localStorage.setItem('biztrack-business-type', data.user.businessType);
           localStorage.setItem('biztrack-company-name', data.user.companyName || '');
           
-          console.log('✅ Token and user data saved, redirecting to dashboard');
-          console.log('Business Type:', data.user.businessType);
+          console.log('✅ Login successful, redirecting');
 
-          // Redirect to correct dashboard based on business type
           const dashboardUrl = data.user.businessType === 'pharma' 
             ? '/pharma-dashboard.html' 
             : '/dashboard.html';
           
-          console.log('Redirecting to:', dashboardUrl);
-          
-          setTimeout(() => {
-            window.location.href = dashboardUrl;
-          }, 1000);
+          setTimeout(() => window.location.href = dashboardUrl, 1000);
 
         } else {
-          // Failed - show specific error message
+          // Login failed
           let errorMsg = 'Login failed';
-          
-          if (response.status === 401) {
-            errorMsg = 'Incorrect email or password';
-          } else if (response.status === 404) {
-            errorMsg = 'Account not found. Please sign up first.';
-          } else if (data.error) {
-            errorMsg = data.error;
-          } else if (data.details) {
-            errorMsg = data.details;
-          }
+          if (response.status === 401) errorMsg = 'Incorrect email or password';
+          else if (response.status === 404) errorMsg = 'Account not found. Please sign up first.';
+          else if (data.error) errorMsg = data.error;
 
           showMessage(errorMsg, 'error');
-          console.error('Login failed:', errorMsg);
-
           loginBtn.disabled = false;
           loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
         }
@@ -412,9 +538,114 @@
       } catch (error) {
         console.error('Login error:', error);
         showMessage('Connection error. Please try again.', 'error');
-        
         loginBtn.disabled = false;
         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+      }
+    });
+
+    // Send 2FA code (for email method)
+    async function send2FACode() {
+      try {
+        const response = await fetch(`${API_BASE}/api/2fa-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            action: 'send-code', 
+            email: userEmail, 
+            tempToken: tempToken 
+          })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          showMessage('Verification code sent to your email!', 'info', 'twofaMessage');
+        }
+      } catch (error) {
+        console.error('Error sending 2FA code:', error);
+      }
+    }
+
+    // Resend 2FA code
+    async function resend2FACode() {
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+      resendBtn.textContent = 'Sending...';
+      
+      await send2FACode();
+      
+      resendBtn.textContent = 'Code Sent!';
+      setTimeout(() => {
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Resend Code';
+      }, 30000); // 30 second cooldown
+    }
+
+    // 2FA verification form
+    document.getElementById('twofaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessage('twofaMessage');
+
+      const code = document.getElementById('twofaCode').value.trim();
+      const verifyBtn = document.getElementById('verifyBtn');
+
+      if (code.length !== 6) {
+        showMessage('Please enter a 6-digit code', 'error', 'twofaMessage');
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/2fa-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            action: 'verify', 
+            email: userEmail, 
+            tempToken: tempToken,
+            code: code 
+          })
+        });
+
+        const data = await response.json();
+        console.log('2FA verify response:', data);
+
+        if (response.ok && data.success && data.token) {
+          showMessage('Verified! Redirecting...', 'success', 'twofaMessage');
+          
+          localStorage.setItem('biztrack-auth-token', data.token);
+          localStorage.setItem('biztrack-user-email', userEmail);
+          localStorage.setItem('biztrack-business-type', data.user.businessType);
+          localStorage.setItem('biztrack-company-name', data.user.companyName || '');
+          
+          console.log('✅ 2FA verified, redirecting');
+
+          const dashboardUrl = data.user.businessType === 'pharma' 
+            ? '/pharma-dashboard.html' 
+            : '/dashboard.html';
+          
+          setTimeout(() => window.location.href = dashboardUrl, 1000);
+
+        } else {
+          showMessage(data.error || 'Invalid code. Please try again.', 'error', 'twofaMessage');
+          verifyBtn.disabled = false;
+          verifyBtn.innerHTML = '<i class="fas fa-check"></i> Verify';
+        }
+
+      } catch (error) {
+        console.error('2FA verify error:', error);
+        showMessage('Connection error. Please try again.', 'error', 'twofaMessage');
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fas fa-check"></i> Verify';
+      }
+    });
+
+    // Auto-submit when 6 digits entered
+    document.getElementById('twofaCode').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, ''); // Numbers only
+      if (e.target.value.length === 6) {
+        document.getElementById('twofaForm').dispatchEvent(new Event('submit'));
       }
     });
   </script>

@@ -1,6 +1,6 @@
 // api/2fa-login.js
 // Consolidated 2FA login endpoint - handles sending code and verifying during login
-// Uses PostgreSQL
+// Uses PostgreSQL + Rate Limiting (5 attempts max) + AES-256 encryption for TOTP
 
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
@@ -15,6 +15,32 @@ const pool = new Pool({
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+const TOTP_ENCRYPTION_KEY = process.env.TOTP_ENCRYPTION_KEY || 'default-32-char-key-change-this!';
+
+const MAX_2FA_ATTEMPTS = 5;
+
+// ==========================================
+// ENCRYPTION HELPERS (AES-256-GCM)
+// ==========================================
+function decryptSecret(encryptedData) {
+  try {
+    const [ivHex, authTagHex, encrypted] = encryptedData.split(':');
+    const iv = Buffer.from(ivHex, 'hex');
+    const authTag = Buffer.from(authTagHex, 'hex');
+    const key = Buffer.from(TOTP_ENCRYPTION_KEY.padEnd(32).slice(0, 32));
+    
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(authTag);
+    
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    
+    return decrypted;
+  } catch (err) {
+    console.error('[2FA] Failed to decrypt secret:', err.message);
+    return null;
+  }
+}
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -52,6 +78,28 @@ module.exports = async (req, res) => {
 
   if (!userRecord.two_factor_enabled) {
     return res.status(400).json({ error: '2FA is not enabled for this account' });
+  }
+
+  // =============================================
+  // CHECK IF LOCKED OUT
+  // =============================================
+  const currentAttempts = userRecord.two_factor_attempts || 0;
+  const lockedUntil = userRecord.two_factor_locked_until;
+  
+  if (lockedUntil && new Date() < new Date(lockedUntil)) {
+    console.log('[2FA-LOGIN] 🔒 Account locked for:', email);
+    return res.status(429).json({ 
+      error: 'Account temporarily locked. Please contact info@biztrack.io',
+      locked: true
+    });
+  }
+
+  // If lock has expired, reset attempts
+  if (lockedUntil && new Date() >= new Date(lockedUntil)) {
+    await pool.query(
+      'UPDATE users SET two_factor_attempts = 0, two_factor_locked_until = NULL WHERE email = $1',
+      [email]
+    );
   }
 
   // =============================================
@@ -112,24 +160,59 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Code expired. Please request a new one.' });
       }
       isValid = userRecord.two_factor_code === code;
-
-      // Clear used code
-      if (isValid) {
-        await pool.query(
-          'UPDATE users SET two_factor_code = NULL, two_factor_code_expires = NULL WHERE email = $1',
-          [email]
-        );
-      }
     } else if (userRecord.two_factor_method === 'totp') {
       if (!userRecord.two_factor_secret) {
         return res.status(400).json({ error: 'TOTP not configured properly' });
       }
-      isValid = authenticator.verify({ token: code, secret: userRecord.two_factor_secret });
+      // Decrypt the secret before verifying
+      const decryptedSecret = decryptSecret(userRecord.two_factor_secret);
+      if (!decryptedSecret) {
+        return res.status(500).json({ error: 'Failed to verify. Please contact support.' });
+      }
+      isValid = authenticator.verify({ token: code, secret: decryptedSecret });
     }
 
+    // =============================================
+    // HANDLE INVALID CODE - INCREMENT ATTEMPTS
+    // =============================================
     if (!isValid) {
-      return res.status(400).json({ error: 'Invalid verification code' });
+      const newAttempts = currentAttempts + 1;
+      console.log(`[2FA-LOGIN] ❌ Invalid code attempt ${newAttempts}/${MAX_2FA_ATTEMPTS} for:`, email);
+
+      if (newAttempts >= MAX_2FA_ATTEMPTS) {
+        // Lock account for 30 minutes
+        const lockUntil = new Date(Date.now() + 30 * 60 * 1000);
+        await pool.query(
+          'UPDATE users SET two_factor_attempts = $1, two_factor_locked_until = $2 WHERE email = $3',
+          [newAttempts, lockUntil, email]
+        );
+        console.log('[2FA-LOGIN] 🔒 Account locked for:', email);
+        return res.status(429).json({ 
+          error: 'Too many failed attempts. Account locked.',
+          locked: true
+        });
+      } else {
+        await pool.query(
+          'UPDATE users SET two_factor_attempts = $1 WHERE email = $2',
+          [newAttempts, email]
+        );
+        const remaining = MAX_2FA_ATTEMPTS - newAttempts;
+        return res.status(400).json({ 
+          error: `Invalid code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`
+        });
+      }
     }
+
+    // =============================================
+    // VALID CODE - RESET ATTEMPTS & COMPLETE LOGIN
+    // =============================================
+    console.log('[2FA-LOGIN] ✅ Valid code for:', email);
+
+    // Clear attempts and code
+    await pool.query(
+      'UPDATE users SET two_factor_attempts = 0, two_factor_locked_until = NULL, two_factor_code = NULL, two_factor_code_expires = NULL WHERE email = $1',
+      [email]
+    );
 
     // Issue full auth token
     const token = jwt.sign(

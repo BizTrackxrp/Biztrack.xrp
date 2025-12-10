@@ -45,50 +45,46 @@
     }
     .card h3 i { color: #4F46E5; }
 
-    /* Industry Selector */
-    .industry-selector-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.25rem;
-    }
-    .industry-selector-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #64748B;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding-left: 0.25rem;
-    }
+    /* Industry Selector - matches QR badge size */
     .industry-selector {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       background: #F8FAFC;
       border: 2px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
       font-size: 0.875rem;
       position: relative;
       transition: all 0.2s;
+      min-height: 56px;
     }
     .industry-selector:hover {
       border-color: #CBD5E1;
       background: white;
     }
-    .industry-selector i.icon {
+    .industry-selector-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .industry-selector-title {
+      font-size: 0.7rem;
+      font-weight: 600;
       color: #64748B;
-      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
     .industry-selector select {
       border: none;
       background: transparent;
       font-family: 'Inter', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 600;
       color: #334155;
       cursor: pointer;
-      padding-right: 0.5rem;
+      padding: 0;
+      margin: 0;
+      margin-left: -3px;
       outline: none;
     }
     .industry-selector select:focus {
@@ -98,8 +94,8 @@
       background: #ECFDF5;
       border-color: #10B981;
     }
-    .industry-selector.food i.icon {
-      color: #10B981;
+    .industry-selector.food .industry-selector-title {
+      color: #059669;
     }
     .industry-selector.food select {
       color: #065F46;
@@ -109,29 +105,27 @@
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #64748B;
       cursor: pointer;
       padding: 0.25rem 0.5rem;
       border-radius: 6px;
       transition: all 0.2s;
-      margin-left: 0.25rem;
-      border-left: 1px solid #E2E8F0;
+      margin-left: auto;
+      background: rgba(0,0,0,0.05);
     }
     .save-preference:hover {
-      background: #F1F5F9;
+      background: rgba(0,0,0,0.08);
       color: #334155;
     }
     .save-preference input {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       cursor: pointer;
     }
     .save-preference.saved {
       color: #10B981;
-    }
-    .save-preference.saved i {
-      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
     }
 
     /* Toggle Containers */
@@ -481,8 +475,7 @@
       .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
       .quick-links-stacked { flex-direction: row; width: 100%; }
       .toggle-container { flex-wrap: wrap; gap: 0.75rem; }
-      .industry-selector-wrapper { width: 100%; }
-      .industry-selector { width: 100%; justify-content: center; }
+      .industry-selector { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
@@ -498,19 +491,18 @@
       </div>
       <div class="header-right">
         <!-- Industry Selector -->
-        <div class="industry-selector-wrapper">
-          <span class="industry-selector-label">Industry</span>
-          <div class="industry-selector" id="industrySelector">
-            <i class="fas fa-industry icon" id="industrySelectorIcon"></i>
+        <div class="industry-selector" id="industrySelector">
+          <div class="industry-selector-content">
+            <span class="industry-selector-title">Industry</span>
             <select id="industrySelect" onchange="handleIndustryChange()">
               <option value="general">General</option>
               <option value="food">Food / Farm to Table</option>
             </select>
-            <label class="save-preference" id="savePreferenceLabel">
-              <input type="checkbox" id="savePreferenceCheckbox" onchange="handleSavePreference()" />
-              <span id="savePreferenceText">Save</span>
-            </label>
           </div>
+          <label class="save-preference" id="savePreferenceLabel">
+            <input type="checkbox" id="savePreferenceCheckbox" onchange="handleSavePreference()" />
+            <span id="savePreferenceText">Save</span>
+          </label>
         </div>
         
         <div class="qr-badge">
@@ -913,15 +905,12 @@
     function applyIndustryContent() {
       const content = industryContent[currentIndustry];
       const selector = document.getElementById('industrySelector');
-      const icon = document.getElementById('industrySelectorIcon');
       
       // Update selector styling
       if (currentIndustry === 'food') {
         selector.classList.add('food');
-        icon.className = 'fas fa-seedling icon';
       } else {
         selector.classList.remove('food');
-        icon.className = 'fas fa-industry icon';
       }
       
       // Update header

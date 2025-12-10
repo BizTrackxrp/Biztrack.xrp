@@ -45,6 +45,76 @@
     }
     .card h3 i { color: #4F46E5; }
 
+    /* Industry Selector */
+    .industry-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      position: relative;
+    }
+    .industry-selector i.icon {
+      color: #64748B;
+      font-size: 0.875rem;
+    }
+    .industry-selector select {
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #334155;
+      cursor: pointer;
+      padding-right: 0.5rem;
+      outline: none;
+    }
+    .industry-selector select:focus {
+      outline: none;
+    }
+    .industry-selector.food {
+      background: #ECFDF5;
+      border-color: #10B981;
+    }
+    .industry-selector.food i.icon {
+      color: #10B981;
+    }
+    .industry-selector.food select {
+      color: #065F46;
+    }
+    
+    .save-preference {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: #64748B;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      margin-left: 0.25rem;
+      border-left: 1px solid #E2E8F0;
+    }
+    .save-preference:hover {
+      background: #F1F5F9;
+      color: #334155;
+    }
+    .save-preference input {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+    .save-preference.saved {
+      color: #10B981;
+    }
+    .save-preference.saved i {
+      color: #10B981;
+    }
+
     /* Toggle Containers */
     .toggle-container {
       display: flex;
@@ -342,7 +412,7 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1rem;
     }
     .qr-badge {
       display: flex;
@@ -388,9 +458,10 @@
     @media (max-width: 768px) {
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .header-bar { flex-direction: column; align-items: flex-start; }
-      .header-right { width: 100%; justify-content: space-between; }
+      .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
       .quick-links { width: 100%; }
       .toggle-container { flex-wrap: wrap; gap: 0.75rem; }
+      .industry-selector { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -402,9 +473,22 @@
     <div class="header-bar">
       <div class="header-left">
         <h1>Create Products</h1>
-        <p>Mint products, documents, certificates, or any data to the blockchain for permanent verification.</p>
+        <p id="headerSubtitle">Mint products, documents, certificates, or any data to the blockchain for permanent verification.</p>
       </div>
       <div class="header-right">
+        <!-- Industry Selector -->
+        <div class="industry-selector" id="industrySelector">
+          <i class="fas fa-industry icon" id="industrySelectorIcon"></i>
+          <select id="industrySelect" onchange="handleIndustryChange()">
+            <option value="general">General</option>
+            <option value="food">Food / Farm to Table</option>
+          </select>
+          <label class="save-preference" id="savePreferenceLabel">
+            <input type="checkbox" id="savePreferenceCheckbox" onchange="handleSavePreference()" />
+            <span id="savePreferenceText">Save</span>
+          </label>
+        </div>
+        
         <div class="quick-links">
           <a href="products.html" class="quick-link">
             <i class="fas fa-box-check"></i>
@@ -428,7 +512,7 @@
     </div>
 
     <div class="card">
-      <h3><i class="fas fa-plus-circle"></i> New Product</h3>
+      <h3><i class="fas fa-plus-circle"></i> <span id="cardTitle">New Product</span></h3>
       
       <!-- Batch Toggle -->
       <div class="toggle-container" id="batchToggleContainer">
@@ -439,7 +523,7 @@
         </div>
         <div class="info-tooltip" id="batchTooltip">
           <strong>What is Batch Upload?</strong><br><br>
-          Have multiple items to mint at once? Enable batch mode to either enter a quantity (for identical items) or upload an Excel file (for different products with unique SKUs).
+          <span id="batchTooltipContent">Have multiple items to mint at once? Enable batch mode to either enter a quantity (for identical items) or upload an Excel file (for different products with unique SKUs).</span>
         </div>
         <div class="toggle-switch" id="batchToggle" onclick="toggleBatchMode()">
           <div class="toggle-switch-slider"></div>
@@ -454,34 +538,34 @@
           <span class="info-icon" onclick="toggleTooltip(event, 'productionTooltip')"><i class="fas fa-info"></i></span>
         </div>
         <div class="info-tooltip" id="productionTooltip">
-          <strong>What is Production Mode?</strong><br><br>
-          Does your product have multiple steps before reaching a consumer? Production Mode lets you track each checkpoint in your supply chain—manufacturing, quality checks, shipping, distribution—before going live.<br><br>
-          Each stop scans the same QR code to log their part of the journey. When ready, hit "Go Live" and customers see the full verified timeline.
+          <strong id="productionTooltipTitle">What is Production Mode?</strong><br><br>
+          <span id="productionTooltipContent">Does your product have multiple steps before reaching a consumer? Production Mode lets you track each checkpoint in your supply chain—manufacturing, quality checks, shipping, distribution—before going live.<br><br>
+          Each stop scans the same QR code to log their part of the journey. When ready, hit "Go Live" and customers see the full verified timeline.</span>
         </div>
         <div class="toggle-switch production" id="productionToggle" onclick="toggleProductionMode()">
           <div class="toggle-switch-slider"></div>
         </div>
       </div>
 
-      <!-- Single Item Helper Text - NEW -->
-      <p class="single-item-helper">
+      <!-- Single Item Helper Text -->
+      <p class="single-item-helper" id="singleItemHelper">
         <i class="fas fa-lightbulb"></i>
-        <strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. 
-        It doesn't have to be a product—mint anything: documents, certificates, artwork, event tickets, or any data point you want permanently verified.
+        <span id="singleItemHelperText"><strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. 
+        It doesn't have to be a product—mint anything: documents, certificates, artwork, event tickets, or any data point you want permanently verified.</span>
       </p>
 
       <!-- Batch Section (quantity input + Excel option below) -->
       <div class="expandable-section batch" id="batchSection">
-        <h4><i class="fas fa-boxes"></i> Batch Settings</h4>
+        <h4><i class="fas fa-boxes"></i> <span id="batchSectionTitle">Batch Settings</span></h4>
         
         <!-- Quantity Input -->
         <div class="form-group">
           <label for="batchQuantity">
-            How many identical items? 
+            <span id="batchQuantityLabel">How many identical items?</span>
             <span id="remainingQRs" style="color: #059669; font-size: 0.875rem;"></span>
           </label>
           <input id="batchQuantity" type="number" min="1" max="1000" value="5" placeholder="Enter quantity..." />
-          <p style="font-size: 0.8rem; color: #92400E; margin-top: 0.5rem;">
+          <p style="font-size: 0.8rem; color: #92400E; margin-top: 0.5rem;" id="batchSkuHelp">
             SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...)
           </p>
         </div>
@@ -489,13 +573,13 @@
         <!-- OR divider -->
         <div style="display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0;">
           <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
-          <span style="color: #92400E; font-weight: 600; font-size: 0.85rem;">OR upload an Excel for a batch with individual items</span>
+          <span style="color: #92400E; font-weight: 600; font-size: 0.85rem;" id="batchOrDivider">OR upload an Excel for a batch with individual items</span>
           <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
         </div>
 
-        <!-- Excel Upload - UPDATED INSTRUCTIONS -->
+        <!-- Excel Upload -->
         <div id="batchExcelInput">
-          <p class="excel-instructions">
+          <p class="excel-instructions" id="excelInstructions">
             <strong>Do not include headers.</strong> Each row becomes a product entry.<br>
             Enter data in columns as follows:<br>
             <code>A: Product Name</code> <code>B: SKU</code> <code>C: Batch #</code> <code>D: Notes</code>
@@ -514,7 +598,7 @@
               <strong><i class="fas fa-table"></i> <span id="excelFileName">file.xlsx</span></strong>
               <div style="display: flex; align-items: center; gap: 1rem;">
                 <span style="background: #10B981; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">
-                  <span id="excelRowCount">0</span> products
+                  <span id="excelRowCount">0</span> <span id="excelRowLabel">products</span>
                 </span>
                 <button class="excel-preview-clear" onclick="clearExcelUpload()"><i class="fas fa-times"></i> Clear</button>
               </div>
@@ -522,7 +606,7 @@
             <div style="max-height: 200px; overflow-y: auto;">
               <table class="excel-preview-table">
                 <thead>
-                  <tr>
+                  <tr id="excelPreviewHeader">
                     <th>Product Name</th>
                     <th>SKU</th>
                     <th>Batch #</th>
@@ -538,15 +622,15 @@
 
       <!-- Production Mode Section -->
       <div class="expandable-section production" id="productionSection">
-        <h4><i class="fas fa-info-circle"></i> Production Mode Enabled</h4>
-        <p>Products will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing for customer verification. No QR codes charged until you "Go Live".</p>
+        <h4><i class="fas fa-info-circle"></i> <span id="productionSectionTitle">Production Mode Enabled</span></h4>
+        <p id="productionSectionDesc">Products will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing for customer verification. No QR codes charged until you "Go Live".</p>
       </div>
 
-      <!-- Manual Entry Form (hidden when Excel mode is on) -->
+      <!-- Manual Entry Form -->
       <div id="manualEntryForm">
         <div class="form-group">
           <label for="dashProdName" id="prodNameLabel">Name *</label>
-          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey, Certificate #1042, Event Ticket" />
+          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey, Certificate #1042, Event Ticket" id="prodNameInput" />
         </div>
         
         <div class="form-group" id="skuGroup">
@@ -556,10 +640,10 @@
           </label>
           <div class="info-tooltip" id="skuTooltip">
             <strong>What is a SKU?</strong><br><br>
-            SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>
+            <span id="skuTooltipContent">SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>
             • <code>STRAW-LEM-001</code><br>
             • <code>HONEY-RAW-16OZ</code><br><br>
-            <strong>Leave blank</strong> and we'll auto-generate one for you!
+            <strong>Leave blank</strong> and we'll auto-generate one for you!</span>
           </div>
           <input id="dashSku" type="text" placeholder="e.g. MANGO-001 or leave blank to auto-generate" />
           <p id="skuSingleHelp" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
@@ -568,7 +652,7 @@
           <div id="skuBatchOptions" style="display: none; margin-top: 0.5rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; color: #475569; cursor: pointer;">
               <input type="checkbox" id="sameSku" style="width: 16px; height: 16px; cursor: pointer;" />
-              Give all items the same SKU
+              <span id="sameSkuLabel">Give all items the same SKU</span>
             </label>
             <p id="skuHelpText" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
               If unchecked, we'll add -001, -002, etc. to make each item unique
@@ -577,30 +661,30 @@
         </div>
         
         <div class="form-group">
-          <label for="dashBatch">
+          <label for="dashBatch" id="batchNumberLabel">
             Batch Number <span style="color: #64748B; font-weight: 400;">(optional)</span>
             <span class="info-icon" onclick="toggleTooltip(event, 'batchTooltip2')"><i class="fas fa-info"></i></span>
           </label>
           <div class="info-tooltip" id="batchTooltip2">
-            <strong>What is a Batch Number?</strong><br><br>
-            Use this to group products made together. Examples:<br>
+            <strong id="batchTooltip2Title">What is a Batch Number?</strong><br><br>
+            <span id="batchTooltip2Content">Use this to group products made together. Examples:<br>
             • Date made: <code>120524</code><br>
             • Batch ID: <code>BATCH-042</code><br>
             • Or just: <code>1</code><br><br>
-            <strong>Skip it</strong> if you make products fresh/individually!
+            <strong>Skip it</strong> if you make products fresh/individually!</span>
           </div>
           <input id="dashBatch" type="text" placeholder="e.g. 120524, BATCH-001, or skip" />
         </div>
         
         <div class="form-group">
-          <label for="dashMetadata">
+          <label for="dashMetadata" id="metadataLabel">
             Additional Info <span style="color: #64748B; font-weight: 400;">(optional)</span>
           </label>
           <textarea id="dashMetadata" placeholder="e.g. Made with real fruit, Fresh squeezed daily, Local pickup available, Ingredients: lemon, sugar, water" rows="3"></textarea>
         </div>
 
         <div class="form-group">
-          <label>Photos (optional)</label>
+          <label id="photosLabel">Photos (optional)</label>
           <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
           <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -616,7 +700,7 @@
           </div>
           <div id="photoPreview" style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;"></div>
           <p id="locationDisplay" style="margin-top: 0.75rem; color: #10B981; font-size: 0.875rem; display: none;">
-            <i class="fas fa-check-circle"></i> Location captured!
+            <i class="fas fa-check-circle"></i> <span id="locationDisplayText">Location captured!</span>
           </p>
         </div>
       </div>
@@ -642,6 +726,234 @@
     let qrLimit = 10;
     let currentTier = 'free';
     let excelData = [];
+    let currentIndustry = 'general';
+    let savedIndustryPreference = null;
+
+    // ==========================================
+    // INDUSTRY-SPECIFIC CONTENT
+    // ==========================================
+    const industryContent = {
+      general: {
+        headerSubtitle: 'Mint products, documents, certificates, or any data to the blockchain for permanent verification.',
+        cardTitle: 'New Product',
+        prodNameLabel: 'Name *',
+        prodNameLabelBatch: 'Batch Name *',
+        prodNamePlaceholder: 'e.g. Organic Honey, Certificate #1042, Event Ticket',
+        prodNamePlaceholderBatch: 'e.g. Summer 2025 Collection',
+        skuPlaceholder: 'e.g. MANGO-001 or leave blank to auto-generate',
+        skuTooltipContent: 'SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>• <code>STRAW-LEM-001</code><br>• <code>HONEY-RAW-16OZ</code><br><br><strong>Leave blank</strong> and we\'ll auto-generate one for you!',
+        batchNumberLabel: 'Batch Number',
+        batchNumberPlaceholder: 'e.g. 120524, BATCH-001, or skip',
+        batchTooltip2Title: 'What is a Batch Number?',
+        batchTooltip2Content: 'Use this to group products made together. Examples:<br>• Date made: <code>120524</code><br>• Batch ID: <code>BATCH-042</code><br>• Or just: <code>1</code><br><br><strong>Skip it</strong> if you make products fresh/individually!',
+        metadataLabel: 'Additional Info',
+        metadataPlaceholder: 'e.g. Made with real fruit, Fresh squeezed daily, Local pickup available, Ingredients: lemon, sugar, water',
+        singleItemHelperText: '<strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. It doesn\'t have to be a product—mint anything: documents, certificates, artwork, event tickets, or any data point you want permanently verified.',
+        batchTooltipContent: 'Have multiple items to mint at once? Enable batch mode to either enter a quantity (for identical items) or upload an Excel file (for different products with unique SKUs).',
+        batchQuantityLabel: 'How many identical items?',
+        batchSkuHelp: 'SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...)',
+        productionTooltipTitle: 'What is Production Mode?',
+        productionTooltipContent: 'Does your product have multiple steps before reaching a consumer? Production Mode lets you track each checkpoint in your supply chain—manufacturing, quality checks, shipping, distribution—before going live.<br><br>Each stop scans the same QR code to log their part of the journey. When ready, hit "Go Live" and customers see the full verified timeline.',
+        productionSectionDesc: 'Products will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing for customer verification. No QR codes charged until you "Go Live".',
+        excelInstructions: '<strong>Do not include headers.</strong> Each row becomes a product entry.<br>Enter data in columns as follows:<br><code>A: Product Name</code> <code>B: SKU</code> <code>C: Batch #</code> <code>D: Notes</code>',
+        excelPreviewHeaders: ['Product Name', 'SKU', 'Batch #', 'Notes'],
+        excelRowLabel: 'products',
+        photosLabel: 'Photos (optional)',
+        locationDisplayText: 'Location captured!',
+        selectorIcon: 'fa-industry'
+      },
+      food: {
+        headerSubtitle: 'Track food products from farm to table with blockchain-verified supply chain transparency.',
+        cardTitle: 'New Product / Harvest',
+        prodNameLabel: 'Product / Harvest Name *',
+        prodNameLabelBatch: 'Harvest Batch Name *',
+        prodNamePlaceholder: 'e.g. Organic Strawberries, Free-Range Eggs, Atlantic Salmon',
+        prodNamePlaceholderBatch: 'e.g. June 2025 Strawberry Harvest',
+        skuPlaceholder: 'e.g. STRW-ORG-001 or leave blank to auto-generate',
+        skuTooltipContent: 'SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>• <code>STRW-ORG-001</code> (Organic Strawberries)<br>• <code>EGG-FR-DOZ</code> (Free-Range Eggs, Dozen)<br><br><strong>Leave blank</strong> and we\'ll auto-generate one for you!',
+        batchNumberLabel: 'Lot / Batch Number',
+        batchNumberPlaceholder: 'e.g. LOT-2025-06-15, HARVEST-042',
+        batchTooltip2Title: 'What is a Lot/Batch Number?',
+        batchTooltip2Content: 'Use this to group products harvested or processed together. Examples:<br>• Harvest date: <code>LOT-2025-06-15</code><br>• Processing batch: <code>PROC-042</code><br>• Farm + date: <code>SMITH-0615</code><br><br>Critical for traceability and recalls!',
+        metadataLabel: 'Product Details',
+        metadataPlaceholder: 'e.g. Certified Organic, Non-GMO, Farm: Smith Family Farms, Harvest temp: 45°F, Certifications: USDA Organic',
+        singleItemHelperText: '<strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. Track a single harvest, shipment, or product with full farm-to-table transparency.',
+        batchTooltipContent: 'Have a full harvest or shipment to track? Enable batch mode to either enter a quantity (for identical items from same harvest) or upload an Excel file (for different products with unique lot numbers).',
+        batchQuantityLabel: 'How many identical items from this harvest?',
+        batchSkuHelp: 'SKUs will be auto-generated (e.g., STRWB-001, STRWB-002, ...)',
+        productionTooltipTitle: 'What is Supply Chain Tracking?',
+        productionTooltipContent: 'Track your product\'s journey from farm to table! Log each checkpoint:<br><br>🌱 <strong>Harvest</strong> — Date, farm, conditions<br>🏭 <strong>Processing</strong> — Facility, handling, temp<br>❄️ <strong>Cold Storage</strong> — Temperature logs<br>🚚 <strong>Distribution</strong> — Transport, delivery<br>🏪 <strong>Retail</strong> — Final destination<br><br>When ready, hit "Go Live" and consumers see the full verified journey.',
+        productionSectionDesc: 'Products will start in <strong>supply chain tracking mode</strong>. Log checkpoints (harvest, processing, cold storage, distribution) before finalizing. Consumers will see the complete farm-to-table journey. No QR codes charged until you "Go Live".',
+        excelInstructions: '<strong>Do not include headers.</strong> Each row becomes a product entry.<br>Enter data in columns as follows:<br><code>A: Product Name</code> <code>B: SKU/Lot #</code> <code>C: Harvest Date</code> <code>D: Notes/Origin</code>',
+        excelPreviewHeaders: ['Product Name', 'SKU/Lot #', 'Harvest Date', 'Notes/Origin'],
+        excelRowLabel: 'items',
+        photosLabel: 'Photos (optional) — harvest, facility, certifications',
+        locationDisplayText: 'Farm/facility location captured!',
+        selectorIcon: 'fa-seedling'
+      }
+    };
+
+    // ==========================================
+    // INDUSTRY PREFERENCE HANDLING
+    // ==========================================
+    async function loadIndustryPreference() {
+      try {
+        const response = await authenticatedFetch('/api/industry-preference');
+        const data = await response.json();
+        
+        if (data.success && data.industryPreference) {
+          savedIndustryPreference = data.industryPreference;
+          currentIndustry = data.industryPreference;
+          document.getElementById('industrySelect').value = currentIndustry;
+          document.getElementById('savePreferenceCheckbox').checked = true;
+          updateSavePreferenceUI(true);
+          applyIndustryContent();
+        }
+      } catch (error) {
+        console.error('Failed to load industry preference:', error);
+      }
+    }
+
+    function handleIndustryChange() {
+      const newIndustry = document.getElementById('industrySelect').value;
+      currentIndustry = newIndustry;
+      
+      // If they change away from saved preference, uncheck the save box
+      if (savedIndustryPreference && newIndustry !== savedIndustryPreference) {
+        document.getElementById('savePreferenceCheckbox').checked = false;
+        updateSavePreferenceUI(false);
+      } else if (savedIndustryPreference && newIndustry === savedIndustryPreference) {
+        document.getElementById('savePreferenceCheckbox').checked = true;
+        updateSavePreferenceUI(true);
+      }
+      
+      applyIndustryContent();
+    }
+
+    async function handleSavePreference() {
+      const checkbox = document.getElementById('savePreferenceCheckbox');
+      const isChecked = checkbox.checked;
+      
+      if (isChecked) {
+        // Save the current selection as preference
+        try {
+          const response = await authenticatedFetch('/api/industry-preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ industryPreference: currentIndustry })
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            savedIndustryPreference = currentIndustry;
+            updateSavePreferenceUI(true);
+          }
+        } catch (error) {
+          console.error('Failed to save preference:', error);
+          checkbox.checked = false;
+        }
+      } else {
+        // Clear the preference (set to general)
+        try {
+          const response = await authenticatedFetch('/api/industry-preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ industryPreference: 'general' })
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            savedIndustryPreference = null;
+            updateSavePreferenceUI(false);
+          }
+        } catch (error) {
+          console.error('Failed to clear preference:', error);
+        }
+      }
+    }
+
+    function updateSavePreferenceUI(isSaved) {
+      const label = document.getElementById('savePreferenceLabel');
+      const text = document.getElementById('savePreferenceText');
+      
+      if (isSaved) {
+        label.classList.add('saved');
+        text.textContent = 'Saved';
+      } else {
+        label.classList.remove('saved');
+        text.textContent = 'Save';
+      }
+    }
+
+    function applyIndustryContent() {
+      const content = industryContent[currentIndustry];
+      const selector = document.getElementById('industrySelector');
+      const icon = document.getElementById('industrySelectorIcon');
+      
+      // Update selector styling
+      if (currentIndustry === 'food') {
+        selector.classList.add('food');
+        icon.className = 'fas fa-seedling icon';
+      } else {
+        selector.classList.remove('food');
+        icon.className = 'fas fa-industry icon';
+      }
+      
+      // Update header
+      document.getElementById('headerSubtitle').textContent = content.headerSubtitle;
+      
+      // Update card title
+      document.getElementById('cardTitle').textContent = content.cardTitle;
+      
+      // Update form labels and placeholders
+      const prodNameLabel = document.getElementById('prodNameLabel');
+      const prodNameInput = document.getElementById('dashProdName');
+      
+      if (isBatchMode) {
+        prodNameLabel.textContent = content.prodNameLabelBatch;
+        prodNameInput.placeholder = content.prodNamePlaceholderBatch;
+      } else {
+        prodNameLabel.textContent = content.prodNameLabel;
+        prodNameInput.placeholder = content.prodNamePlaceholder;
+      }
+      
+      // SKU
+      document.getElementById('dashSku').placeholder = content.skuPlaceholder;
+      document.getElementById('skuTooltipContent').innerHTML = content.skuTooltipContent;
+      
+      // Batch number
+      document.getElementById('batchNumberLabel').innerHTML = content.batchNumberLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span><span class="info-icon" onclick="toggleTooltip(event, \'batchTooltip2\')"><i class="fas fa-info"></i></span>';
+      document.getElementById('dashBatch').placeholder = content.batchNumberPlaceholder;
+      document.getElementById('batchTooltip2Title').textContent = content.batchTooltip2Title;
+      document.getElementById('batchTooltip2Content').innerHTML = content.batchTooltip2Content;
+      
+      // Metadata
+      document.getElementById('metadataLabel').innerHTML = content.metadataLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span>';
+      document.getElementById('dashMetadata').placeholder = content.metadataPlaceholder;
+      
+      // Helper text
+      document.getElementById('singleItemHelperText').innerHTML = content.singleItemHelperText;
+      
+      // Batch section
+      document.getElementById('batchTooltipContent').innerHTML = content.batchTooltipContent;
+      document.getElementById('batchQuantityLabel').textContent = content.batchQuantityLabel;
+      document.getElementById('batchSkuHelp').textContent = content.batchSkuHelp;
+      
+      // Production mode
+      document.getElementById('productionTooltipTitle').textContent = content.productionTooltipTitle;
+      document.getElementById('productionTooltipContent').innerHTML = content.productionTooltipContent;
+      document.getElementById('productionSectionDesc').innerHTML = content.productionSectionDesc;
+      
+      // Excel
+      document.getElementById('excelInstructions').innerHTML = content.excelInstructions;
+      const headerRow = document.getElementById('excelPreviewHeader');
+      headerRow.innerHTML = content.excelPreviewHeaders.map(h => `<th>${h}</th>`).join('');
+      document.getElementById('excelRowLabel').textContent = content.excelRowLabel;
+      
+      // Photos
+      document.getElementById('photosLabel').textContent = content.photosLabel;
+      document.getElementById('locationDisplayText').textContent = content.locationDisplayText;
+    }
 
     // ==========================================
     // TOOLTIPS
@@ -672,14 +984,12 @@
       const skuLabel = document.getElementById('skuLabel');
       const skuBatchOptions = document.getElementById('skuBatchOptions');
       const skuSingleHelp = document.getElementById('skuSingleHelp');
-      const prodNameLabel = document.getElementById('prodNameLabel');
-      const prodNameInput = document.getElementById('dashProdName');
+      const content = industryContent[currentIndustry];
       
       if (isBatchMode) {
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Upload ✓';
-        // SKU stays enabled - will auto-generate if blank
         skuInput.disabled = false;
         skuLabel.textContent = 'SKU';
         skuInput.placeholder = 'Leave blank to auto-generate';
@@ -687,8 +997,8 @@
         skuSingleHelp.style.display = 'none';
         document.getElementById('sameSku').checked = false;
         updateSkuHelpText();
-        prodNameLabel.textContent = 'Batch Name *';
-        prodNameInput.placeholder = 'e.g. Summer 2025 Collection';
+        document.getElementById('prodNameLabel').textContent = content.prodNameLabelBatch;
+        document.getElementById('dashProdName').placeholder = content.prodNamePlaceholderBatch;
         document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
       } else {
         toggle.classList.remove('active');
@@ -696,11 +1006,11 @@
         toggleText.textContent = 'Batch Upload';
         skuInput.disabled = false;
         skuLabel.textContent = 'SKU';
-        skuInput.placeholder = 'Leave blank to auto-generate';
+        skuInput.placeholder = content.skuPlaceholder;
         skuBatchOptions.style.display = 'none';
         skuSingleHelp.style.display = 'block';
-        prodNameLabel.textContent = 'Name *';
-        prodNameInput.placeholder = 'e.g. Organic Honey, Certificate #1042, Event Ticket';
+        document.getElementById('prodNameLabel').textContent = content.prodNameLabel;
+        document.getElementById('dashProdName').placeholder = content.prodNamePlaceholder;
         document.getElementById('remainingQRs').textContent = '';
         clearExcelUpload();
       }
@@ -717,7 +1027,6 @@
       }
     }
     
-    // Add event listener for checkbox
     document.getElementById('sameSku').addEventListener('change', updateSkuHelpText);
 
     function toggleProductionMode() {
@@ -729,11 +1038,11 @@
       if (isProductionMode) {
         toggle.classList.add('active');
         section.classList.add('show');
-        toggleText.textContent = 'Production Mode ✓';
+        toggleText.textContent = currentIndustry === 'food' ? 'Supply Chain Tracking ✓' : 'Production Mode ✓';
       } else {
         toggle.classList.remove('active');
         section.classList.remove('show');
-        toggleText.textContent = 'Production Mode';
+        toggleText.textContent = currentIndustry === 'food' ? 'Supply Chain Tracking' : 'Production Mode';
       }
       updateMintButtonText();
     }
@@ -741,14 +1050,15 @@
     function updateMintButtonText() {
       const text = document.getElementById('mintButtonText');
       const hasExcel = excelData.length > 0;
+      const isFood = currentIndustry === 'food';
       
       if (isProductionMode) {
         if (hasExcel) {
-          text.textContent = 'Create Production Entries';
+          text.textContent = isFood ? 'Create Supply Chain Entries' : 'Create Production Entries';
         } else if (isBatchMode) {
-          text.textContent = 'Create Production Batch';
+          text.textContent = isFood ? 'Create Supply Chain Batch' : 'Create Production Batch';
         } else {
-          text.textContent = 'Create Production Entry';
+          text.textContent = isFood ? 'Create Supply Chain Entry' : 'Create Production Entry';
         }
       } else {
         if (hasExcel) {
@@ -837,7 +1147,6 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
-          // Disable batch toggle, SKU, and batch # field when Excel is loaded (they're in the Excel)
           document.getElementById('batchToggle').style.pointerEvents = 'none';
           document.getElementById('batchToggle').style.opacity = '0.5';
           document.getElementById('dashSku').disabled = true;
@@ -855,23 +1164,24 @@
     }
 
     function clearExcelUpload() {
+      const content = industryContent[currentIndustry];
       excelData = [];
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
-      // Re-enable batch toggle, SKU, and batch # field
       document.getElementById('batchToggle').style.pointerEvents = 'auto';
       document.getElementById('batchToggle').style.opacity = '1';
       document.getElementById('dashSku').disabled = false;
       document.getElementById('skuLabel').textContent = 'SKU';
-      document.getElementById('dashSku').placeholder = 'Leave blank to auto-generate';
+      document.getElementById('dashSku').placeholder = content.skuPlaceholder;
       document.getElementById('skuBatchOptions').style.display = 'block';
       document.getElementById('dashBatch').disabled = false;
-      document.getElementById('dashBatch').placeholder = 'e.g. 001';
+      document.getElementById('dashBatch').placeholder = content.batchNumberPlaceholder;
       updateMintButtonText();
     }
 
     function clearForm() {
+      const content = industryContent[currentIndustry];
       document.getElementById('dashProdName').value = '';
       document.getElementById('dashSku').value = '';
       document.getElementById('dashBatch').value = '';
@@ -1025,20 +1335,19 @@
       const btn = document.getElementById('dashCreateBtn');
       msgEl.innerHTML = '';
 
-      // Excel mode - if Excel data exists, use that
+      // Excel mode
       if (excelData.length > 0) {
         btn.disabled = true;
         const origText = btn.innerHTML;
         
         const batchGroupId = 'batch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         const totalItems = excelData.length;
-        // Get batch name from form field (or use default)
         const batchName = document.getElementById('dashProdName').value.trim() || 'Excel Batch Upload';
         const batchNumberFromForm = document.getElementById('dashBatch').value.trim();
         
         const mintingMessage = isProductionMode 
           ? `<div class="message info" style="text-align: left;">
-              <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${totalItems} products in Production Mode...</strong><br>
+              <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${totalItems} products in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode...</strong><br>
               <small style="color: #64748B;">Products will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
             </div>`
           : `<div class="message info" style="text-align: left;">
@@ -1052,7 +1361,6 @@
         
         for (let i = 0; i < excelData.length; i++) {
           const row = excelData[i];
-          // Convert all values to strings (Excel may read numbers as integers)
           const productName = String(row[0] || '').trim();
           const sku = String(row[1] || '').trim();
           const batchNumber = String(row[2] || '').trim();
@@ -1082,7 +1390,8 @@
                 excelBatchGroupId: batchGroupId,
                 excelBatchTotal: totalItems,
                 excelBatchIndex: i + 1,
-                excelBatchName: batchName
+                excelBatchName: batchName,
+                industryType: currentIndustry
               })
             });
             
@@ -1134,7 +1443,7 @@
       const itemCount = isBatchMode ? batchQuantity : 1;
       const mintingMessage = isProductionMode 
         ? `<div class="message info" style="text-align: left;">
-            <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${itemCount > 1 ? itemCount + ' products' : 'product'} in Production Mode...</strong><br>
+            <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${itemCount > 1 ? itemCount + ' products' : 'product'} in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode...</strong><br>
             <small style="color: #64748B;">Your product${itemCount > 1 ? 's' : ''} will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
           </div>`
         : `<div class="message info" style="text-align: left;">
@@ -1160,7 +1469,8 @@
             isBatchOrder: isBatchMode,
             batchQuantity,
             sameSku: isBatchMode ? document.getElementById('sameSku').checked : false,
-            mode: isProductionMode ? 'production' : 'live'
+            mode: isProductionMode ? 'production' : 'live',
+            industryType: currentIndustry
           })
         });
 
@@ -1170,7 +1480,7 @@
         const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
         const viewLink = isProductionMode ? 'production.html' : 'products.html';
         const successMsg = isProductionMode 
-          ? (result.isBatch ? `Batch of ${batchQuantity} created in Production Mode!` : 'Product created in Production Mode!')
+          ? (result.isBatch ? `Batch of ${batchQuantity} created in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode!` : `Product created in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode!`)
           : (result.isBatch ? `Batch of ${batchQuantity} minted to blockchain!` : 'Product minted to blockchain!');
         msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         
@@ -1200,6 +1510,8 @@
     // ==========================================
     loadSubscriptionLimits();
     loadProductCounts();
+    loadIndustryPreference();
+    applyIndustryContent(); // Apply default content initially
   </script>
 </body>
 </html>

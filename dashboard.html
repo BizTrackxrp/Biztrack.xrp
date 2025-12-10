@@ -45,7 +45,7 @@
     }
     .card h3 i { color: #4F46E5; }
 
-    /* Industry Selector - compact */
+    /* Industry Selector - fixed height to match QR badge */
     .industry-selector {
       display: flex;
       align-items: center;
@@ -53,10 +53,12 @@
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 10px;
-      padding: 0.35rem 0.65rem;
+      padding: 0.5rem 0.75rem;
       font-size: 0.8rem;
       position: relative;
       transition: all 0.2s;
+      height: 52px;
+      box-sizing: border-box;
     }
     .industry-selector:hover {
       border-color: #CBD5E1;
@@ -398,35 +400,38 @@
       gap: 0.75rem;
     }
     
-    /* Quick Links - Compact Row */
-    .quick-links-row {
+    /* Quick Links - Stacked to match height */
+    .quick-links-stacked {
       display: flex;
-      gap: 0.5rem;
+      flex-direction: column;
+      gap: 0.25rem;
+      height: 52px;
+      justify-content: center;
     }
     .quick-link-compact {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.65rem;
+      gap: 0.35rem;
+      padding: 0.25rem 0.6rem;
       background: #F8FAFC;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #E2E8F0;
       text-decoration: none;
       color: #334155;
       font-weight: 500;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       transition: all 0.2s;
     }
     .quick-link-compact:hover { border-color: #4F46E5; background: white; }
-    .quick-link-compact i { font-size: 0.75rem; color: #4F46E5; }
+    .quick-link-compact i { font-size: 0.7rem; color: #4F46E5; }
     .quick-link-compact.production i { color: #10B981; }
     .quick-link-compact.production:hover { border-color: #10B981; }
     .quick-link-count {
       background: #E2E8F0;
       color: #64748B;
-      padding: 0.1rem 0.4rem;
-      border-radius: 10px;
-      font-size: 0.65rem;
+      padding: 0.05rem 0.35rem;
+      border-radius: 8px;
+      font-size: 0.6rem;
       font-weight: 600;
     }
     
@@ -436,9 +441,11 @@
       gap: 0.6rem;
       background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
       color: white;
-      padding: 0.4rem 0.75rem;
+      padding: 0.5rem 0.75rem;
       border-radius: 10px;
       font-size: 0.8rem;
+      height: 52px;
+      box-sizing: border-box;
     }
     .qr-badge-number {
       font-weight: 800;
@@ -475,10 +482,10 @@
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .header-bar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
       .header-controls { width: 100%; flex-wrap: wrap; gap: 0.5rem; }
-      .quick-links-row { width: 100%; }
+      .quick-links-stacked { flex-direction: row; height: auto; }
       .toggle-container { flex-wrap: wrap; gap: 0.75rem; }
-      .industry-selector { flex: 1; }
-      .qr-badge { flex: 1; justify-content: center; }
+      .industry-selector { flex: 1; height: auto; }
+      .qr-badge { flex: 1; justify-content: center; height: auto; }
     }
   </style>
 </head>
@@ -513,7 +520,7 @@
           <span class="qr-badge-tier" id="tierName">Free</span>
         </div>
         
-        <div class="quick-links-row">
+        <div class="quick-links-stacked">
           <a href="products.html" class="quick-link-compact">
             <i class="fas fa-box-check"></i>
             <span>Finished</span>

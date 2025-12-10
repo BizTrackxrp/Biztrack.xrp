@@ -377,35 +377,36 @@
     .message.error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
     .message.info { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
 
-    /* Quick Links - Compact */
-    .quick-links {
+    /* Quick Links - Stacked */
+    .quick-links-stacked {
       display: flex;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
     }
-    .quick-link {
+    .quick-link-stacked {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.75rem;
       background: #F8FAFC;
       border-radius: 8px;
       border: 1px solid #E2E8F0;
       text-decoration: none;
       color: #334155;
       font-weight: 500;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       transition: all 0.2s;
     }
-    .quick-link:hover { border-color: #4F46E5; background: white; }
-    .quick-link i { font-size: 1rem; color: #4F46E5; }
-    .quick-link.production i { color: #10B981; }
-    .quick-link.production:hover { border-color: #10B981; }
+    .quick-link-stacked:hover { border-color: #4F46E5; background: white; }
+    .quick-link-stacked i { font-size: 0.875rem; color: #4F46E5; }
+    .quick-link-stacked.production i { color: #10B981; }
+    .quick-link-stacked.production:hover { border-color: #10B981; }
     .quick-link-count {
       background: #E2E8F0;
       color: #64748B;
       padding: 0.125rem 0.5rem;
       border-radius: 12px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
 
     /* Compact Header Bar */
@@ -477,9 +478,10 @@
     @media (max-width: 768px) {
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .header-bar { flex-direction: column; align-items: flex-start; }
-      .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
-      .quick-links { width: 100%; }
+      .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+      .quick-links-stacked { flex-direction: row; width: 100%; }
       .toggle-container { flex-wrap: wrap; gap: 0.75rem; }
+      .industry-selector-wrapper { width: 100%; }
       .industry-selector { width: 100%; justify-content: center; }
     }
   </style>
@@ -511,24 +513,25 @@
           </div>
         </div>
         
-        <div class="quick-links">
-          <a href="products.html" class="quick-link">
-            <i class="fas fa-box-check"></i>
-            <span>Finished</span>
-            <span class="quick-link-count" id="finishedCount">-</span>
-          </a>
-          <a href="production.html" class="quick-link production">
-            <i class="fas fa-industry"></i>
-            <span>In Progress</span>
-            <span class="quick-link-count" id="productionCount">-</span>
-          </a>
-        </div>
         <div class="qr-badge">
           <div>
             <div class="qr-badge-number"><span id="qrUsedCount">0</span> <span style="font-size: 0.875rem; font-weight: 400;">/ <span id="qrLimitCount">10</span></span></div>
             <div class="qr-badge-label">QR codes this month</div>
           </div>
           <span class="qr-badge-tier" id="tierName">Free</span>
+        </div>
+        
+        <div class="quick-links-stacked">
+          <a href="products.html" class="quick-link-stacked">
+            <i class="fas fa-box-check"></i>
+            <span>Finished</span>
+            <span class="quick-link-count" id="finishedCount">-</span>
+          </a>
+          <a href="production.html" class="quick-link-stacked production">
+            <i class="fas fa-industry"></i>
+            <span>In Progress</span>
+            <span class="quick-link-count" id="productionCount">-</span>
+          </a>
         </div>
       </div>
     </div>

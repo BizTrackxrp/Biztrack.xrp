@@ -46,16 +46,35 @@
     .card h3 i { color: #4F46E5; }
 
     /* Industry Selector */
+    .industry-selector-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+    .industry-selector-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-left: 0.25rem;
+    }
     .industry-selector {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       background: #F8FAFC;
-      border: 1px solid #E2E8F0;
+      border: 2px solid #E2E8F0;
       border-radius: 10px;
       padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
       position: relative;
+      transition: all 0.2s;
+    }
+    .industry-selector:hover {
+      border-color: #CBD5E1;
+      background: white;
     }
     .industry-selector i.icon {
       color: #64748B;
@@ -477,16 +496,19 @@
       </div>
       <div class="header-right">
         <!-- Industry Selector -->
-        <div class="industry-selector" id="industrySelector">
-          <i class="fas fa-industry icon" id="industrySelectorIcon"></i>
-          <select id="industrySelect" onchange="handleIndustryChange()">
-            <option value="general">General</option>
-            <option value="food">Food / Farm to Table</option>
-          </select>
-          <label class="save-preference" id="savePreferenceLabel">
-            <input type="checkbox" id="savePreferenceCheckbox" onchange="handleSavePreference()" />
-            <span id="savePreferenceText">Save</span>
-          </label>
+        <div class="industry-selector-wrapper">
+          <span class="industry-selector-label">Industry</span>
+          <div class="industry-selector" id="industrySelector">
+            <i class="fas fa-industry icon" id="industrySelectorIcon"></i>
+            <select id="industrySelect" onchange="handleIndustryChange()">
+              <option value="general">General</option>
+              <option value="food">Food / Farm to Table</option>
+            </select>
+            <label class="save-preference" id="savePreferenceLabel">
+              <input type="checkbox" id="savePreferenceCheckbox" onchange="handleSavePreference()" />
+              <span id="savePreferenceText">Save</span>
+            </label>
+          </div>
         </div>
         
         <div class="quick-links">

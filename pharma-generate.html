@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   
   <style>
     * {
@@ -52,6 +51,19 @@
     .page-header p {
       color: #64748b;
       font-size: 1rem;
+    }
+
+    .dscsa-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-left: 1rem;
     }
 
     .card {
@@ -119,6 +131,20 @@
       font-size: 0.95rem;
     }
 
+    .form-group label .required {
+      color: #DC2626;
+    }
+
+    .form-group label .dscsa-label {
+      background: #DBEAFE;
+      color: #1E40AF;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+
     .form-group input,
     .form-group textarea {
       width: 100%;
@@ -144,6 +170,12 @@
       border-color: #667eea;
       box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
       background: white;
+    }
+
+    .form-group .helper-text {
+      font-size: 0.8rem;
+      color: #64748B;
+      margin-top: 0.35rem;
     }
 
     .btn {
@@ -301,6 +333,17 @@
       width: 100%;
     }
 
+    .product-gs1 {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.8rem;
+      background: #1E293B;
+      color: #4ADE80;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+
     .empty-state {
       text-align: center;
       padding: 3rem 1rem;
@@ -313,10 +356,62 @@
       opacity: 0.5;
     }
 
+    .gs1-preview {
+      background: #1E293B;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .gs1-preview-label {
+      font-size: 0.75rem;
+      color: #94A3B8;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .gs1-preview-value {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.9rem;
+      color: #4ADE80;
+      word-break: break-all;
+    }
+
+    .qr-types-info {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .qr-types-info h4 {
+      font-size: 0.9rem;
+      color: #1E40AF;
+      margin-bottom: 0.75rem;
+    }
+
+    .qr-type-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: #334155;
+    }
+
+    .qr-type-item i {
+      color: #3B82F6;
+      margin-top: 0.2rem;
+    }
+
     @media (max-width: 768px) {
       .main-with-sidebar {
         margin-left: 0;
         padding: 1.5rem;
+        padding-top: 5rem;
       }
 
       .product-header {
@@ -328,14 +423,15 @@
   </style>
 </head>
 <body>
-  <!-- Pharma Sidebar (auto-loads) -->
-
   <div class="main-with-sidebar">
     
     <!-- Page Header -->
     <div class="page-header">
-      <h1><i class="fas fa-qrcode"></i> Generate Product IDs</h1>
-      <p>Create DSCSA-compliant QR codes for pharmaceutical products</p>
+      <h1>
+        <i class="fas fa-qrcode"></i> Generate Product IDs
+        <span class="dscsa-badge"><i class="fas fa-shield-check"></i> DSCSA Compliant</span>
+      </h1>
+      <p>Create GS1-encoded QR codes for pharmaceutical products with full supply chain traceability</p>
     </div>
 
     <!-- Usage Counter -->
@@ -352,6 +448,19 @@
     <!-- Generate QR Form -->
     <div class="card">
       <h3><i class="fas fa-pills"></i> Product Information</h3>
+
+      <!-- QR Types Info -->
+      <div class="qr-types-info">
+        <h4><i class="fas fa-info-circle"></i> Two QR Codes Generated</h4>
+        <div class="qr-type-item">
+          <i class="fas fa-user"></i>
+          <div><strong>Customer QR:</strong> Links to verification page for consumers</div>
+        </div>
+        <div class="qr-type-item">
+          <i class="fas fa-barcode"></i>
+          <div><strong>GS1 QR:</strong> Industry-standard format with NDC, Serial, Lot, Expiry - scannable by any pharma system</div>
+        </div>
+      </div>
       
       <!-- Batch Toggle -->
       <div class="batch-toggle-container">
@@ -382,33 +491,48 @@
           />
         </div>
         <div style="margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; font-size: 0.875rem; color: #92400E;">
-          <strong>Note:</strong> Serial numbers will be auto-generated (e.g., SN2024-001, SN2024-002, ...). All products share the same NDC, lot, and expiration date.
+          <strong>Note:</strong> Each unit gets a unique serial number (e.g., SN-001, SN-002...). All share the same NDC, lot, and expiration.
         </div>
       </div>
       
       <div class="form-group">
-        <label for="productName">Product Name *</label>
+        <label for="productName">Product Name <span class="required">*</span></label>
         <input id="productName" type="text" placeholder="e.g., Lisinopril 10mg Tablets" />
       </div>
       
       <div class="form-group">
-        <label for="ndc">NDC (National Drug Code) *</label>
-        <input id="ndc" type="text" placeholder="e.g., 12345-678-90" />
+        <label for="ndc">
+          NDC (National Drug Code) <span class="required">*</span>
+          <span class="dscsa-label">DSCSA Required</span>
+        </label>
+        <input id="ndc" type="text" placeholder="e.g., 12345-678-90 or 1234567890" />
+        <p class="helper-text">Enter 10-11 digits. Formats: 4-4-2, 5-3-2, 5-4-1, or without dashes</p>
       </div>
       
       <div class="form-group">
-        <label for="serialNumber" id="serialLabel">Serial Number *</label>
+        <label for="serialNumber" id="serialLabel">
+          Serial Number <span class="required">*</span>
+          <span class="dscsa-label">DSCSA Required</span>
+        </label>
         <input id="serialNumber" type="text" placeholder="e.g., SN123456789" />
+        <p class="helper-text" id="serialHelperText">Unique identifier for this specific unit</p>
       </div>
       
       <div class="form-group">
-        <label for="lotNumber">Lot/Batch Number *</label>
+        <label for="lotNumber">
+          Lot/Batch Number <span class="required">*</span>
+          <span class="dscsa-label">DSCSA Required</span>
+        </label>
         <input id="lotNumber" type="text" placeholder="e.g., LOT2024-001" />
       </div>
       
       <div class="form-group">
-        <label for="expDate">Expiration Date *</label>
+        <label for="expDate">
+          Expiration Date <span class="required">*</span>
+          <span class="dscsa-label">DSCSA Required</span>
+        </label>
         <input id="expDate" type="date" />
+        <p class="helper-text">Must be a future date</p>
       </div>
       
       <div class="form-group">
@@ -416,9 +540,15 @@
         <input id="manufacturer" type="text" placeholder="e.g., Pfizer Inc." />
       </div>
 
+      <!-- GS1 Preview -->
+      <div class="gs1-preview" id="gs1Preview" style="display: none;">
+        <div class="gs1-preview-label">GS1 Data Preview</div>
+        <div class="gs1-preview-value" id="gs1PreviewValue">(01)00000000000000(21)SERIAL(17)YYMMDD(10)LOT</div>
+      </div>
+
       <!-- Photos & Location Section -->
       <div class="form-group">
-        <label>Photos (optional - shared across all items in batch)</label>
+        <label>Photos (optional)</label>
         <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" />
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -426,10 +556,10 @@
             <i class="fas fa-camera"></i> Take Photo
           </button>
           <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">
-            <i class="fas fa-images"></i> Choose from Gallery
+            <i class="fas fa-images"></i> Gallery
           </button>
           <button type="button" class="btn btn-secondary" id="captureLocationBtn">
-            <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Capture Location</span>
+            <i class="fas fa-map-marker-alt"></i> <span id="locationBtnText">Location</span>
           </button>
         </div>
         <div id="photoPreview" style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;"></div>
@@ -440,7 +570,7 @@
       
       <button class="btn" id="generateBtn">
         <i class="fas fa-qrcode"></i>
-        <span id="btnText">Generate QR Code</span>
+        <span id="btnText">Generate DSCSA-Compliant QR Codes</span>
       </button>
       
       <div id="message"></div>
@@ -467,6 +597,68 @@
     let selectedPhotos = [];
     let capturedLocation = null;
 
+    // ==========================================
+    // GS1 PREVIEW HELPERS
+    // ==========================================
+    function ndcToGtin14Preview(ndc) {
+      const cleanNdc = ndc.replace(/[^0-9]/g, '');
+      let ndc11 = cleanNdc.padStart(11, '0').substring(0, 11);
+      const gtinWithoutCheck = '00' + ndc11;
+      
+      // Calculate check digit
+      let sum = 0;
+      for (let i = 0; i < gtinWithoutCheck.length; i++) {
+        const digit = parseInt(gtinWithoutCheck[i], 10);
+        sum += digit * (i % 2 === 0 ? 1 : 3);
+      }
+      const remainder = sum % 10;
+      const checkDigit = remainder === 0 ? '0' : String(10 - remainder);
+      
+      return gtinWithoutCheck + checkDigit;
+    }
+
+    function formatExpiryPreview(dateStr) {
+      if (!dateStr) return 'YYMMDD';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return 'YYMMDD';
+      
+      const yy = String(date.getFullYear()).slice(-2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return yy + mm + dd;
+    }
+
+    function updateGS1Preview() {
+      const ndc = document.getElementById('ndc').value.trim();
+      const serial = document.getElementById('serialNumber').value.trim() || 'SERIAL';
+      const lot = document.getElementById('lotNumber').value.trim() || 'LOT';
+      const expDate = document.getElementById('expDate').value;
+
+      if (!ndc) {
+        document.getElementById('gs1Preview').style.display = 'none';
+        return;
+      }
+
+      const gtin = ndcToGtin14Preview(ndc);
+      const expiry = formatExpiryPreview(expDate);
+      const cleanSerial = serial.replace(/[^A-Za-z0-9]/g, '').substring(0, 20) || 'SERIAL';
+      const cleanLot = lot.replace(/[^A-Za-z0-9]/g, '').substring(0, 20) || 'LOT';
+
+      const gs1String = `(01)${gtin}(21)${cleanSerial}(17)${expiry}(10)${cleanLot}`;
+      
+      document.getElementById('gs1PreviewValue').textContent = gs1String;
+      document.getElementById('gs1Preview').style.display = 'block';
+    }
+
+    // Add event listeners for live preview
+    ['ndc', 'serialNumber', 'lotNumber', 'expDate'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateGS1Preview);
+      document.getElementById(id).addEventListener('change', updateGS1Preview);
+    });
+
+    // ==========================================
+    // LOAD LIMITS
+    // ==========================================
     async function loadLimits() {
       try {
         const response = await authenticatedFetch('/api/check-limits');
@@ -495,6 +687,9 @@
       }
     }
 
+    // ==========================================
+    // BATCH MODE TOGGLE
+    // ==========================================
     function toggleBatchMode() {
       isBatchMode = !isBatchMode;
       const toggle = document.getElementById('batchToggle');
@@ -503,17 +698,16 @@
       const btnText = document.getElementById('btnText');
       const serialLabel = document.getElementById('serialLabel');
       const serialInput = document.getElementById('serialNumber');
+      const serialHelper = document.getElementById('serialHelperText');
       
       if (isBatchMode) {
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Mode Enabled ✓';
         btnText.textContent = 'Generate Batch QR Codes';
-        serialLabel.innerHTML = 'Serial Prefix * <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
-        
-        serialInput.disabled = true;
-        serialInput.value = '';
-        serialInput.placeholder = 'e.g., SN2024- (becomes SN2024-001, SN2024-002...)';
+        serialLabel.innerHTML = 'Serial Prefix <span class="dscsa-label">DSCSA Required</span> <small style="color: #64748B; font-weight: 400;">(Auto-numbered)</small>';
+        serialInput.placeholder = 'e.g., SN2024 (becomes SN2024-001, SN2024-002...)';
+        serialHelper.textContent = 'Each unit will get a unique serial: PREFIX-001, PREFIX-002, etc.';
         
         const remaining = qrLimit - qrUsedThisMonth;
         document.getElementById('remainingQRs').textContent = `(${remaining} available)`;
@@ -521,14 +715,14 @@
         toggle.classList.remove('active');
         section.classList.remove('show');
         toggleText.textContent = 'Enable Batch Generation';
-        btnText.textContent = 'Generate QR Code';
-        serialLabel.textContent = 'Serial Number *';
-        
-        serialInput.disabled = false;
+        btnText.textContent = 'Generate DSCSA-Compliant QR Codes';
+        serialLabel.innerHTML = 'Serial Number <span class="required">*</span> <span class="dscsa-label">DSCSA Required</span>';
         serialInput.placeholder = 'e.g., SN123456789';
-        
+        serialHelper.textContent = 'Unique identifier for this specific unit';
         document.getElementById('remainingQRs').textContent = '';
       }
+      
+      updateGS1Preview();
     }
 
     // ==========================================
@@ -544,26 +738,18 @@
             let width = img.width;
             let height = img.height;
             
-            const MAX_WIDTH = 1200;
-            const MAX_HEIGHT = 1200;
-            
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width *= MAX_HEIGHT / height;
-                height = MAX_HEIGHT;
-              }
+            const MAX = 1200;
+            if (width > height && width > MAX) {
+              height *= MAX / width;
+              width = MAX;
+            } else if (height > MAX) {
+              width *= MAX / height;
+              height = MAX;
             }
             
             canvas.width = width;
             canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL('image/jpeg', 0.8));
           };
           img.src = e.target.result;
@@ -573,28 +759,18 @@
     }
 
     document.getElementById('photoInput').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files);
-      for (const file of files) {
-        if (selectedPhotos.length >= 5) {
-          alert('Maximum 5 photos allowed');
-          break;
-        }
-        const compressed = await compressImage(file);
-        selectedPhotos.push(compressed);
+      for (const file of Array.from(e.target.files)) {
+        if (selectedPhotos.length >= 5) break;
+        selectedPhotos.push(await compressImage(file));
         displayPhotoPreview();
       }
       e.target.value = '';
     });
 
     document.getElementById('cameraInput').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files);
-      for (const file of files) {
-        if (selectedPhotos.length >= 5) {
-          alert('Maximum 5 photos allowed');
-          break;
-        }
-        const compressed = await compressImage(file);
-        selectedPhotos.push(compressed);
+      for (const file of Array.from(e.target.files)) {
+        if (selectedPhotos.length >= 5) break;
+        selectedPhotos.push(await compressImage(file));
         displayPhotoPreview();
       }
       e.target.value = '';
@@ -605,10 +781,10 @@
       preview.innerHTML = '';
       selectedPhotos.forEach((photo, index) => {
         const div = document.createElement('div');
-        div.style.cssText = 'position: relative; width: 100px; height: 100px;';
+        div.style.cssText = 'position: relative; width: 80px; height: 80px;';
         div.innerHTML = `
           <img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 2px solid #E2E8F0;" />
-          <button onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #DC2626; color: white; border: none; cursor: pointer; font-size: 12px;">✕</button>
+          <button onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; border-radius: 50%; background: #DC2626; color: white; border: none; cursor: pointer; font-size: 10px;">✕</button>
         `;
         preview.appendChild(div);
       });
@@ -624,37 +800,34 @@
     // ==========================================
     document.getElementById('captureLocationBtn').addEventListener('click', () => {
       if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser');
+        alert('Geolocation not supported');
         return;
       }
 
       const btn = document.getElementById('captureLocationBtn');
       btn.disabled = true;
-      document.getElementById('locationBtnText').textContent = 'Getting location...';
+      document.getElementById('locationBtnText').textContent = 'Getting...';
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
           capturedLocation = {
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy
+            longitude: position.coords.longitude
           };
           document.getElementById('locationDisplay').style.display = 'block';
-          document.getElementById('locationDisplay').innerHTML = 
-            `<i class="fas fa-check-circle"></i> Location captured! (${capturedLocation.latitude.toFixed(4)}, ${capturedLocation.longitude.toFixed(4)})`;
           btn.disabled = false;
-          document.getElementById('locationBtnText').textContent = 'Update Location';
+          document.getElementById('locationBtnText').textContent = 'Update';
         },
         (error) => {
-          alert('Unable to get location: ' + error.message);
+          alert('Location error: ' + error.message);
           btn.disabled = false;
-          document.getElementById('locationBtnText').textContent = 'Capture Location';
+          document.getElementById('locationBtnText').textContent = 'Location';
         }
       );
     });
 
     // ==========================================
-    // GENERATE QR CODE
+    // GENERATE QR CODE - CALLS PHARMA-MINT API
     // ==========================================
     document.getElementById('generateBtn').addEventListener('click', async () => {
       const productName = document.getElementById('productName').value.trim();
@@ -671,14 +844,26 @@
       msgEl.innerHTML = '';
 
       // Validation
-      if (!productName || !ndc || (!isBatchMode && !serialNumber) || !lotNumber || !expDate) {
-        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please fill in all required fields (*).</div>';
+      if (!productName || !ndc || !lotNumber || !expDate) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please fill in all required DSCSA fields.</div>';
         return;
       }
 
-      const maxAllowed = Math.min(10, qrLimit - qrUsedThisMonth);
-      if (isBatchMode && (!batchQuantity || batchQuantity < 1 || batchQuantity > maxAllowed)) {
-        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Batch quantity must be between 1 and ${maxAllowed} (you have ${maxAllowed} QR codes remaining).</div>`;
+      if (!isBatchMode && !serialNumber) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Serial number is required for DSCSA compliance.</div>';
+        return;
+      }
+
+      // Validate NDC format
+      const cleanNdc = ndc.replace(/[^0-9]/g, '');
+      if (cleanNdc.length < 9 || cleanNdc.length > 11) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> NDC must be 9-11 digits.</div>';
+        return;
+      }
+
+      // Validate expiry is in future
+      if (new Date(expDate) <= new Date()) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Expiration date must be in the future.</div>';
         return;
       }
 
@@ -686,34 +871,27 @@
       const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
       
-      if (isBatchMode && batchQuantity > 1) {
-        msgEl.innerHTML = `<div class="message info">
-          <i class="fas fa-info-circle"></i>
-          <div>Generating ${batchQuantity} DSCSA-compliant QR codes. This may take a moment...</div>
-        </div>`;
-      } else {
-        msgEl.innerHTML = '<div class="message info"><i class="fas fa-info-circle"></i> Minting to blockchain...</div>';
-      }
+      msgEl.innerHTML = `<div class="message info">
+        <i class="fas fa-info-circle"></i>
+        <div>Generating ${batchQuantity > 1 ? batchQuantity + ' ' : ''}DSCSA-compliant QR code${batchQuantity > 1 ? 's' : ''}. Minting to blockchain...</div>
+      </div>`;
 
       try {
-        const response = await authenticatedFetch('/api/mint-product', {
+        // CALL THE NEW PHARMA-MINT API
+        const response = await authenticatedFetch('/api/pharma-mint', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             productName,
-            sku: isBatchMode ? undefined : serialNumber,
-            batchNumber: lotNumber,
-            metadata: {
-              ndc,
-              expDate,
-              manufacturer,
-              dscsa: true,
-              serialNumber: isBatchMode ? undefined : serialNumber
-            },
+            ndc,
+            serialNumber: isBatchMode ? (serialNumber || undefined) : serialNumber,
+            lotNumber,
+            expDate,
+            manufacturer,
             photos: selectedPhotos.length > 0 ? selectedPhotos : null,
             location: capturedLocation,
             isBatchOrder: isBatchMode,
-            batchQuantity: batchQuantity
+            batchQuantity
           })
         });
 
@@ -721,13 +899,12 @@
 
         if (!response.ok) {
           if (response.status === 403 && result.upgrade) {
-            const nextTier = result.upgrade.nextTierName || 'higher tier';
             msgEl.innerHTML = `<div class="message error">
               <i class="fas fa-exclamation-circle"></i> 
               <div>
                 <strong>QR Code Limit Exceeded!</strong><br>
                 You need ${result.limits.requested} QR codes but only have ${result.limits.remaining} remaining.
-                ${result.upgrade.available ? `<br><br><a href="/SI-pharma-pricing.html" style="color: #DC2626; font-weight: 700; text-decoration: underline;">Upgrade to ${nextTier} for ${result.upgrade.nextTierLimit.toLocaleString()} QR codes/month →</a>` : ''}
+                <br><br><a href="/SI-pharma-pricing.html" style="color: #DC2626; font-weight: 700;">Upgrade your plan →</a>
               </div>
             </div>`;
             btn.disabled = false;
@@ -737,14 +914,15 @@
           throw new Error(result.details || result.error || 'Generation failed');
         }
 
-        if (result.isBatch) {
-          msgEl.innerHTML = `<div class="message success">
-            <i class="fas fa-check-circle"></i> 
-            Successfully generated ${result.batchInfo.quantity} QR codes! View below to download.
-          </div>`;
-        } else {
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> QR code successfully generated!</div>`;
-        }
+        // Success!
+        const qty = result.isBatch ? result.batchInfo.quantity : 1;
+        msgEl.innerHTML = `<div class="message success">
+          <i class="fas fa-check-circle"></i> 
+          <div>
+            <strong>Successfully generated ${qty} DSCSA-compliant QR code${qty > 1 ? 's' : ''}!</strong><br>
+            <small>GS1: ${result.isBatch ? result.products[0].gs1String : result.gs1String}</small>
+          </div>
+        </div>`;
 
         // Clear form
         document.getElementById('productName').value = '';
@@ -757,7 +935,7 @@
         capturedLocation = null;
         document.getElementById('photoPreview').innerHTML = '';
         document.getElementById('locationDisplay').style.display = 'none';
-        document.getElementById('locationBtnText').textContent = 'Capture Location';
+        document.getElementById('gs1Preview').style.display = 'none';
 
         // Reload data
         await loadLimits();
@@ -777,7 +955,7 @@
     // ==========================================
     function loadProducts() {
       const productList = document.getElementById('productList');
-      productList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading products...</p></div>';
+      productList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>';
       
       authenticatedFetch('/api/list-products')
         .then(res => res.json())
@@ -792,49 +970,59 @@
             return;
           }
 
-          const products = data.products;
+          // Filter to show pharma products (have NDC in metadata)
+          const pharmaProducts = data.products.filter(p => p.metadata?.ndc || p.metadata?.dscsa);
+          
+          if (pharmaProducts.length === 0) {
+            productList.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-pills"></i>
+                <p>No pharma products yet. Generate your first DSCSA-compliant QR code above!</p>
+              </div>
+            `;
+            return;
+          }
+
           productList.innerHTML = '';
 
-          products.forEach((product) => {
+          pharmaProducts.slice(0, 20).forEach((product) => {
             const li = document.createElement('li');
+            const gs1String = product.metadata?.gs1String || product.metadata?.gs1?.formatted || '';
+            const ndc = product.metadata?.ndc || 'N/A';
+            const serial = product.metadata?.serialNumber || product.sku || 'N/A';
+            const lot = product.metadata?.lotNumber || product.batch_number || 'N/A';
+            const expiry = product.metadata?.expDate || 'N/A';
             
-            if (product.isBatchGroup && product.items && product.items.length > 0) {
-              // Batch order
-              li.innerHTML = `
-                <div class="product-header">
-                  <div>
-                    <strong>${product.productName}</strong>
-                    <span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-left: 0.5rem;">BATCH ${product.quantity}</span>
-                    <br><small>NDC: ${product.metadata?.ndc || 'N/A'} • Lot: ${product.batchNumber || 'N/A'} • Exp: ${product.metadata?.expDate || 'N/A'}</small>
-                    <br><small>${new Date(product.timestamp).toLocaleString()}</small>
-                  </div>
-                  <div style="display: flex; gap: 0.5rem;">
-                    <button class="btn btn-secondary" onclick="window.open('${product.items[0].verificationUrl}', '_blank')">
-                      <i class="fas fa-eye"></i> View
-                    </button>
-                  </div>
+            li.innerHTML = `
+              <div class="product-header">
+                <div>
+                  <strong>${product.productName || product.product_name}</strong>
+                  ${product.is_batch_group ? `<span style="background: #667eea; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem;">BATCH ${product.batch_quantity || ''}</span>` : ''}
+                  <br>
+                  <small style="color: #64748B;">
+                    NDC: ${ndc} • Serial: ${serial} • Lot: ${lot} • Exp: ${expiry}
+                  </small>
+                  ${gs1String ? `<div class="product-gs1">${gs1String}</div>` : ''}
                 </div>
-              `;
-            } else {
-              // Single product
-              li.innerHTML = `
-                <div class="product-header">
-                  <div>
-                    <strong>${product.productName}</strong>
-                    <br><small>NDC: ${product.metadata?.ndc || 'N/A'} • Serial: ${product.sku || product.metadata?.serialNumber || 'N/A'} • Lot: ${product.batchNumber || 'N/A'}</small>
-                    <br><small>Exp: ${product.metadata?.expDate || 'N/A'} • ${new Date(product.timestamp).toLocaleString()}</small>
-                  </div>
-                  <div style="display: flex; gap: 0.5rem;">
-                    <a href="${product.verificationUrl}" class="btn btn-secondary" target="_blank">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  ${product.verificationUrl || product.verification_url ? `
+                    <a href="${product.verificationUrl || product.verification_url}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
                       <i class="fas fa-shield-check"></i> Verify
                     </a>
-                    <a href="${product.qrCodeUrl}" class="btn btn-secondary" target="_blank">
-                      <i class="fas fa-qrcode"></i> QR Code
+                  ` : ''}
+                  ${product.qrCodeUrl || product.qr_code_ipfs_hash ? `
+                    <a href="${product.qrCodeUrl || 'https://gateway.pinata.cloud/ipfs/' + product.qr_code_ipfs_hash}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                      <i class="fas fa-user"></i> Customer QR
                     </a>
-                  </div>
+                  ` : ''}
+                  ${product.gs1QrUrl || product.inventory_qr_code_ipfs_hash ? `
+                    <a href="${product.gs1QrUrl || 'https://gateway.pinata.cloud/ipfs/' + product.inventory_qr_code_ipfs_hash}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                      <i class="fas fa-barcode"></i> GS1 QR
+                    </a>
+                  ` : ''}
                 </div>
-              `;
-            }
+              </div>
+            `;
             
             productList.appendChild(li);
           });
@@ -850,6 +1038,7 @@
         });
     }
 
+    // Initialize
     loadLimits();
     loadProducts();
   </script>

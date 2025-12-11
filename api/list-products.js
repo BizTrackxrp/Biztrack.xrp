@@ -33,9 +33,9 @@ module.exports = async (req, res) => {
         p.product_name,
         p.sku,
         p.batch_number,
-        p.ipfs_hash,
-        p.qr_code_ipfs_hash,
-        p.inventory_qr_code_ipfs_hash,
+        p.qr_code_url,
+        p.inventory_qr_code_url,
+        p.gs1_qr_code_url,
         p.xrpl_tx_hash,
         p.metadata,
         p.is_batch_group,
@@ -58,9 +58,6 @@ module.exports = async (req, res) => {
       productName: row.product_name,
       sku: row.sku,
       batchNumber: row.batch_number,
-      ipfsHash: row.ipfs_hash,
-      qrCodeIpfsHash: row.qr_code_ipfs_hash,
-      inventoryQrCodeIpfsHash: row.inventory_qr_code_ipfs_hash,
       xrplTxHash: row.xrpl_tx_hash,
       metadata: row.metadata,
       isBatchGroup: row.is_batch_group,
@@ -73,12 +70,10 @@ module.exports = async (req, res) => {
       finalizedAt: row.finalized_at,
       checkpointCount: parseInt(row.checkpoint_count) || 0,
       verificationUrl: `https://www.biztrack.io/verify.html?id=${row.product_id}`,
-      qrCodeUrl: row.qr_code_ipfs_hash 
-        ? `https://gateway.pinata.cloud/ipfs/${row.qr_code_ipfs_hash}`
-        : null,
-      inventoryQrCodeUrl: row.inventory_qr_code_ipfs_hash
-        ? `https://gateway.pinata.cloud/ipfs/${row.inventory_qr_code_ipfs_hash}`
-        : null
+      // New Vercel Blob URLs (direct URLs, not IPFS hashes)
+      qrCodeUrl: row.qr_code_url || null,
+      inventoryQrCodeUrl: row.inventory_qr_code_url || null,
+      gs1QrCodeUrl: row.gs1_qr_code_url || null
     }));
 
     // Group batch products together
@@ -118,6 +113,8 @@ module.exports = async (req, res) => {
           finalizedAt: batchLeader.finalizedAt,
           checkpointCount: totalCheckpoints,
           qrCodeUrl: batchLeader.qrCodeUrl,
+          inventoryQrCodeUrl: batchLeader.inventoryQrCodeUrl,
+          gs1QrCodeUrl: batchLeader.gs1QrCodeUrl,
           verificationUrl: batchLeader.verificationUrl,
           items: batchItems.sort((a, b) => {
             // Sort by creation time to preserve Excel upload order

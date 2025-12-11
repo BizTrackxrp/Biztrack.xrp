@@ -37,9 +37,12 @@
             <i class="fas fa-chart-line"></i> Dashboard
           </a></li>
           
-          <!-- ✅ ADD THIS NEW LINE HERE -->
           <li><a href="/pharma-generate.html" id="pharma-nav-generate">
             <i class="fas fa-fingerprint"></i> Generate Product IDs
+          </a></li>
+          
+          <li><a href="/pharma-scanner.html" id="pharma-nav-scanner">
+            <i class="fas fa-qrcode"></i> QR Scanner
           </a></li>
           
           <li><a href="/pharma/receive.html" id="pharma-nav-receive">
@@ -342,6 +345,8 @@
     const navMap = {
       'pharma-dashboard.html': 'pharma-nav-dashboard',
       'SI-pharma-dashboard.html': 'pharma-nav-dashboard',
+      'pharma-generate.html': 'pharma-nav-generate',
+      'pharma-scanner.html': 'pharma-nav-scanner',
       'receive.html': 'pharma-nav-receive',
       'partners.html': 'pharma-nav-partners',
       'returns.html': 'pharma-nav-returns',

@@ -558,14 +558,24 @@
 
         if (!data.success) throw new Error(data.error || 'Failed to load products');
 
+        // Filter for pharma products - they have NDC in metadata
         allProducts = (data.products || []).filter(p => {
-          if (p.productType !== 'pharma') return false;
+          // Must be a pharma product (has NDC or DSCSA data)
+          const isPharma = p.productType === 'pharma' || p.metadata?.ndc || p.metadata?.dscsa;
+          if (!isPharma) return false;
+          // Must be finished (not in production mode, or finalized)
           if (p.mode === 'production' && !p.isFinalized) return false;
           return true;
         });
+        
+        console.log('Filtered pharma products:', allProducts.length, allProducts);
 
         const totalProducts = allProducts.length;
-        const vrsReady = allProducts.filter(p => p.gtin && p.lotNumber).length;
+        const vrsReady = allProducts.filter(p => {
+          const gtin = p.gtin || p.metadata?.gtin || p.metadata?.ndc;
+          const lot = p.lotNumber || p.metadata?.lotNumber;
+          return gtin && lot;
+        }).length;
 
         document.getElementById('totalProducts').textContent = totalProducts;
         document.getElementById('vrsReady').textContent = vrsReady;
@@ -671,8 +681,16 @@
 
     function renderProductCard(product) {
       const createdDate = product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'N/A';
-      const hasGs1 = product.gtin && product.lotNumber;
-      const expiryStatus = getExpiryStatus(product.expirationDate);
+      
+      // Extract pharma fields - could be at top level OR in metadata
+      const gtin = product.gtin || product.metadata?.gtin || product.metadata?.ndc;
+      const lotNumber = product.lotNumber || product.metadata?.lotNumber || product.batchNumber;
+      const serialNumber = product.serialNumber || product.metadata?.serialNumber || product.sku;
+      const expirationDate = product.expirationDate || product.metadata?.expDate || product.metadata?.expirationDate;
+      const gs1QrCodeUrl = product.gs1QrCodeUrl || product.metadata?.gs1QrUrl;
+      
+      const hasGs1 = gtin && lotNumber;
+      const expiryStatus = getExpiryStatus(expirationDate);
       
       let badges = '';
       if (product.isFinalized) badges += '<span class="badge badge-finalized">Finalized</span>';
@@ -690,7 +708,7 @@
             <div>
               <div class="product-card-title">${escapeHtml(product.productName)}</div>
               <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
-              ${product.gtin ? `<div class="product-card-gtin">GTIN: ${escapeHtml(product.gtin)}</div>` : ''}
+              ${gtin ? `<div class="product-card-gtin">GTIN: ${escapeHtml(gtin)}</div>` : ''}
             </div>
             <div class="product-card-badges">${badges}</div>
           </div>
@@ -699,15 +717,15 @@
             <div class="pharma-card-details">
               <div class="pharma-card-detail">
                 <div class="pharma-card-detail-label">Lot/Batch</div>
-                <div class="pharma-card-detail-value">${escapeHtml(product.lotNumber || 'N/A')}</div>
+                <div class="pharma-card-detail-value">${escapeHtml(lotNumber || 'N/A')}</div>
               </div>
               <div class="pharma-card-detail">
                 <div class="pharma-card-detail-label">Expiry</div>
-                <div class="pharma-card-detail-value ${expiryStatus === 'expiring' ? 'expiry-warning' : ''} ${expiryStatus === 'expired' ? 'expiry-danger' : ''}">${formatExpiry(product.expirationDate)}</div>
+                <div class="pharma-card-detail-value ${expiryStatus === 'expiring' ? 'expiry-warning' : ''} ${expiryStatus === 'expired' ? 'expiry-danger' : ''}">${formatExpiry(expirationDate)}</div>
               </div>
               <div class="pharma-card-detail">
                 <div class="pharma-card-detail-label">Serial #</div>
-                <div class="pharma-card-detail-value">${escapeHtml(product.serialNumber || 'N/A')}</div>
+                <div class="pharma-card-detail-value">${escapeHtml(serialNumber || 'N/A')}</div>
               </div>
               <div class="pharma-card-detail">
                 <div class="pharma-card-detail-label">Created</div>
@@ -730,7 +748,7 @@
                 sku: product.sku || product.productId,
                 productName: product.productName,
                 qrCodeUrl: product.qrCodeUrl,
-                gs1QrCodeUrl: product.gs1QrCodeUrl
+                gs1QrCodeUrl: gs1QrCodeUrl
               }).replace(/'/g, "\\'")})'>
                 <i class="fas fa-qrcode"></i> Customer QR
               </button>

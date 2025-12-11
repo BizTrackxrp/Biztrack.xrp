@@ -41,6 +41,14 @@
             <i class="fas fa-fingerprint"></i> Generate Product IDs
           </a></li>
           
+          <li><a href="/pharma-production.html" id="pharma-nav-production">
+            <i class="fas fa-industry"></i> In Progress
+          </a></li>
+          
+          <li><a href="/pharma-products.html" id="pharma-nav-products">
+            <i class="fas fa-pills"></i> Finished Products
+          </a></li>
+          
           <li><a href="/pharma-scanner.html" id="pharma-nav-scanner">
             <i class="fas fa-qrcode"></i> QR Scanner
           </a></li>
@@ -205,12 +213,12 @@
 
       .pharma-sidebar-nav a:hover {
         background: #1e293b;
-        color: #3b82f6;
+        color: #14b8a6;
       }
 
       .pharma-sidebar-nav a.active {
         background: #1e293b;
-        color: #3b82f6;
+        color: #14b8a6;
       }
 
       .pharma-sidebar-nav a i {
@@ -346,6 +354,8 @@
       'pharma-dashboard.html': 'pharma-nav-dashboard',
       'SI-pharma-dashboard.html': 'pharma-nav-dashboard',
       'pharma-generate.html': 'pharma-nav-generate',
+      'pharma-production.html': 'pharma-nav-production',
+      'pharma-products.html': 'pharma-nav-products',
       'pharma-scanner.html': 'pharma-nav-scanner',
       'receive.html': 'pharma-nav-receive',
       'partners.html': 'pharma-nav-partners',

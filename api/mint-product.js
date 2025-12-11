@@ -1,9 +1,9 @@
 const { Client, Wallet } = require('xrpl');
-const axios = require('axios');
 const { Pool } = require('pg');
 const QRCode = require('qrcode');
 const jwt = require('jsonwebtoken');
 const stripeConfig = require('../stripe-config');
+const { put } = require('@vercel/blob');
 
 // Database connection
 const pool = new Pool({
@@ -12,6 +12,17 @@ const pool = new Pool({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+
+// ==========================================
+// VERCEL BLOB UPLOAD HELPER
+// ==========================================
+async function uploadToBlob(buffer, filename, contentType = 'image/png') {
+  const blob = await put(filename, buffer, {
+    access: 'public',
+    contentType: contentType
+  });
+  return blob.url;
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -58,7 +69,9 @@ module.exports = async (req, res) => {
       excelBatchGroupId,
       excelBatchTotal,
       excelBatchIndex,
-      excelBatchName
+      excelBatchName,
+      // Industry type (for general/food modes)
+      industryType
     } = req.body;
 
     // Validate mode (default to 'live')
@@ -161,7 +174,6 @@ module.exports = async (req, res) => {
       console.log(`\n=== PRODUCTION MODE: Creating tracking entry ===`);
       
       const productId = `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      // Production mode QR points to /scan which routes appropriately
       const scanUrl = `https://www.biztrack.io/scan.html?id=${productId}`;
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
@@ -177,37 +189,18 @@ module.exports = async (req, res) => {
       // For Excel batches, only first item is marked as batch group leader
       const is_batch_group = isExcelBatch ? (excelBatchIndex === 1) : isBatchOrder;
 
-      // Upload photos to IPFS if provided (keep for later use)
-      let photoHashes = [];
+      // Upload photos to Vercel Blob if provided
+      let photoUrls = [];
       if (photos && photos.length > 0) {
-        console.log(`Uploading ${photos.length} photos to IPFS...`);
-        
-        const FormData = require('form-data');
+        console.log(`Uploading ${photos.length} photos to Vercel Blob...`);
         
         for (let i = 0; i < photos.length; i++) {
           const photoData = photos[i];
           const base64Data = photoData.includes(',') ? photoData.split(',')[1] : photoData;
           const buffer = Buffer.from(base64Data, 'base64');
-          
-          const photoFormData = new FormData();
-          photoFormData.append('file', buffer, {
-            filename: `production-photo-${Date.now()}-${i + 1}.jpg`,
-            contentType: 'image/jpeg'
-          });
-
-          const photoResponse = await axios.post(
-            'https://api.pinata.cloud/pinning/pinFileToIPFS',
-            photoFormData,
-            {
-              headers: {
-                ...photoFormData.getHeaders(),
-                'Authorization': `Bearer ${process.env.PINATA_JWT}`
-              }
-            }
-          );
-
-          photoHashes.push(photoResponse.data.IpfsHash);
-          console.log(`Photo ${i + 1} IPFS Hash:`, photoResponse.data.IpfsHash);
+          const photoUrl = await uploadToBlob(buffer, `production-photo-${productId}-${i + 1}.jpg`, 'image/jpeg');
+          photoUrls.push(photoUrl);
+          console.log(`Photo ${i + 1} uploaded:`, photoUrl);
         }
       }
 
@@ -216,40 +209,19 @@ module.exports = async (req, res) => {
       const trackingQrBuffer = await QRCode.toBuffer(scanUrl, {
         width: 300,
         margin: 2,
-        color: {
-          dark: '#000000',  // Black for reliable printing
-          light: '#FFFFFF'
-        },
+        color: { dark: '#000000', light: '#FFFFFF' },
         errorCorrectionLevel: 'M'
       });
 
-      // Upload tracking QR to IPFS
-      const FormData = require('form-data');
-      const qrFormData = new FormData();
-      qrFormData.append('file', trackingQrBuffer, {
-        filename: `${productId}-tracking-qr.png`,
-        contentType: 'image/png'
-      });
+      // Upload tracking QR to Vercel Blob
+      const trackingQrUrl = await uploadToBlob(trackingQrBuffer, `${productId}-tracking-qr.png`);
+      console.log('Tracking QR URL:', trackingQrUrl);
 
-      const qrPinataResponse = await axios.post(
-        'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        qrFormData,
-        {
-          headers: {
-            ...qrFormData.getHeaders(),
-            'Authorization': `Bearer ${process.env.PINATA_JWT}`
-          }
-        }
-      );
-
-      const trackingQrIpfsHash = qrPinataResponse.data.IpfsHash;
-      console.log('Tracking QR IPFS Hash:', trackingQrIpfsHash);
-
-      // Save to database (NO xrpl_tx_hash, NO ipfs_hash for product data yet)
+      // Save to database
       console.log('Saving production entry to database...');
       
       // For Excel batch leaders, store batch name in metadata for group display
-      const productMetadata = { ...(metadata || {}) };
+      const productMetadata = { ...(metadata || {}), industryType: industryType || 'general' };
       if (isExcelBatch && excelBatchIndex === 1 && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
       }
@@ -260,36 +232,19 @@ module.exports = async (req, res) => {
       
       await pool.query(
         `INSERT INTO products (
-          product_id, 
-          product_name, 
-          sku, 
-          batch_number, 
-          qr_code_ipfs_hash,
-          metadata, 
-          user_id,
-          is_batch_group,
-          batch_group_id,
-          batch_quantity,
-          mode,
-          is_finalized,
-          photo_hashes,
-          location_data
+          product_id, product_name, sku, batch_number, 
+          qr_code_url, metadata, user_id,
+          is_batch_group, batch_group_id, batch_quantity,
+          mode, is_finalized, photo_urls, location_data
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
-          productId, 
-          productName, 
-          skuPrefix || null, 
-          batchNumber || null, 
-          trackingQrIpfsHash,
-          productMetadata, 
-          user.id,
-          is_batch_group,
-          batchGroupId,
+          productId, productName, skuPrefix || null, batchNumber || null, 
+          trackingQrUrl, productMetadata, user.id,
+          is_batch_group, batchGroupId,
           isExcelBatch ? excelBatchTotal : quantity,
-          'production',
-          false,
-          photoHashes.length > 0 ? JSON.stringify(photoHashes) : null,
+          'production', false,
+          photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
           location ? JSON.stringify(location) : null
         ]
       );
@@ -307,8 +262,7 @@ module.exports = async (req, res) => {
         quantity,
         batchGroupId,
         mode: 'production',
-        // Tracking QR for supply chain
-        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${trackingQrIpfsHash}`,
+        qrCodeUrl: trackingQrUrl,
         scanUrl,
         verificationUrl,
         message: isBatchOrder 
@@ -337,36 +291,18 @@ module.exports = async (req, res) => {
     // For Excel batches, only first item is marked as batch group leader
     const is_batch_group = isExcelBatch ? (excelBatchIndex === 1) : isBatchOrder;
 
-    // Step 1: Upload shared photos to IPFS
-    let photoHashes = [];
+    // Step 1: Upload shared photos to Vercel Blob
+    let photoUrls = [];
     if (photos && photos.length > 0) {
-      console.log(`Uploading ${photos.length} shared photos to IPFS...`);
+      console.log(`Uploading ${photos.length} shared photos to Vercel Blob...`);
       
       for (let i = 0; i < photos.length; i++) {
         const photoData = photos[i];
         const base64Data = photoData.includes(',') ? photoData.split(',')[1] : photoData;
         const buffer = Buffer.from(base64Data, 'base64');
-        
-        const FormData = require('form-data');
-        const photoFormData = new FormData();
-        photoFormData.append('file', buffer, {
-          filename: `batch-photo-${Date.now()}-${i + 1}.jpg`,
-          contentType: 'image/jpeg'
-        });
-
-        const photoResponse = await axios.post(
-          'https://api.pinata.cloud/pinning/pinFileToIPFS',
-          photoFormData,
-          {
-            headers: {
-              ...photoFormData.getHeaders(),
-              'Authorization': `Bearer ${process.env.PINATA_JWT}`
-            }
-          }
-        );
-
-        photoHashes.push(photoResponse.data.IpfsHash);
-        console.log(`Shared photo ${i + 1} IPFS Hash:`, photoResponse.data.IpfsHash);
+        const photoUrl = await uploadToBlob(buffer, `batch-photo-${Date.now()}-${i + 1}.jpg`, 'image/jpeg');
+        photoUrls.push(photoUrl);
+        console.log(`Shared photo ${i + 1} uploaded:`, photoUrl);
       }
     }
 
@@ -387,20 +323,14 @@ module.exports = async (req, res) => {
       const verificationUrl = `https://www.biztrack.io/verify.html?id=${productId}`;
 
       // Generate SKU
-      // - Batch + sameSku true: all items get same SKU (user-provided or auto-generated, no suffix)
-      // - Batch + sameSku false: add sequential suffix (-001, -002)
-      // - Single product: use provided SKU or auto-generate one
       let productSku;
       if (isBatchOrder) {
         if (sameSku) {
-          // All items get the same SKU (skuPrefix is either user-provided or auto-generated)
           productSku = String(skuPrefix);
         } else {
-          // Each item gets a unique suffix
           productSku = `${skuPrefix}-${String(itemNumber).padStart(3, '0')}`;
         }
       } else {
-        // Single product: use provided SKU or auto-generate
         productSku = sku 
           ? String(sku) 
           : `${productName.substring(0, 3).toUpperCase()}${Date.now().toString().slice(-4)}`;
@@ -413,41 +343,18 @@ module.exports = async (req, res) => {
       const smartQrBuffer = await QRCode.toBuffer(verificationUrl, {
         width: 300,
         margin: 2,
-        color: {
-          dark: '#000000',  // Black for reliable printing
-          light: '#FFFFFF'
-        },
+        color: { dark: '#000000', light: '#FFFFFF' },
         errorCorrectionLevel: 'M'
       });
 
-      console.log('Uploading SMART QR code to IPFS...');
-      const FormData = require('form-data');
-      const smartQrFormData = new FormData();
-      smartQrFormData.append('file', smartQrBuffer, {
-        filename: `${productId}-smart-qr.png`,
-        contentType: 'image/png'
-      });
-
-      const smartQrPinataResponse = await axios.post(
-        'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        smartQrFormData,
-        {
-          headers: {
-            ...smartQrFormData.getHeaders(),
-            'Authorization': `Bearer ${process.env.PINATA_JWT}`
-          }
-        }
-      );
-
-      const smartQrIpfsHash = smartQrPinataResponse.data.IpfsHash;
-      console.log('SMART QR Code IPFS Hash:', smartQrIpfsHash);
+      console.log('Uploading SMART QR code to Vercel Blob...');
+      const smartQrUrl = await uploadToBlob(smartQrBuffer, `${productId}-smart-qr.png`);
+      console.log('SMART QR Code URL:', smartQrUrl);
 
       // ==========================================
       // GENERATE DUMB QR (Inventory - Raw SKU only)
       // ==========================================
-      let dumbQrIpfsHash = null;
-      
-      // Ensure SKU is a valid string for QR generation (must be at least 2 chars)
+      let dumbQrUrl = null;
       const skuForQr = productSku && String(productSku).length >= 2 ? String(productSku) : null;
       
       if (skuForQr) {
@@ -455,45 +362,26 @@ module.exports = async (req, res) => {
         const dumbQrBuffer = await QRCode.toBuffer(skuForQr, {
           width: 300,
           margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-          },
+          color: { dark: '#000000', light: '#FFFFFF' },
           errorCorrectionLevel: 'L'
         });
 
-        console.log('Uploading DUMB QR code to IPFS...');
-        const dumbQrFormData = new FormData();
-        dumbQrFormData.append('file', dumbQrBuffer, {
-          filename: `${productId}-inventory-qr.png`,
-          contentType: 'image/png'
-        });
-
-        const dumbQrPinataResponse = await axios.post(
-          'https://api.pinata.cloud/pinning/pinFileToIPFS',
-          dumbQrFormData,
-          {
-            headers: {
-              ...dumbQrFormData.getHeaders(),
-              'Authorization': `Bearer ${process.env.PINATA_JWT}`
-            }
-          }
-        );
-
-        dumbQrIpfsHash = dumbQrPinataResponse.data.IpfsHash;
-        console.log('DUMB QR Code IPFS Hash:', dumbQrIpfsHash);
+        console.log('Uploading DUMB QR code to Vercel Blob...');
+        dumbQrUrl = await uploadToBlob(dumbQrBuffer, `${productId}-inventory-qr.png`);
+        console.log('DUMB QR Code URL:', dumbQrUrl);
       }
 
+      // Build product data
       const productData = {
         productId,
         productName,
         sku: productSku,
         batchNumber: batchNumber || null,
-        metadata: metadata || {},
-        photoHashes: photoHashes.length > 0 ? photoHashes : null,
+        metadata: { ...(metadata || {}), industryType: industryType || 'general' },
+        photoUrls: photoUrls.length > 0 ? photoUrls : null,
         location: location || null,
-        qrCodeIpfsHash: smartQrIpfsHash,
-        inventoryQrCodeIpfsHash: dumbQrIpfsHash,
+        smartQrUrl,
+        inventoryQrUrl: dumbQrUrl,
         verificationUrl,
         createdAt: new Date().toISOString(),
         mintedBy: 'BizTrack Supply Chain Tracking',
@@ -505,25 +393,9 @@ module.exports = async (req, res) => {
         } : null
       };
 
-      console.log('Uploading product data to IPFS...');
-      const pinataResponse = await axios.post(
-        'https://api.pinata.cloud/pinning/pinJSONToIPFS',
-        {
-          pinataContent: productData,
-          pinataMetadata: {
-            name: `BizTrack-${productId}`
-          }
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.PINATA_JWT}`
-          }
-        }
-      );
-
-      const ipfsHash = pinataResponse.data.IpfsHash;
-      console.log('Product Data IPFS Hash:', ipfsHash);
+      // Create hash of product data for blockchain
+      const crypto = require('crypto');
+      const productDataHash = crypto.createHash('sha256').update(JSON.stringify(productData)).digest('hex');
 
       console.log('Writing to XRPL...');
       const tx = {
@@ -535,9 +407,7 @@ module.exports = async (req, res) => {
               MemoType: Buffer.from('BizTrack-Product').toString('hex').toUpperCase(),
               MemoData: Buffer.from(JSON.stringify({
                 productId,
-                ipfsHash,
-                qrCodeIpfsHash: smartQrIpfsHash,
-                inventoryQrCodeIpfsHash: dumbQrIpfsHash,
+                dataHash: productDataHash,
                 timestamp: new Date().toISOString(),
                 batchInfo: isBatchOrder ? { itemNumber, totalInBatch: quantity, batchGroupId } : null
               })).toString('hex').toUpperCase()
@@ -567,50 +437,30 @@ module.exports = async (req, res) => {
       
       // For batch leaders, store display info in metadata
       const isBatchLeader = isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1);
-      const productMetadata = { ...(metadata || {}) };
+      const productMetadata = { ...(metadata || {}), industryType: industryType || 'general', dataHash: productDataHash };
       if (isExcelBatch && isBatchLeader && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
       }
-      // Store the base SKU prefix for batch display (without -001 suffix)
       if (isBatchOrder && isBatchLeader && !sameSku) {
         productMetadata.batchSkuPrefix = skuPrefix;
       }
       
       await pool.query(
         `INSERT INTO products (
-          product_id, 
-          product_name, 
-          sku, 
-          batch_number, 
-          ipfs_hash, 
-          xrpl_tx_hash, 
-          qr_code_ipfs_hash,
-          inventory_qr_code_ipfs_hash,
-          metadata, 
-          user_id,
-          is_batch_group,
-          batch_group_id,
-          batch_quantity,
-          mode,
-          is_finalized
+          product_id, product_name, sku, batch_number, 
+          xrpl_tx_hash, qr_code_url, inventory_qr_code_url,
+          metadata, user_id,
+          is_batch_group, batch_group_id, batch_quantity,
+          mode, is_finalized
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
-          productId, 
-          productName, 
-          productSku, 
-          batchNumber, 
-          ipfsHash, 
-          txHash, 
-          smartQrIpfsHash,
-          dumbQrIpfsHash,
-          productMetadata, 
-          user.id,
-          isBatchLeader,
-          batchGroupId,
+          productId, productName, productSku, batchNumber, 
+          txHash, smartQrUrl, dumbQrUrl,
+          productMetadata, user.id,
+          isBatchLeader, batchGroupId,
           isExcelBatch ? excelBatchTotal : (isBatchOrder ? quantity : null),
-          'live',
-          true  // Live mode products are "finalized" by default
+          'live', true
         ]
       );
 
@@ -621,16 +471,12 @@ module.exports = async (req, res) => {
         productName,
         sku: productSku,
         batchNumber,
-        ipfsHash,
-        qrCodeIpfsHash: smartQrIpfsHash,
-        inventoryQrCodeIpfsHash: dumbQrIpfsHash,
         xrplTxHash: txHash,
         verificationUrl,
         mode: 'live',
-        qrCodeUrl: `https://gateway.pinata.cloud/ipfs/${smartQrIpfsHash}`,
-        inventoryQrCodeUrl: dumbQrIpfsHash ? `https://gateway.pinata.cloud/ipfs/${dumbQrIpfsHash}` : null,
+        qrCodeUrl: smartQrUrl,
+        inventoryQrCodeUrl: dumbQrUrl,
         blockchainExplorer: `https://livenet.xrpl.org/transactions/${txHash}`,
-        ipfsGateway: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
         timestamp: new Date().toISOString()
       });
 
@@ -675,15 +521,11 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         success: true,
         productId: product.productId,
-        ipfsHash: product.ipfsHash,
-        qrCodeIpfsHash: product.qrCodeIpfsHash,
-        inventoryQrCodeIpfsHash: product.inventoryQrCodeIpfsHash,
         xrplTxHash: product.xrplTxHash,
         verificationUrl: product.verificationUrl,
         qrCodeUrl: product.qrCodeUrl,
         inventoryQrCodeUrl: product.inventoryQrCodeUrl,
-        blockchainExplorer: product.blockchainExplorer,
-        ipfsGateway: product.ipfsGateway
+        blockchainExplorer: product.blockchainExplorer
       });
     }
 

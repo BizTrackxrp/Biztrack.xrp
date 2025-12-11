@@ -8,6 +8,7 @@
     "dev": "vercel dev"
   },
   "dependencies": {
+    "@vercel/blob": "^0.27.0",
     "xrpl": "^3.0.0",
     "axios": "^1.6.0",
     "pg": "^8.11.0",

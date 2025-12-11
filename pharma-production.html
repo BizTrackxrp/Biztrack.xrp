@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pharma In Progress – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #F0FDFA 0%, #ECFDF5 50%, #F0FDF4 100%);
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-header h1 { 
+      font-size: 2rem; 
+      font-weight: 800; 
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .page-header h1 i { color: #14B8A6; }
+    .page-header p { font-size: 1rem; color: #64748B; margin-top: 0.25rem; }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .stat-box {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: 2px solid #14B8A6;
+      text-align: center;
+    }
+    .stat-box-value { font-size: 1.5rem; font-weight: 800; color: #14B8A6; }
+    .stat-box-label { font-size: 0.75rem; color: #0F766E; text-transform: uppercase; }
+
+    /* Info Banner */
+    .info-banner {
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%);
+      border: 2px solid #14B8A6;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .info-banner i { color: #14B8A6; font-size: 1.25rem; margin-top: 0.1rem; }
+    .info-banner-content { flex: 1; }
+    .info-banner-content strong { color: #0F766E; }
+    .info-banner-content p { color: #0D9488; font-size: 0.9rem; margin: 0; }
+
+    /* Search */
+    .search-bar {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 1.5rem;
+    }
+    .search-box {
+      position: relative;
+      max-width: 400px;
+    }
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #14B8A6;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+
+    /* Product List */
+    .products-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #14B8A6;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.15);
+    }
+
+    .product-card-header {
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%);
+    }
+    .product-card-header:hover { background: #CCFBF1; }
+
+    .product-card-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .product-card-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1E293B;
+    }
+    .product-card-sku {
+      font-size: 0.85rem;
+      color: #64748B;
+      font-family: monospace;
+    }
+    .product-card-gtin {
+      font-size: 0.75rem;
+      color: #0D9488;
+      font-family: monospace;
+      margin-top: 0.15rem;
+    }
+
+    .product-card-badges {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-production { background: #14B8A6; color: white; }
+    .badge-checkpoints { background: #F59E0B; color: white; }
+    .badge-batch { background: #3B82F6; color: white; }
+    .badge-gs1 { background: #8B5CF6; color: white; }
+
+    .expand-icon {
+      color: #64748B;
+      font-size: 1.25rem;
+      transition: transform 0.2s;
+    }
+    .product-card.expanded .expand-icon { transform: rotate(180deg); }
+
+    .product-card-body {
+      display: none;
+      padding: 1.5rem;
+      border-top: 2px solid #CCFBF1;
+    }
+    .product-card.expanded .product-card-body { display: block; }
+
+    /* Pharma Details Section */
+    .pharma-details {
+      background: linear-gradient(135deg, #F0FDFA 0%, #F5F3FF 100%);
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+    .pharma-detail-item {
+      text-align: center;
+    }
+    .pharma-detail-label {
+      font-size: 0.7rem;
+      color: #64748B;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .pharma-detail-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1E293B;
+      font-family: monospace;
+    }
+    .pharma-detail-value.expiry {
+      color: #DC2626;
+    }
+
+    /* Timeline */
+    .timeline-section {
+      margin-bottom: 1.5rem;
+    }
+    .timeline-section h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0F766E;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #14B8A6, #8B5CF6);
+      border-radius: 3px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.25rem;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -2rem;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background: #14B8A6;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #14B8A6;
+    }
+
+    .timeline-content {
+      background: #F8FAFC;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
+      position: relative;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      padding-right: 2rem;
+    }
+    .timeline-who {
+      font-weight: 600;
+      color: #1E293B;
+    }
+    .timeline-role {
+      font-size: 0.7rem;
+      color: white;
+      background: #14B8A6;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+    }
+    .timeline-when {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+    .timeline-location {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-bottom: 0.25rem;
+    }
+    .timeline-location i { color: #3B82F6; margin-right: 0.25rem; }
+    .timeline-notes {
+      font-size: 0.9rem;
+      color: #475569;
+      background: white;
+      padding: 0.5rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      border-left: 3px solid #14B8A6;
+    }
+    .timeline-photos {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .timeline-photos img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+    .timeline-photos img:hover { transform: scale(1.1); border-color: #14B8A6; }
+
+    .timeline-delete {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .timeline-delete:hover { color: #DC2626; background: #FEF2F2; }
+
+    .timeline-empty {
+      text-align: center;
+      padding: 2rem;
+      color: #94A3B8;
+      background: #F8FAFC;
+      border-radius: 10px;
+    }
+    .timeline-empty i { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
+
+    /* Actions */
+    .product-actions {
+      display: flex;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 2px solid #E2E8F0;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-finalize {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+      box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    }
+    .btn-finalize:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(20, 184, 166, 0.4); }
+    .btn-finalize:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary {
+      background: white;
+      color: #475569;
+      border: 2px solid #E2E8F0;
+    }
+    .btn-secondary:hover { background: #F8FAFC; border-color: #CBD5E1; }
+    .btn-danger {
+      background: white;
+      color: #DC2626;
+      border: 2px solid #FECACA;
+    }
+    .btn-danger:hover { background: #FEF2F2; }
+    .btn-qr {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+    }
+    .btn-qr:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3); }
+    .btn-gs1 {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+    }
+    .btn-gs1:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #94A3B8;
+    }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: #14B8A6; opacity: 0.5; }
+    .empty-state h3 { font-size: 1.25rem; color: #64748B; margin-bottom: 0.5rem; }
+    .empty-state p { margin-bottom: 1.5rem; }
+    .empty-state a { color: #14B8A6; text-decoration: none; font-weight: 600; }
+    .empty-state a:hover { text-decoration: underline; }
+
+    /* Confirmation Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal h3 { font-size: 1.25rem; margin-bottom: 0.75rem; color: #1E293B; }
+    .modal p { color: #64748B; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .modal-buttons { display: flex; gap: 0.75rem; justify-content: center; }
+    .modal-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .modal-btn-cancel { background: #F1F5F9; color: #64748B; }
+    .modal-btn-cancel:hover { background: #E2E8F0; }
+    .modal-btn-danger { background: #DC2626; color: white; }
+    .modal-btn-danger:hover { background: #B91C1C; }
+    .modal-btn-success { background: #14B8A6; color: white; }
+    .modal-btn-success:hover { background: #0D9488; }
+
+    /* QR Modal - Updated for dual QR codes */
+    .qr-modal {
+      max-width: 520px;
+    }
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .qr-modal-header h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+    .qr-modal-header h3 i { color: #14B8A6; }
+    .qr-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #64748B;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+    }
+    .qr-modal-close:hover { background: #F1F5F9; color: #1E293B; }
+    .qr-modal-sku {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .qr-modal-sku span {
+      font-family: monospace;
+      background: #F0FDFA;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #0F766E;
+      border: 1px solid #99F6E4;
+    }
+    .qr-codes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-code-box {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      background: #F8FAFC;
+    }
+    .qr-code-box.customer {
+      border-color: #14B8A6;
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%);
+    }
+    .qr-code-box.gs1 {
+      border-color: #8B5CF6;
+      background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    }
+    .qr-code-box img {
+      width: 140px;
+      height: 140px;
+      border-radius: 8px;
+      border: 2px solid white;
+      padding: 8px;
+      background: white;
+    }
+    .qr-code-label {
+      margin-top: 0.75rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .qr-code-box.customer .qr-code-label { color: #0F766E; }
+    .qr-code-box.gs1 .qr-code-label { color: #7C3AED; }
+    .qr-code-desc {
+      font-size: 0.75rem;
+      color: #64748B;
+      margin-top: 0.25rem;
+    }
+    .qr-download-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .qr-download-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      transition: all 0.2s;
+    }
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+    }
+    .qr-download-btn.gs1 {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+    }
+    .qr-download-btn:hover { transform: translateY(-2px); }
+
+    /* Checkpoint Detail Modal */
+    .checkpoint-modal {
+      max-width: 500px;
+      text-align: left;
+    }
+    .checkpoint-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .checkpoint-modal-header h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-modal-header h3 i { color: #14B8A6; }
+    .checkpoint-modal-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-modal-nav button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #E2E8F0;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .checkpoint-modal-nav button:hover:not(:disabled) {
+      border-color: #14B8A6;
+      color: #14B8A6;
+    }
+    .checkpoint-modal-nav button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .checkpoint-modal-nav span {
+      font-size: 0.85rem;
+      color: #64748B;
+      min-width: 60px;
+      text-align: center;
+    }
+    .checkpoint-detail-row {
+      display: flex;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .checkpoint-detail-label {
+      width: 100px;
+      font-weight: 600;
+      color: #64748B;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .checkpoint-detail-value {
+      flex: 1;
+      color: #1E293B;
+    }
+    .checkpoint-detail-value.role-badge {
+      display: inline-block;
+      background: #14B8A6;
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .checkpoint-detail-photos {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .checkpoint-detail-photos img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+    .checkpoint-detail-photos img:hover {
+      border-color: #14B8A6;
+      transform: scale(1.05);
+    }
+    .checkpoint-detail-notes {
+      background: #F8FAFC;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border-left: 3px solid #14B8A6;
+      font-size: 0.95rem;
+    }
+    .checkpoint-detail-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkpoint-detail-location i {
+      color: #3B82F6;
+    }
+    .checkpoint-detail-location a {
+      color: #3B82F6;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .checkpoint-detail-location a:hover {
+      text-decoration: underline;
+    }
+
+    /* Add Checkpoint Modal */
+    .add-checkpoint-modal {
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: left;
+      padding: 0;
+    }
+    .add-checkpoint-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+      color: white;
+      border-radius: 16px 16px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .add-checkpoint-modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .add-checkpoint-modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .add-checkpoint-modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .add-checkpoint-modal-body {
+      padding: 1.5rem;
+      padding-bottom: 2.5rem;
+    }
+    .add-checkpoint-form-group {
+      margin-bottom: 1.25rem;
+    }
+    .add-checkpoint-form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+    .add-checkpoint-form-group input,
+    .add-checkpoint-form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+    .add-checkpoint-form-group input:focus,
+    .add-checkpoint-form-group textarea:focus {
+      outline: none;
+      border-color: #14B8A6;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+      background: white;
+    }
+    .add-checkpoint-form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .add-checkpoint-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .add-checkpoint-location-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #F8FAFC;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-checkpoint-location-status:hover {
+      background: #F1F5F9;
+    }
+    .add-checkpoint-location-status.success {
+      background: #F0FDFA;
+      color: #0D9488;
+    }
+    .add-checkpoint-photo-btns {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .add-checkpoint-photo-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+    }
+    .add-checkpoint-photo-btn:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+    .add-checkpoint-photo-preview {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+    .add-checkpoint-photo-item {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+    .add-checkpoint-photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #E2E8F0;
+    }
+    .add-checkpoint-photo-item button {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #DC2626;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .add-checkpoint-submit {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+      box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+      margin-top: 0.5rem;
+    }
+    .add-checkpoint-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(20, 184, 166, 0.4);
+    }
+    .add-checkpoint-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .add-checkpoint-message {
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .add-checkpoint-message.success {
+      background: #F0FDFA;
+      color: #0D9488;
+      border: 1px solid #99F6E4;
+    }
+    .add-checkpoint-message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    /* Minting Modal */
+    .minting-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .minting-modal-overlay.show { display: flex; }
+    .minting-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+    .minting-spinner {
+      width: 80px;
+      height: 80px;
+      border: 4px solid #E2E8F0;
+      border-top: 4px solid #14B8A6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .minting-modal h3 {
+      font-size: 1.5rem;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+    .minting-modal p {
+      color: #64748B;
+      margin-bottom: 1rem;
+    }
+    .minting-status {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #14B8A6;
+      background: #F0FDFA;
+      padding: 0.75rem;
+      border-radius: 8px;
+    }
+    .minting-warning {
+      font-size: 0.8rem;
+      color: #DC2626;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .header-stats { width: 100%; }
+      .stat-box { flex: 1; }
+      .product-card-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      .product-actions { flex-direction: column; }
+      .product-actions .btn { width: 100%; justify-content: center; }
+      .add-checkpoint-form-row { grid-template-columns: 1fr; }
+      .qr-codes-grid { grid-template-columns: 1fr; }
+      .pharma-details { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 500px) {
+      .add-checkpoint-modal {
+        max-width: 95%;
+        margin: 1rem;
+      }
+      .add-checkpoint-modal-body {
+        padding-bottom: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="js/pharma-sidebar.js"></script>
+
+  <div class="main-with-sidebar">
+    <div class="page-header">
+      <div>
+        <h1><i class="fas fa-industry"></i> Pharma In Progress</h1>
+        <p>Track pharmaceutical products through the supply chain with GS1 compliance.</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-box">
+          <div class="stat-box-value" id="totalInProduction">-</div>
+          <div class="stat-box-label">In Production</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-value" id="totalCheckpoints">-</div>
+          <div class="stat-box-label">Total Checkpoints</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+      <i class="fas fa-pills"></i>
+      <div class="info-banner-content">
+        <p><strong>DSCSA Compliance:</strong> Products in production mode can be scanned at each supply chain checkpoint. GS1 data (GTIN, Lot, Expiry, Serial) is encoded for VRS verification. Click "Go Live" when ready to mint to blockchain.</p>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, SKU, GTIN, or serial..." />
+      </div>
+    </div>
+
+    <!-- Products List -->
+    <div id="productsContainer">
+      <div class="empty-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="confirmModal" onclick="closeModal('confirmModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 id="confirmModalTitle">Confirm</h3>
+      <p id="confirmModalMessage">Are you sure?</p>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+        <button class="modal-btn" id="confirmModalBtn" onclick="confirmAction()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Modal with dual QR codes -->
+  <div class="modal-overlay" id="qrModal" onclick="closeModal('qrModal')">
+    <div class="modal qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h3><i class="fas fa-qrcode"></i> Product QR Codes</h3>
+        <button class="qr-modal-close" onclick="closeModal('qrModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="qr-modal-sku">
+        <span id="qrModalSku">SKU: ---</span>
+      </div>
+      <div class="qr-codes-grid">
+        <div class="qr-code-box customer">
+          <img id="qrModalCustomer" src="" alt="Customer QR" />
+          <div class="qr-code-label">Customer QR</div>
+          <div class="qr-code-desc">Verification link</div>
+        </div>
+        <div class="qr-code-box gs1" id="qrModalGs1Box">
+          <img id="qrModalGs1" src="" alt="GS1 QR" />
+          <div class="qr-code-label">GS1 QR</div>
+          <div class="qr-code-desc">GTIN/Lot/Exp/Serial</div>
+        </div>
+      </div>
+      <div class="qr-download-buttons">
+        <button class="qr-download-btn customer" onclick="downloadQR('customer')">
+          <i class="fas fa-download"></i> Customer
+        </button>
+        <button class="qr-download-btn gs1" id="downloadGs1Btn" onclick="downloadQR('gs1')">
+          <i class="fas fa-download"></i> GS1
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkpoint Detail Modal -->
+  <div class="modal-overlay" id="checkpointModal" onclick="closeModal('checkpointModal')">
+    <div class="modal checkpoint-modal" onclick="event.stopPropagation()">
+      <div class="checkpoint-modal-header">
+        <h3><i class="fas fa-map-marker-alt"></i> Checkpoint Details</h3>
+        <div class="checkpoint-modal-nav">
+          <button onclick="navigateCheckpoint(-1)" id="checkpointPrev" title="Previous">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span id="checkpointCounter">1 of 3</span>
+          <button onclick="navigateCheckpoint(1)" id="checkpointNext" title="Next">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div id="checkpointModalContent"></div>
+      <div class="modal-buttons" style="margin-top: 1.5rem; border-top: 2px solid #E2E8F0; padding-top: 1rem;">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkpointModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Checkpoint Modal -->
+  <div class="modal-overlay" id="addCheckpointModal" onclick="closeAddCheckpointModal()">
+    <div class="modal add-checkpoint-modal" onclick="event.stopPropagation()">
+      <div class="add-checkpoint-modal-header">
+        <h3><i class="fas fa-plus-circle"></i> Add Checkpoint</h3>
+        <button class="add-checkpoint-modal-close" onclick="closeAddCheckpointModal()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="add-checkpoint-modal-body">
+        <div id="addCheckpointMessage"></div>
+        
+        <div class="add-checkpoint-form-row">
+          <div class="add-checkpoint-form-group">
+            <label for="acScannerName">Your Name *</label>
+            <input type="text" id="acScannerName" placeholder="e.g. John Smith">
+          </div>
+          <div class="add-checkpoint-form-group">
+            <label for="acScannerRole">Your Role *</label>
+            <input type="text" id="acScannerRole" placeholder="e.g. QC Inspector">
+          </div>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label>Location</label>
+          <div class="add-checkpoint-location-status" id="acLocationStatus" onclick="acRetryLocation()">
+            <i class="fas fa-location-crosshairs"></i>
+            <span>Tap to capture location</span>
+          </div>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label for="acNotes">Notes (optional)</label>
+          <textarea id="acNotes" placeholder="e.g. Passed quality inspection, temperature verified at 4°C"></textarea>
+        </div>
+
+        <div class="add-checkpoint-form-group">
+          <label>Photos (optional)</label>
+          <input type="file" id="acPhotoInput" accept="image/*" multiple style="display:none;">
+          <input type="file" id="acCameraInput" accept="image/*" capture="environment" style="display:none;">
+          <div class="add-checkpoint-photo-btns">
+            <button type="button" class="add-checkpoint-photo-btn" onclick="document.getElementById('acCameraInput').click()">
+              <i class="fas fa-camera"></i> Camera
+            </button>
+            <button type="button" class="add-checkpoint-photo-btn" onclick="document.getElementById('acPhotoInput').click()">
+              <i class="fas fa-images"></i> Gallery
+            </button>
+          </div>
+          <div class="add-checkpoint-photo-preview" id="acPhotoPreview"></div>
+        </div>
+
+        <button class="add-checkpoint-submit" id="acSubmitBtn" onclick="acSubmitCheckpoint()">
+          <i class="fas fa-check"></i> Log Checkpoint
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minting Modal -->
+  <div class="minting-modal-overlay" id="mintingModal">
+    <div class="minting-modal">
+      <div class="minting-spinner"></div>
+      <h3>Minting to Blockchain</h3>
+      <p>Recording GS1 product data on IPFS & the XRP Ledger for DSCSA verification compliance.</p>
+      <div class="minting-status" id="mintingStatus">Initializing...</div>
+      <p class="minting-warning"><i class="fas fa-exclamation-triangle"></i> Please don't refresh or close this page</p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    let allProducts = [];
+    let filteredProducts = [];
+    let confirmCallback = null;
+    let currentQRData = null;
+
+    // ==========================================
+    // LOAD PRODUCTS
+    // ==========================================
+    async function loadProducts() {
+      try {
+        const response = await authenticatedFetch('/api/list-products?type=pharma');
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to load products');
+        }
+
+        // Filter for pharma production mode only (not finalized)
+        allProducts = (data.products || []).filter(p => {
+          return p.mode === 'production' && !p.isFinalized && p.productType === 'pharma';
+        });
+
+        // Calculate stats
+        let totalCheckpoints = 0;
+        allProducts.forEach(p => {
+          totalCheckpoints += (p.checkpointCount || 0);
+        });
+
+        document.getElementById('totalInProduction').textContent = allProducts.length;
+        document.getElementById('totalCheckpoints').textContent = totalCheckpoints;
+
+        applyFilters();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsContainer').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error Loading Products</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // ==========================================
+    // FILTERS
+    // ==========================================
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      filteredProducts = allProducts.filter(p => {
+        return !searchTerm || 
+          p.productName?.toLowerCase().includes(searchTerm) ||
+          p.sku?.toLowerCase().includes(searchTerm) ||
+          p.productId?.toLowerCase().includes(searchTerm) ||
+          p.gtin?.toLowerCase().includes(searchTerm) ||
+          p.serialNumber?.toLowerCase().includes(searchTerm);
+      });
+
+      renderProducts();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // ==========================================
+    // RENDER PRODUCTS
+    // ==========================================
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+
+      if (filteredProducts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-pills"></i>
+            <h3>No Pharma Products in Production</h3>
+            <p>Enable "Production Mode" when creating pharma products to track them through your supply chain.</p>
+            <a href="pharma-generate.html"><i class="fas fa-plus"></i> Create Pharma Product</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="products-list">
+          ${filteredProducts.map(product => renderProductCard(product)).join('')}
+        </div>
+      `;
+    }
+
+    function renderProductCard(product) {
+      const checkpointCount = product.checkpointCount || 0;
+      const hasGs1 = product.gtin && product.lotNumber;
+
+      return `
+        <div class="product-card" id="card-${product.productId}">
+          <div class="product-card-header" onclick="toggleCard('${product.productId}')">
+            <div class="product-card-info">
+              <div>
+                <div class="product-card-title">${escapeHtml(product.productName)}</div>
+                <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
+                ${product.gtin ? `<div class="product-card-gtin">GTIN: ${escapeHtml(product.gtin)}</div>` : ''}
+              </div>
+            </div>
+            <div class="product-card-badges">
+              <span class="badge badge-production">Production</span>
+              <span class="badge badge-checkpoints">${checkpointCount} checkpoint${checkpointCount !== 1 ? 's' : ''}</span>
+              ${hasGs1 ? '<span class="badge badge-gs1">GS1</span>' : ''}
+              <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <!-- Pharma Details -->
+            ${hasGs1 ? `
+            <div class="pharma-details">
+              <div class="pharma-detail-item">
+                <div class="pharma-detail-label">GTIN</div>
+                <div class="pharma-detail-value">${escapeHtml(product.gtin)}</div>
+              </div>
+              <div class="pharma-detail-item">
+                <div class="pharma-detail-label">Lot/Batch</div>
+                <div class="pharma-detail-value">${escapeHtml(product.lotNumber || 'N/A')}</div>
+              </div>
+              <div class="pharma-detail-item">
+                <div class="pharma-detail-label">Expiry</div>
+                <div class="pharma-detail-value ${isExpiringSoon(product.expirationDate) ? 'expiry' : ''}">${formatExpiry(product.expirationDate)}</div>
+              </div>
+              <div class="pharma-detail-item">
+                <div class="pharma-detail-label">Serial #</div>
+                <div class="pharma-detail-value">${escapeHtml(product.serialNumber || 'N/A')}</div>
+              </div>
+            </div>
+            ` : ''}
+            
+            <div class="timeline-section">
+              <h4><i class="fas fa-route"></i> Supply Chain Timeline</h4>
+              <div class="timeline" id="timeline-${product.productId}">
+                <div class="timeline-empty">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>Loading checkpoints...</p>
+                </div>
+              </div>
+            </div>
+            <div class="product-actions">
+              <button class="btn btn-finalize" onclick="finalizeProduct('${product.productId}', '${escapeHtml(product.productName)}')">
+                <i class="fas fa-rocket"></i> Go Live
+              </button>
+              <button class="btn btn-secondary" onclick="openAddCheckpointModal('${product.productId}')">
+                <i class="fas fa-plus"></i> Add Checkpoint
+              </button>
+              <button class="btn btn-qr" onclick='showQRModal(${JSON.stringify({
+                sku: product.sku || product.productId,
+                productName: product.productName,
+                qrCodeUrl: product.qrCodeUrl,
+                gs1QrCodeUrl: product.gs1QrCodeUrl
+              }).replace(/'/g, "\\'")})'>
+                <i class="fas fa-qrcode"></i> QR Codes
+              </button>
+              <button class="btn btn-danger" onclick="deleteProduct('${product.productId}', '${escapeHtml(product.productName)}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function isExpiringSoon(dateStr) {
+      if (!dateStr) return false;
+      const expiry = new Date(dateStr);
+      const now = new Date();
+      const diffDays = (expiry - now) / (1000 * 60 * 60 * 24);
+      return diffDays < 90; // Less than 90 days
+    }
+
+    function formatExpiry(dateStr) {
+      if (!dateStr) return 'N/A';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    // ==========================================
+    // TOGGLE CARD
+    // ==========================================
+    window.toggleCard = async function(productId) {
+      const card = document.getElementById('card-' + productId);
+      const isExpanding = !card.classList.contains('expanded');
+      
+      card.classList.toggle('expanded');
+      
+      if (isExpanding) {
+        await loadCheckpoints(productId);
+      }
+    };
+
+    // ==========================================
+    // LOAD CHECKPOINTS
+    // ==========================================
+    async function loadCheckpoints(productId) {
+      const timeline = document.getElementById('timeline-' + productId);
+      
+      try {
+        const response = await authenticatedFetch('/api/get-production-timeline?productId=' + encodeURIComponent(productId));
+        const data = await response.json();
+
+        if (!data.success) {
+          timeline.innerHTML = '<div class="timeline-empty">Failed to load checkpoints</div>';
+          return;
+        }
+
+        const checkpoints = data.timeline?.checkpoints || [];
+
+        if (checkpoints.length === 0) {
+          timeline.innerHTML = `
+            <div class="timeline-empty">
+              <i class="fas fa-route"></i>
+              <p>No checkpoints logged yet.<br>Scan the QR code or click "Add Checkpoint" to log progress.</p>
+            </div>
+          `;
+          return;
+        }
+
+        timeline.innerHTML = checkpoints.map((cp, index) => `
+          <div class="timeline-item" id="checkpoint-${cp.id}" onclick="showCheckpointModal(${index})" style="cursor: pointer;">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <button class="timeline-delete" onclick="event.stopPropagation(); deleteCheckpoint(${cp.id}, '${productId}')" title="Delete checkpoint">
+                <i class="fas fa-trash"></i>
+              </button>
+              <div class="timeline-header">
+                <div>
+                  <span class="timeline-who">${escapeHtml(cp.scannedByName || 'Unknown')}</span>
+                  ${cp.scannedByRole ? `<span class="timeline-role">${escapeHtml(cp.scannedByRole)}</span>` : ''}
+                </div>
+                <span class="timeline-when">${formatDate(cp.scannedAt)}</span>
+              </div>
+              ${cp.locationName ? `<div class="timeline-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(cp.locationName)}</div>` : ''}
+              ${cp.notes ? `<div class="timeline-notes">${escapeHtml(cp.notes)}</div>` : ''}
+              ${cp.photos && cp.photos.length > 0 ? `
+                <div class="timeline-photos">
+                  ${cp.photos.map(photo => `<img src="${photo}" onclick="event.stopPropagation(); window.open('${photo}', '_blank')" alt="Checkpoint photo">`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+
+        window.currentCheckpoints = checkpoints;
+
+      } catch (error) {
+        console.error('Error loading checkpoints:', error);
+        timeline.innerHTML = '<div class="timeline-empty">Error loading checkpoints</div>';
+      }
+    }
+
+    // ==========================================
+    // CHECKPOINT DETAIL MODAL
+    // ==========================================
+    let currentCheckpointIndex = 0;
+
+    window.showCheckpointModal = function(index) {
+      const checkpoints = window.currentCheckpoints;
+      if (!checkpoints || checkpoints.length === 0) return;
+
+      currentCheckpointIndex = index;
+      renderCheckpointModal();
+      document.getElementById('checkpointModal').classList.add('show');
+    };
+
+    function renderCheckpointModal() {
+      const checkpoints = window.currentCheckpoints;
+      const cp = checkpoints[currentCheckpointIndex];
+      const total = checkpoints.length;
+
+      document.getElementById('checkpointCounter').textContent = `${currentCheckpointIndex + 1} of ${total}`;
+      document.getElementById('checkpointPrev').disabled = currentCheckpointIndex === 0;
+      document.getElementById('checkpointNext').disabled = currentCheckpointIndex === total - 1;
+
+      const content = document.getElementById('checkpointModalContent');
+      
+      const date = new Date(cp.scannedAt);
+      const fullDateTime = date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      content.innerHTML = `
+        <div class="checkpoint-detail-row">
+          <div class="checkpoint-detail-label">Logged By</div>
+          <div class="checkpoint-detail-value">
+            <strong>${escapeHtml(cp.scannedByName || 'Unknown')}</strong>
+            ${cp.scannedByRole ? `<span class="checkpoint-detail-value role-badge" style="margin-left: 0.5rem;">${escapeHtml(cp.scannedByRole)}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="checkpoint-detail-row">
+          <div class="checkpoint-detail-label">Date/Time</div>
+          <div class="checkpoint-detail-value">${fullDateTime}</div>
+        </div>
+
+        ${cp.locationName ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Location</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${escapeHtml(cp.locationName)}</span>
+              </div>
+              ${cp.latitude && cp.longitude ? `
+                <a href="https://www.google.com/maps?q=${cp.latitude},${cp.longitude}" target="_blank" class="checkpoint-detail-location" style="margin-top: 0.25rem;">
+                  <i class="fas fa-external-link-alt"></i>
+                  View on Google Maps
+                </a>
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.latitude && cp.longitude ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Coordinates</div>
+            <div class="checkpoint-detail-value" style="font-family: monospace; font-size: 0.85rem;">
+              ${parseFloat(cp.latitude).toFixed(6)}, ${parseFloat(cp.longitude).toFixed(6)}
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.notes ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Notes</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-notes">${escapeHtml(cp.notes)}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${cp.photos && cp.photos.length > 0 ? `
+          <div class="checkpoint-detail-row">
+            <div class="checkpoint-detail-label">Photos</div>
+            <div class="checkpoint-detail-value">
+              <div class="checkpoint-detail-photos">
+                ${cp.photos.map(photo => `<img src="${photo}" onclick="window.open('${photo}', '_blank')" alt="Checkpoint photo" title="Click to view full size">`).join('')}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    window.navigateCheckpoint = function(direction) {
+      const checkpoints = window.currentCheckpoints;
+      const newIndex = currentCheckpointIndex + direction;
+      
+      if (newIndex >= 0 && newIndex < checkpoints.length) {
+        currentCheckpointIndex = newIndex;
+        renderCheckpointModal();
+      }
+    };
+
+    // ==========================================
+    // ADD CHECKPOINT MODAL
+    // ==========================================
+    let acCurrentProductId = null;
+    let acSelectedPhotos = [];
+    let acCapturedLocation = null;
+
+    window.openAddCheckpointModal = function(productId) {
+      acCurrentProductId = productId;
+      acSelectedPhotos = [];
+      acCapturedLocation = null;
+      
+      document.getElementById('acScannerName').value = '';
+      document.getElementById('acScannerRole').value = '';
+      document.getElementById('acNotes').value = '';
+      document.getElementById('acPhotoPreview').innerHTML = '';
+      document.getElementById('addCheckpointMessage').innerHTML = '';
+      
+      const statusEl = document.getElementById('acLocationStatus');
+      statusEl.className = 'add-checkpoint-location-status';
+      statusEl.innerHTML = '<i class="fas fa-location-crosshairs"></i> <span>Tap to capture location</span>';
+      
+      const btn = document.getElementById('acSubmitBtn');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check"></i> Log Checkpoint';
+      
+      document.getElementById('addCheckpointModal').classList.add('show');
+      acAutoGetLocation();
+    };
+
+    window.closeAddCheckpointModal = function() {
+      document.getElementById('addCheckpointModal').classList.remove('show');
+      
+      if (acCurrentProductId) {
+        loadCheckpoints(acCurrentProductId);
+        updateCheckpointBadge(acCurrentProductId);
+      }
+      acCurrentProductId = null;
+    };
+
+    async function updateCheckpointBadge(productId) {
+      try {
+        const response = await authenticatedFetch('/api/get-production-timeline?productId=' + encodeURIComponent(productId));
+        const data = await response.json();
+        
+        if (data.success) {
+          const count = data.timeline?.checkpoints?.length || 0;
+          const card = document.getElementById('card-' + productId);
+          if (card) {
+            const badge = card.querySelector('.badge-checkpoints');
+            if (badge) {
+              badge.textContent = `${count} checkpoint${count !== 1 ? 's' : ''}`;
+            }
+          }
+          
+          let totalCheckpoints = 0;
+          allProducts.forEach(p => {
+            if (p.productId === productId) {
+              p.checkpointCount = count;
+            }
+            totalCheckpoints += (p.checkpointCount || 0);
+          });
+          document.getElementById('totalCheckpoints').textContent = totalCheckpoints;
+        }
+      } catch (error) {
+        console.error('Error updating badge:', error);
+      }
+    }
+
+    function acAutoGetLocation() {
+      if (!navigator.geolocation) return;
+
+      const statusEl = document.getElementById('acLocationStatus');
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Getting location...</span>';
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          acCapturedLocation = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          };
+
+          let locationName = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+          try {
+            const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`);
+            const geoData = await geoResponse.json();
+            if (geoData.display_name) {
+              locationName = geoData.display_name.split(',').slice(0, 3).join(',');
+            }
+          } catch (e) {
+            console.log('Reverse geocoding failed');
+          }
+
+          acCapturedLocation.name = locationName;
+          statusEl.className = 'add-checkpoint-location-status success';
+          statusEl.innerHTML = `<i class="fas fa-check-circle"></i> <span>${locationName}</span>`;
+        },
+        (err) => {
+          console.log('Location error:', err);
+          statusEl.innerHTML = '<i class="fas fa-location-crosshairs"></i> <span>Tap to retry</span>';
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
+      );
+    }
+
+    window.acRetryLocation = function() {
+      acAutoGetLocation();
+    };
+
+    document.getElementById('acPhotoInput').addEventListener('change', acHandlePhotos);
+    document.getElementById('acCameraInput').addEventListener('change', acHandlePhotos);
+
+    async function acHandlePhotos(e) {
+      for (const file of Array.from(e.target.files)) {
+        if (acSelectedPhotos.length >= 3) break;
+        acSelectedPhotos.push(await acCompressImage(file));
+        acRenderPhotoPreview();
+      }
+      e.target.value = '';
+    }
+
+    async function acCompressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const MAX = 1000;
+            if (w > h && w > MAX) { h *= MAX / w; w = MAX; }
+            else if (h > MAX) { w *= MAX / h; h = MAX; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function acRenderPhotoPreview() {
+      const container = document.getElementById('acPhotoPreview');
+      container.innerHTML = acSelectedPhotos.map((photo, i) => `
+        <div class="add-checkpoint-photo-item">
+          <img src="${photo}">
+          <button onclick="acRemovePhoto(${i})"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+    }
+
+    window.acRemovePhoto = function(index) {
+      acSelectedPhotos.splice(index, 1);
+      acRenderPhotoPreview();
+    };
+
+    window.acSubmitCheckpoint = async function() {
+      const name = document.getElementById('acScannerName').value.trim();
+      const role = document.getElementById('acScannerRole').value.trim();
+      const notes = document.getElementById('acNotes').value.trim();
+      const msgEl = document.getElementById('addCheckpointMessage');
+      const btn = document.getElementById('acSubmitBtn');
+
+      msgEl.innerHTML = '';
+
+      if (!name || !role) {
+        msgEl.innerHTML = '<div class="add-checkpoint-message error"><i class="fas fa-exclamation-circle"></i> Name and role are required.</div>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      try {
+        const response = await fetch('/api/log-production-scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: acCurrentProductId,
+            scannedByName: name,
+            scannedByRole: role,
+            latitude: acCapturedLocation?.latitude || null,
+            longitude: acCapturedLocation?.longitude || null,
+            locationName: acCapturedLocation?.name || null,
+            notes: notes || null,
+            photos: acSelectedPhotos.length > 0 ? acSelectedPhotos : null
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to log checkpoint');
+        }
+
+        msgEl.innerHTML = '<div class="add-checkpoint-message success"><i class="fas fa-check-circle"></i> Checkpoint logged successfully!</div>';
+        
+        document.querySelector('.add-checkpoint-modal').scrollTop = 0;
+        
+        document.getElementById('acScannerName').value = '';
+        document.getElementById('acScannerRole').value = '';
+        document.getElementById('acNotes').value = '';
+        acSelectedPhotos = [];
+        acRenderPhotoPreview();
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Log Another Checkpoint';
+
+      } catch (error) {
+        msgEl.innerHTML = `<div class="add-checkpoint-message error"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Log Checkpoint';
+      }
+    };
+
+    // ==========================================
+    // FINALIZE PRODUCT
+    // ==========================================
+    window.finalizeProduct = function(productId, productName) {
+      showConfirmModal(
+        'Go Live?',
+        `Are you sure you want to finalize "${productName}"? This will mint it to the blockchain with full GS1 data and make it available for DSCSA verification. This cannot be undone.`,
+        'modal-btn-success',
+        'Go Live',
+        async () => {
+          const mintingModal = document.getElementById('mintingModal');
+          const mintingStatus = document.getElementById('mintingStatus');
+          mintingModal.classList.add('show');
+          document.body.style.overflow = 'hidden';
+          
+          mintingStatus.textContent = 'Connecting to XRPL...';
+          
+          try {
+            const response = await authenticatedFetch('/api/finalize-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+              throw new Error(data.error || data.message || 'Failed to finalize');
+            }
+
+            mintingModal.classList.remove('show');
+            document.body.style.overflow = '';
+            
+            alert('🚀 Product is now live! GS1 data encoded for VRS verification.');
+            loadProducts();
+          } catch (error) {
+            mintingModal.classList.remove('show');
+            document.body.style.overflow = '';
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    // ==========================================
+    // DELETE PRODUCT
+    // ==========================================
+    window.deleteProduct = function(productId, productName) {
+      showConfirmModal(
+        'Delete Production Entry?',
+        `Are you sure you want to delete "${productName}" and all its checkpoints? This cannot be undone.`,
+        'modal-btn-danger',
+        'Delete',
+        async () => {
+          try {
+            const response = await authenticatedFetch('/api/delete-production-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+              throw new Error(data.error || 'Failed to delete');
+            }
+
+            loadProducts();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    // ==========================================
+    // DELETE CHECKPOINT
+    // ==========================================
+    window.deleteCheckpoint = function(scanId, productId) {
+      showConfirmModal(
+        'Delete Checkpoint?',
+        'Are you sure you want to delete this checkpoint? This cannot be undone.',
+        'modal-btn-danger',
+        'Delete',
+        async () => {
+          try {
+            const response = await authenticatedFetch('/api/delete-production-scan', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ scanId })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+              throw new Error(data.error || 'Failed to delete');
+            }
+
+            const el = document.getElementById('checkpoint-' + scanId);
+            if (el) el.remove();
+
+            const timeline = document.getElementById('timeline-' + productId);
+            if (timeline && timeline.querySelectorAll('.timeline-item').length === 0) {
+              timeline.innerHTML = `
+                <div class="timeline-empty">
+                  <i class="fas fa-route"></i>
+                  <p>No checkpoints logged yet.<br>Scan the QR code or click "Add Checkpoint" to log progress.</p>
+                </div>
+              `;
+            }
+
+            loadProducts();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        }
+      );
+    };
+
+    // ==========================================
+    // MODALS
+    // ==========================================
+    function showConfirmModal(title, message, btnClass, btnText, callback) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      const btn = document.getElementById('confirmModalBtn');
+      btn.textContent = btnText;
+      btn.className = 'modal-btn ' + btnClass;
+      confirmCallback = callback;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    window.closeModal = function(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+      if (modalId === 'confirmModal') confirmCallback = null;
+    };
+
+    window.confirmAction = function() {
+      if (confirmCallback) confirmCallback();
+      closeModal('confirmModal');
+    };
+
+    window.showQRModal = function(data) {
+      if (typeof data === 'string') data = JSON.parse(data);
+      currentQRData = data;
+
+      document.getElementById('qrModalSku').textContent = 'SKU: ' + (data.sku || 'N/A');
+      document.getElementById('qrModalCustomer').src = data.qrCodeUrl || '';
+      
+      const gs1Box = document.getElementById('qrModalGs1Box');
+      const gs1Btn = document.getElementById('downloadGs1Btn');
+      
+      if (data.gs1QrCodeUrl) {
+        document.getElementById('qrModalGs1').src = data.gs1QrCodeUrl;
+        gs1Box.style.display = 'block';
+        gs1Btn.style.display = 'flex';
+      } else {
+        gs1Box.style.display = 'none';
+        gs1Btn.style.display = 'none';
+      }
+      
+      document.getElementById('qrModal').classList.add('show');
+    };
+
+    window.downloadQR = async function(type) {
+      if (!currentQRData) return;
+      
+      const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.gs1QrCodeUrl;
+      if (!url) return;
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = (currentQRData.sku || 'product') + '-' + type + '-qr.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (error) {
+        console.error('Download failed:', error);
+        window.open(url, '_blank');
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal('confirmModal');
+        closeModal('qrModal');
+        closeModal('checkpointModal');
+        if (document.getElementById('addCheckpointModal').classList.contains('show')) {
+          closeAddCheckpointModal();
+        }
+      }
+      if (document.getElementById('checkpointModal').classList.contains('show')) {
+        if (e.key === 'ArrowLeft') navigateCheckpoint(-1);
+        if (e.key === 'ArrowRight') navigateCheckpoint(1);
+      }
+    });
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    loadProducts();
+  </script>
+</body>
+</html>

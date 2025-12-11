@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QR Scanner – BizTrack Pharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- QR Code Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      color: #E2E8F0;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .header h1 i { color: #8B5CF6; }
+    .header p {
+      color: #94A3B8;
+      font-size: 0.85rem;
+    }
+    .header .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #8B5CF6;
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .header .back-link:hover { color: #A78BFA; }
+
+    /* Scanner Container */
+    .scanner-container {
+      background: #1E293B;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #334155;
+      margin-bottom: 1rem;
+    }
+    #reader {
+      width: 100%;
+    }
+    #reader video {
+      border-radius: 12px;
+    }
+
+    /* Scanner Controls */
+    .scanner-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .scanner-btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .scanner-btn.primary {
+      background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      color: white;
+    }
+    .scanner-btn.primary:hover { transform: translateY(-2px); }
+    .scanner-btn.primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .scanner-btn.secondary {
+      background: #334155;
+      color: #E2E8F0;
+    }
+    .scanner-btn.secondary:hover { background: #475569; }
+
+    /* Status Bar */
+    .status-bar {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-bar.ready { background: #1E3A5F; color: #60A5FA; }
+    .status-bar.scanning { background: #3B2F63; color: #A78BFA; }
+    .status-bar.success { background: #14532D; color: #4ADE80; }
+    .status-bar.error { background: #7F1D1D; color: #FCA5A5; }
+    .status-bar i { font-size: 1rem; }
+
+    /* Result Card */
+    .result-card {
+      background: #1E293B;
+      border-radius: 16px;
+      border: 2px solid #334155;
+      overflow: hidden;
+      display: none;
+    }
+    .result-card.show { display: block; }
+    
+    .result-header {
+      padding: 1rem;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .result-header.suspect {
+      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    }
+    .result-header.unverified {
+      background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+    }
+    .result-header i { font-size: 1.5rem; }
+    .result-header-text h3 { font-size: 1rem; font-weight: 700; }
+    .result-header-text p { font-size: 0.75rem; opacity: 0.9; }
+
+    .result-body {
+      padding: 1rem;
+    }
+    .result-field {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #334155;
+    }
+    .result-field:last-child { border-bottom: none; }
+    .result-field-label {
+      color: #94A3B8;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .result-field-value {
+      color: #E2E8F0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      text-align: right;
+      word-break: break-all;
+      max-width: 60%;
+    }
+
+    .result-actions {
+      padding: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      border-top: 1px solid #334155;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .action-btn.accept {
+      background: #059669;
+      color: white;
+    }
+    .action-btn.accept:hover { background: #047857; }
+    .action-btn.quarantine {
+      background: #DC2626;
+      color: white;
+    }
+    .action-btn.quarantine:hover { background: #B91C1C; }
+    .action-btn.verify {
+      background: #8B5CF6;
+      color: white;
+    }
+    .action-btn.verify:hover { background: #7C3AED; }
+
+    /* Raw Data Toggle */
+    .raw-data-toggle {
+      padding: 0.75rem 1rem;
+      background: #0F172A;
+      border-top: 1px solid #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+    .raw-data-toggle:hover { background: #1E293B; }
+    .raw-data-content {
+      display: none;
+      padding: 1rem;
+      background: #0F172A;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 0.75rem;
+      color: #94A3B8;
+      word-break: break-all;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .raw-data-content.show { display: block; }
+
+    /* Scan History */
+    .history-section {
+      margin-top: 1.5rem;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .history-header h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+    .history-clear {
+      font-size: 0.75rem;
+      color: #8B5CF6;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .history-clear:hover { color: #A78BFA; }
+    
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .history-item {
+      background: #1E293B;
+      border-radius: 10px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .history-item:hover { background: #334155; }
+    .history-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .history-icon.verified { background: #14532D; color: #4ADE80; }
+    .history-icon.suspect { background: #7F1D1D; color: #FCA5A5; }
+    .history-icon.unknown { background: #3B2F63; color: #A78BFA; }
+    .history-details { flex: 1; }
+    .history-details h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #E2E8F0;
+      margin-bottom: 0.1rem;
+    }
+    .history-details p {
+      font-size: 0.7rem;
+      color: #94A3B8;
+    }
+    .history-time {
+      font-size: 0.7rem;
+      color: #64748B;
+    }
+
+    /* Manual Entry */
+    .manual-entry {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #1E293B;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    .manual-entry h4 {
+      font-size: 0.85rem;
+      color: #94A3B8;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .manual-entry input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #E2E8F0;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .manual-entry input:focus {
+      outline: none;
+      border-color: #8B5CF6;
+    }
+    .manual-entry input::placeholder { color: #64748B; }
+
+    /* Mode Toggle */
+    .mode-toggle {
+      display: flex;
+      background: #0F172A;
+      border-radius: 10px;
+      padding: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #94A3B8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-btn.active {
+      background: #334155;
+      color: #E2E8F0;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 0.75rem 1.5rem;
+      background: #1E293B;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      color: #E2E8F0;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-color: #059669; }
+    .toast.error { border-color: #DC2626; }
+
+    /* Empty State */
+    .empty-history {
+      text-align: center;
+      padding: 2rem;
+      color: #64748B;
+      font-size: 0.85rem;
+    }
+    .empty-history i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <a href="pharma-dashboard.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+      <h1><i class="fas fa-qrcode"></i> QR Scanner</h1>
+      <p>Scan pharmaceutical product codes for verification</p>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="scanModeBtn" onclick="setMode('scan')">
+        <i class="fas fa-camera"></i> Camera Scan
+      </button>
+      <button class="mode-btn" id="manualModeBtn" onclick="setMode('manual')">
+        <i class="fas fa-keyboard"></i> Manual Entry
+      </button>
+    </div>
+
+    <!-- Scanner Container -->
+    <div id="scannerSection">
+      <div class="scanner-container">
+        <div id="reader"></div>
+      </div>
+
+      <div class="scanner-controls">
+        <button class="scanner-btn primary" id="startBtn" onclick="startScanner()">
+          <i class="fas fa-play"></i> Start Scanner
+        </button>
+        <button class="scanner-btn secondary" id="switchBtn" onclick="switchCamera()" style="display: none;">
+          <i class="fas fa-sync-alt"></i> Flip
+        </button>
+      </div>
+    </div>
+
+    <!-- Manual Entry Section -->
+    <div id="manualSection" style="display: none;">
+      <div class="manual-entry">
+        <h4><i class="fas fa-barcode"></i> Enter GS1 Data</h4>
+        <input type="text" id="manualInput" placeholder="Paste or type GS1 barcode data..." />
+        <button class="scanner-btn primary" onclick="processManualEntry()" style="width: 100%;">
+          <i class="fas fa-search"></i> Look Up Product
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar ready" id="statusBar">
+      <i class="fas fa-info-circle"></i>
+      <span id="statusText">Ready to scan</span>
+    </div>
+
+    <!-- Result Card -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header" id="resultHeader">
+        <i class="fas fa-check-circle" id="resultIcon"></i>
+        <div class="result-header-text">
+          <h3 id="resultTitle">Product Verified</h3>
+          <p id="resultSubtitle">Valid pharmaceutical product</p>
+        </div>
+      </div>
+      <div class="result-body" id="resultBody">
+        <!-- Fields populated dynamically -->
+      </div>
+      <div class="result-actions" id="resultActions">
+        <button class="action-btn accept" onclick="acceptProduct()">
+          <i class="fas fa-check"></i> Accept
+        </button>
+        <button class="action-btn quarantine" onclick="quarantineProduct()">
+          <i class="fas fa-exclamation-triangle"></i> Quarantine
+        </button>
+      </div>
+      <div class="raw-data-toggle" onclick="toggleRawData()">
+        <span><i class="fas fa-code"></i> Raw Data</span>
+        <i class="fas fa-chevron-down" id="rawDataChevron"></i>
+      </div>
+      <div class="raw-data-content" id="rawDataContent"></div>
+    </div>
+
+    <!-- Scan History -->
+    <div class="history-section">
+      <div class="history-header">
+        <h3><i class="fas fa-history"></i> Recent Scans</h3>
+        <button class="history-clear" onclick="clearHistory()">Clear All</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="empty-history">
+          <i class="fas fa-qrcode"></i>
+          <p>No scans yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastText">Action completed</span>
+  </div>
+
+  <script>
+    let html5QrCode = null;
+    let isScanning = false;
+    let currentCamera = 'environment'; // 'environment' = back, 'user' = front
+    let scanHistory = JSON.parse(localStorage.getItem('pharma-scan-history') || '[]');
+    let lastScannedData = null;
+
+    // ==========================================
+    // GS1 PARSING
+    // ==========================================
+    function parseGS1(data) {
+      // GS1 Application Identifiers for pharmaceuticals
+      const result = {
+        raw: data,
+        gtin: null,        // AI 01 - Global Trade Item Number (NDC)
+        serial: null,      // AI 21 - Serial Number
+        lot: null,         // AI 10 - Batch/Lot Number
+        expiry: null,      // AI 17 - Expiration Date
+        quantity: null,    // AI 30 - Quantity
+        sscc: null,        // AI 00 - Serial Shipping Container Code
+        parsed: false
+      };
+
+      // Remove FNC1 character if present (often represented as GS or ]d2)
+      let cleanData = data.replace(/[\x1D\x1E]/g, '|').replace(/]d2/gi, '');
+      
+      // Try to parse GS1 format
+      // Format can be: (01)GTIN(21)SERIAL(17)EXPIRY(10)LOT
+      // Or without parens: 01GTIN21SERIAL17EXPIRY10LOT with separators
+      
+      const patterns = {
+        // GTIN-14 (01) - 14 digits
+        gtin: /(?:\(01\)|^01)(\d{14})/,
+        // Serial Number (21) - alphanumeric, variable length
+        serial: /(?:\(21\)|[\x1D|]21)([A-Za-z0-9]{1,20})/,
+        // Lot/Batch (10) - alphanumeric, variable length
+        lot: /(?:\(10\)|[\x1D|]10)([A-Za-z0-9]{1,20})/,
+        // Expiry Date (17) - YYMMDD
+        expiry: /(?:\(17\)|[\x1D|]17)(\d{6})/,
+        // Quantity (30) - variable digits
+        quantity: /(?:\(30\)|[\x1D|]30)(\d+)/,
+        // SSCC (00) - 18 digits
+        sscc: /(?:\(00\)|^00)(\d{18})/
+      };
+
+      // Try each pattern
+      for (const [key, pattern] of Object.entries(patterns)) {
+        const match = cleanData.match(pattern);
+        if (match) {
+          result[key] = match[1];
+          result.parsed = true;
+        }
+      }
+
+      // Format expiry date if found
+      if (result.expiry) {
+        const yy = result.expiry.substring(0, 2);
+        const mm = result.expiry.substring(2, 4);
+        const dd = result.expiry.substring(4, 6);
+        const year = parseInt(yy) > 50 ? '19' + yy : '20' + yy;
+        result.expiryFormatted = `${mm}/${dd}/${year}`;
+        
+        // Check if expired
+        const expiryDate = new Date(year, parseInt(mm) - 1, parseInt(dd));
+        result.isExpired = expiryDate < new Date();
+      }
+
+      // Extract NDC from GTIN if present
+      if (result.gtin) {
+        // NDC is typically embedded in GTIN-14
+        // Format: indicator + NDC(11 digits) + check digit
+        // or: 0 + NDC(10 digits in 5-4-2 format) padded
+        result.ndc = extractNDC(result.gtin);
+      }
+
+      return result;
+    }
+
+    function extractNDC(gtin) {
+      // GTIN-14 to NDC conversion
+      // GTIN-14: [indicator][NDC-11][check]
+      // Remove first digit (indicator) and last digit (check)
+      if (gtin && gtin.length === 14) {
+        const ndcRaw = gtin.substring(1, 12);
+        // Format as 5-4-2 (labeler-product-package)
+        // This is simplified - real NDC parsing is more complex
+        return `${ndcRaw.substring(0, 5)}-${ndcRaw.substring(5, 9)}-${ndcRaw.substring(9, 11)}`;
+      }
+      return null;
+    }
+
+    // ==========================================
+    // SCANNER CONTROL
+    // ==========================================
+    async function startScanner() {
+      const btn = document.getElementById('startBtn');
+      
+      if (isScanning) {
+        await stopScanner();
+        return;
+      }
+
+      try {
+        html5QrCode = new Html5Qrcode("reader");
+        
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0
+        };
+
+        await html5QrCode.start(
+          { facingMode: currentCamera },
+          config,
+          onScanSuccess,
+          onScanFailure
+        );
+
+        isScanning = true;
+        btn.innerHTML = '<i class="fas fa-stop"></i> Stop Scanner';
+        document.getElementById('switchBtn').style.display = 'flex';
+        setStatus('scanning', 'Scanning... Point at QR code');
+        
+      } catch (err) {
+        console.error('Scanner error:', err);
+        setStatus('error', 'Camera access denied or unavailable');
+      }
+    }
+
+    async function stopScanner() {
+      if (html5QrCode && isScanning) {
+        await html5QrCode.stop();
+        html5QrCode.clear();
+        isScanning = false;
+        
+        document.getElementById('startBtn').innerHTML = '<i class="fas fa-play"></i> Start Scanner';
+        document.getElementById('switchBtn').style.display = 'none';
+        setStatus('ready', 'Ready to scan');
+      }
+    }
+
+    async function switchCamera() {
+      if (!isScanning) return;
+      
+      await stopScanner();
+      currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+      await startScanner();
+    }
+
+    // ==========================================
+    // SCAN HANDLERS
+    // ==========================================
+    function onScanSuccess(decodedText, decodedResult) {
+      // Prevent duplicate rapid scans
+      if (lastScannedData === decodedText) return;
+      lastScannedData = decodedText;
+      
+      // Vibrate if supported
+      if (navigator.vibrate) navigator.vibrate(100);
+      
+      // Parse the GS1 data
+      const parsed = parseGS1(decodedText);
+      
+      // Show result
+      showResult(parsed);
+      
+      // Add to history
+      addToHistory(parsed);
+      
+      // Update status
+      if (parsed.parsed) {
+        setStatus('success', 'Product scanned successfully');
+      } else {
+        setStatus('error', 'Unknown barcode format');
+      }
+
+      // Reset duplicate detection after 3 seconds
+      setTimeout(() => { lastScannedData = null; }, 3000);
+    }
+
+    function onScanFailure(error) {
+      // Ignore - this fires constantly when no QR is in view
+    }
+
+    // ==========================================
+    // RESULT DISPLAY
+    // ==========================================
+    function showResult(parsed) {
+      const card = document.getElementById('resultCard');
+      const header = document.getElementById('resultHeader');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const subtitle = document.getElementById('resultSubtitle');
+      const body = document.getElementById('resultBody');
+      const rawContent = document.getElementById('rawDataContent');
+
+      // Determine status
+      let status = 'verified';
+      if (!parsed.parsed) {
+        status = 'unknown';
+      } else if (parsed.isExpired) {
+        status = 'suspect';
+      }
+
+      // Update header based on status
+      header.className = 'result-header';
+      if (status === 'suspect') {
+        header.classList.add('suspect');
+        icon.className = 'fas fa-exclamation-triangle';
+        title.textContent = 'Product Alert';
+        subtitle.textContent = parsed.isExpired ? 'Product is EXPIRED' : 'Suspicious product detected';
+      } else if (status === 'unknown') {
+        header.classList.add('unverified');
+        icon.className = 'fas fa-question-circle';
+        title.textContent = 'Unknown Format';
+        subtitle.textContent = 'Could not parse GS1 data';
+      } else {
+        icon.className = 'fas fa-check-circle';
+        title.textContent = 'Product Identified';
+        subtitle.textContent = 'GS1 data parsed successfully';
+      }
+
+      // Build fields
+      let fieldsHtml = '';
+      
+      if (parsed.gtin) {
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">GTIN-14</span>
+            <span class="result-field-value">${parsed.gtin}</span>
+          </div>`;
+      }
+      if (parsed.ndc) {
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">NDC</span>
+            <span class="result-field-value">${parsed.ndc}</span>
+          </div>`;
+      }
+      if (parsed.serial) {
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">Serial Number</span>
+            <span class="result-field-value">${parsed.serial}</span>
+          </div>`;
+      }
+      if (parsed.lot) {
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">Lot/Batch</span>
+            <span class="result-field-value">${parsed.lot}</span>
+          </div>`;
+      }
+      if (parsed.expiryFormatted) {
+        const expiryClass = parsed.isExpired ? 'style="color: #FCA5A5;"' : '';
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">Expiry Date</span>
+            <span class="result-field-value" ${expiryClass}>${parsed.expiryFormatted}${parsed.isExpired ? ' (EXPIRED)' : ''}</span>
+          </div>`;
+      }
+      if (parsed.sscc) {
+        fieldsHtml += `
+          <div class="result-field">
+            <span class="result-field-label">SSCC</span>
+            <span class="result-field-value">${parsed.sscc}</span>
+          </div>`;
+      }
+
+      if (!fieldsHtml) {
+        fieldsHtml = `
+          <div class="result-field">
+            <span class="result-field-label">Raw Data</span>
+            <span class="result-field-value">${parsed.raw.substring(0, 50)}${parsed.raw.length > 50 ? '...' : ''}</span>
+          </div>`;
+      }
+
+      body.innerHTML = fieldsHtml;
+      rawContent.textContent = parsed.raw;
+      
+      // Store current parsed data for actions
+      window.currentParsedData = parsed;
+      
+      card.classList.add('show');
+    }
+
+    function toggleRawData() {
+      const content = document.getElementById('rawDataContent');
+      const chevron = document.getElementById('rawDataChevron');
+      content.classList.toggle('show');
+      chevron.style.transform = content.classList.contains('show') ? 'rotate(180deg)' : '';
+    }
+
+    // ==========================================
+    // ACTIONS
+    // ==========================================
+    async function acceptProduct() {
+      const data = window.currentParsedData;
+      if (!data) return;
+
+      showToast('success', 'Product accepted into inventory');
+      
+      // TODO: Call API to add to inventory
+      // await fetch('/api/pharma/receive', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      //   body: JSON.stringify({ productData: data })
+      // });
+
+      // Update history item status
+      updateHistoryStatus(data.raw, 'accepted');
+      
+      // Hide result card
+      document.getElementById('resultCard').classList.remove('show');
+    }
+
+    async function quarantineProduct() {
+      const data = window.currentParsedData;
+      if (!data) return;
+
+      showToast('error', 'Product moved to quarantine');
+      
+      // TODO: Call API to quarantine
+      // await fetch('/api/pharma/quarantine', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      //   body: JSON.stringify({ productData: data, reason: 'Manual quarantine' })
+      // });
+
+      // Update history item status
+      updateHistoryStatus(data.raw, 'quarantined');
+      
+      // Hide result card
+      document.getElementById('resultCard').classList.remove('show');
+    }
+
+    // ==========================================
+    // HISTORY
+    // ==========================================
+    function addToHistory(parsed) {
+      const item = {
+        raw: parsed.raw,
+        gtin: parsed.gtin,
+        serial: parsed.serial,
+        lot: parsed.lot,
+        ndc: parsed.ndc,
+        parsed: parsed.parsed,
+        isExpired: parsed.isExpired,
+        timestamp: new Date().toISOString(),
+        status: 'scanned'
+      };
+
+      scanHistory.unshift(item);
+      if (scanHistory.length > 20) scanHistory.pop(); // Keep last 20
+      
+      localStorage.setItem('pharma-scan-history', JSON.stringify(scanHistory));
+      renderHistory();
+    }
+
+    function updateHistoryStatus(raw, status) {
+      const idx = scanHistory.findIndex(h => h.raw === raw);
+      if (idx !== -1) {
+        scanHistory[idx].status = status;
+        localStorage.setItem('pharma-scan-history', JSON.stringify(scanHistory));
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      
+      if (scanHistory.length === 0) {
+        list.innerHTML = `
+          <div class="empty-history">
+            <i class="fas fa-qrcode"></i>
+            <p>No scans yet</p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = scanHistory.map(item => {
+        const iconClass = item.isExpired ? 'suspect' : (item.parsed ? 'verified' : 'unknown');
+        const iconName = item.isExpired ? 'exclamation-triangle' : (item.parsed ? 'check' : 'question');
+        const displayName = item.ndc || item.gtin || item.raw.substring(0, 20) + '...';
+        const time = formatTime(item.timestamp);
+        const statusBadge = item.status === 'accepted' ? '✓ Accepted' : 
+                          item.status === 'quarantined' ? '⚠ Quarantined' : '';
+
+        return `
+          <div class="history-item" onclick='showResult(${JSON.stringify(parseGS1(item.raw))})'>
+            <div class="history-icon ${iconClass}">
+              <i class="fas fa-${iconName}"></i>
+            </div>
+            <div class="history-details">
+              <h4>${displayName}</h4>
+              <p>${item.serial ? 'SN: ' + item.serial : 'No serial'} ${statusBadge}</p>
+            </div>
+            <span class="history-time">${time}</span>
+          </div>`;
+      }).join('');
+    }
+
+    function clearHistory() {
+      scanHistory = [];
+      localStorage.removeItem('pharma-scan-history');
+      renderHistory();
+      showToast('success', 'History cleared');
+    }
+
+    function formatTime(isoString) {
+      const date = new Date(isoString);
+      const now = new Date();
+      const diff = now - date;
+      
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+      return date.toLocaleDateString();
+    }
+
+    // ==========================================
+    // MODE SWITCHING
+    // ==========================================
+    function setMode(mode) {
+      document.getElementById('scanModeBtn').classList.toggle('active', mode === 'scan');
+      document.getElementById('manualModeBtn').classList.toggle('active', mode === 'manual');
+      document.getElementById('scannerSection').style.display = mode === 'scan' ? 'block' : 'none';
+      document.getElementById('manualSection').style.display = mode === 'manual' ? 'block' : 'none';
+      
+      if (mode === 'manual' && isScanning) {
+        stopScanner();
+      }
+    }
+
+    function processManualEntry() {
+      const input = document.getElementById('manualInput');
+      const data = input.value.trim();
+      
+      if (!data) {
+        setStatus('error', 'Please enter barcode data');
+        return;
+      }
+
+      const parsed = parseGS1(data);
+      showResult(parsed);
+      addToHistory(parsed);
+      
+      if (parsed.parsed) {
+        setStatus('success', 'Product data parsed');
+      } else {
+        setStatus('error', 'Could not parse GS1 format');
+      }
+      
+      input.value = '';
+    }
+
+    // ==========================================
+    // UI HELPERS
+    // ==========================================
+    function setStatus(type, text) {
+      const bar = document.getElementById('statusBar');
+      const textEl = document.getElementById('statusText');
+      
+      bar.className = 'status-bar ' + type;
+      textEl.textContent = text;
+      
+      const icons = {
+        ready: 'info-circle',
+        scanning: 'spinner fa-spin',
+        success: 'check-circle',
+        error: 'exclamation-circle'
+      };
+      bar.querySelector('i').className = 'fas fa-' + (icons[type] || 'info-circle');
+    }
+
+    function showToast(type, text) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      const toastIcon = toast.querySelector('i');
+      
+      toast.className = 'toast ' + type;
+      toastText.textContent = text;
+      toastIcon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+      
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+      
+      // Handle Enter key in manual input
+      document.getElementById('manualInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') processManualEntry();
+      });
+    });
+
+    // Cleanup on page leave
+    window.addEventListener('beforeunload', () => {
+      if (isScanning) stopScanner();
+    });
+  </script>
+</body>
+</html>

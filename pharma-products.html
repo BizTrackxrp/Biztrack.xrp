@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finished Pharma Products – BizTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #F0FDFA 0%, #ECFDF5 50%, #F0FDF4 100%);
+      color: #1E293B;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-header h1 { 
+      font-size: 2rem; 
+      font-weight: 800; 
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .page-header h1 i { color: #14B8A6; }
+    .page-header p { font-size: 1rem; color: #64748B; margin-top: 0.25rem; }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .stat-box {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: 2px solid #14B8A6;
+      text-align: center;
+    }
+    .stat-box-value { font-size: 1.5rem; font-weight: 800; color: #14B8A6; }
+    .stat-box-label { font-size: 0.75rem; color: #0F766E; text-transform: uppercase; }
+
+    .filters-bar {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #14B8A6;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+
+    .filter-select {
+      padding: 0.75rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      min-width: 150px;
+    }
+    .filter-select:focus {
+      outline: none;
+      border-color: #14B8A6;
+    }
+
+    .clear-filters {
+      padding: 0.75rem 1rem;
+      background: #F1F5F9;
+      border: none;
+      border-radius: 10px;
+      color: #64748B;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clear-filters:hover { background: #E2E8F0; color: #334155; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid #14B8A6;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .product-card-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid #CCFBF1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%);
+    }
+    .product-card-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+    .product-card-sku {
+      font-size: 0.85rem;
+      color: #64748B;
+      font-family: monospace;
+    }
+    .product-card-gtin {
+      font-size: 0.75rem;
+      color: #0D9488;
+      font-family: monospace;
+      margin-top: 0.15rem;
+    }
+
+    .product-card-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-live { background: #CCFBF1; color: #0F766E; }
+    .badge-finalized { background: #D1FAE5; color: #065F46; }
+    .badge-gs1 { background: #8B5CF6; color: white; }
+    .badge-vrs { background: #3B82F6; color: white; }
+    .badge-expiring { background: #FEF3C7; color: #92400E; }
+    .badge-expired { background: #FEE2E2; color: #DC2626; }
+
+    .product-card-body {
+      padding: 1.25rem;
+    }
+
+    .pharma-card-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #F0FDFA 0%, #F5F3FF 100%);
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
+    }
+    .pharma-card-detail {
+      text-align: center;
+    }
+    .pharma-card-detail-label {
+      font-size: 0.65rem;
+      color: #64748B;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .pharma-card-detail-value {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1E293B;
+      font-family: monospace;
+    }
+    .pharma-card-detail-value.expiry-warning { color: #D97706; }
+    .pharma-card-detail-value.expiry-danger { color: #DC2626; }
+
+    .product-card-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .meta-item-label {
+      color: #94A3B8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+    .meta-item-value {
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .product-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3); }
+    .btn-secondary {
+      background: #F1F5F9;
+      color: #475569;
+    }
+    .btn-secondary:hover { background: #E2E8F0; }
+    .btn-gs1 {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+    }
+    .btn-gs1:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #94A3B8;
+    }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: #14B8A6; opacity: 0.5; }
+    .empty-state h3 { font-size: 1.25rem; color: #64748B; margin-bottom: 0.5rem; }
+    .empty-state p { margin-bottom: 1.5rem; }
+    .empty-state a { color: #14B8A6; text-decoration: none; font-weight: 600; }
+    .empty-state a:hover { text-decoration: underline; }
+
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #64748B;
+    }
+    .loading-state i { font-size: 2rem; margin-bottom: 1rem; }
+
+    .qr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .qr-modal-overlay.show { display: flex; }
+    .qr-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .qr-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .qr-modal-header h2 { 
+      font-size: 1.5rem; 
+      font-weight: 700; 
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+    .qr-modal-header h2 i { color: #14B8A6; }
+    .qr-modal-close {
+      background: none; border: none; font-size: 1.5rem; color: #64748B;
+      cursor: pointer; padding: 0.5rem; border-radius: 8px;
+    }
+    .qr-modal-close:hover { background: #F1F5F9; color: #1E293B; }
+    .qr-modal-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .qr-modal-sku {
+      background: #F0FDFA;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      color: #0F766E;
+      display: inline-block;
+      border: 1px solid #99F6E4;
+    }
+    .qr-codes-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-code-box { 
+      text-align: center; 
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid #E2E8F0;
+      background: #F8FAFC;
+    }
+    .qr-code-box.customer {
+      border-color: #14B8A6;
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%);
+    }
+    .qr-code-box.gs1 {
+      border-color: #8B5CF6;
+      background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    }
+    .qr-code-box img {
+      width: 140px; height: 140px;
+      border-radius: 8px;
+      border: 2px solid white;
+      padding: 8px;
+      background: white;
+    }
+    .qr-code-label { 
+      margin-top: 0.75rem; 
+      font-weight: 700; 
+      font-size: 0.9rem; 
+    }
+    .qr-code-box.customer .qr-code-label { color: #0F766E; }
+    .qr-code-box.gs1 .qr-code-label { color: #7C3AED; }
+    .qr-code-desc {
+      font-size: 0.75rem;
+      color: #64748B;
+      margin-top: 0.25rem;
+    }
+    .qr-download-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .qr-download-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+    }
+    .qr-download-btn.customer {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+    }
+    .qr-download-btn.customer:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4); }
+    .qr-download-btn.gs1 {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+    }
+    .qr-download-btn.gs1:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
+    .qr-download-btn.both {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+    }
+    .qr-download-btn.both:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #E2E8F0;
+    }
+    .pagination-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #E2E8F0;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) { border-color: #14B8A6; color: #14B8A6; }
+    .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination-btn.active { background: #14B8A6; color: white; border-color: #14B8A6; }
+    .pagination-info { color: #64748B; font-size: 0.9rem; margin: 0 1rem; }
+
+    @media (max-width: 768px) {
+      .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .header-stats { width: 100%; }
+      .stat-box { flex: 1; }
+      .products-grid { grid-template-columns: 1fr; }
+      .qr-codes-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="js/pharma-sidebar.js"></script>
+
+  <div class="main-with-sidebar">
+    <div class="page-header">
+      <div>
+        <h1><i class="fas fa-pills"></i> Finished Pharma Products</h1>
+        <p>All your live pharma products with GS1 data ready for VRS verification.</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-box">
+          <div class="stat-box-value" id="totalProducts">-</div>
+          <div class="stat-box-label">Total Products</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-value" id="vrsReady">-</div>
+          <div class="stat-box-label">VRS Ready</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, SKU, GTIN, or serial..." />
+      </div>
+      <select class="filter-select" id="sortSelect">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="name-az">Name A-Z</option>
+        <option value="expiry">Expiry Date</option>
+      </select>
+      <select class="filter-select" id="expiryFilter">
+        <option value="all">All Expiry Status</option>
+        <option value="valid">Valid</option>
+        <option value="expiring">Expiring Soon (90 days)</option>
+        <option value="expired">Expired</option>
+      </select>
+      <button class="clear-filters" onclick="clearFilters()">
+        <i class="fas fa-times"></i> Clear
+      </button>
+    </div>
+
+    <div id="productsContainer">
+      <div class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading products...</p>
+      </div>
+    </div>
+
+    <div class="pagination" id="pagination" style="display: none;"></div>
+  </div>
+
+  <div class="qr-modal-overlay" id="qrModalOverlay" onclick="closeQRModal(event)">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+      <div class="qr-modal-header">
+        <h2><i class="fas fa-qrcode"></i> Product QR Codes</h2>
+        <button class="qr-modal-close" onclick="closeQRModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="qr-modal-info">
+        <span class="qr-modal-sku" id="modalSku">SKU: ---</span>
+      </div>
+
+      <div class="qr-codes-container">
+        <div class="qr-code-box customer">
+          <img id="modalCustomerQR" src="" alt="Customer QR" />
+          <div class="qr-code-label">Customer QR</div>
+          <div class="qr-code-desc">Verification link</div>
+        </div>
+        <div class="qr-code-box gs1" id="gs1QRBox">
+          <img id="modalGs1QR" src="" alt="GS1 QR" />
+          <div class="qr-code-label">GS1 QR</div>
+          <div class="qr-code-desc">GTIN/Lot/Exp/Serial</div>
+        </div>
+      </div>
+
+      <div class="qr-download-buttons">
+        <button class="qr-download-btn customer" onclick="downloadQR('customer')">
+          <i class="fas fa-download"></i> Customer
+        </button>
+        <button id="downloadGs1Btn" class="qr-download-btn gs1" onclick="downloadQR('gs1')">
+          <i class="fas fa-download"></i> GS1
+        </button>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
+          <i class="fas fa-layer-group"></i> Both
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+    let currentQRData = null;
+
+    async function loadProducts() {
+      try {
+        const response = await authenticatedFetch('/api/list-products?type=pharma');
+        const data = await response.json();
+
+        if (!data.success) throw new Error(data.error || 'Failed to load products');
+
+        allProducts = (data.products || []).filter(p => {
+          if (p.productType !== 'pharma') return false;
+          if (p.mode === 'production' && !p.isFinalized) return false;
+          return true;
+        });
+
+        const totalProducts = allProducts.length;
+        const vrsReady = allProducts.filter(p => p.gtin && p.lotNumber).length;
+
+        document.getElementById('totalProducts').textContent = totalProducts;
+        document.getElementById('vrsReady').textContent = vrsReady;
+
+        applyFilters();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsContainer').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error Loading Products</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const sortBy = document.getElementById('sortSelect').value;
+      const expiryFilter = document.getElementById('expiryFilter').value;
+
+      filteredProducts = allProducts.filter(p => {
+        const matchesSearch = !searchTerm || 
+          p.productName?.toLowerCase().includes(searchTerm) ||
+          p.sku?.toLowerCase().includes(searchTerm) ||
+          p.productId?.toLowerCase().includes(searchTerm) ||
+          p.gtin?.toLowerCase().includes(searchTerm) ||
+          p.serialNumber?.toLowerCase().includes(searchTerm);
+
+        let matchesExpiry = true;
+        if (expiryFilter !== 'all' && p.expirationDate) {
+          const status = getExpiryStatus(p.expirationDate);
+          if (expiryFilter === 'valid') matchesExpiry = status === 'valid';
+          else if (expiryFilter === 'expiring') matchesExpiry = status === 'expiring';
+          else if (expiryFilter === 'expired') matchesExpiry = status === 'expired';
+        }
+
+        return matchesSearch && matchesExpiry;
+      });
+
+      filteredProducts.sort((a, b) => {
+        switch (sortBy) {
+          case 'newest': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          case 'oldest': return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          case 'name-az': return (a.productName || '').localeCompare(b.productName || '');
+          case 'expiry': return new Date(a.expirationDate || '9999-12-31') - new Date(b.expirationDate || '9999-12-31');
+          default: return 0;
+        }
+      });
+
+      currentPage = 1;
+      renderProducts();
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('sortSelect').value = 'newest';
+      document.getElementById('expiryFilter').value = 'all';
+      applyFilters();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+    document.getElementById('sortSelect').addEventListener('change', applyFilters);
+    document.getElementById('expiryFilter').addEventListener('change', applyFilters);
+
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+
+      if (filteredProducts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-pills"></i>
+            <h3>No Finished Pharma Products Yet</h3>
+            <p>Products will appear here once they're minted or finalized from production.</p>
+            <a href="pharma-generate.html"><i class="fas fa-plus"></i> Create Pharma Product</a>
+          </div>
+        `;
+        document.getElementById('pagination').style.display = 'none';
+        return;
+      }
+
+      const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+      const startIdx = (currentPage - 1) * itemsPerPage;
+      const pageProducts = filteredProducts.slice(startIdx, startIdx + itemsPerPage);
+
+      container.innerHTML = `
+        <div class="products-grid">
+          ${pageProducts.map(product => renderProductCard(product)).join('')}
+        </div>
+      `;
+
+      renderPagination(totalPages);
+    }
+
+    function renderProductCard(product) {
+      const createdDate = product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'N/A';
+      const hasGs1 = product.gtin && product.lotNumber;
+      const expiryStatus = getExpiryStatus(product.expirationDate);
+      
+      let badges = '';
+      if (product.isFinalized) badges += '<span class="badge badge-finalized">Finalized</span>';
+      else badges += '<span class="badge badge-live">Live</span>';
+      if (hasGs1) {
+        badges += '<span class="badge badge-gs1">GS1</span>';
+        badges += '<span class="badge badge-vrs">VRS Ready</span>';
+      }
+      if (expiryStatus === 'expiring') badges += '<span class="badge badge-expiring">Expiring Soon</span>';
+      else if (expiryStatus === 'expired') badges += '<span class="badge badge-expired">Expired</span>';
+      
+      return `
+        <div class="product-card">
+          <div class="product-card-header">
+            <div>
+              <div class="product-card-title">${escapeHtml(product.productName)}</div>
+              <div class="product-card-sku">${escapeHtml(product.sku || product.productId)}</div>
+              ${product.gtin ? `<div class="product-card-gtin">GTIN: ${escapeHtml(product.gtin)}</div>` : ''}
+            </div>
+            <div class="product-card-badges">${badges}</div>
+          </div>
+          <div class="product-card-body">
+            ${hasGs1 ? `
+            <div class="pharma-card-details">
+              <div class="pharma-card-detail">
+                <div class="pharma-card-detail-label">Lot/Batch</div>
+                <div class="pharma-card-detail-value">${escapeHtml(product.lotNumber || 'N/A')}</div>
+              </div>
+              <div class="pharma-card-detail">
+                <div class="pharma-card-detail-label">Expiry</div>
+                <div class="pharma-card-detail-value ${expiryStatus === 'expiring' ? 'expiry-warning' : ''} ${expiryStatus === 'expired' ? 'expiry-danger' : ''}">${formatExpiry(product.expirationDate)}</div>
+              </div>
+              <div class="pharma-card-detail">
+                <div class="pharma-card-detail-label">Serial #</div>
+                <div class="pharma-card-detail-value">${escapeHtml(product.serialNumber || 'N/A')}</div>
+              </div>
+              <div class="pharma-card-detail">
+                <div class="pharma-card-detail-label">Created</div>
+                <div class="pharma-card-detail-value">${createdDate}</div>
+              </div>
+            </div>
+            ` : `
+            <div class="product-card-meta">
+              <div class="meta-item">
+                <div class="meta-item-label">Created</div>
+                <div class="meta-item-value">${createdDate}</div>
+              </div>
+            </div>
+            `}
+            <div class="product-card-actions">
+              <a href="${product.verificationUrl || '/verify.html?id=' + product.productId}" target="_blank" class="btn btn-secondary">
+                <i class="fas fa-eye"></i> Verify
+              </a>
+              <button class="btn btn-primary" onclick='openQRModal(${JSON.stringify({
+                sku: product.sku || product.productId,
+                productName: product.productName,
+                qrCodeUrl: product.qrCodeUrl,
+                gs1QrCodeUrl: product.gs1QrCodeUrl
+              }).replace(/'/g, "\\'")})'>
+                <i class="fas fa-qrcode"></i> Customer QR
+              </button>
+              ${product.gs1QrCodeUrl ? `
+              <a href="${product.gs1QrCodeUrl}" class="btn btn-gs1" target="_blank">
+                <i class="fas fa-barcode"></i> GS1 QR
+              </a>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPagination(totalPages) {
+      const pagination = document.getElementById('pagination');
+      if (totalPages <= 1) { pagination.style.display = 'none'; return; }
+      pagination.style.display = 'flex';
+      
+      let html = `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+          html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+          html += `<span class="pagination-info">...</span>`;
+        }
+      }
+      html += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+      pagination.innerHTML = html;
+    }
+
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.openQRModal = function(data) {
+      if (typeof data === 'string') data = JSON.parse(data);
+      currentQRData = data;
+
+      document.getElementById('modalSku').textContent = 'SKU: ' + (data.sku || 'N/A');
+      document.getElementById('modalCustomerQR').src = data.qrCodeUrl || '';
+
+      const gs1Box = document.getElementById('gs1QRBox');
+      const gs1Btn = document.getElementById('downloadGs1Btn');
+      const bothBtn = document.getElementById('downloadBothBtn');
+
+      if (data.gs1QrCodeUrl) {
+        document.getElementById('modalGs1QR').src = data.gs1QrCodeUrl;
+        gs1Box.style.display = 'block';
+        gs1Btn.style.display = 'flex';
+        bothBtn.style.display = 'flex';
+      } else {
+        gs1Box.style.display = 'none';
+        gs1Btn.style.display = 'none';
+        bothBtn.style.display = 'none';
+      }
+
+      document.getElementById('qrModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeQRModal = function(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('qrModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentQRData = null;
+    };
+
+    window.downloadQR = async function(type) {
+      if (!currentQRData) return;
+      const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.gs1QrCodeUrl;
+      if (!url) return;
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = (currentQRData.sku || 'product') + '-' + type + '-qr.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (error) {
+        window.open(url, '_blank');
+      }
+    };
+
+    window.downloadBothQRs = async function() {
+      if (!currentQRData || !currentQRData.gs1QrCodeUrl) return;
+
+      const btn = document.getElementById('downloadBothBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      btn.disabled = true;
+
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600; canvas.height = 380;
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const customerImg = new Image();
+        const gs1Img = new Image();
+        customerImg.crossOrigin = 'anonymous';
+        gs1Img.crossOrigin = 'anonymous';
+
+        await Promise.all([
+          new Promise((resolve, reject) => { customerImg.onload = resolve; customerImg.onerror = reject; customerImg.src = currentQRData.qrCodeUrl; }),
+          new Promise((resolve, reject) => { gs1Img.onload = resolve; gs1Img.onerror = reject; gs1Img.src = currentQRData.gs1QrCodeUrl; })
+        ]);
+
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 22px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 32);
+
+        ctx.fillStyle = '#64748B';
+        ctx.font = '14px Inter, Arial, sans-serif';
+        ctx.fillText('SKU: ' + (currentQRData.sku || ''), canvas.width / 2, 55);
+
+        const qrSize = 140, qrY = 75;
+        ctx.drawImage(customerImg, 80, qrY, qrSize, qrSize);
+        ctx.drawImage(gs1Img, 380, qrY, qrSize, qrSize);
+
+        ctx.fillStyle = '#0F766E';
+        ctx.font = 'bold 13px Inter, Arial, sans-serif';
+        ctx.fillText('Customer', 150, qrY + qrSize + 22);
+
+        ctx.fillStyle = '#7C3AED';
+        ctx.fillText('GS1', 450, qrY + qrSize + 22);
+
+        const link = document.createElement('a');
+        link.download = (currentQRData.sku || 'product') + '-pharma-label.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert('Error creating label: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fas fa-layer-group"></i> Both';
+        btn.disabled = false;
+      }
+    };
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQRModal(); });
+
+    function getExpiryStatus(dateStr) {
+      if (!dateStr) return 'valid';
+      const expiry = new Date(dateStr);
+      const now = new Date();
+      const diffDays = (expiry - now) / (1000 * 60 * 60 * 24);
+      if (diffDays < 0) return 'expired';
+      if (diffDays < 90) return 'expiring';
+      return 'valid';
+    }
+
+    function formatExpiry(dateStr) {
+      if (!dateStr) return 'N/A';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receive Shipment - BizTrack Pharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
+
+    /* Compact Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .header-bar h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin: 0;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dscsa-badge-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      height: 52px;
+      width: 140px;
+      box-sizing: border-box;
+    }
+
+    .receive-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      height: 52px;
+      width: 140px;
+      box-sizing: border-box;
+    }
+
+    .receive-badge-number {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .receive-badge-label {
+      opacity: 0.9;
+      font-size: 0.65rem;
+    }
+
+    .quick-links-stacked {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: 52px;
+      min-width: 140px;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    .quick-link-compact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.6rem;
+      background: #F8FAFC;
+      border-radius: 6px;
+      border: 1px solid #E2E8F0;
+      text-decoration: none;
+      color: #334155;
+      font-weight: 500;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    .quick-link-compact:hover {
+      border-color: #3B82F6;
+      background: white;
+    }
+
+    .quick-link-compact i {
+      font-size: 0.7rem;
+      color: #3B82F6;
+    }
+
+    .quick-link-compact.inventory i {
+      color: #8B5CF6;
+    }
+
+    .quick-link-compact.inventory:hover {
+      border-color: #8B5CF6;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 2px solid #e2e8f0;
+      margin-bottom: 2rem;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 i {
+      color: #3B82F6;
+    }
+
+    /* Scanner Section */
+    .scanner-section {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      border: 2px solid #3B82F6;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .scanner-section h3 {
+      justify-content: center;
+      color: #1E40AF;
+    }
+
+    .scanner-section h3 i {
+      color: #3B82F6;
+    }
+
+    #scanner-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 1.5rem;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #1E293B;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #scanner-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scanner-placeholder {
+      color: #64748B;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .scanner-placeholder i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .scanner-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Manual Entry */
+    .manual-entry-section {
+      background: #F8FAFC;
+      border: 2px dashed #CBD5E1;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .manual-entry-section h4 {
+      font-size: 0.9rem;
+      color: #64748B;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .gs1-input-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .gs1-input-group input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .gs1-input-group input:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Scanned Product Card */
+    .scanned-product {
+      background: #F0FDF4;
+      border: 2px solid #10B981;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .scanned-product.show {
+      display: block;
+    }
+
+    .scanned-product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .scanned-product-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #065F46;
+    }
+
+    .scanned-product-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .scanned-product-status.verified {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .scanned-product-status.unknown {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .scanned-product-status.error {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .scanned-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .scanned-detail {
+      background: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+    }
+
+    .scanned-detail-label {
+      font-size: 0.7rem;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .scanned-detail-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1E293B;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .gs1-display {
+      background: #1E293B;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .gs1-display-label {
+      font-size: 0.7rem;
+      color: #94A3B8;
+      margin-bottom: 0.25rem;
+    }
+
+    .gs1-display-value {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.85rem;
+      color: #4ADE80;
+      word-break: break-all;
+    }
+
+    /* Shipment Info Form */
+    .shipment-info {
+      background: #F8FAFC;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .shipment-info h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .shipment-info h4 i {
+      color: #3B82F6;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    .form-group label .required {
+      color: #DC2626;
+    }
+
+    .form-group label .dscsa-label {
+      background: #DBEAFE;
+      color: #1E40AF;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group .helper-text {
+      font-size: 0.8rem;
+      color: #64748B;
+      margin-top: 0.35rem;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10B981, #059669);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #3B82F6;
+      border: 2px solid #3B82F6;
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #F8FAFC;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-outline-danger {
+      background: white;
+      color: #DC2626;
+      border: 2px solid #DC2626;
+      box-shadow: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    /* Pending Queue */
+    .pending-queue {
+      margin-top: 1.5rem;
+    }
+
+    .pending-queue h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pending-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+    }
+
+    .pending-item-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .pending-item-icon {
+      width: 40px;
+      height: 40px;
+      background: #DBEAFE;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3B82F6;
+    }
+
+    .pending-item-details h5 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+
+    .pending-item-details p {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .pending-item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Messages */
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1.5rem;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .message.success {
+      background: #F0FDF4;
+      color: #16A34A;
+      border: 1px solid #BBF7D0;
+    }
+
+    .message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    .message.info {
+      background: #DBEAFE;
+      color: #2563EB;
+      border: 1px solid #BFDBFE;
+    }
+
+    .message.warning {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE047;
+    }
+
+    /* Recent Receipts */
+    .receipt-list {
+      list-style: none;
+    }
+
+    .receipt-item {
+      padding: 1.25rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .receipt-item-info h5 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.35rem;
+    }
+
+    .receipt-item-info p {
+      font-size: 0.85rem;
+      color: #64748B;
+    }
+
+    .receipt-item-meta {
+      text-align: right;
+    }
+
+    .receipt-item-date {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .receipt-item-qty {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #10B981;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94A3B8;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* T3 Document Preview */
+    .t3-preview {
+      background: #FEF3C7;
+      border: 2px solid #F59E0B;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .t3-preview h5 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #92400E;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t3-preview p {
+      font-size: 0.8rem;
+      color: #78350F;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 5rem;
+      }
+
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .header-controls {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .dscsa-badge-header,
+      .receive-badge,
+      .quick-links-stacked {
+        width: auto;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .quick-links-stacked {
+        height: auto;
+        flex-direction: row;
+      }
+
+      .quick-link-compact {
+        flex: 1;
+      }
+
+      .scanner-controls {
+        flex-direction: column;
+      }
+
+      .scanner-controls .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .scanned-details {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-with-sidebar">
+    
+    <!-- Header Bar -->
+    <div class="header-bar">
+      <h1><i class="fas fa-truck-loading" style="color: #3B82F6;"></i> Receive Shipment</h1>
+      <div class="header-controls">
+        <!-- DSCSA Badge -->
+        <div class="dscsa-badge-header">
+          <i class="fas fa-shield-check"></i>
+          <span>DSCSA Compliant</span>
+        </div>
+        
+        <!-- Receive Counter Badge -->
+        <div class="receive-badge">
+          <div>
+            <div class="receive-badge-number"><span id="todayReceived">0</span></div>
+            <div class="receive-badge-label">Received today</div>
+          </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="quick-links-stacked">
+          <a href="pharma-inventory.html" class="quick-link-compact inventory">
+            <i class="fas fa-boxes"></i>
+            <span>Inventory</span>
+          </a>
+          <a href="pharma-ship.html" class="quick-link-compact">
+            <i class="fas fa-shipping-fast"></i>
+            <span>Ship Out</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="header-subtitle">Scan incoming shipments, verify T3 documents, and log receipt for DSCSA compliance</p>
+
+    <!-- Scanner Section -->
+    <div class="scanner-section">
+      <h3><i class="fas fa-qrcode"></i> Scan Incoming Product</h3>
+      
+      <div id="scanner-container">
+        <div class="scanner-placeholder" id="scanner-placeholder">
+          <i class="fas fa-qrcode"></i>
+          <p>Camera preview will appear here</p>
+          <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click "Start Scanner" to begin</p>
+        </div>
+        <video id="scanner-video" style="display: none;"></video>
+      </div>
+
+      <div class="scanner-controls">
+        <button class="btn" id="startScannerBtn" onclick="startScanner()">
+          <i class="fas fa-camera"></i> Start Scanner
+        </button>
+        <button class="btn btn-secondary" id="stopScannerBtn" onclick="stopScanner()" style="display: none;">
+          <i class="fas fa-stop"></i> Stop Scanner
+        </button>
+      </div>
+
+      <!-- Manual Entry -->
+      <div class="manual-entry-section">
+        <h4>Or enter GS1 data manually</h4>
+        <div class="gs1-input-group">
+          <input type="text" id="manualGS1Input" placeholder="(01)00012345678905(21)SN123(17)251231(10)LOT001" />
+          <button class="btn btn-secondary" onclick="processManualEntry()">
+            <i class="fas fa-check"></i> Process
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanned Product Display -->
+    <div class="scanned-product" id="scannedProduct">
+      <div class="scanned-product-header">
+        <div class="scanned-product-title" id="scannedProductTitle">Product Scanned</div>
+        <div class="scanned-product-status verified" id="scannedProductStatus">
+          <i class="fas fa-check-circle"></i>
+          <span>Verified</span>
+        </div>
+      </div>
+
+      <div class="gs1-display">
+        <div class="gs1-display-label">GS1 Data String</div>
+        <div class="gs1-display-value" id="scannedGS1"></div>
+      </div>
+
+      <div class="scanned-details">
+        <div class="scanned-detail">
+          <div class="scanned-detail-label">GTIN</div>
+          <div class="scanned-detail-value" id="scannedGTIN">-</div>
+        </div>
+        <div class="scanned-detail">
+          <div class="scanned-detail-label">Serial Number</div>
+          <div class="scanned-detail-value" id="scannedSerial">-</div>
+        </div>
+        <div class="scanned-detail">
+          <div class="scanned-detail-label">Lot Number</div>
+          <div class="scanned-detail-value" id="scannedLot">-</div>
+        </div>
+        <div class="scanned-detail">
+          <div class="scanned-detail-label">Expiry Date</div>
+          <div class="scanned-detail-value" id="scannedExpiry">-</div>
+        </div>
+      </div>
+
+      <!-- T3 Document Info -->
+      <div class="t3-preview" id="t3Preview" style="display: none;">
+        <h5><i class="fas fa-file-contract"></i> Transaction Information (T3)</h5>
+        <p><strong>Sender:</strong> <span id="t3Sender">-</span></p>
+        <p><strong>Ship Date:</strong> <span id="t3ShipDate">-</span></p>
+        <p><strong>Transaction ID:</strong> <span id="t3TransactionId">-</span></p>
+      </div>
+
+      <!-- Shipment Info Form -->
+      <div class="shipment-info">
+        <h4><i class="fas fa-clipboard-list"></i> Receipt Details</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="senderName">
+              Sender / Trading Partner <span class="required">*</span>
+              <span class="dscsa-label">T3 Required</span>
+            </label>
+            <input type="text" id="senderName" placeholder="e.g., McKesson Distribution" />
+          </div>
+          <div class="form-group">
+            <label for="senderGLN">Sender GLN (optional)</label>
+            <input type="text" id="senderGLN" placeholder="13-digit GLN" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="poNumber">PO Number</label>
+            <input type="text" id="poNumber" placeholder="e.g., PO-2024-001234" />
+          </div>
+          <div class="form-group">
+            <label for="receivedQuantity">Quantity Received <span class="required">*</span></label>
+            <input type="number" id="receivedQuantity" value="1" min="1" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="storageLocation">Storage Location</label>
+          <select id="storageLocation">
+            <option value="">Select location...</option>
+            <option value="pharmacy-main">Pharmacy - Main Storage</option>
+            <option value="pharmacy-refrigerated">Pharmacy - Refrigerated</option>
+            <option value="pharmacy-controlled">Pharmacy - Controlled Substances</option>
+            <option value="warehouse-a">Warehouse A</option>
+            <option value="warehouse-b">Warehouse B</option>
+            <option value="quarantine">Quarantine Area</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="receiptNotes">Notes (optional)</label>
+          <textarea id="receiptNotes" rows="2" placeholder="Any observations about the shipment condition..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+          <button class="btn btn-success" id="confirmReceiptBtn" onclick="confirmReceipt()">
+            <i class="fas fa-check-double"></i> Confirm Receipt
+          </button>
+          <button class="btn btn-secondary" onclick="addToQueue()">
+            <i class="fas fa-plus"></i> Add to Queue & Scan Next
+          </button>
+          <button class="btn btn-outline-danger" onclick="clearScanned()">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+      </div>
+
+      <div id="receiptMessage"></div>
+    </div>
+
+    <!-- Pending Queue -->
+    <div class="card" id="pendingQueueCard" style="display: none;">
+      <h3><i class="fas fa-clipboard-list"></i> Pending Queue</h3>
+      <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 1rem;">
+        Products scanned and waiting to be confirmed as a batch
+      </p>
+      <div id="pendingQueue"></div>
+      <div style="margin-top: 1.5rem;">
+        <button class="btn btn-success" onclick="confirmAllPending()">
+          <i class="fas fa-check-double"></i> Confirm All (<span id="pendingCount">0</span> items)
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Receipts -->
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Recent Receipts</h3>
+      <ul id="receiptList" class="receipt-list"></ul>
+    </div>
+
+  </div>
+
+  <!-- Include QR Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/pharma-sidebar.js"></script>
+  
+  <script>
+    requireAuth();
+
+    let html5QrCode = null;
+    let isScanning = false;
+    let scannedData = null;
+    let pendingQueue = [];
+
+    // ==========================================
+    // GS1 PARSING
+    // ==========================================
+    function parseGS1String(gs1String) {
+      // Handle both formats: (01)xxx and raw with FNC1 separators
+      const result = {
+        gtin: null,
+        serial: null,
+        lot: null,
+        expiry: null,
+        raw: gs1String
+      };
+
+      // Pattern for (AI)value format
+      const patterns = {
+        gtin: /\(01\)(\d{14})/,
+        serial: /\(21\)([A-Za-z0-9]+)/,
+        expiry: /\(17\)(\d{6})/,
+        lot: /\(10\)([A-Za-z0-9]+)/
+      };
+
+      for (const [key, pattern] of Object.entries(patterns)) {
+        const match = gs1String.match(pattern);
+        if (match) {
+          result[key] = match[1];
+        }
+      }
+
+      // Format expiry for display (YYMMDD -> readable)
+      if (result.expiry) {
+        const yy = result.expiry.substring(0, 2);
+        const mm = result.expiry.substring(2, 4);
+        const dd = result.expiry.substring(4, 6);
+        const year = parseInt(yy) > 50 ? '19' + yy : '20' + yy;
+        result.expiryFormatted = `${year}-${mm}-${dd}`;
+      }
+
+      return result;
+    }
+
+    function isValidGS1(parsed) {
+      return parsed.gtin && parsed.serial && parsed.lot && parsed.expiry;
+    }
+
+    // ==========================================
+    // SCANNER
+    // ==========================================
+    async function startScanner() {
+      const startBtn = document.getElementById('startScannerBtn');
+      const stopBtn = document.getElementById('stopScannerBtn');
+      const placeholder = document.getElementById('scanner-placeholder');
+      const video = document.getElementById('scanner-video');
+
+      try {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("scanner-container");
+        }
+
+        placeholder.style.display = 'none';
+        video.style.display = 'block';
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-flex';
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+          },
+          onScanSuccess,
+          onScanFailure
+        );
+
+        isScanning = true;
+      } catch (err) {
+        console.error("Scanner error:", err);
+        alert("Could not start camera. Please check permissions or try manual entry.");
+        stopScanner();
+      }
+    }
+
+    function stopScanner() {
+      const startBtn = document.getElementById('startScannerBtn');
+      const stopBtn = document.getElementById('stopScannerBtn');
+      const placeholder = document.getElementById('scanner-placeholder');
+      const video = document.getElementById('scanner-video');
+
+      if (html5QrCode && isScanning) {
+        html5QrCode.stop().then(() => {
+          isScanning = false;
+        }).catch(err => console.error("Stop error:", err));
+      }
+
+      placeholder.style.display = 'block';
+      video.style.display = 'none';
+      startBtn.style.display = 'inline-flex';
+      stopBtn.style.display = 'none';
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      console.log("Scanned:", decodedText);
+      
+      // Parse the GS1 string
+      const parsed = parseGS1String(decodedText);
+      
+      if (isValidGS1(parsed)) {
+        // Valid GS1 - show product
+        displayScannedProduct(parsed);
+        stopScanner();
+        
+        // Play success sound/vibration
+        if (navigator.vibrate) {
+          navigator.vibrate(200);
+        }
+      } else {
+        // Not a valid GS1 - might be a BizTrack verification URL
+        if (decodedText.includes('biztrack.io')) {
+          lookupBizTrackProduct(decodedText);
+          stopScanner();
+        }
+      }
+    }
+
+    function onScanFailure(error) {
+      // Ignore - continuous scanning
+    }
+
+    // ==========================================
+    // MANUAL ENTRY
+    // ==========================================
+    function processManualEntry() {
+      const input = document.getElementById('manualGS1Input').value.trim();
+      
+      if (!input) {
+        alert('Please enter a GS1 string');
+        return;
+      }
+
+      const parsed = parseGS1String(input);
+      
+      if (isValidGS1(parsed)) {
+        displayScannedProduct(parsed);
+        document.getElementById('manualGS1Input').value = '';
+      } else {
+        alert('Invalid GS1 format. Required: GTIN (01), Serial (21), Expiry (17), Lot (10)');
+      }
+    }
+
+    // ==========================================
+    // DISPLAY SCANNED PRODUCT
+    // ==========================================
+    function displayScannedProduct(parsed) {
+      scannedData = parsed;
+      
+      const container = document.getElementById('scannedProduct');
+      container.classList.add('show');
+      
+      // Populate fields
+      document.getElementById('scannedGS1').textContent = parsed.raw;
+      document.getElementById('scannedGTIN').textContent = parsed.gtin || '-';
+      document.getElementById('scannedSerial').textContent = parsed.serial || '-';
+      document.getElementById('scannedLot').textContent = parsed.lot || '-';
+      document.getElementById('scannedExpiry').textContent = parsed.expiryFormatted || parsed.expiry || '-';
+      
+      // Check against database
+      verifyProduct(parsed);
+      
+      // Scroll to product
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ==========================================
+    // VERIFY PRODUCT
+    // ==========================================
+    async function verifyProduct(parsed) {
+      const statusEl = document.getElementById('scannedProductStatus');
+      const titleEl = document.getElementById('scannedProductTitle');
+      const t3Preview = document.getElementById('t3Preview');
+      
+      try {
+        // Try to find product in our system
+        const response = await authenticatedFetch(`/api/pharma-lookup?gtin=${parsed.gtin}&serial=${parsed.serial}`);
+        const data = await response.json();
+        
+        if (data.success && data.product) {
+          // Found in system
+          titleEl.textContent = data.product.productName || 'Known Product';
+          statusEl.className = 'scanned-product-status verified';
+          statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Verified in System</span>';
+          
+          // Show T3 info if available
+          if (data.product.lastTransaction) {
+            t3Preview.style.display = 'block';
+            document.getElementById('t3Sender').textContent = data.product.lastTransaction.sender || '-';
+            document.getElementById('t3ShipDate').textContent = data.product.lastTransaction.shipDate || '-';
+            document.getElementById('t3TransactionId').textContent = data.product.lastTransaction.transactionId || '-';
+            
+            // Pre-fill sender
+            document.getElementById('senderName').value = data.product.lastTransaction.sender || '';
+          }
+        } else {
+          // Not found - new product
+          titleEl.textContent = 'New Product';
+          statusEl.className = 'scanned-product-status unknown';
+          statusEl.innerHTML = '<i class="fas fa-question-circle"></i><span>Not in System</span>';
+          t3Preview.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        titleEl.textContent = 'Product Scanned';
+        statusEl.className = 'scanned-product-status unknown';
+        statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Verification Pending</span>';
+        t3Preview.style.display = 'none';
+      }
+    }
+
+    // ==========================================
+    // LOOKUP BIZTRACK PRODUCT
+    // ==========================================
+    async function lookupBizTrackProduct(url) {
+      try {
+        const productId = new URL(url).searchParams.get('id');
+        if (!productId) return;
+
+        const response = await authenticatedFetch(`/api/product/${productId}`);
+        const data = await response.json();
+        
+        if (data.success && data.product) {
+          const product = data.product;
+          const parsed = {
+            gtin: product.metadata?.gtin || product.metadata?.gs1?.gtin,
+            serial: product.metadata?.serialNumber || product.sku,
+            lot: product.metadata?.lotNumber || product.batch_number,
+            expiry: product.metadata?.expDate,
+            expiryFormatted: product.metadata?.expDate,
+            raw: product.metadata?.gs1String || product.metadata?.gs1?.formatted || url,
+            productName: product.product_name,
+            productId: product.product_id
+          };
+          
+          displayScannedProduct(parsed);
+          document.getElementById('scannedProductTitle').textContent = product.product_name;
+        }
+      } catch (error) {
+        console.error('Lookup error:', error);
+      }
+    }
+
+    // ==========================================
+    // CONFIRM RECEIPT
+    // ==========================================
+    async function confirmReceipt() {
+      if (!scannedData) {
+        alert('No product scanned');
+        return;
+      }
+
+      const senderName = document.getElementById('senderName').value.trim();
+      const senderGLN = document.getElementById('senderGLN').value.trim();
+      const poNumber = document.getElementById('poNumber').value.trim();
+      const quantity = parseInt(document.getElementById('receivedQuantity').value) || 1;
+      const storageLocation = document.getElementById('storageLocation').value;
+      const notes = document.getElementById('receiptNotes').value.trim();
+
+      if (!senderName) {
+        alert('Sender/Trading Partner is required for DSCSA compliance');
+        return;
+      }
+
+      const btn = document.getElementById('confirmReceiptBtn');
+      const msgEl = document.getElementById('receiptMessage');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      msgEl.innerHTML = '';
+
+      try {
+        const response = await authenticatedFetch('/api/pharma-receive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            gs1Data: scannedData,
+            gtin: scannedData.gtin,
+            serialNumber: scannedData.serial,
+            lotNumber: scannedData.lot,
+            expiryDate: scannedData.expiryFormatted || scannedData.expiry,
+            sender: {
+              name: senderName,
+              gln: senderGLN || null
+            },
+            poNumber: poNumber || null,
+            quantity,
+            storageLocation: storageLocation || null,
+            notes: notes || null,
+            receivedAt: new Date().toISOString()
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Receipt failed');
+        }
+
+        msgEl.innerHTML = `
+          <div class="message success">
+            <i class="fas fa-check-circle"></i>
+            <div>
+              <strong>Receipt confirmed!</strong><br>
+              <small>Product added to inventory. Transaction ID: ${result.transactionId || 'N/A'}</small>
+            </div>
+          </div>
+        `;
+
+        // Clear form after short delay
+        setTimeout(() => {
+          clearScanned();
+          loadRecentReceipts();
+          updateTodayCount();
+        }, 2000);
+
+      } catch (error) {
+        msgEl.innerHTML = `
+          <div class="message error">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>Error: ${error.message}</div>
+          </div>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-double"></i> Confirm Receipt';
+      }
+    }
+
+    // ==========================================
+    // QUEUE MANAGEMENT
+    // ==========================================
+    function addToQueue() {
+      if (!scannedData) {
+        alert('No product scanned');
+        return;
+      }
+
+      const senderName = document.getElementById('senderName').value.trim();
+      const quantity = parseInt(document.getElementById('receivedQuantity').value) || 1;
+
+      pendingQueue.push({
+        ...scannedData,
+        senderName,
+        quantity,
+        storageLocation: document.getElementById('storageLocation').value,
+        addedAt: new Date().toISOString()
+      });
+
+      updateQueueDisplay();
+      clearScanned();
+      
+      // Restart scanner for next item
+      startScanner();
+    }
+
+    function updateQueueDisplay() {
+      const card = document.getElementById('pendingQueueCard');
+      const container = document.getElementById('pendingQueue');
+      const countEl = document.getElementById('pendingCount');
+      
+      if (pendingQueue.length === 0) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'block';
+      countEl.textContent = pendingQueue.length;
+      
+      container.innerHTML = pendingQueue.map((item, index) => `
+        <div class="pending-item">
+          <div class="pending-item-info">
+            <div class="pending-item-icon">
+              <i class="fas fa-pills"></i>
+            </div>
+            <div class="pending-item-details">
+              <h5>GTIN: ${item.gtin}</h5>
+              <p>Serial: ${item.serial} • Lot: ${item.lot} • Qty: ${item.quantity}</p>
+            </div>
+          </div>
+          <div class="pending-item-actions">
+            <button class="btn btn-outline-danger" onclick="removeFromQueue(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.removeFromQueue = (index) => {
+      pendingQueue.splice(index, 1);
+      updateQueueDisplay();
+    };
+
+    async function confirmAllPending() {
+      if (pendingQueue.length === 0) return;
+
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const item of pendingQueue) {
+        try {
+          const response = await authenticatedFetch('/api/pharma-receive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gs1Data: item,
+              gtin: item.gtin,
+              serialNumber: item.serial,
+              lotNumber: item.lot,
+              expiryDate: item.expiryFormatted || item.expiry,
+              sender: { name: item.senderName },
+              quantity: item.quantity,
+              storageLocation: item.storageLocation,
+              receivedAt: new Date().toISOString()
+            })
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (err) {
+          errorCount++;
+        }
+      }
+
+      alert(`Processed ${successCount + errorCount} items:\n✓ ${successCount} successful\n✗ ${errorCount} failed`);
+      
+      pendingQueue = [];
+      updateQueueDisplay();
+      loadRecentReceipts();
+      updateTodayCount();
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check-double"></i> Confirm All (<span id="pendingCount">0</span> items)';
+    }
+
+    // ==========================================
+    // CLEAR FORM
+    // ==========================================
+    function clearScanned() {
+      scannedData = null;
+      document.getElementById('scannedProduct').classList.remove('show');
+      document.getElementById('senderName').value = '';
+      document.getElementById('senderGLN').value = '';
+      document.getElementById('poNumber').value = '';
+      document.getElementById('receivedQuantity').value = '1';
+      document.getElementById('storageLocation').value = '';
+      document.getElementById('receiptNotes').value = '';
+      document.getElementById('receiptMessage').innerHTML = '';
+      document.getElementById('t3Preview').style.display = 'none';
+    }
+
+    // ==========================================
+    // LOAD RECENT RECEIPTS
+    // ==========================================
+    async function loadRecentReceipts() {
+      const list = document.getElementById('receiptList');
+      list.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>';
+
+      try {
+        const response = await authenticatedFetch('/api/pharma-receipts?limit=20');
+        const data = await response.json();
+
+        if (!data.success || !data.receipts || data.receipts.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-truck-loading"></i>
+              <p>No receipts yet. Scan your first incoming shipment above!</p>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = data.receipts.map(receipt => `
+          <li class="receipt-item">
+            <div class="receipt-item-info">
+              <h5>${receipt.productName || 'GTIN: ' + receipt.gtin}</h5>
+              <p>
+                Serial: ${receipt.serialNumber || '-'} • 
+                Lot: ${receipt.lotNumber || '-'} • 
+                From: ${receipt.sender?.name || '-'}
+              </p>
+            </div>
+            <div class="receipt-item-meta">
+              <div class="receipt-item-qty">×${receipt.quantity || 1}</div>
+              <div class="receipt-item-date">${formatDate(receipt.receivedAt)}</div>
+            </div>
+          </li>
+        `).join('');
+
+      } catch (error) {
+        console.error('Failed to load receipts:', error);
+        list.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Failed to load receipts</p>
+          </div>
+        `;
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diff = now - date;
+      
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+      
+      return date.toLocaleDateString();
+    }
+
+    // ==========================================
+    // UPDATE TODAY COUNT
+    // ==========================================
+    async function updateTodayCount() {
+      try {
+        const response = await authenticatedFetch('/api/pharma-receipts?today=true');
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('todayReceived').textContent = data.count || 0;
+        }
+      } catch (error) {
+        console.error('Failed to load today count:', error);
+      }
+    }
+
+    // ==========================================
+    // INITIALIZE
+    // ==========================================
+    loadRecentReceipts();
+    updateTodayCount();
+
+    // Handle Enter key in manual input
+    document.getElementById('manualGS1Input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        processManualEntry();
+      }
+    });
+  </script>
+</body>
+</html>

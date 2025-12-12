@@ -53,23 +53,27 @@
             <i class="fas fa-qrcode"></i> QR Scanner
           </a></li>
           
-          <li><a href="/pharma/receive.html" id="pharma-nav-receive">
-            <i class="fas fa-box"></i> Receive Shipment
+          <li><a href="/pharma-receive.html" id="pharma-nav-receive">
+            <i class="fas fa-truck-loading"></i> Receive Shipment
           </a></li>
           
-          <li><a href="/pharma/partners.html" id="pharma-nav-partners">
+          <li><a href="/pharma-inventory.html" id="pharma-nav-inventory">
+            <i class="fas fa-boxes"></i> Inventory
+          </a></li>
+          
+          <li><a href="/pharma-ship.html" id="pharma-nav-ship">
+            <i class="fas fa-shipping-fast"></i> Ship Out
+          </a></li>
+          
+          <li><a href="/pharma-partners.html" id="pharma-nav-partners">
             <i class="fas fa-building"></i> Trading Partners
           </a></li>
           
-          <li><a href="/pharma/returns.html" id="pharma-nav-returns">
-            <i class="fas fa-undo"></i> Returns Processing
-          </a></li>
-          
-          <li><a href="/pharma/quarantine.html" id="pharma-nav-quarantine">
+          <li><a href="/pharma-quarantine.html" id="pharma-nav-quarantine">
             <i class="fas fa-exclamation-triangle"></i> Quarantine Zone
           </a></li>
           
-          <li><a href="/pharma/epcis.html" id="pharma-nav-epcis">
+          <li><a href="/pharma-epcis.html" id="pharma-nav-epcis">
             <i class="fas fa-file-export"></i> EPCIS Export
           </a></li>
           
@@ -357,11 +361,12 @@
       'pharma-production.html': 'pharma-nav-production',
       'pharma-products.html': 'pharma-nav-products',
       'pharma-scanner.html': 'pharma-nav-scanner',
-      'receive.html': 'pharma-nav-receive',
-      'partners.html': 'pharma-nav-partners',
-      'returns.html': 'pharma-nav-returns',
-      'quarantine.html': 'pharma-nav-quarantine',
-      'epcis.html': 'pharma-nav-epcis',
+      'pharma-receive.html': 'pharma-nav-receive',
+      'pharma-inventory.html': 'pharma-nav-inventory',
+      'pharma-ship.html': 'pharma-nav-ship',
+      'pharma-partners.html': 'pharma-nav-partners',
+      'pharma-quarantine.html': 'pharma-nav-quarantine',
+      'pharma-epcis.html': 'pharma-nav-epcis',
       'SI-pharma-pricing.html': 'pharma-nav-subscription',
       'SI-pharma-settings.html': 'pharma-nav-settings'
     };

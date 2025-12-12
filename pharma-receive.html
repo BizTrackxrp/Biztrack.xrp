@@ -853,6 +853,14 @@
       <div class="shipment-info">
         <h4><i class="fas fa-clipboard-list"></i> Receipt Details</h4>
         
+        <div class="form-group">
+          <label for="productName">
+            Product Name <span class="required">*</span>
+          </label>
+          <input type="text" id="productName" placeholder="e.g., Lisinopril 10mg Tablets" />
+          <p class="helper-text">Enter the product name (GS1 codes don't include this)</p>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label for="senderName">
@@ -1204,12 +1212,18 @@
         return;
       }
 
+      const productName = document.getElementById('productName').value.trim();
       const senderName = document.getElementById('senderName').value.trim();
       const senderGLN = document.getElementById('senderGLN').value.trim();
       const poNumber = document.getElementById('poNumber').value.trim();
       const quantity = parseInt(document.getElementById('receivedQuantity').value) || 1;
       const storageLocation = document.getElementById('storageLocation').value;
       const notes = document.getElementById('receiptNotes').value.trim();
+
+      if (!productName) {
+        alert('Product Name is required');
+        return;
+      }
 
       if (!senderName) {
         alert('Sender/Trading Partner is required for DSCSA compliance');
@@ -1229,6 +1243,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             gs1Data: scannedData,
+            productName,
             gtin: scannedData.gtin,
             serialNumber: scannedData.serial,
             lotNumber: scannedData.lot,
@@ -1256,7 +1271,7 @@
             <i class="fas fa-check-circle"></i>
             <div>
               <strong>Receipt confirmed!</strong><br>
-              <small>Product added to inventory. Transaction ID: ${result.transactionId || 'N/A'}</small>
+              <small>${productName} added to inventory. Transaction ID: ${result.transactionId || 'N/A'}</small>
             </div>
           </div>
         `;
@@ -1264,6 +1279,7 @@
         // Clear form after short delay
         setTimeout(() => {
           clearScanned();
+          document.getElementById('productName').value = '';
           loadRecentReceipts();
           updateTodayCount();
         }, 2000);

@@ -113,6 +113,7 @@ async function handleCreateReceipt(req, res) {
 
     const {
       gs1Data,
+      productName: requestProductName,
       gtin,
       serialNumber,
       lotNumber,
@@ -130,6 +131,10 @@ async function handleCreateReceipt(req, res) {
       return res.status(400).json({ error: 'GTIN or Serial Number required' });
     }
 
+    if (!requestProductName) {
+      return res.status(400).json({ error: 'Product Name is required' });
+    }
+
     if (!sender || !sender.name) {
       return res.status(400).json({ error: 'Sender information required for DSCSA compliance' });
     }
@@ -140,7 +145,7 @@ async function handleCreateReceipt(req, res) {
 
     // Try to find matching product in our system
     let productId = null;
-    let productName = null;
+    let productName = requestProductName; // Use the name from request
 
     if (gtin && serialNumber) {
       const productResult = await pool.query(
@@ -154,7 +159,10 @@ async function handleCreateReceipt(req, res) {
 
       if (productResult.rows.length > 0) {
         productId = productResult.rows[0].product_id;
-        productName = productResult.rows[0].product_name;
+        // Only override product name if we found a match AND no name was provided
+        if (!requestProductName && productResult.rows[0].product_name) {
+          productName = productResult.rows[0].product_name;
+        }
       }
     }
 
@@ -236,14 +244,15 @@ async function handleCreateReceipt(req, res) {
       await pool.query(
         `INSERT INTO pharma_inventory (
           user_id, gtin, serial_number, lot_number, expiry_date,
-          quantity, storage_location, status, last_updated
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+          product_name, quantity, storage_location, status, last_updated
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
         ON CONFLICT (user_id, gtin, serial_number) 
         DO UPDATE SET 
           quantity = pharma_inventory.quantity + EXCLUDED.quantity,
           storage_location = EXCLUDED.storage_location,
+          product_name = EXCLUDED.product_name,
           last_updated = NOW()`,
-        [userId, gtin, serialNumber, lotNumber, expiryDate, quantity || 1, storageLocation, 'in_stock']
+        [userId, gtin, serialNumber, lotNumber, expiryDate, productName, quantity || 1, storageLocation, 'in_stock']
       );
     } catch (invError) {
       // Inventory table might not exist yet - that's OK

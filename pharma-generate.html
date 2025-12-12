@@ -30,6 +30,202 @@
       min-height: 100vh;
     }
 
+    /* Compact Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .header-bar h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin: 0;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dscsa-badge-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      height: 52px;
+      min-width: 140px;
+      box-sizing: border-box;
+    }
+
+    .qr-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      height: 52px;
+      min-width: 140px;
+      box-sizing: border-box;
+    }
+
+    .qr-badge-number {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .qr-badge-label {
+      opacity: 0.9;
+      font-size: 0.65rem;
+    }
+
+    .qr-badge-tier {
+      background: rgba(255,255,255,0.2);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .quick-links-stacked {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: 52px;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .quick-link-compact {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.6rem;
+      background: #F8FAFC;
+      border-radius: 6px;
+      border: 1px solid #E2E8F0;
+      text-decoration: none;
+      color: #334155;
+      font-weight: 500;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      height: 22px;
+      box-sizing: border-box;
+    }
+
+    .quick-link-compact:hover {
+      border-color: #667eea;
+      background: white;
+    }
+
+    .quick-link-compact i {
+      font-size: 0.7rem;
+      color: #667eea;
+    }
+
+    .quick-link-compact.production i {
+      color: #10B981;
+    }
+
+    .quick-link-compact.production:hover {
+      border-color: #10B981;
+    }
+
+    .quick-link-count {
+      background: #E2E8F0;
+      color: #64748B;
+      padding: 0.05rem 0.35rem;
+      border-radius: 8px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    /* Tracking Mode Selector */
+    .tracking-mode-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #ECFDF5;
+      border: 2px solid #10B981;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .tracking-mode-selector i {
+      color: #10B981;
+      font-size: 1.1rem;
+    }
+
+    .tracking-mode-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .tracking-mode-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #059669;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tracking-mode-select {
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #065F46;
+      cursor: pointer;
+      padding: 0;
+      margin-left: -3px;
+      outline: none;
+    }
+
+    .tracking-mode-select:focus {
+      outline: none;
+    }
+
+    .tracking-mode-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: #10B981;
+      color: white;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tracking-mode-info:hover {
+      background: #059669;
+    }
+
     .page-header {
       background: white;
       border-radius: 16px;
@@ -406,82 +602,6 @@
       font-size: 1rem;
     }
 
-    .usage-counter {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-
-    .usage-counter h4 {
-      font-size: 0.875rem;
-      opacity: 0.9;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .usage-counter-numbers {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin-bottom: 0.25rem;
-    }
-
-    .usage-counter-numbers small {
-      font-size: 1.25rem;
-      opacity: 0.8;
-    }
-
-    /* Quick Links */
-    .quick-links {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .quick-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      background: white;
-      border-radius: 10px;
-      border: 2px solid #E2E8F0;
-      text-decoration: none;
-      color: #334155;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-
-    .quick-link:hover {
-      border-color: #667eea;
-      background: #F8FAFC;
-    }
-
-    .quick-link i {
-      color: #667eea;
-    }
-
-    .quick-link.production i {
-      color: #10B981;
-    }
-
-    .quick-link.production:hover {
-      border-color: #10B981;
-    }
-
-    .quick-link-count {
-      background: #E2E8F0;
-      color: #64748B;
-      padding: 0.15rem 0.5rem;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
     .product-list {
       list-style: none;
     }
@@ -582,14 +702,42 @@
         padding-top: 5rem;
       }
 
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .header-controls {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .quick-links-stacked {
+        flex-direction: row;
+        height: auto;
+      }
+
+      .dscsa-badge-header {
+        height: auto;
+        padding: 0.4rem 0.6rem;
+      }
+
+      .qr-badge {
+        flex: 1;
+        justify-content: center;
+        height: auto;
+      }
+
       .product-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
       }
 
-      .quick-links {
-        flex-direction: column;
+      .tracking-mode-selector {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -597,39 +745,41 @@
 <body>
   <div class="main-with-sidebar">
     
-    <!-- Page Header -->
-    <div class="page-header">
-      <h1>
-        <i class="fas fa-qrcode"></i> Generate Product IDs
-        <span class="dscsa-badge"><i class="fas fa-shield-check"></i> DSCSA Compliant</span>
-      </h1>
-      <p>Create GS1-encoded QR codes for pharmaceutical products with full supply chain traceability</p>
-    </div>
-
-    <!-- Quick Links -->
-    <div class="quick-links">
-      <a href="pharma-products.html" class="quick-link">
-        <i class="fas fa-box-check"></i>
-        <span>Finished Products</span>
-        <span class="quick-link-count" id="finishedCount">-</span>
-      </a>
-      <a href="pharma-production.html" class="quick-link production">
-        <i class="fas fa-industry"></i>
-        <span>In Progress</span>
-        <span class="quick-link-count" id="productionCount">-</span>
-      </a>
-    </div>
-
-    <!-- Usage Counter -->
-    <div class="usage-counter">
-      <div class="usage-counter-info">
-        <h4>QR Codes Used This Month</h4>
-        <div class="usage-counter-numbers">
-          <span id="qrUsedCount">0</span> <small>/ <span id="qrLimitCount">10,000</span></small>
+    <!-- Compact Header Bar -->
+    <div class="header-bar">
+      <h1>Generate Product IDs</h1>
+      <div class="header-controls">
+        <!-- DSCSA Badge -->
+        <div class="dscsa-badge-header">
+          <i class="fas fa-shield-check"></i>
+          <span>DSCSA Compliant</span>
         </div>
-        <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;" id="tierName">Free Plan</p>
+        
+        <!-- QR Counter Badge -->
+        <div class="qr-badge">
+          <div>
+            <div class="qr-badge-number"><span id="qrUsedCount">0</span> <span style="font-size: 0.875rem; font-weight: 400;">/ <span id="qrLimitCount">10,000</span></span></div>
+            <div class="qr-badge-label">QR codes this month</div>
+          </div>
+          <span class="qr-badge-tier" id="tierName">Free</span>
+        </div>
+        
+        <!-- Quick Links Stacked -->
+        <div class="quick-links-stacked">
+          <a href="pharma-products.html" class="quick-link-compact">
+            <i class="fas fa-box-check"></i>
+            <span>Finished</span>
+            <span class="quick-link-count" id="finishedCount">-</span>
+          </a>
+          <a href="pharma-production.html" class="quick-link-compact production">
+            <i class="fas fa-industry"></i>
+            <span>In Progress</span>
+            <span class="quick-link-count" id="productionCount">-</span>
+          </a>
+        </div>
       </div>
     </div>
+    <p class="header-subtitle">Create GS1-encoded QR codes for pharmaceutical products with full supply chain traceability</p>
 
     <!-- Generate QR Form -->
     <div class="card">
@@ -664,33 +814,30 @@
         </div>
       </div>
 
-      <!-- Production Mode Toggle -->
-      <div class="toggle-container production">
-        <div class="toggle-label">
-          <i class="fas fa-route production"></i>
-          <span id="productionToggleText">Supply Chain Tracking</span>
-          <span class="info-icon" onclick="toggleTooltip(event, 'productionTooltip')"><i class="fas fa-info"></i></span>
+      <!-- Tracking Mode Selector -->
+      <div class="tracking-mode-selector">
+        <i class="fas fa-route"></i>
+        <div class="tracking-mode-content">
+          <span class="tracking-mode-label">Tracking Mode</span>
+          <select class="tracking-mode-select" id="trackingModeSelect" onchange="handleTrackingModeChange()">
+            <option value="supply-chain">Full Supply Chain (Recommended)</option>
+            <option value="direct">Direct Dispense</option>
+          </select>
         </div>
-        <div class="info-tooltip" id="productionTooltip">
-          <strong>What is Supply Chain Tracking?</strong><br><br>
-          Track your pharmaceutical products through every checkpoint in your supply chain before going live:<br><br>
-          🏭 <strong>Manufacturing</strong> — Production facility<br>
-          ✅ <strong>Quality Control</strong> — Testing & verification<br>
-          📦 <strong>Packaging</strong> — Final packaging<br>
-          🚚 <strong>Distribution</strong> — Shipping & logistics<br>
-          🏥 <strong>Dispensing</strong> — Pharmacy/hospital<br><br>
-          Each checkpoint scans the QR to log their part. When ready, hit "Go Live" and customers see the full verified DSCSA-compliant timeline.<br><br>
-          <strong>No QR codes charged until you "Go Live"!</strong>
-        </div>
-        <div class="toggle-switch production" id="productionToggle" onclick="toggleProductionMode()">
-          <div class="toggle-switch-slider"></div>
+        <span class="tracking-mode-info" onclick="toggleTooltip(event, 'trackingTooltip')"><i class="fas fa-info"></i></span>
+        <div class="info-tooltip" id="trackingTooltip">
+          <strong>Tracking Modes</strong><br><br>
+          <strong>Full Supply Chain</strong> (Recommended)<br>
+          Track through every checkpoint: manufacturing → QC → packaging → distribution → dispensing. No QR codes charged until "Go Live".<br><br>
+          <strong>Direct Dispense</strong><br>
+          For compounding pharmacies or single-site operations. Product goes live immediately with QR codes generated on creation.
         </div>
       </div>
 
-      <!-- Production Mode Section -->
-      <div class="expandable-section production" id="productionSection">
-        <h4><i class="fas fa-info-circle"></i> Supply Chain Tracking Enabled</h4>
-        <p>Products will start in <strong>supply chain tracking mode</strong>. Log checkpoints (manufacturing, QC, packaging, distribution) before finalizing for customer verification. <strong>No QR codes charged until you "Go Live".</strong></p>
+      <!-- Supply Chain Info Section -->
+      <div class="expandable-section production show" id="supplyChainSection">
+        <h4><i class="fas fa-info-circle"></i> Full Supply Chain Tracking</h4>
+        <p>Products will track through each checkpoint (manufacturing, QC, packaging, distribution, dispensing) before going live. <strong>No QR codes charged until you "Go Live".</strong></p>
       </div>
 
       <!-- Batch Quantity Section -->
@@ -993,25 +1140,31 @@
     }
 
     // ==========================================
-    // PRODUCTION MODE TOGGLE
+    // TRACKING MODE HANDLER
     // ==========================================
-    function toggleProductionMode() {
-      isProductionMode = !isProductionMode;
-      const toggle = document.getElementById('productionToggle');
-      const section = document.getElementById('productionSection');
-      const toggleText = document.getElementById('productionToggleText');
+    function handleTrackingModeChange() {
+      const select = document.getElementById('trackingModeSelect');
+      const section = document.getElementById('supplyChainSection');
       
-      if (isProductionMode) {
-        toggle.classList.add('active');
+      if (select.value === 'supply-chain') {
+        isProductionMode = true;
         section.classList.add('show');
-        toggleText.textContent = 'Supply Chain Tracking ✓';
+        section.querySelector('h4').innerHTML = '<i class="fas fa-info-circle"></i> Full Supply Chain Tracking';
+        section.querySelector('p').innerHTML = 'Products will track through each checkpoint (manufacturing, QC, packaging, distribution, dispensing) before going live. <strong>No QR codes charged until you "Go Live".</strong>';
       } else {
-        toggle.classList.remove('active');
-        section.classList.remove('show');
-        toggleText.textContent = 'Supply Chain Tracking';
+        isProductionMode = false;
+        section.classList.add('show');
+        section.querySelector('h4').innerHTML = '<i class="fas fa-bolt"></i> Direct Dispense Mode';
+        section.querySelector('p').innerHTML = 'Products will go <strong>live immediately</strong> with QR codes generated on creation. Best for compounding pharmacies or single-site operations.';
       }
       
       updateButtonText();
+    }
+
+    // Initialize tracking mode on page load
+    function initTrackingMode() {
+      isProductionMode = true; // Default to supply chain
+      document.getElementById('trackingModeSelect').value = 'supply-chain';
     }
 
     // ==========================================
@@ -1019,14 +1172,16 @@
     // ==========================================
     function updateButtonText() {
       const btnText = document.getElementById('btnText');
+      const trackingMode = document.getElementById('trackingModeSelect').value;
       
-      if (isProductionMode) {
+      if (trackingMode === 'supply-chain') {
         if (isBatchMode) {
-          btnText.textContent = 'Create Production Batch';
+          btnText.textContent = 'Create Supply Chain Batch';
         } else {
-          btnText.textContent = 'Create Production Entry';
+          btnText.textContent = 'Create Supply Chain Entry';
         }
       } else {
+        // Direct dispense
         if (isBatchMode) {
           btnText.textContent = 'Generate Batch QR Codes';
         } else {
@@ -1382,6 +1537,7 @@
     loadLimits();
     loadProductCounts();
     loadProducts();
+    initTrackingMode();
   </script>
 </body>
 </html>

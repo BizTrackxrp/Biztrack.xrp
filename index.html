@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizTrack - Blockchain Product Verification & Supply Chain Tracking</title>
+  <title>BizTrack - Supply Chain Tracking Made Customer-Facing</title>
   
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Blockchain-powered product verification and supply chain tracking. Give your customers confidence with tamper-proof QR codes backed by XRPL.">
-  <meta name="keywords" content="supply chain, blockchain, product verification, QR codes, XRPL, DSCSA, pharmaceutical tracking, inventory management">
+  <meta name="description" content="Turn your supply chain into a customer experience. Smart QR codes let customers see exactly where their product came from—every step, verified on blockchain.">
+  <meta name="keywords" content="supply chain tracking, blockchain verification, QR codes, product transparency, XRPL, DSCSA, pharmaceutical tracking, product authentication">
   
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.biztrack.io/">
-  <meta property="og:title" content="BizTrack - Blockchain Product Verification">
-  <meta property="og:description" content="Blockchain-powered product verification and supply chain tracking. Give your customers confidence with tamper-proof QR codes.">
+  <meta property="og:title" content="BizTrack - Supply Chain Tracking Made Customer-Facing">
+  <meta property="og:description" content="Turn your supply chain into a customer experience. Smart QR codes let customers see exactly where their product came from.">
   <meta property="og:image" content="https://www.biztrack.io/images/og-image.png">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="BizTrack - Blockchain Product Verification">
-  <meta name="twitter:description" content="Blockchain-powered product verification and supply chain tracking. Tamper-proof QR codes backed by XRPL.">
+  <meta name="twitter:title" content="BizTrack - Supply Chain Tracking Made Customer-Facing">
+  <meta name="twitter:description" content="Turn your supply chain into a customer experience. Smart QR codes verified on blockchain.">
   <meta name="twitter:image" content="https://www.biztrack.io/images/og-image.png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -100,26 +100,90 @@
       min-height: 100vh;
     }
 
-    /* Page Header */
-    .page-header {
+    /* Hero Section */
+    .hero {
       background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
       color: white;
-      padding: 4rem 2rem;
+      padding: 5rem 2rem 4rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .page-header h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      line-height: 1.2;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
     }
 
-    .page-header p {
-      font-size: 1.25rem;
-      opacity: 0.95;
-      max-width: 800px;
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
       margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: 1.35rem;
+      opacity: 0.95;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-price {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .hero-price span {
+      background: white;
+      color: #1e40af;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .btn-hero {
+      background: white;
+      color: #1e40af;
+      padding: 1rem 2.25rem;
+      border-radius: 10px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
     }
 
     /* Content Section */
@@ -129,159 +193,45 @@
       padding: 3rem 2rem;
     }
 
-    /* Section */
-    .section {
+    /* Value Prop Section */
+    .value-section {
       background: white;
-      border-radius: 16px;
-      padding: 3rem;
+      border-radius: 20px;
+      padding: 3.5rem;
       margin-bottom: 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .section h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      color: #0f172a;
-    }
-
-    .section h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #1e40af;
-    }
-
-    /* Product Journey Visual */
-    .journey-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin: 2rem 0;
-    }
-
-    .journey-step {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       text-align: center;
-      padding: 1.5rem 1rem;
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border-radius: 12px;
-      border: 2px solid #3b82f6;
-      position: relative;
     }
 
-    .journey-step::after {
-      content: '→';
-      position: absolute;
-      right: -2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2rem;
-      color: #3b82f6;
-      font-weight: 700;
-    }
-
-    .journey-step:last-child::after {
-      display: none;
-    }
-
-    .journey-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1rem;
-      font-size: 2rem;
-    }
-
-    .journey-step h4 {
-      font-size: 1.125rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
+    .value-section h2 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
       color: #0f172a;
+      letter-spacing: -0.01em;
     }
 
-    .journey-step p {
+    .value-section .subtitle {
+      font-size: 1.2rem;
       color: #475569;
-      font-size: 0.95rem;
+      line-height: 1.8;
+      max-width: 750px;
+      margin: 0 auto 2rem;
     }
 
-    /* Features Grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin: 2rem 0;
-    }
-
-    .feature-card {
-      padding: 1.5rem;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 2px solid #e2e8f0;
-      transition: all 0.3s;
-    }
-
-    .feature-card:hover {
-      border-color: #3b82f6;
-      transform: translateY(-4px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .feature-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    }
-
-    .feature-card h4 {
-      font-size: 1.25rem;
+    .tagline {
+      font-size: 1.4rem;
+      color: #10b981;
       font-weight: 700;
-      margin-bottom: 0.75rem;
-      color: #0f172a;
-    }
-
-    .feature-card p {
-      color: #475569;
-      line-height: 1.7;
-    }
-
-    /* CTA Section */
-    .cta-section {
-      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
-      color: white;
-      padding: 3rem;
-      border-radius: 16px;
-      text-align: center;
-      margin: 3rem 0;
-    }
-
-    .cta-section h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: white;
-    }
-
-    .cta-section p {
-      font-size: 1.125rem;
       margin-bottom: 2rem;
-      opacity: 0.95;
     }
 
     .btn {
       padding: 1rem 2rem;
-      border-radius: 8px;
+      border-radius: 10px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1.125rem;
+      font-size: 1.1rem;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
@@ -290,53 +240,355 @@
       border: none;
     }
 
-    .btn-white {
-      background: white;
-      color: #1e40af;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-white:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
-    }
-
     .btn-green {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
     }
 
     .btn-green:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
     }
 
-    /* Stats */
-    .stats-grid {
+    .btn-white {
+      background: white;
+      color: #1e40af;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .free-trial-note {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      color: #64748b;
+    }
+
+    /* Three Pillars */
+    .pillars {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .pillar {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .pillar:hover {
+      border-color: #3b82f6;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .pillar-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 2rem;
+    }
+
+    .pillar h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .pillar p {
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Journey Section */
+    .section {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .section > p {
+      font-size: 1.1rem;
+      color: #475569;
+      margin-bottom: 2rem;
+    }
+
+    .journey-visual {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin: 2.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .journey-step {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      position: relative;
+    }
+
+    .journey-step.active {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border-color: #3b82f6;
+    }
+
+    .journey-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .journey-step h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .journey-step p {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .journey-arrow {
+      font-size: 1.5rem;
+      color: #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    /* What Customers See */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-card {
+      padding: 1.75rem;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .feature-card h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+
+    .feature-card p {
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Trust Section */
+    .trust-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 20px;
+      padding: 3rem;
+      margin-bottom: 2rem;
+      color: white;
+      text-align: center;
+    }
+
+    .trust-section h2 {
+      color: white;
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .trust-section > p {
+      color: #94a3b8;
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .trust-item {
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .trust-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #3b82f6;
+      margin-bottom: 0.25rem;
+    }
+
+    .trust-label {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* How It Works */
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       margin: 2rem 0;
     }
 
-    .stat-card {
+    .step-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .step-item h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: #0f172a;
+    }
+
+    .step-item p {
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 3.5rem;
+      border-radius: 20px;
       text-align: center;
-      padding: 2rem;
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border-radius: 12px;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .stat-number {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #1e40af;
-      margin-bottom: 0.5rem;
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>');
     }
 
-    .stat-label {
-      color: #475569;
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section h2 {
+      font-size: 2.25rem;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      font-size: 1.15rem;
+      opacity: 0.95;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .trust-badge span {
+      font-size: 1.25rem;
     }
 
     /* Footer */
@@ -345,7 +597,7 @@
       color: #94a3b8;
       padding: 3rem 2rem 2rem;
       margin-left: 260px;
-      margin-top: 4rem;
+      margin-top: 2rem;
     }
 
     .footer-content {
@@ -380,276 +632,7 @@
       font-size: 0.875rem;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .main-content,
-      .footer {
-        margin-left: 0;
-      }
-
-      .page-header h1 {
-        font-size: 2rem;
-      }
-
-      .journey-steps {
-        grid-template-columns: 1fr;
-      }
-
-      .journey-step::after {
-        display: none;
-      }
-
-      .section {
-        padding: 2rem 1.5rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- Sidebar Navigation -->
-  <div id="sidebar-container" data-page="business"></div>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Page Header -->
-    <header class="page-header">
-      <h1>Prove Your Products Are Real</h1>
-      <p style="font-size: 1.5rem; margin-bottom: 1.5rem;">
-        Stop counterfeits. Build trust. Charge more.
-      </p>
-      <p style="font-size: 1.75rem; font-weight: 700;">
-        Starting at <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 8px;">$0.10 per QR code</span>
-      </p>
-    </header>
-
-    <!-- Content -->
-    <div class="content-section">
-      
-      <!-- Value Proposition -->
-      <section class="section" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 2px solid #e2e8f0;">
-        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-          <h2 style="font-size: 2.25rem; margin-bottom: 1.5rem; color: #0f172a;">
-            Make Your Products More Valuable by Making Them Verifiable
-          </h2>
-          
-          <p style="font-size: 1.25rem; color: #475569; line-height: 1.8; margin-bottom: 1.5rem;">
-            Every BizTrack QR code gives customers <strong>instant proof</strong> your product is authentic.
-            <br />
-            They scan → see photos, GPS, timestamps → from factory to their hands.
-          </p>
-
-          <p style="font-size: 1.5rem; color: #10b981; font-weight: 700; margin-bottom: 2rem;">
-            No fakes. No doubts. Just trust.
-          </p>
-
-          <a href="login.html" class="btn btn-green" style="font-size: 1.25rem; padding: 1rem 2.5rem;">
-            <i class="fas fa-arrow-right"></i> Get Started Free
-          </a>
-          <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #64748b;">10 free QR codes • No credit card required</p>
-        </div>
-      </section>
-
-      <!-- Product Journey -->
-      <section class="section">
-        <h2>The Complete Product Journey</h2>
-        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
-          Show your customers exactly where their product has been. Real transparency = real trust.
-        </p>
-
-        <div class="journey-steps">
-          <div class="journey-step">
-            <div class="journey-icon">🏭</div>
-            <h4>Manufacturing</h4>
-            <p>Photo, GPS, timestamp at creation</p>
-          </div>
-
-          <div class="journey-step">
-            <div class="journey-icon">📦</div>
-            <h4>Warehousing</h4>
-            <p>Storage location verified</p>
-          </div>
-
-          <div class="journey-step">
-            <div class="journey-icon">🚚</div>
-            <h4>Distribution</h4>
-            <p>Shipment tracking with updates</p>
-          </div>
-
-          <div class="journey-step">
-            <div class="journey-icon">✅</div>
-            <h4>Customer</h4>
-            <p>Scan QR = instant proof</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- What Customers See -->
-      <section class="section">
-        <h2>What Your Customers See When They Scan</h2>
-        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
-          A beautiful verification page that proves your product is authentic and shows its complete journey.
-        </p>
-
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">📸</div>
-            <h4>Photo Verification</h4>
-            <p>Actual photos of the product at each stage of production and shipping. Visual proof it's real.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">📍</div>
-            <h4>Location History</h4>
-            <p>GPS coordinates and timestamps showing exactly where the product has been throughout its journey.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h4>Tamper-Proof Records</h4>
-            <p>Every piece of data is stored on the blockchain. It can't be changed, deleted, or faked—ever.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">⏱️</div>
-            <h4>Complete Timeline</h4>
-            <p>See exactly when each event happened, from manufacturing to delivery. Full transparency.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">📜</div>
-            <h4>Certifications</h4>
-            <p>Display relevant certifications, origin information, and quality guarantees right on the verification page.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h4>Mobile-Friendly</h4>
-            <p>Works perfectly on any smartphone. Your customers just scan and see—no app required.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Why It Matters -->
-      <section class="section" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #3b82f6;">
-        <h2>Why Immutable Data Matters</h2>
-        <p style="font-size: 1.125rem; color: #334155; margin-bottom: 2rem;">
-          Traditional tracking systems can be hacked, altered, or deleted. BizTrack uses blockchain technology 
-          (XRPL) to ensure your product data is <strong>permanently recorded and impossible to change</strong>.
-        </p>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Tamper-Proof</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">∞</div>
-            <div class="stat-label">Permanent Storage</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">$0.10</div>
-            <div class="stat-label">Per QR Code</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">⚡</div>
-            <div class="stat-label">Instant Verification</div>
-          </div>
-        </div>
-
-        <p style="font-size: 1rem; color: #475569; margin-top: 2rem; text-align: center;">
-          <strong>The bottom line:</strong> Your customers get unquestionable proof. Your products gain value through verified authenticity.
-        </p>
-      </section>
-
-      <!-- How It Works -->
-      <section class="section">
-        <h2>Getting Started Is Easy</h2>
-        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 2rem;">
-          No blockchain experience needed. We handle all the technical complexity so you can focus on your business.
-        </p>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 2rem 0;">
-          <div style="display: flex; gap: 1rem;">
-            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">1</div>
-            <div>
-              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sign Up</h4>
-              <p style="color: #475569;">Create your account in minutes. No wallet required.</p>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 1rem;">
-            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">2</div>
-            <div>
-              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Enter Product Info</h4>
-              <p style="color: #475569;">Add product details, photos, and location. We mint it to the blockchain.</p>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 1rem;">
-            <div style="flex-shrink: 0; width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">3</div>
-            <div>
-              <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Download QR Codes</h4>
-              <p style="color: #475569;">Print and attach to your products. That's it!</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA -->
-      <section class="cta-section">
-        <h2>Ready to Prove Your Products Are Real?</h2>
-        <p style="font-size: 1.25rem; margin-bottom: 2.5rem;">Join businesses building customer trust with verified product authenticity.</p>
-        
-        <a href="pricing-hub.html" class="btn btn-white" style="font-size: 1.25rem; padding: 1.25rem 2.5rem; margin-bottom: 1rem;">
-          <i class="fas fa-rocket"></i>
-          Start at $49/month → 500 QR Codes
-        </a>
-        
-        <p style="margin-top: 1.5rem; font-size: 1rem; opacity: 0.95;">
-          10 free QR codes to try it out • No credit card required
-        </p>
-
-        <!-- Trust Badges -->
-        <div style="display: flex; justify-content: center; gap: 3rem; margin-top: 2.5rem; flex-wrap: wrap;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem;">
-            <span style="font-size: 1.5rem;">🔒</span> Encrypted
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem;">
-            <span style="font-size: 1.5rem;">🌍</span> GPS Verified
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem;">
-            <span style="font-size: 1.5rem;">⏰</span> Timestamped
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="faq.html">FAQ</a>
-        <a href="#" class="contact-trigger" onclick="showContactTooltip(event)">Contact</a>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-      </div>
-      <div class="footer-copyright">
-        <p>&copy; 2025 BizTrack - Blockchain-Powered Product Authentication</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Contact Tooltip -->
-  <div class="contact-tooltip" id="contactTooltip">
-    <div class="contact-tooltip-content">
-      <i class="fas fa-envelope"></i>
-      <a href="mailto:info@biztrack.io">info@biztrack.io</a>
-    </div>
-  </div>
-
-  <style>
+    /* Contact Tooltip */
     .contact-tooltip {
       position: fixed;
       display: none;
@@ -679,7 +662,295 @@
     .contact-tooltip-content a:hover {
       text-decoration: underline;
     }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .pillars,
+      .features-grid,
+      .trust-grid,
+      .steps-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content,
+      .footer {
+        margin-left: 0;
+      }
+
+      .hero h1 {
+        font-size: 2.25rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .pillars,
+      .features-grid,
+      .trust-grid,
+      .steps-row {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-visual {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .journey-arrow {
+        transform: rotate(90deg);
+      }
+
+      .value-section,
+      .section,
+      .cta-section {
+        padding: 2rem 1.5rem;
+      }
+    }
   </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div id="sidebar-container" data-page="home"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Your Product Has a Story.<br>Let Customers See It.</h1>
+        <p class="hero-subtitle">
+          Full supply chain tracking that's actually customer-facing. One scan shows them everything—where it was made, who handled it, how it got here.
+        </p>
+        <a href="login.html" class="btn btn-hero">
+          Get Started <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content-section">
+      
+      <!-- Value Proposition -->
+      <section class="value-section">
+        <h2>Supply Chain Tracking, Made Simple</h2>
+        <p class="subtitle">
+          We make it easy to track your products through every step—and share that journey with customers through smart QR codes backed by blockchain.
+        </p>
+        <p class="tagline">Track it. Prove it. Share it.</p>
+      </section>
+
+      <!-- Three Pillars -->
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon">📍</div>
+          <h3>Track Every Step</h3>
+          <p>Log locations, photos, and timestamps as products move through your supply chain.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🔗</div>
+          <h3>Verify on Blockchain</h3>
+          <p>Every data point is permanently recorded on XRPL. Tamper-proof and transparent.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">📱</div>
+          <h3>Share with Customers</h3>
+          <p>One QR scan shows the complete journey. Build trust through transparency.</p>
+        </div>
+      </div>
+
+      <!-- Product Journey -->
+      <section class="section">
+        <h2>The Complete Product Journey</h2>
+        <p>Every checkpoint recorded. Every step visible. From your hands to theirs.</p>
+
+        <div class="journey-visual">
+          <div class="journey-step active">
+            <div class="journey-icon">🏭</div>
+            <h4>Manufacturing</h4>
+            <p>Origin captured</p>
+          </div>
+          <div class="journey-arrow">→</div>
+          <div class="journey-step">
+            <div class="journey-icon">✅</div>
+            <h4>Quality Check</h4>
+            <p>Verified & logged</p>
+          </div>
+          <div class="journey-arrow">→</div>
+          <div class="journey-step">
+            <div class="journey-icon">📦</div>
+            <h4>Warehousing</h4>
+            <p>Storage tracked</p>
+          </div>
+          <div class="journey-arrow">→</div>
+          <div class="journey-step">
+            <div class="journey-icon">🚚</div>
+            <h4>Distribution</h4>
+            <p>In transit</p>
+          </div>
+          <div class="journey-arrow">→</div>
+          <div class="journey-step active">
+            <div class="journey-icon">🛒</div>
+            <h4>Customer</h4>
+            <p>Scan & verify</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- What Customers See -->
+      <section class="section">
+        <h2>What Your Customers See When They Scan</h2>
+        <p>A beautiful verification page showing the complete product story.</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📸</div>
+            <h4>Real Photos</h4>
+            <p>Actual images from each stage of production and handling.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h4>Location History</h4>
+            <p>GPS coordinates showing exactly where it's been.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏱️</div>
+            <h4>Full Timeline</h4>
+            <p>When each event happened, from origin to delivery.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h4>Blockchain Proof</h4>
+            <p>Data that can't be changed, deleted, or faked.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📜</div>
+            <h4>Certifications</h4>
+            <p>Display quality marks, origin info, and guarantees.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h4>Works Everywhere</h4>
+            <p>Any smartphone. No app download required.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trust Section -->
+      <section class="trust-section">
+        <h2>Why Blockchain?</h2>
+        <p>Traditional systems can be hacked or altered. Ours can't.</p>
+        <div class="trust-grid">
+          <div class="trust-item">
+            <div class="trust-number">100%</div>
+            <div class="trust-label">Tamper-Proof</div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-number">∞</div>
+            <div class="trust-label">Permanent</div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-number">$0.10</div>
+            <div class="trust-label">Per QR Code</div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-number">⚡</div>
+            <div class="trust-label">Instant Verify</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section class="section">
+        <h2>Getting Started Is Easy</h2>
+        <p>No blockchain experience needed. We handle the complexity.</p>
+
+        <div class="steps-row">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div>
+              <h4>Sign Up</h4>
+              <p>Create your account in minutes. No crypto wallet required.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div>
+              <h4>Add Products</h4>
+              <p>Enter details, upload photos, capture location. We mint to blockchain.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div>
+              <h4>Print & Attach</h4>
+              <p>Download QR codes. Put them on your products. Done.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <div class="cta-content">
+          <h2>Ready to Tell Your Product's Story?</h2>
+          <p>Join businesses building trust through transparency.</p>
+          
+          <div class="cta-buttons">
+            <a href="login.html" class="btn btn-white" style="font-size: 1.15rem; padding: 1.1rem 2rem;">
+              <i class="fas fa-rocket"></i> Start Free Trial
+            </a>
+            <a href="pricing-hub.html" class="btn" style="background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 1.15rem; padding: 1.1rem 2rem;">
+              View Pricing
+            </a>
+          </div>
+
+          <div class="trust-badges">
+            <div class="trust-badge">
+              <span>🔒</span> Encrypted
+            </div>
+            <div class="trust-badge">
+              <span>🌍</span> GPS Verified
+            </div>
+            <div class="trust-badge">
+              <span>⏰</span> Timestamped
+            </div>
+            <div class="trust-badge">
+              <span>⛓️</span> Blockchain Backed
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="faq.html">FAQ</a>
+        <a href="pricing-hub.html">Pricing</a>
+        <a href="#" class="contact-trigger" onclick="showContactTooltip(event)">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 BizTrack - Built by Aventra LLC | Powered by XRPL</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact Tooltip -->
+  <div class="contact-tooltip" id="contactTooltip">
+    <div class="contact-tooltip-content">
+      <i class="fas fa-envelope"></i>
+      <a href="mailto:info@biztrack.io">info@biztrack.io</a>
+    </div>
+  </div>
 
   <script src="js/sidebar.js"></script>
   <script>
@@ -692,7 +963,6 @@
       tooltip.style.top = rect.top - 50 + 'px';
       tooltip.classList.add('show');
       
-      // Hide after 3 seconds or on click outside
       setTimeout(() => {
         tooltip.classList.remove('show');
       }, 3000);

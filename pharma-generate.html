@@ -112,7 +112,7 @@
       flex-direction: column;
       gap: 4px;
       height: 52px;
-      justify-content: center;
+      justify-content: space-between;
       box-sizing: border-box;
     }
 
@@ -129,7 +129,7 @@
       font-weight: 500;
       font-size: 0.7rem;
       transition: all 0.2s;
-      height: 22px;
+      flex: 1;
       box-sizing: border-box;
     }
 
@@ -158,6 +158,7 @@
       border-radius: 8px;
       font-size: 0.6rem;
       font-weight: 600;
+      margin-left: auto;
     }
 
     /* Tracking Mode Selector */
@@ -224,42 +225,6 @@
 
     .tracking-mode-info:hover {
       background: #059669;
-    }
-
-    .page-header {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    .page-header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .page-header p {
-      color: #64748b;
-      font-size: 1rem;
-    }
-
-    .dscsa-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, #059669, #047857);
-      color: white;
-      padding: 0.35rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-left: 1rem;
     }
 
     .card {
@@ -602,48 +567,6 @@
       font-size: 1rem;
     }
 
-    .product-list {
-      list-style: none;
-    }
-
-    .product-list li {
-      padding: 1.5rem;
-      background: #F8FAFC;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      border: 1px solid #E2E8F0;
-    }
-
-    .product-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .product-gs1 {
-      font-family: 'SF Mono', Monaco, monospace;
-      font-size: 0.8rem;
-      background: #1E293B;
-      color: #4ADE80;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      margin-top: 0.5rem;
-      display: inline-block;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: #94A3B8;
-    }
-
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
     .gs1-preview {
       background: #1E293B;
       border-radius: 12px;
@@ -728,12 +651,6 @@
         flex: 1;
         justify-content: center;
         height: auto;
-      }
-
-      .product-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
       }
 
       .tracking-mode-selector {
@@ -943,12 +860,6 @@
       <div id="message"></div>
     </div>
 
-    <!-- Recent Products -->
-    <div class="card">
-      <h3><i class="fas fa-history"></i> Recent QR Codes</h3>
-      <ul id="productList" class="product-list"></ul>
-    </div>
-
   </div>
 
   <script src="js/auth.js"></script>
@@ -958,7 +869,7 @@
     requireAuth();
 
     let isBatchMode = false;
-    let isProductionMode = false;
+    let isProductionMode = true;
     let qrUsedThisMonth = 0;
     let qrLimit = 10000;
     let currentTier = 'free';
@@ -990,7 +901,6 @@
       let ndc11 = cleanNdc.padStart(11, '0').substring(0, 11);
       const gtinWithoutCheck = '00' + ndc11;
       
-      // Calculate check digit
       let sum = 0;
       for (let i = 0; i < gtinWithoutCheck.length; i++) {
         const digit = parseInt(gtinWithoutCheck[i], 10);
@@ -1035,7 +945,6 @@
       document.getElementById('gs1Preview').style.display = 'block';
     }
 
-    // Add event listeners for live preview
     ['ndc', 'serialNumber', 'lotNumber', 'expDate'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateGS1Preview);
       document.getElementById(id).addEventListener('change', updateGS1Preview);
@@ -1081,7 +990,6 @@
         const data = await response.json();
         
         if (data.success && data.products) {
-          // Filter to pharma products only
           const pharmaProducts = data.products.filter(p => p.metadata?.ndc || p.metadata?.dscsa);
           
           let finished = 0;
@@ -1161,12 +1069,6 @@
       updateButtonText();
     }
 
-    // Initialize tracking mode on page load
-    function initTrackingMode() {
-      isProductionMode = true; // Default to supply chain
-      document.getElementById('trackingModeSelect').value = 'supply-chain';
-    }
-
     // ==========================================
     // UPDATE BUTTON TEXT
     // ==========================================
@@ -1181,7 +1083,6 @@
           btnText.textContent = 'Create Supply Chain Entry';
         }
       } else {
-        // Direct dispense
         if (isBatchMode) {
           btnText.textContent = 'Generate Batch QR Codes';
         } else {
@@ -1319,14 +1220,12 @@
         return;
       }
 
-      // Validate NDC format
       const cleanNdc = ndc.replace(/[^0-9]/g, '');
       if (cleanNdc.length < 9 || cleanNdc.length > 11) {
         msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> NDC must be 9-11 digits.</div>';
         return;
       }
 
-      // Validate expiry is in future
       if (new Date(expDate) <= new Date()) {
         msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Expiration date must be in the future.</div>';
         return;
@@ -1336,7 +1235,6 @@
       const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
       
-      // Show appropriate progress message
       const itemCount = batchQuantity;
       const progressMessage = isProductionMode 
         ? `<div class="message info" style="text-align: left;">
@@ -1354,7 +1252,6 @@
       msgEl.innerHTML = progressMessage;
 
       try {
-        // CALL THE PHARMA-MINT API
         const response = await authenticatedFetch('/api/pharma-mint', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1392,7 +1289,6 @@
           throw new Error(result.details || result.error || 'Generation failed');
         }
 
-        // Success!
         const qty = result.isBatch ? result.batchInfo.quantity : 1;
         const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
         const viewLink = isProductionMode ? 'pharma-production.html' : 'pharma-products.html';
@@ -1429,10 +1325,9 @@
         document.getElementById('locationDisplay').style.display = 'none';
         document.getElementById('gs1Preview').style.display = 'none';
 
-        // Reload data
+        // Reload counts
         await loadLimits();
         await loadProductCounts();
-        loadProducts();
 
       } catch (error) {
         msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
@@ -1443,101 +1338,9 @@
       }
     });
 
-    // ==========================================
-    // LOAD PRODUCTS
-    // ==========================================
-    function loadProducts() {
-      const productList = document.getElementById('productList');
-      productList.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>';
-      
-      authenticatedFetch('/api/list-products')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success || !data.products || data.products.length === 0) {
-            productList.innerHTML = `
-              <div class="empty-state">
-                <i class="fas fa-qrcode"></i>
-                <p>No QR codes generated yet.</p>
-              </div>
-            `;
-            return;
-          }
-
-          // Filter to show pharma products (have NDC in metadata)
-          const pharmaProducts = data.products.filter(p => p.metadata?.ndc || p.metadata?.dscsa);
-          
-          if (pharmaProducts.length === 0) {
-            productList.innerHTML = `
-              <div class="empty-state">
-                <i class="fas fa-pills"></i>
-                <p>No pharma products yet. Generate your first DSCSA-compliant QR code above!</p>
-              </div>
-            `;
-            return;
-          }
-
-          productList.innerHTML = '';
-
-          pharmaProducts.slice(0, 20).forEach((product) => {
-            const li = document.createElement('li');
-            const gs1String = product.metadata?.gs1String || product.metadata?.gs1?.formatted || '';
-            const ndc = product.metadata?.ndc || 'N/A';
-            const serial = product.metadata?.serialNumber || product.sku || 'N/A';
-            const lot = product.metadata?.lotNumber || product.batch_number || 'N/A';
-            const expiry = product.metadata?.expDate || 'N/A';
-            const isProduction = product.mode === 'production' && !product.isFinalized;
-            
-            li.innerHTML = `
-              <div class="product-header">
-                <div>
-                  <strong>${product.productName || product.product_name}</strong>
-                  ${product.is_batch_group ? `<span style="background: #667eea; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem;">BATCH ${product.batch_quantity || ''}</span>` : ''}
-                  ${isProduction ? `<span style="background: #10B981; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem;">IN PROGRESS</span>` : ''}
-                  <br>
-                  <small style="color: #64748B;">
-                    NDC: ${ndc} • Serial: ${serial} • Lot: ${lot} • Exp: ${expiry}
-                  </small>
-                  ${gs1String ? `<div class="product-gs1">${gs1String}</div>` : ''}
-                </div>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                  ${product.verificationUrl || product.verification_url ? `
-                    <a href="${product.verificationUrl || product.verification_url}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
-                      <i class="fas fa-shield-check"></i> Verify
-                    </a>
-                  ` : ''}
-                  ${product.qrCodeUrl || product.qr_code_ipfs_hash ? `
-                    <a href="${product.qrCodeUrl || 'https://gateway.pinata.cloud/ipfs/' + product.qr_code_ipfs_hash}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
-                      <i class="fas fa-user"></i> Customer QR
-                    </a>
-                  ` : ''}
-                  ${product.gs1QrCodeUrl ? `
-                    <a href="${product.gs1QrCodeUrl}" class="btn btn-secondary" target="_blank" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
-                      <i class="fas fa-barcode"></i> GS1 QR
-                    </a>
-                  ` : ''}
-                </div>
-              </div>
-            `;
-            
-            productList.appendChild(li);
-          });
-        })
-        .catch(error => {
-          console.error('Failed to load products:', error);
-          productList.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-exclamation-triangle"></i>
-              <p>Failed to load products</p>
-            </div>
-          `;
-        });
-    }
-
     // Initialize
     loadLimits();
     loadProductCounts();
-    loadProducts();
-    initTrackingMode();
   </script>
 </body>
 </html>

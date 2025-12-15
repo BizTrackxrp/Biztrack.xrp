@@ -1,109 +1,1373 @@
-const { Pool } = require('pg');
-const jwt = require('jsonwebtoken');
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
-
-module.exports = async (req, res) => {
-  if (req.method === 'POST') {
-    return handleCreateShipment(req, res);
-  }
-  return res.status(405).json({ error: 'Method not allowed' });
-};
-
-async function handleCreateShipment(req, res) {
-  const client = await pool.connect();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ship Out - BizTrack Pharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Unauthorized' });
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.userId;
-
-    const { items, recipient, shipDate, poNumber, carrier, trackingNumber, notes } = req.body;
-
-    if (!items || items.length === 0) {
-      return res.status(400).json({ error: 'At least one item required' });
-    }
-    if (!recipient || !recipient.name) {
-      return res.status(400).json({ error: 'Recipient name required for DSCSA compliance' });
-    }
-    if (!shipDate) {
-      return res.status(400).json({ error: 'Ship date required' });
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    const shipmentId = `SHP-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-    const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    .main-with-sidebar {
+      margin-left: 280px;
+      padding: 2rem 3rem;
+      min-height: 100vh;
+    }
 
-    await client.query('BEGIN');
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
 
-    const processedItems = [];
+    .header-bar h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1E293B;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-bar h1 i {
+      color: #4F46E5;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: #64748B;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dscsa-badge-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      height: 52px;
+      min-width: 140px;
+    }
+
+    .quick-links-stacked {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: 52px;
+      min-width: 140px;
+      justify-content: space-between;
+    }
+
+    .quick-link-compact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.6rem;
+      background: #F8FAFC;
+      border-radius: 6px;
+      border: 1px solid #E2E8F0;
+      text-decoration: none;
+      color: #334155;
+      font-weight: 500;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      flex: 1;
+    }
+
+    .quick-link-compact:hover {
+      border-color: #4F46E5;
+      background: white;
+    }
+
+    .quick-link-compact i {
+      font-size: 0.7rem;
+      color: #4F46E5;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 2px solid #e2e8f0;
+      margin-bottom: 2rem;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 i {
+      color: #4F46E5;
+    }
+
+    /* T3 Info Box */
+    .t3-info-box {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      border: 2px solid #4F46E5;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .t3-info-box h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #3730A3;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t3-info-box p {
+      font-size: 0.85rem;
+      color: #4338CA;
+    }
+
+    .t3-info-box ul {
+      margin-top: 0.5rem;
+      padding-left: 1.25rem;
+      font-size: 0.8rem;
+      color: #4338CA;
+    }
+
+    /* Form */
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-section-title i {
+      color: #4F46E5;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    .form-group label .required {
+      color: #DC2626;
+    }
+
+    .form-group label .dscsa-label {
+      background: #DBEAFE;
+      color: #1E40AF;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    .form-group .helper-text {
+      font-size: 0.8rem;
+      color: #64748B;
+      margin-top: 0.35rem;
+    }
+
+    /* Product Selection */
+    .product-selector {
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .product-selector.has-product {
+      background: #F0FDF4;
+      border-color: #10B981;
+    }
+
+    .product-selector h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1rem;
+    }
+
+    .selected-product {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .selected-product-info h5 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.35rem;
+    }
+
+    .selected-product-info p {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .selected-product-info .gs1-string {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.75rem;
+      color: #4ADE80;
+      background: #1E293B;
+      padding: 0.35rem 0.6rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #4F46E5, #4338CA);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10B981, #059669);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #F8FAFC;
+      transform: none;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    /* Shipment Items List */
+    .shipment-items {
+      margin-bottom: 1.5rem;
+    }
+
+    .shipment-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+    }
+
+    .shipment-item-info h5 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+
+    .shipment-item-info p {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .shipment-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .qty-input {
+      width: 70px;
+      padding: 0.5rem;
+      text-align: center;
+      border: 2px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .remove-item-btn {
+      background: #FEE2E2;
+      color: #DC2626;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* T3 Preview */
+    .t3-preview {
+      background: #FFFBEB;
+      border: 2px solid #F59E0B;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .t3-preview h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #92400E;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t3-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .t3-preview-item {
+      background: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+    }
+
+    .t3-preview-item label {
+      font-size: 0.7rem;
+      color: #92400E;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .t3-preview-item span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #78350F;
+    }
+
+    /* Messages */
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1.5rem;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .message.success {
+      background: #F0FDF4;
+      color: #16A34A;
+      border: 1px solid #BBF7D0;
+    }
+
+    .message.error {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    /* Recent Shipments */
+    .shipment-list {
+      list-style: none;
+    }
+
+    .shipment-list-item {
+      padding: 1.25rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .shipment-list-item-info h5 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.35rem;
+    }
+
+    .shipment-list-item-info p {
+      font-size: 0.85rem;
+      color: #64748B;
+    }
+
+    .shipment-list-item-meta {
+      text-align: right;
+    }
+
+    .shipment-list-item-date {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .shipment-list-item-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #D1FAE5;
+      color: #065F46;
+      margin-top: 0.35rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94A3B8;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* History Button */
+    .history-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      color: #4F46E5;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .history-btn:hover {
+      background: white;
+      border-color: #4F46E5;
+      transform: translateY(-1px);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      padding: 0;
+      max-width: 700px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      animation: modalSlideIn 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #E2E8F0;
+      background: #F8FAFC;
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .modal-header h3 i {
+      color: #4F46E5;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #E2E8F0;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748B;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: #CBD5E1;
+      color: #1E293B;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .history-list {
+      list-style: none;
+    }
+
+    .history-item {
+      padding: 1rem 1.25rem;
+      background: #F8FAFC;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover {
+      border-color: #CBD5E1;
+      background: white;
+    }
+
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .history-item-recipient {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1E293B;
+    }
+
+    .history-item-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .history-item-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    .history-item-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .history-item-detail i {
+      color: #94A3B8;
+      font-size: 0.75rem;
+    }
+
+    .history-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94A3B8;
+    }
+
+    .history-empty i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-with-sidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 5rem;
+      }
+
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .shipment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .shipment-item-qty {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .modal-box {
+        width: 95%;
+        max-height: 90vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-with-sidebar">
     
-    for (const item of items) {
-      if (item.inventoryId) {
-        const updateResult = await client.query(
-          `UPDATE pharma_inventory 
-           SET status = 'shipped', quantity = quantity - $1, last_updated = NOW()
-           WHERE id = $2 AND user_id = $3 AND quantity >= $1
-           RETURNING *`,
-          [item.quantity, item.inventoryId, userId]
-        );
-        if (updateResult.rows.length === 0) {
-          throw new Error(`Insufficient quantity for item ${item.gtin || item.serialNumber}`);
+    <!-- Header Bar -->
+    <div class="header-bar">
+      <h1><i class="fas fa-shipping-fast"></i> Ship Out</h1>
+      <div class="header-controls">
+        <button class="history-btn" onclick="openHistoryModal()">
+          <i class="fas fa-history"></i>
+          <span>History</span>
+        </button>
+
+        <div class="dscsa-badge-header">
+          <i class="fas fa-shield-check"></i>
+          <span>DSCSA Compliant</span>
+        </div>
+        
+        <div class="quick-links-stacked">
+          <a href="pharma-inventory.html" class="quick-link-compact">
+            <i class="fas fa-boxes"></i>
+            <span>Inventory</span>
+          </a>
+          <a href="pharma-receive.html" class="quick-link-compact">
+            <i class="fas fa-truck-loading"></i>
+            <span>Receive</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="header-subtitle">Create outbound shipments with T3 documentation for DSCSA compliance</p>
+
+    <!-- T3 Info Box -->
+    <div class="t3-info-box">
+      <h4><i class="fas fa-file-contract"></i> Transaction Documentation (T3)</h4>
+      <p>DSCSA requires three pieces of documentation for each transaction:</p>
+      <ul>
+        <li><strong>Transaction Information (TI):</strong> Product details, quantity, dates</li>
+        <li><strong>Transaction History (TH):</strong> Prior ownership chain</li>
+        <li><strong>Transaction Statement (TS):</strong> Attestation of authorized trading</li>
+      </ul>
+    </div>
+
+    <!-- Ship Out Form -->
+    <div class="card">
+      <h3><i class="fas fa-box-open"></i> Create Shipment</h3>
+
+      <!-- Product Selection -->
+      <div class="product-selector" id="productSelector">
+        <h4><i class="fas fa-pills"></i> Products to Ship</h4>
+        <div id="selectedProducts">
+          <p style="color: #64748B; font-size: 0.9rem;">No products selected. Add from inventory or scan QR codes.</p>
+        </div>
+        <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="openInventoryPicker()">
+            <i class="fas fa-boxes"></i> Select from Inventory
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openScanner()">
+            <i class="fas fa-qrcode"></i> Scan QR Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Recipient Info -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-building"></i> Recipient Information
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="recipientName">
+              Recipient Name <span class="required">*</span>
+              <span class="dscsa-label">T3 Required</span>
+            </label>
+            <input type="text" id="recipientName" placeholder="e.g., ABC Pharmacy" />
+          </div>
+          <div class="form-group">
+            <label for="recipientGLN">GLN (Global Location Number)</label>
+            <input type="text" id="recipientGLN" placeholder="13-digit GLN" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="recipientAddress">Address</label>
+            <input type="text" id="recipientAddress" placeholder="Street address" />
+          </div>
+          <div class="form-group">
+            <label for="recipientCity">City, State, ZIP</label>
+            <input type="text" id="recipientCity" placeholder="e.g., Seattle, WA 98101" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="recipientSelect">Or select from Trading Partners</label>
+          <select id="recipientSelect" onchange="fillRecipientFromPartner()">
+            <option value="">-- Select Trading Partner --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Shipment Details -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fas fa-truck"></i> Shipment Details
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="shipDate">Ship Date <span class="required">*</span></label>
+            <input type="date" id="shipDate" />
+          </div>
+          <div class="form-group">
+            <label for="poNumber">PO Number</label>
+            <input type="text" id="poNumber" placeholder="e.g., PO-2024-001234" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="carrier">Carrier</label>
+            <select id="carrier">
+              <option value="">Select carrier...</option>
+              <option value="fedex">FedEx</option>
+              <option value="ups">UPS</option>
+              <option value="usps">USPS</option>
+              <option value="dhl">DHL</option>
+              <option value="courier">Local Courier</option>
+              <option value="pickup">Customer Pickup</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="trackingNumber">Tracking Number</label>
+            <input type="text" id="trackingNumber" placeholder="Enter tracking number" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="shipNotes">Notes</label>
+          <textarea id="shipNotes" rows="2" placeholder="Special handling instructions, etc."></textarea>
+        </div>
+      </div>
+
+      <!-- T3 Preview -->
+      <div class="t3-preview" id="t3Preview" style="display: none;">
+        <h4><i class="fas fa-file-alt"></i> T3 Document Preview</h4>
+        <div class="t3-preview-grid">
+          <div class="t3-preview-item">
+            <label>Transaction ID</label>
+            <span id="t3TransactionId">-</span>
+          </div>
+          <div class="t3-preview-item">
+            <label>Ship Date</label>
+            <span id="t3ShipDate">-</span>
+          </div>
+          <div class="t3-preview-item">
+            <label>Recipient</label>
+            <span id="t3Recipient">-</span>
+          </div>
+          <div class="t3-preview-item">
+            <label>Total Items</label>
+            <span id="t3TotalItems">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn btn-success" id="createShipmentBtn" onclick="createShipment()">
+          <i class="fas fa-paper-plane"></i> Create Shipment & Generate T3
+        </button>
+        <button class="btn btn-secondary" onclick="clearForm()">
+          <i class="fas fa-times"></i> Clear
+        </button>
+      </div>
+
+      <div id="message"></div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fas fa-history"></i> Shipment History</h3>
+          <button class="modal-close" onclick="closeHistoryModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ul id="historyList" class="history-list"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/pharma-sidebar.js"></script>
+  
+  <script>
+    requireAuth();
+
+    let selectedItems = [];
+    let tradingPartners = [];
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    function init() {
+      // Set default ship date to today
+      document.getElementById('shipDate').valueAsDate = new Date();
+      
+      // Check for pre-selected item from inventory page
+      const shipItem = sessionStorage.getItem('shipItem');
+      if (shipItem) {
+        try {
+          const item = JSON.parse(shipItem);
+          addItemToShipment(item);
+          sessionStorage.removeItem('shipItem');
+        } catch (e) {
+          console.error('Failed to parse shipItem:', e);
         }
       }
 
-      const itemTxId = `${transactionId}-${processedItems.length + 1}`;
-      await client.query(
-        `INSERT INTO pharma_transactions (
-          transaction_id, user_id, product_id, transaction_type,
-          from_party, to_party, quantity, timestamp, metadata
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [itemTxId, userId, item.productId, 'ship', 'inventory', recipient.name, item.quantity, shipDate,
-          JSON.stringify({ shipmentId, gtin: item.gtin, serialNumber: item.serialNumber, lotNumber: item.lotNumber, expiryDate: item.expiryDate, recipient, poNumber, carrier, trackingNumber })]
-      );
-      processedItems.push({ ...item, transactionId: itemTxId });
+      loadTradingPartners();
+      updateT3Preview();
     }
 
-    await client.query('COMMIT');
-
-    // T3 Document structure
-    const t3Document = {
-      transactionId, shipmentId, documentType: 'T3', generatedAt: new Date().toISOString(),
-      transactionInformation: {
-        transactionDate: shipDate, transactionType: 'Sale',
-        shipToName: recipient.name, shipToGLN: recipient.gln || null,
-        products: processedItems.map(item => ({
-          gtin: item.gtin, serialNumber: item.serialNumber, lotNumber: item.lotNumber, expirationDate: item.expiryDate, quantity: item.quantity
-        }))
-      },
-      transactionHistory: { priorOwners: ['Manufacturer', 'Distributor'] },
-      transactionStatement: {
-        statement: 'The entity transferring ownership certifies that it is authorized to do so under DSCSA.',
-        date: new Date().toISOString()
+    // ==========================================
+    // PRODUCT SELECTION
+    // ==========================================
+    function addItemToShipment(item) {
+      // Check if already added
+      const exists = selectedItems.find(i => i.id === item.id);
+      if (exists) {
+        alert('Item already added to shipment');
+        return;
       }
-    };
 
-    console.log(`Shipment created: ${shipmentId} | To: ${recipient.name} | Items: ${items.length}`);
+      selectedItems.push({
+        ...item,
+        shipQuantity: item.quantity || 1
+      });
 
-    return res.status(200).json({
-      success: true, shipmentId, transactionId, itemCount: processedItems.length,
-      t3Document, message: 'Shipment created with T3 documentation'
+      renderSelectedProducts();
+      updateT3Preview();
+    }
+
+    function removeItem(index) {
+      selectedItems.splice(index, 1);
+      renderSelectedProducts();
+      updateT3Preview();
+    }
+
+    function updateItemQuantity(index, qty) {
+      const item = selectedItems[index];
+      const maxQty = item.quantity || 1;
+      selectedItems[index].shipQuantity = Math.min(Math.max(1, parseInt(qty) || 1), maxQty);
+      updateT3Preview();
+    }
+
+    function renderSelectedProducts() {
+      const container = document.getElementById('selectedProducts');
+      const selector = document.getElementById('productSelector');
+
+      if (selectedItems.length === 0) {
+        container.innerHTML = '<p style="color: #64748B; font-size: 0.9rem;">No products selected. Add from inventory or scan QR codes.</p>';
+        selector.classList.remove('has-product');
+        return;
+      }
+
+      selector.classList.add('has-product');
+      container.innerHTML = `
+        <div class="shipment-items">
+          ${selectedItems.map((item, index) => `
+            <div class="shipment-item">
+              <div class="shipment-item-info">
+                <h5>${item.productName || 'Unknown Product'}</h5>
+                <p>GTIN: ${item.gtin || '-'} • Serial: ${item.serialNumber || '-'} • Lot: ${item.lotNumber || '-'}</p>
+              </div>
+              <div class="shipment-item-qty">
+                <label style="font-size: 0.8rem; color: #64748B;">Qty:</label>
+                <input type="number" class="qty-input" value="${item.shipQuantity}" min="1" max="${item.quantity || 1}" 
+                  onchange="updateItemQuantity(${index}, this.value)" />
+                <span style="font-size: 0.75rem; color: #94A3B8;">/ ${item.quantity || 1}</span>
+                <button class="remove-item-btn" onclick="removeItem(${index})">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function openInventoryPicker() {
+      // For now, redirect to inventory with return flag
+      // In production, you'd open a modal
+      window.location.href = 'pharma-inventory.html?select=true';
+    }
+
+    function openScanner() {
+      window.location.href = 'pharma-scanner.html?returnTo=ship';
+    }
+
+    // ==========================================
+    // TRADING PARTNERS
+    // ==========================================
+    async function loadTradingPartners() {
+      try {
+        const response = await authenticatedFetch('/api/pharma-partners');
+        const data = await response.json();
+
+        if (data.success && data.partners) {
+          tradingPartners = data.partners;
+          const select = document.getElementById('recipientSelect');
+          
+          tradingPartners.forEach(partner => {
+            const option = document.createElement('option');
+            option.value = partner.id;
+            option.textContent = `${partner.partnerName} (${partner.partnerType || 'Partner'})`;
+            select.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load trading partners:', error);
+      }
+    }
+
+    function fillRecipientFromPartner() {
+      const select = document.getElementById('recipientSelect');
+      const partner = tradingPartners.find(p => p.id == select.value);
+
+      if (partner) {
+        document.getElementById('recipientName').value = partner.partnerName || '';
+        document.getElementById('recipientGLN').value = partner.gln || '';
+        if (partner.address) {
+          document.getElementById('recipientAddress').value = partner.address.street || '';
+          document.getElementById('recipientCity').value = [partner.address.city, partner.address.state, partner.address.zip].filter(Boolean).join(', ');
+        }
+        updateT3Preview();
+      }
+    }
+
+    // ==========================================
+    // T3 PREVIEW
+    // ==========================================
+    function updateT3Preview() {
+      const preview = document.getElementById('t3Preview');
+      const recipientName = document.getElementById('recipientName').value.trim();
+      const shipDate = document.getElementById('shipDate').value;
+
+      if (selectedItems.length === 0 || !recipientName) {
+        preview.style.display = 'none';
+        return;
+      }
+
+      preview.style.display = 'block';
+      
+      const transactionId = `TXN-${Date.now().toString().slice(-8)}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+      const totalItems = selectedItems.reduce((sum, item) => sum + item.shipQuantity, 0);
+
+      document.getElementById('t3TransactionId').textContent = transactionId;
+      document.getElementById('t3ShipDate').textContent = shipDate ? new Date(shipDate).toLocaleDateString() : '-';
+      document.getElementById('t3Recipient').textContent = recipientName;
+      document.getElementById('t3TotalItems').textContent = totalItems;
+    }
+
+    // Add listeners for T3 preview updates
+    ['recipientName', 'shipDate'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateT3Preview);
+      document.getElementById(id).addEventListener('change', updateT3Preview);
     });
 
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Shipment error:', error);
-    return res.status(500).json({ error: 'Shipment failed', details: error.message });
-  } finally {
-    client.release();
-  }
-}
+    // ==========================================
+    // CREATE SHIPMENT
+    // ==========================================
+    async function createShipment() {
+      const recipientName = document.getElementById('recipientName').value.trim();
+      const recipientGLN = document.getElementById('recipientGLN').value.trim();
+      const recipientAddress = document.getElementById('recipientAddress').value.trim();
+      const recipientCity = document.getElementById('recipientCity').value.trim();
+      const shipDate = document.getElementById('shipDate').value;
+      const poNumber = document.getElementById('poNumber').value.trim();
+      const carrier = document.getElementById('carrier').value;
+      const trackingNumber = document.getElementById('trackingNumber').value.trim();
+      const notes = document.getElementById('shipNotes').value.trim();
+
+      const msgEl = document.getElementById('message');
+      const btn = document.getElementById('createShipmentBtn');
+
+      // Validation
+      if (selectedItems.length === 0) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Please select at least one product to ship.</div>';
+        return;
+      }
+
+      if (!recipientName) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Recipient name is required for DSCSA compliance.</div>';
+        return;
+      }
+
+      if (!shipDate) {
+        msgEl.innerHTML = '<div class="message error"><i class="fas fa-exclamation-circle"></i> Ship date is required.</div>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Shipment...';
+      msgEl.innerHTML = '';
+
+      try {
+        const response = await authenticatedFetch('/api/pharma-ship', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: selectedItems.map(item => ({
+              inventoryId: item.id,
+              productId: item.productId,
+              gtin: item.gtin,
+              serialNumber: item.serialNumber,
+              lotNumber: item.lotNumber,
+              expiryDate: item.expiryDate,
+              quantity: item.shipQuantity
+            })),
+            recipient: {
+              name: recipientName,
+              gln: recipientGLN || null,
+              address: recipientAddress || null,
+              city: recipientCity || null
+            },
+            shipDate,
+            poNumber: poNumber || null,
+            carrier: carrier || null,
+            trackingNumber: trackingNumber || null,
+            notes: notes || null
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Shipment failed');
+        }
+
+        msgEl.innerHTML = `
+          <div class="message success">
+            <i class="fas fa-check-circle"></i>
+            <div>
+              <strong>Shipment created successfully!</strong><br>
+              <small>Transaction ID: ${result.transactionId} • T3 document generated</small>
+              ${result.t3DocumentUrl ? `<br><a href="${result.t3DocumentUrl}" target="_blank" style="color: #059669; font-weight: 600;">Download T3 Document →</a>` : ''}
+            </div>
+          </div>
+        `;
+
+        // Clear form
+        selectedItems = [];
+        renderSelectedProducts();
+        document.getElementById('recipientName').value = '';
+        document.getElementById('recipientGLN').value = '';
+        document.getElementById('recipientAddress').value = '';
+        document.getElementById('recipientCity').value = '';
+        document.getElementById('recipientSelect').value = '';
+        document.getElementById('poNumber').value = '';
+        document.getElementById('carrier').value = '';
+        document.getElementById('trackingNumber').value = '';
+        document.getElementById('shipNotes').value = '';
+        document.getElementById('t3Preview').style.display = 'none';
+
+        loadRecentShipments();
+
+      } catch (error) {
+        msgEl.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Create Shipment & Generate T3';
+      }
+    }
+
+    function clearForm() {
+      selectedItems = [];
+      renderSelectedProducts();
+      document.getElementById('recipientName').value = '';
+      document.getElementById('recipientGLN').value = '';
+      document.getElementById('recipientAddress').value = '';
+      document.getElementById('recipientCity').value = '';
+      document.getElementById('recipientSelect').value = '';
+      document.getElementById('poNumber').value = '';
+      document.getElementById('carrier').value = '';
+      document.getElementById('trackingNumber').value = '';
+      document.getElementById('shipNotes').value = '';
+      document.getElementById('message').innerHTML = '';
+      document.getElementById('t3Preview').style.display = 'none';
+    }
+
+    // ==========================================
+    // HISTORY MODAL
+    // ==========================================
+    function openHistoryModal() {
+      document.getElementById('historyModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      loadShipmentHistory();
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    // Close on overlay click
+    document.getElementById('historyModal').addEventListener('click', function(e) {
+      if (e.target === this) closeHistoryModal();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeHistoryModal();
+    });
+
+    async function loadShipmentHistory() {
+      const list = document.getElementById('historyList');
+      list.innerHTML = '<li style="text-align: center; padding: 2rem; color: #94A3B8;"><i class="fas fa-spinner fa-spin"></i> Loading...</li>';
+
+      try {
+        const response = await authenticatedFetch('/api/pharma-shipments?limit=50');
+        const data = await response.json();
+
+        if (!data.success || !data.shipments || data.shipments.length === 0) {
+          list.innerHTML = `
+            <div class="history-empty">
+              <i class="fas fa-shipping-fast"></i>
+              <p>No shipments yet.</p>
+              <p style="font-size: 0.85rem;">Your shipment history will appear here.</p>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = data.shipments.map(shipment => `
+          <li class="history-item">
+            <div class="history-item-header">
+              <span class="history-item-recipient">${shipment.recipient?.name || 'Unknown Recipient'}</span>
+              <span class="history-item-status">
+                <i class="fas fa-check-circle"></i> Shipped
+              </span>
+            </div>
+            <div class="history-item-details">
+              <span class="history-item-detail">
+                <i class="fas fa-box"></i> ${shipment.itemCount || 0} item${shipment.itemCount !== 1 ? 's' : ''}
+              </span>
+              <span class="history-item-detail">
+                <i class="fas fa-calendar"></i> ${formatDate(shipment.shipDate)}
+              </span>
+              ${shipment.poNumber ? `
+                <span class="history-item-detail">
+                  <i class="fas fa-file-alt"></i> PO: ${shipment.poNumber}
+                </span>
+              ` : ''}
+              ${shipment.carrier ? `
+                <span class="history-item-detail">
+                  <i class="fas fa-truck"></i> ${shipment.carrier}
+                </span>
+              ` : ''}
+              ${shipment.trackingNumber ? `
+                <span class="history-item-detail">
+                  <i class="fas fa-barcode"></i> ${shipment.trackingNumber}
+                </span>
+              ` : ''}
+            </div>
+          </li>
+        `).join('');
+
+      } catch (error) {
+        console.error('Failed to load shipments:', error);
+        list.innerHTML = `
+          <div class="history-empty">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Failed to load shipment history</p>
+          </div>
+        `;
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    init();
+  </script>
+</body>
+</html>

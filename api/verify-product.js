@@ -1,5 +1,5 @@
 // api/verify-product.js - Public product verification endpoint
-// Updated for Vercel Blob storage (not IPFS)
+// Updated for Vercel Blob storage with backwards compatibility
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -46,11 +46,11 @@ module.exports = async (req, res) => {
     const product = result.rows[0];
 
     // ==========================================
-    // PHOTOS - Check both photo_urls (new) and photo_hashes (old)
+    // PHOTOS - Check multiple possible columns
     // ==========================================
     let photos = [];
     
-    // New format: Vercel Blob URLs stored directly
+    // New format: Vercel Blob URLs stored directly in photo_urls
     if (product.photo_urls) {
       try {
         const urls = typeof product.photo_urls === 'string' 
@@ -107,42 +107,46 @@ module.exports = async (req, res) => {
     }
 
     // ==========================================
-    // SUPPLY CHAIN CHECKPOINTS
+    // SUPPLY CHAIN CHECKPOINTS (with error handling)
     // ==========================================
     let supplyChain = null;
-    const checkpointsResult = await pool.query(
-      `SELECT * FROM checkpoints 
-       WHERE product_id = $1 
-       ORDER BY scanned_at ASC`,
-      [id]
-    );
+    try {
+      const checkpointsResult = await pool.query(
+        `SELECT * FROM checkpoints 
+         WHERE product_id = $1 
+         ORDER BY scanned_at ASC`,
+        [id]
+      );
 
-    if (checkpointsResult.rows.length > 0) {
-      supplyChain = {
-        timeline: checkpointsResult.rows.map(cp => {
-          // Parse checkpoint photos
-          let cpPhotos = [];
-          if (cp.photo_urls) {
-            try {
-              cpPhotos = typeof cp.photo_urls === 'string' 
-                ? JSON.parse(cp.photo_urls) 
-                : cp.photo_urls;
-            } catch (e) {}
-          }
+      if (checkpointsResult.rows.length > 0) {
+        supplyChain = {
+          timeline: checkpointsResult.rows.map(cp => {
+            let cpPhotos = [];
+            if (cp.photo_urls) {
+              try {
+                cpPhotos = typeof cp.photo_urls === 'string' 
+                  ? JSON.parse(cp.photo_urls) 
+                  : cp.photo_urls;
+              } catch (e) {}
+            }
 
-          return {
-            stage: cp.location_name || cp.scanned_by_role || 'Checkpoint',
-            timestamp: cp.scanned_at,
-            scannedByName: cp.scanned_by_name,
-            scannedByRole: cp.scanned_by_role,
-            location: cp.location_name,
-            latitude: cp.latitude ? parseFloat(cp.latitude) : null,
-            longitude: cp.longitude ? parseFloat(cp.longitude) : null,
-            notes: cp.notes,
-            photos: cpPhotos
-          };
-        })
-      };
+            return {
+              stage: cp.location_name || cp.scanned_by_role || 'Checkpoint',
+              timestamp: cp.scanned_at,
+              scannedByName: cp.scanned_by_name,
+              scannedByRole: cp.scanned_by_role,
+              location: cp.location_name,
+              latitude: cp.latitude ? parseFloat(cp.latitude) : null,
+              longitude: cp.longitude ? parseFloat(cp.longitude) : null,
+              notes: cp.notes,
+              photos: cpPhotos
+            };
+          })
+        };
+      }
+    } catch (checkpointError) {
+      // Checkpoints table might not exist - that's OK
+      console.log('Checkpoints query failed (table may not exist):', checkpointError.message);
     }
 
     // ==========================================
@@ -150,23 +154,27 @@ module.exports = async (req, res) => {
     // ==========================================
     let batchInfo = null;
     if (product.batch_group_id) {
-      const batchCountResult = await pool.query(
-        `SELECT COUNT(*) as count FROM products WHERE batch_group_id = $1`,
-        [product.batch_group_id]
-      );
-      
-      const positionResult = await pool.query(
-        `SELECT COUNT(*) as position FROM products 
-         WHERE batch_group_id = $1 AND created_at <= $2`,
-        [product.batch_group_id, product.created_at]
-      );
+      try {
+        const batchCountResult = await pool.query(
+          `SELECT COUNT(*) as count FROM products WHERE batch_group_id = $1`,
+          [product.batch_group_id]
+        );
+        
+        const positionResult = await pool.query(
+          `SELECT COUNT(*) as position FROM products 
+           WHERE batch_group_id = $1 AND created_at <= $2`,
+          [product.batch_group_id, product.created_at]
+        );
 
-      batchInfo = {
-        isBatchOrder: true,
-        itemNumber: parseInt(positionResult.rows[0].position) || 1,
-        totalInBatch: parseInt(batchCountResult.rows[0].count) || product.batch_quantity || 1,
-        batchGroupId: product.batch_group_id
-      };
+        batchInfo = {
+          isBatchOrder: true,
+          itemNumber: parseInt(positionResult.rows[0].position) || 1,
+          totalInBatch: parseInt(batchCountResult.rows[0].count) || product.batch_quantity || 1,
+          batchGroupId: product.batch_group_id
+        };
+      } catch (batchError) {
+        console.error('Error getting batch info:', batchError);
+      }
     }
 
     // ==========================================
@@ -174,22 +182,40 @@ module.exports = async (req, res) => {
     // ==========================================
     let rewards = null;
     if (product.rewards_enabled) {
-      const claimKey = product.batch_group_id || product.product_id;
-      
-      const claimResult = await pool.query(
-        `SELECT * FROM points_claims WHERE claim_key = $1`,
-        [claimKey]
-      );
+      try {
+        const claimKey = product.batch_group_id || product.product_id;
+        
+        const claimResult = await pool.query(
+          `SELECT * FROM points_claims WHERE claim_key = $1`,
+          [claimKey]
+        );
 
-      rewards = {
-        enabled: true,
-        pointsPerClaim: product.points_per_claim || 10,
-        programName: product.rewards_program_name || 'Loyalty Rewards',
-        businessName: product.business_name,
-        claimType: product.batch_group_id ? 'batch' : 'product',
-        alreadyClaimed: claimResult.rows.length > 0,
-        claimedAt: claimResult.rows.length > 0 ? claimResult.rows[0].claimed_at : null
-      };
+        rewards = {
+          enabled: true,
+          pointsPerClaim: product.points_per_claim || 10,
+          programName: product.rewards_program_name || 'Loyalty Rewards',
+          businessName: product.business_name,
+          claimType: product.batch_group_id ? 'batch' : 'product',
+          alreadyClaimed: claimResult.rows.length > 0,
+          claimedAt: claimResult.rows.length > 0 ? claimResult.rows[0].claimed_at : null
+        };
+      } catch (rewardsError) {
+        console.log('Rewards query failed (table may not exist):', rewardsError.message);
+      }
+    }
+
+    // ==========================================
+    // QR CODE URL - Check multiple possible columns
+    // ==========================================
+    let qrCodeUrl = product.qr_code_url || null;
+    // Fallback to IPFS hash if URL not present
+    if (!qrCodeUrl && product.qr_code_ipfs_hash) {
+      qrCodeUrl = `https://gateway.pinata.cloud/ipfs/${product.qr_code_ipfs_hash}`;
+    }
+
+    let inventoryQrCodeUrl = product.inventory_qr_code_url || null;
+    if (!inventoryQrCodeUrl && product.inventory_qr_code_ipfs_hash) {
+      inventoryQrCodeUrl = `https://gateway.pinata.cloud/ipfs/${product.inventory_qr_code_ipfs_hash}`;
     }
 
     // ==========================================
@@ -209,11 +235,12 @@ module.exports = async (req, res) => {
         
         // Blockchain info
         xrplTxHash: product.xrpl_tx_hash,
+        ipfsHash: product.ipfs_hash,
         dataHash: metadata.dataHash || null,
         
-        // QR code URLs (Vercel Blob)
-        qrCodeUrl: product.qr_code_url,
-        inventoryQrCodeUrl: product.inventory_qr_code_url,
+        // QR code URLs
+        qrCodeUrl: qrCodeUrl,
+        inventoryQrCodeUrl: inventoryQrCodeUrl,
         
         // Rich data
         photos,

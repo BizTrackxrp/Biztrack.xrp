@@ -298,6 +298,32 @@
       margin-bottom: 2rem;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
+      position: relative;
+    }
+
+    /* Points Claimed Badge - shows in header when already claimed */
+    .points-claimed-header-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .points-claimed-header-badge.show {
+      display: flex;
+    }
+
+    .points-claimed-header-badge i {
+      font-size: 0.9rem;
     }
 
     /* TEXT OVERFLOW FIXES */
@@ -1346,6 +1372,10 @@
 
       <!-- Product Header -->
       <div class="product-header">
+        <div class="points-claimed-header-badge" id="pointsClaimedBadge">
+          <i class="fas fa-check-circle"></i>
+          <span>Points Claimed</span>
+        </div>
         <h2 class="product-name" id="productName">Loading...</h2>
         <span class="product-id" id="productId">Product ID: ...</span>
       </div>
@@ -1630,26 +1660,25 @@
       const title = document.getElementById('rewardsTitle');
       const desc = document.getElementById('rewardsDescription');
       const businessNameEl = document.getElementById('businessName');
-
-      section.style.display = 'block';
-      
-      if (rewards.businessName) {
-        businessNameEl.textContent = rewards.businessName;
-      }
-
-      if (rewards.programName) {
-        title.textContent = rewards.programName;
-      }
+      const headerBadge = document.getElementById('pointsClaimedBadge');
 
       if (rewards.alreadyClaimed) {
-        // Already claimed state
-        section.classList.add('claimed');
-        claimBtn.style.display = 'none';
-        claimedBadge.style.display = 'inline-flex';
-        title.textContent = '✓ Points Already Claimed';
-        desc.textContent = `This ${rewards.claimType === 'batch' ? 'order' : 'product'} was claimed on ${new Date(rewards.claimedAt).toLocaleDateString()}.`;
+        // Already claimed - show small badge in header, hide full section
+        section.style.display = 'none';
+        headerBadge.classList.add('show');
       } else {
-        // Can claim state
+        // Can claim - show full rewards section
+        section.style.display = 'block';
+        headerBadge.classList.remove('show');
+        
+        if (rewards.businessName) {
+          businessNameEl.textContent = rewards.businessName;
+        }
+
+        if (rewards.programName) {
+          title.textContent = rewards.programName;
+        }
+
         desc.textContent = `Earn ${rewards.pointsPerClaim} points for purchasing this product!`;
       }
     }
@@ -1699,24 +1728,18 @@
         // Save email for future use
         localStorage.setItem('biztrack-rewards-email', email);
 
-        // Show success
+        // Show success in modal
         document.getElementById('claimForm').style.display = 'none';
         document.getElementById('claimSuccess').style.display = 'block';
         document.getElementById('pointsEarned').textContent = data.pointsAwarded;
         document.getElementById('totalPoints').textContent = data.totalPoints;
 
-        // Update the rewards section
+        // Hide the full rewards section and show header badge
         const section = document.getElementById('rewardsSection');
-        const claimBtn = document.getElementById('claimBtn');
-        const claimedBadge = document.getElementById('claimedBadge');
-        const title = document.getElementById('rewardsTitle');
-        const desc = document.getElementById('rewardsDescription');
-
-        section.classList.add('claimed');
-        claimBtn.style.display = 'none';
-        claimedBadge.style.display = 'inline-flex';
-        title.textContent = '✓ Points Claimed!';
-        desc.textContent = `You earned ${data.pointsAwarded} points!`;
+        const headerBadge = document.getElementById('pointsClaimedBadge');
+        
+        section.style.display = 'none';
+        headerBadge.classList.add('show');
 
       } catch (error) {
         alert('Error: ' + error.message);

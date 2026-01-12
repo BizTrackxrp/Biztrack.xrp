@@ -39,6 +39,7 @@
           <li><a href="dashboard.html" id="si-nav-dashboard"><i class="fas fa-plus-circle"></i> Create Products</a></li>
           <li><a href="production.html" id="si-nav-production"><i class="fas fa-industry"></i> In Progress</a></li>
           <li><a href="products.html" id="si-nav-products"><i class="fas fa-check-circle"></i> Finished Products</a></li>
+          <li><a href="rewards.html" id="si-nav-rewards" class="si-nav-rewards"><i class="fas fa-gift"></i> Customer Rewards</a></li>
           <li><a href="#" onclick="goToPricing(); return false;" id="si-nav-subscription"><i class="fas fa-credit-card"></i> Subscription</a></li>
           <li><a href="settings.html" id="si-nav-settings"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
@@ -57,6 +58,9 @@
 
     // Set active nav
     setActiveNav();
+    
+    // Check if rewards should be shown
+    checkRewardsVisibility();
   }
 
   // Inject CSS styles
@@ -194,6 +198,25 @@
       .si-sidebar-nav a.active {
         background: #1e293b;
         color: #3b82f6;
+      }
+      
+      /* Rewards link special styling */
+      .si-sidebar-nav a.si-nav-rewards {
+        color: #fbbf24;
+      }
+      
+      .si-sidebar-nav a.si-nav-rewards:hover {
+        background: rgba(251, 191, 36, 0.1);
+        color: #f59e0b;
+      }
+      
+      .si-sidebar-nav a.si-nav-rewards.active {
+        background: rgba(251, 191, 36, 0.15);
+        color: #f59e0b;
+      }
+      
+      .si-sidebar-nav a.si-nav-rewards i {
+        color: #fbbf24;
       }
 
       .si-sidebar-nav a i {
@@ -367,6 +390,7 @@
       'dashboard.html': 'si-nav-dashboard',
       'products.html': 'si-nav-products',
       'production.html': 'si-nav-production',
+      'rewards.html': 'si-nav-rewards',
       'pricing.html': 'si-nav-subscription',
       'SI-pharma-pricing.html': 'si-nav-subscription',
       'settings.html': 'si-nav-settings'
@@ -378,6 +402,35 @@
       if (activeLink) {
         activeLink.classList.add('active');
       }
+    }
+  }
+  
+  // Check if rewards link should be visible (only for businesses with rewards enabled)
+  async function checkRewardsVisibility() {
+    const rewardsLink = document.getElementById('si-nav-rewards');
+    if (!rewardsLink) return;
+    
+    // Hide by default, show only if rewards are enabled
+    rewardsLink.parentElement.style.display = 'none';
+    
+    try {
+      // Check if authenticatedFetch is available
+      if (typeof authenticatedFetch !== 'function') {
+        console.log('authenticatedFetch not available yet, will retry');
+        // Retry after auth.js loads
+        setTimeout(checkRewardsVisibility, 500);
+        return;
+      }
+      
+      const response = await authenticatedFetch('/api/rewards-settings');
+      const data = await response.json();
+      
+      if (data.success && data.settings && data.settings.rewardsEnabled) {
+        rewardsLink.parentElement.style.display = 'block';
+      }
+    } catch (error) {
+      console.log('Could not check rewards status:', error.message);
+      // Keep hidden if we can't verify
     }
   }
 

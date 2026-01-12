@@ -6,7 +6,7 @@
   <title>Verify Product - BizTrack</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -24,217 +24,14 @@
       min-height: 100vh;
     }
 
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 260px;
-      background: #0f172a;
-      padding: 2rem 1.5rem;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-logo {
-      margin-bottom: 3rem;
-    }
-
-    .sidebar-logo h1 {
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .sidebar-nav a {
-      color: #94a3b8;
-      text-decoration: none;
-      padding: 0.875rem 1rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .sidebar-nav a:hover,
-    .sidebar-nav a.active {
-      background: #1e293b;
-      color: #3b82f6;
-    }
-
-    .sidebar-nav i {
-      width: 20px;
-      font-size: 1.1rem;
-    }
-
-    .sidebar-logout {
-      margin-top: auto;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-logout button {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .sidebar-logout button:hover {
-      background: rgba(239, 68, 68, 0.2);
-      transform: translateY(-2px);
-    }
-
-    /* Main Content */
-    .main-content {
-      margin-left: 260px;
-      min-height: 100vh;
-    }
-
-    /* Landing State (No Product) */
-    .verify-landing {
-      max-width: 100%;
+    main {
+      max-width: 500px;
       margin: 0 auto;
-      padding: 4rem 2rem;
-      text-align: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem;
+      padding-bottom: 2rem;
     }
 
-    .verify-landing-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .camera-icon-large {
-      width: 150px;
-      height: 150px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 2rem;
-      font-size: 4rem;
-      color: white;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .verify-landing h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 1rem;
-    }
-
-    .verify-landing-content > p {
-      font-size: 1.25rem;
-      color: white;
-      margin-bottom: 3rem;
-      line-height: 1.8;
-    }
-
-    .scan-instructions {
-      background: white;
-      padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      border: 2px solid #e2e8f0;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .scan-instructions h3 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    .scan-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      text-align: left;
-    }
-
-    .scan-step-number {
-      flex-shrink: 0;
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
-    .scan-step-content h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #0f172a;
-      margin-bottom: 0.25rem;
-    }
-
-    .scan-step-content p {
-      font-size: 0.95rem;
-      color: #64748b;
-      margin: 0;
-    }
-
-    .biztrack-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.875rem;
-      margin-top: 2rem;
-    }
-
-    /* Product View State */
-    .product-view {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
+    /* Back Button */
     .back-button {
       display: inline-flex;
       align-items: center;
@@ -242,204 +39,158 @@
       color: #4F46E5;
       text-decoration: none;
       font-weight: 600;
-      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
       background: white;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      border: 1px solid #E2E8F0;
       transition: all 0.2s;
     }
 
     .back-button:hover {
-      transform: translateX(-4px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      background: #F8FAFC;
+      border-color: #4F46E5;
     }
 
+    /* Verified Badge */
     .verified-badge {
       background: linear-gradient(135deg, #10B981 0%, #059669 100%);
       color: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+      padding: 1.25rem 1.5rem;
+      border-radius: 16px;
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      animation: slideIn 0.5s ease-out;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     .verified-badge i {
-      font-size: 3rem;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 1rem;
-      border-radius: 16px;
+      font-size: 2rem;
+      opacity: 0.9;
     }
 
     .verified-badge h1 {
-      font-size: 1.75rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 700;
       margin-bottom: 0.25rem;
     }
 
     .verified-badge p {
-      opacity: 0.95;
-      font-size: 1rem;
+      font-size: 0.85rem;
+      opacity: 0.9;
     }
 
+    /* Product Header Card */
     .product-header {
       background: white;
-      padding: 2.5rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
       position: relative;
     }
 
-    /* Points Claimed Badge - shows in header when already claimed */
-    .points-claimed-header-badge {
+    .points-claimed-badge {
       position: absolute;
       top: 1rem;
       right: 1rem;
       display: none;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       background: linear-gradient(135deg, #10B981, #059669);
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 50px;
       font-weight: 600;
-      font-size: 0.8rem;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      font-size: 0.75rem;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
     }
 
-    .points-claimed-header-badge.show {
+    .points-claimed-badge.show {
       display: flex;
     }
 
-    .points-claimed-header-badge i {
-      font-size: 0.9rem;
-    }
-
-    /* TEXT OVERFLOW FIXES */
     .product-name {
-      font-size: 2.5rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #1E293B;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
       word-wrap: break-word;
-      overflow-wrap: break-word;
-      hyphens: auto;
     }
 
-    .product-id {
-      font-size: 0.875rem;
-      color: #64748B;
-      font-family: 'Courier New', monospace;
-      background: #F8FAFC;
-      padding: 0.5rem 1rem;
+    /* Quick Info Row */
+    .quick-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .quick-info-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #F1F5F9;
+      padding: 0.35rem 0.75rem;
       border-radius: 8px;
-      display: inline-block;
-      max-width: 100%;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
+      font-size: 0.8rem;
+      color: #475569;
     }
 
-    /* Info Cards */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .info-card {
-      background: white;
-      padding: 1.75rem;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      border: 1px solid #E2E8F0;
-      transition: all 0.2s;
-      overflow: hidden;
-    }
-
-    .info-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    .info-card-label {
-      font-size: 0.875rem;
-      font-weight: 600;
+    .quick-info-item i {
       color: #64748B;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
     }
 
-    .info-card-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1E293B;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
+    .quick-info-item strong {
+      color: #334155;
     }
 
-    /* ========================================== */
-    /* REWARDS / POINTS CLAIM SECTION            */
-    /* ========================================== */
+    .business-name {
+      font-size: 0.85rem;
+      color: #64748B;
+    }
+
+    .business-name i {
+      margin-right: 0.25rem;
+      color: #10B981;
+    }
+
+    /* Rewards Section */
     .rewards-section {
       background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
       border: 2px solid #F59E0B;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
       text-align: center;
     }
 
-    .rewards-section.claimed {
-      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
-      border-color: #10B981;
-    }
-
-    .rewards-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
     .rewards-section h3 {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #92400E;
-      margin-bottom: 0.5rem;
-    }
-
-    .rewards-section.claimed h3 {
-      color: #065F46;
+      margin-bottom: 0.35rem;
     }
 
     .rewards-section p {
       color: #B45309;
-      margin-bottom: 1.5rem;
-    }
-
-    .rewards-section.claimed p {
-      color: #047857;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
     }
 
     .claim-btn {
-      padding: 1rem 2.5rem;
+      padding: 0.875rem 2rem;
       background: linear-gradient(135deg, #F59E0B, #D97706);
       color: white;
       border: none;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
       box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
@@ -447,522 +198,87 @@
 
     .claim-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
-    }
-
-    .claim-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .claimed-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #10B981;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 50px;
-      font-weight: 600;
-    }
-
-    /* Claim Modal */
-    .claim-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-
-    .claim-modal.active {
-      display: flex;
-    }
-
-    .claim-modal-content {
-      background: white;
-      border-radius: 20px;
-      padding: 2.5rem;
-      max-width: 450px;
-      width: 100%;
-      text-align: center;
-      animation: modalSlide 0.3s ease-out;
-    }
-
-    @keyframes modalSlide {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .claim-modal-content h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      color: #1E293B;
-    }
-
-    .claim-modal-content p {
-      color: #64748B;
-      margin-bottom: 1.5rem;
-    }
-
-    .claim-modal-content input {
-      width: 100%;
-      padding: 1rem;
-      border: 2px solid #E2E8F0;
-      border-radius: 12px;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .claim-modal-content input:focus {
-      outline: none;
-      border-color: #F59E0B;
-    }
-
-    .claim-modal-buttons {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .claim-modal-buttons button {
-      flex: 1;
-      padding: 1rem;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .claim-cancel-btn {
-      background: #F1F5F9;
-      color: #64748B;
-      border: none;
-    }
-
-    .claim-cancel-btn:hover {
-      background: #E2E8F0;
-    }
-
-    .claim-submit-btn {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: white;
-      border: none;
-    }
-
-    .claim-submit-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .claim-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Success State */
-    .claim-success {
-      padding: 2rem;
-    }
-
-    .claim-success-icon {
-      font-size: 4rem;
-      color: #10B981;
-      margin-bottom: 1rem;
-    }
-
-    .claim-success h2 {
-      color: #065F46;
-      margin-bottom: 0.5rem;
-    }
-
-    .points-earned {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #F59E0B;
-      margin: 1rem 0;
-    }
-
-    .total-points {
-      background: #FEF3C7;
-      padding: 1rem;
-      border-radius: 12px;
-      margin-top: 1rem;
-    }
-
-    .total-points span {
-      font-weight: 700;
-      color: #D97706;
-    }
-
-    /* Batch Item Badge */
-    .batch-item-badge {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
-      border: 2px solid #A5B4FC;
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .batch-item-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #4F46E5, #7C3AED);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .batch-item-info {
-      flex: 1;
-    }
-
-    .batch-item-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #6366F1;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.25rem;
-    }
-
-    .batch-item-number {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1E293B;
-    }
-
-    /* Supply Chain Timeline */
-    .supply-chain-section {
-      background: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      border: 2px solid #10B981;
-    }
-
-    .supply-chain-section h3 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: #1E293B;
-    }
-
-    .supply-chain-section h3 i {
-      color: #10B981;
-    }
-
-    .supply-chain-summary {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .summary-stat {
-      background: #ECFDF5;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .summary-stat-value {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #10B981;
-    }
-
-    .summary-stat-label {
-      font-size: 0.8rem;
-      color: #065F46;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .timeline {
-      position: relative;
-      padding-left: 2.5rem;
-    }
-
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 10px;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, #10B981, #3B82F6);
-      border-radius: 3px;
-    }
-
-    .timeline-item {
-      position: relative;
-      padding-bottom: 2rem;
-    }
-
-    .timeline-item:last-child {
-      padding-bottom: 0;
-    }
-
-    .timeline-dot {
-      position: absolute;
-      left: -2.5rem;
-      top: 0;
-      width: 24px;
-      height: 24px;
-      background: #10B981;
-      border-radius: 50%;
-      border: 4px solid white;
-      box-shadow: 0 0 0 3px #10B981;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timeline-dot i {
-      color: white;
-      font-size: 0.6rem;
-    }
-
-    .timeline-step {
-      position: absolute;
-      left: -3.5rem;
-      top: 28px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #10B981;
-      width: 24px;
-      text-align: center;
-    }
-
-    .timeline-content {
-      background: #F8FAFC;
-      padding: 1.25rem;
-      border-radius: 12px;
-      border: 1px solid #E2E8F0;
-    }
-
-    .timeline-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .timeline-who {
-      font-weight: 700;
-      color: #1E293B;
-      font-size: 1rem;
-    }
-
-    .timeline-role {
-      font-size: 0.75rem;
-      color: white;
-      background: #10B981;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-weight: 600;
-      margin-left: 0.5rem;
-    }
-
-    .timeline-when {
-      font-size: 0.85rem;
-      color: #64748B;
-    }
-
-    .timeline-location {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      color: #475569;
-      margin-bottom: 0.5rem;
-    }
-
-    .timeline-location i {
-      color: #3B82F6;
-    }
-
-    .timeline-notes {
-      font-size: 0.9rem;
-      color: #334155;
-      background: white;
-      padding: 0.75rem;
-      border-radius: 8px;
-      margin-top: 0.5rem;
-      border-left: 3px solid #10B981;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .timeline-photos {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .timeline-photos img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 2px solid #E2E8F0;
-      transition: all 0.2s;
-    }
-
-    .timeline-photos img:hover {
-      transform: scale(1.1);
-      border-color: #10B981;
-    }
-
-    /* Journey Map */
-    .journey-map {
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 2px solid #E2E8F0;
-    }
-
-    .journey-map h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #334155;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .journey-map h4 i {
-      color: #3B82F6;
-    }
-
-    .journey-map-container {
-      border-radius: 12px;
-      overflow: hidden;
-      height: 300px;
-      background: #F1F5F9;
-    }
-
-    .journey-map-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
     }
 
     /* Photo Gallery */
-    .photo-gallery {
+    .photo-section {
       background: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
     }
 
-    .photo-gallery h3 {
-      font-size: 1.5rem;
+    .photo-section h3 {
+      padding: 1rem 1.25rem 0.75rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 1.5rem;
+      color: #334155;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      color: #1E293B;
+      gap: 0.5rem;
     }
 
     .photo-carousel {
       position: relative;
       overflow: hidden;
-      border-radius: 16px;
-      background: #F8FAFC;
-      margin-bottom: 1rem;
     }
 
     .photo-track {
       display: flex;
-      transition: transform 0.3s ease-out;
+      transition: transform 0.3s ease;
     }
 
     .photo-slide {
       min-width: 100%;
-      aspect-ratio: 16/9;
+      aspect-ratio: 4/3;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
     }
 
     .photo-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s;
-    }
-
-    .photo-slide:hover img {
-      transform: scale(1.05);
     }
 
     .carousel-controls {
       position: absolute;
       top: 50%;
-      width: 100%;
+      left: 0;
+      right: 0;
       transform: translateY(-50%);
       display: flex;
       justify-content: space-between;
-      padding: 0 1rem;
+      padding: 0 0.5rem;
       pointer-events: none;
     }
 
     .carousel-btn {
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      width: 48px;
-      height: 48px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
       cursor: pointer;
-      font-size: 1.25rem;
-      color: #1E293B;
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: all;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      pointer-events: auto;
       transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .carousel-btn:hover {
-      background: white;
       transform: scale(1.1);
     }
 
     .carousel-dots {
       display: flex;
-      gap: 0.5rem;
       justify-content: center;
-      margin-top: 1rem;
+      gap: 0.5rem;
+      padding: 0.75rem;
     }
 
     .dot {
@@ -976,36 +292,60 @@
 
     .dot.active {
       background: #4F46E5;
-      width: 24px;
-      border-radius: 4px;
+      transform: scale(1.2);
+    }
+
+    /* Notes/Description Section */
+    .notes-section {
+      background: white;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .notes-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .notes-content {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
     /* Map Section */
     .map-section {
       background: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
     }
 
     .map-section h3 {
-      font-size: 1.5rem;
+      padding: 1rem 1.25rem 0.75rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 1.5rem;
+      color: #334155;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      color: #1E293B;
+      gap: 0.5rem;
     }
 
     .map-container {
-      border-radius: 16px;
-      overflow: hidden;
-      height: 400px;
-      background: #F8FAFC;
-      margin-bottom: 1rem;
+      height: 200px;
+      background: #F1F5F9;
     }
 
     .map-container iframe {
@@ -1014,162 +354,299 @@
       border: none;
     }
 
+    .map-footer {
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #E2E8F0;
+      font-size: 0.8rem;
+    }
+
     .map-coords {
+      color: #64748B;
+      font-family: 'Courier New', monospace;
+    }
+
+    .map-link {
+      color: #4F46E5;
+      text-decoration: none;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: #F8FAFC;
-      border-radius: 12px;
-      margin-top: 1rem;
-      flex-wrap: wrap;
+      gap: 0.35rem;
     }
 
-    .map-coords i {
-      color: #10B981;
-      font-size: 1.5rem;
+    .map-link:hover {
+      text-decoration: underline;
     }
 
-    .map-coords-text {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .map-coords-label {
-      font-size: 0.875rem;
-      color: #64748B;
-      margin-bottom: 0.25rem;
-    }
-
-    .map-coords-value {
-      font-family: 'Courier New', monospace;
-      font-weight: 600;
-      color: #1E293B;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .map-link-btn {
-      padding: 0.75rem 1.5rem;
-      text-decoration: none;
-      font-size: 0.875rem;
+    /* Blockchain Section (collapsible) */
+    .blockchain-section {
       background: white;
-      color: #4F46E5;
-      border: 2px solid #4F46E5;
-      border-radius: 10px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-    }
-
-    .map-link-btn:hover {
-      background: #4F46E5;
-      color: white;
-    }
-
-    /* Metadata Section */
-    .metadata-section {
-      background: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
     }
 
-    .metadata-section h3 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: #1E293B;
-    }
-
-    .metadata-item {
-      padding: 1rem;
-      background: #F8FAFC;
-      border-radius: 12px;
-      margin-bottom: 0.75rem;
+    .blockchain-header {
+      padding: 1rem 1.25rem;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      flex-wrap: wrap;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
     }
 
-    .metadata-key {
+    .blockchain-header:hover {
+      background: #F8FAFC;
+    }
+
+    .blockchain-header h3 {
+      font-size: 0.9rem;
       font-weight: 600;
       color: #64748B;
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .metadata-value {
-      color: #1E293B;
+    .blockchain-header i.toggle {
+      color: #94A3B8;
+      transition: transform 0.2s;
+    }
+
+    .blockchain-header.open i.toggle {
+      transform: rotate(180deg);
+    }
+
+    .blockchain-content {
+      display: none;
+      padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .blockchain-content.show {
+      display: block;
+    }
+
+    .blockchain-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .blockchain-item:last-child {
+      border-bottom: none;
+    }
+
+    .blockchain-label {
+      font-size: 0.75rem;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.25rem;
+    }
+
+    .blockchain-value {
+      font-size: 0.85rem;
+      color: #475569;
+      font-family: 'Courier New', monospace;
+      word-break: break-all;
+    }
+
+    .blockchain-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #4F46E5;
+      text-decoration: none;
+      font-size: 0.85rem;
       font-weight: 500;
-      text-align: right;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      max-width: 70%;
+    }
+
+    .blockchain-link:hover {
+      text-decoration: underline;
     }
 
     /* Action Buttons */
     .action-buttons {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .action-btn {
-      padding: 1.25rem 2rem;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
       text-decoration: none;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s;
     }
 
     .action-btn-primary {
       background: linear-gradient(135deg, #4F46E5, #7C3AED);
       color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
 
     .action-btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
     }
 
     .action-btn-secondary {
       background: white;
       color: #4F46E5;
-      border: 2px solid #4F46E5;
+      border: 2px solid #E2E8F0;
     }
 
     .action-btn-secondary:hover {
+      border-color: #4F46E5;
       background: #F8FAFC;
-      transform: translateY(-2px);
     }
 
     /* Footer */
     .verify-footer {
       text-align: center;
-      color: #64748B;
-      font-size: 0.875rem;
-      padding: 2rem 0;
+      padding: 1rem;
+      color: #94A3B8;
+      font-size: 0.8rem;
     }
 
-    /* Lightbox */
+    .verify-footer i {
+      margin-right: 0.35rem;
+      color: #10B981;
+    }
+
+    /* Claim Modal */
+    .claim-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .claim-modal.active {
+      display: flex;
+    }
+
+    .claim-modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .claim-modal h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #1E293B;
+    }
+
+    .claim-modal p {
+      color: #64748B;
+      margin-bottom: 1.5rem;
+    }
+
+    .claim-modal input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .claim-modal input:focus {
+      outline: none;
+      border-color: #F59E0B;
+    }
+
+    .claim-modal-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .claim-modal-btn {
+      flex: 1;
+      padding: 0.875rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .claim-modal-btn.primary {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      border: none;
+    }
+
+    .claim-modal-btn.secondary {
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+    }
+
+    /* Success State */
+    .claim-success {
+      text-align: center;
+    }
+
+    .claim-success .success-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .claim-success h2 {
+      color: #10B981;
+      margin-bottom: 1rem;
+    }
+
+    .points-display {
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .points-earned {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #92400E;
+    }
+
+    .points-label {
+      color: #B45309;
+      font-weight: 600;
+    }
+
+    .total-points {
+      color: #64748B;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    /* Photo Lightbox */
     .lightbox {
       display: none;
       position: fixed;
@@ -1178,10 +655,9 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      justify-content: center;
+      z-index: 3000;
       align-items: center;
-      padding: 2rem;
+      justify-content: center;
     }
 
     .lightbox.active {
@@ -1189,176 +665,328 @@
     }
 
     .lightbox img {
-      max-width: 90%;
+      max-width: 95%;
       max-height: 90%;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      object-fit: contain;
     }
 
     .lightbox-close {
       position: absolute;
-      top: 2rem;
-      right: 2rem;
-      background: white;
+      top: 1rem;
+      right: 1rem;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
       border: none;
-      width: 48px;
-      height: 48px;
       border-radius: 50%;
-      cursor: pointer;
+      color: white;
       font-size: 1.5rem;
-      color: #1E293B;
+      cursor: pointer;
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .loading i {
+      font-size: 3rem;
+      color: #4F46E5;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Batch Badge */
+    .batch-badge {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      border: 2px solid #818CF8;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .batch-badge-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .batch-badge-text {
+      flex: 1;
+    }
+
+    .batch-badge-label {
+      font-size: 0.75rem;
+      color: #6366F1;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .batch-badge-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #3730A3;
+    }
+
+    /* Supply Chain Timeline - Accordion Style */
+    .timeline-section {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .timeline-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .timeline-header:hover {
+      background: #F8FAFC;
+    }
+
+    .timeline-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .timeline-header h3 i {
+      color: #10B981;
+    }
+
+    .timeline-count {
+      background: #10B981;
+      color: white;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .timeline-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64748B;
+      font-size: 0.85rem;
+    }
+
+    .timeline-toggle i {
+      transition: transform 0.2s;
+    }
+
+    .timeline-header.open .timeline-toggle i {
+      transform: rotate(180deg);
+    }
+
+    .timeline-content {
+      display: none;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .timeline-content.show {
+      display: block;
+    }
+
+    /* Individual Timeline Entry */
+    .timeline-entry {
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .timeline-entry:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-entry-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .timeline-entry-header:hover {
+      background: #F8FAFC;
+    }
+
+    .timeline-entry-number {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-entry-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .timeline-entry-title {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .timeline-entry-date {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    .timeline-entry-arrow {
+      color: #94A3B8;
+      transition: transform 0.2s;
+    }
+
+    .timeline-entry-header.open .timeline-entry-arrow {
+      transform: rotate(180deg);
+    }
+
+    .timeline-entry-details {
+      display: none;
+      padding: 0 1.25rem 1rem 4rem;
+    }
+
+    .timeline-entry-details.show {
+      display: block;
+    }
+
+    .timeline-entry-notes {
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-entry-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-entry-location i {
+      color: #10B981;
+    }
+
+    .timeline-entry-photos {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .timeline-entry-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid #E2E8F0;
       transition: all 0.2s;
     }
 
-    .lightbox-close:hover {
-      transform: rotate(90deg);
+    .timeline-entry-photo:hover {
+      border-color: #4F46E5;
+      transform: scale(1.05);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .main-content {
-        margin-left: 0;
-      }
+    /* Error State */
+    .error-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: white;
+      border-radius: 16px;
+    }
 
-      .verify-landing {
-        padding: 2rem 1rem;
-      }
+    .error-state i {
+      font-size: 3rem;
+      color: #EF4444;
+      margin-bottom: 1rem;
+    }
 
-      .camera-icon-large {
-        width: 120px;
-        height: 120px;
-        font-size: 3rem;
-      }
+    .error-state h2 {
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
 
-      .verify-landing h1 {
-        font-size: 2rem;
-      }
-
-      .product-view {
-        padding: 1rem;
-      }
-
-      .product-name {
-        font-size: 1.75rem;
-      }
-
-      .verified-badge {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .map-container {
-        height: 300px;
-      }
-
-      .action-buttons {
-        grid-template-columns: 1fr;
-      }
-
-      .timeline {
-        padding-left: 2rem;
-      }
-
-      .timeline-dot {
-        left: -2rem;
-        width: 20px;
-        height: 20px;
-      }
-
-      .timeline-step {
-        display: none;
-      }
-
-      .batch-item-badge {
-        padding: 1rem;
-      }
-
-      .batch-item-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-      }
-
-      .batch-item-number {
-        font-size: 1.1rem;
-      }
-
-      .metadata-value {
-        max-width: 100%;
-        text-align: left;
-      }
-
-      .map-coords {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .map-link-btn {
-        width: 100%;
-        justify-content: center;
-      }
+    .error-state p {
+      color: #64748B;
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <div id="sidebar-container" data-page="verify"></div>
+  <main>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <p style="margin-top: 1rem; color: #64748B;">Verifying product...</p>
+    </div>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    
-    <!-- Landing State (No Product ID) -->
-    <div id="landingState" class="verify-landing" style="display: none;">
-      <div class="verify-landing-content">
-        <div class="camera-icon-large">
-          📸
-        </div>
-        
-        <h1>Check Your Product's Authenticity</h1>
-        <p>Verify any BizTrack-enabled product with instant blockchain proof.</p>
-
-        <div class="scan-instructions">
-          <h3><i class="fas fa-qrcode"></i> How to Verify</h3>
-          
-          <div class="scan-step">
-            <div class="scan-step-number">1</div>
-            <div class="scan-step-content">
-              <h4>Find the QR Code</h4>
-              <p>Look for the BizTrack QR code on your product packaging</p>
-            </div>
-          </div>
-
-          <div class="scan-step">
-            <div class="scan-step-number">2</div>
-            <div class="scan-step-content">
-              <h4>Scan with Your Phone</h4>
-              <p>Use your phone's camera to scan the QR code</p>
-            </div>
-          </div>
-
-          <div class="scan-step">
-            <div class="scan-step-number">3</div>
-            <div class="scan-step-content">
-              <h4>View Verification</h4>
-              <p>Instantly see your product's complete verified history</p>
-            </div>
-          </div>
-
-          <div class="biztrack-badge">
-            🚚 Powered by BizTrack
-          </div>
-        </div>
+    <!-- Error State -->
+    <div id="errorState" style="display: none;">
+      <div class="error-state">
+        <i class="fas fa-exclamation-circle"></i>
+        <h2>Product Not Found</h2>
+        <p id="errorMessage">This product could not be verified.</p>
       </div>
     </div>
 
-    <!-- Product View State (Has Product ID) -->
-    <div id="productState" class="product-view" style="display: none;">
-      <a href="#" id="backButton" class="back-button">
+    <!-- Product View -->
+    <div id="productState" style="display: none;">
+      <a href="products.html" class="back-button">
         <i class="fas fa-arrow-left"></i>
-        <span id="backButtonText">Back to Verify</span>
+        Back to Dashboard
       </a>
 
       <!-- Verified Badge -->
@@ -1372,75 +1000,62 @@
 
       <!-- Product Header -->
       <div class="product-header">
-        <div class="points-claimed-header-badge" id="pointsClaimedBadge">
+        <div class="points-claimed-badge" id="pointsClaimedBadge">
           <i class="fas fa-check-circle"></i>
           <span>Points Claimed</span>
         </div>
-        <h2 class="product-name" id="productName">Loading...</h2>
-        <span class="product-id" id="productId">Product ID: ...</span>
+        
+        <h1 class="product-name" id="productName">Loading...</h1>
+        
+        <div class="quick-info" id="quickInfo">
+          <div class="quick-info-item" id="skuItem" style="display: none;">
+            <i class="fas fa-barcode"></i>
+            <span>SKU:</span>
+            <strong id="skuValue">-</strong>
+          </div>
+          <div class="quick-info-item" id="batchItem" style="display: none;">
+            <i class="fas fa-layer-group"></i>
+            <span>Batch:</span>
+            <strong id="batchValue">-</strong>
+          </div>
+          <div class="quick-info-item">
+            <i class="fas fa-calendar"></i>
+            <strong id="mintDate">-</strong>
+          </div>
+        </div>
+        
+        <div class="business-name" id="businessName" style="display: none;">
+          <i class="fas fa-store"></i>
+          <span id="businessNameText"></span>
+        </div>
       </div>
 
-      <!-- Rewards Section (shown if business has rewards enabled) -->
+      <!-- Batch Badge (shows if part of a batch) -->
+      <div class="batch-badge" id="batchBadge" style="display: none;">
+        <div class="batch-badge-icon">
+          <i class="fas fa-boxes-stacked"></i>
+        </div>
+        <div class="batch-badge-text">
+          <div class="batch-badge-label">Part of Batch Production</div>
+          <div class="batch-badge-value" id="batchBadgeValue">Item #1 of 100</div>
+        </div>
+      </div>
+
+      <!-- Rewards Section (only shows if available & not claimed) -->
       <div class="rewards-section" id="rewardsSection" style="display: none;">
-        <div class="rewards-icon">🎁</div>
-        <h3 id="rewardsTitle">Claim Your Points!</h3>
-        <p id="rewardsDescription">Earn rewards for purchasing this product.</p>
-        <button class="claim-btn" id="claimBtn" onclick="openClaimModal()">
+        <h3 id="rewardsTitle">🎁 Earn Rewards!</h3>
+        <p id="rewardsDescription">Earn points for purchasing this product!</p>
+        <button class="claim-btn" onclick="openClaimModal()">
           <i class="fas fa-gift"></i> Claim Points
         </button>
-        <div class="claimed-badge" id="claimedBadge" style="display: none;">
-          <i class="fas fa-check-circle"></i>
-          <span>Points Already Claimed</span>
-        </div>
-      </div>
-
-      <!-- Info Cards -->
-      <div class="info-grid">
-        <div class="info-card">
-          <div class="info-card-label">SKU</div>
-          <div class="info-card-value" id="sku">-</div>
-        </div>
-        <div class="info-card">
-          <div class="info-card-label">Batch Number</div>
-          <div class="info-card-value" id="batchNumber">-</div>
-        </div>
-        <div class="info-card">
-          <div class="info-card-label">Minted On</div>
-          <div class="info-card-value" id="mintedOn">-</div>
-        </div>
-      </div>
-
-      <!-- Batch Item Badge (for items from batch orders) -->
-      <div class="batch-item-badge" id="batchItemBadge" style="display: none;">
-        <div class="batch-item-icon">
-          <i class="fas fa-box"></i>
-        </div>
-        <div class="batch-item-info">
-          <div class="batch-item-label">Item from Batch Production</div>
-          <div class="batch-item-number" id="batchItemNumber">Item 1 of 1</div>
-        </div>
-      </div>
-
-      <!-- Supply Chain Timeline (shown for finalized products) -->
-      <div class="supply-chain-section" id="supplyChainSection" style="display: none;">
-        <h3><i class="fas fa-route"></i> Supply Chain Journey</h3>
-        
-        <div class="supply-chain-summary" id="supplyChainSummary"></div>
-        
-        <div class="timeline" id="supplyChainTimeline"></div>
-        
-        <div class="journey-map" id="journeyMapSection" style="display: none;">
-          <h4><i class="fas fa-map-marked-alt"></i> Journey Map</h4>
-          <div class="journey-map-container" id="journeyMapContainer"></div>
-        </div>
       </div>
 
       <!-- Photo Gallery -->
-      <div class="photo-gallery" id="photoGallery" style="display: none;">
+      <div class="photo-section" id="photoSection" style="display: none;">
         <h3>📸 Product Photos</h3>
         <div class="photo-carousel">
           <div class="photo-track" id="photoTrack"></div>
-          <div class="carousel-controls">
+          <div class="carousel-controls" id="carouselControls">
             <button class="carousel-btn" id="prevBtn">
               <i class="fas fa-chevron-left"></i>
             </button>
@@ -1452,36 +1067,69 @@
         <div class="carousel-dots" id="carouselDots"></div>
       </div>
 
-      <!-- Map Section -->
+      <!-- Notes Section -->
+      <div class="notes-section" id="notesSection" style="display: none;">
+        <h3>📝 Product Details</h3>
+        <div class="notes-content" id="notesContent"></div>
+      </div>
+
+      <!-- Map Section (for single location products) -->
       <div class="map-section" id="mapSection" style="display: none;">
         <h3>📍 Origin Location</h3>
         <div class="map-container" id="mapContainer"></div>
-        <div class="map-coords">
-          <i class="fas fa-location-dot"></i>
-          <div class="map-coords-text">
-            <div class="map-coords-label">Coordinates:</div>
-            <div class="map-coords-value" id="coordinates">-</div>
-          </div>
-          <a href="#" id="viewOnGoogleMaps" target="_blank" class="map-link-btn">
-            <i class="fas fa-external-link-alt"></i> Open in Google Maps
+        <div class="map-footer">
+          <span class="map-coords" id="mapCoords">-</span>
+          <a href="#" id="googleMapsLink" target="_blank" class="map-link">
+            Open in Maps <i class="fas fa-external-link-alt"></i>
           </a>
         </div>
       </div>
 
-      <!-- Metadata Section -->
-      <div class="metadata-section" id="metadataSection" style="display: none;">
-        <h3>ℹ️ Additional Information</h3>
-        <div id="metadataContent"></div>
+      <!-- Supply Chain Timeline (accordion style) -->
+      <div class="timeline-section" id="timelineSection" style="display: none;">
+        <div class="timeline-header" onclick="toggleTimeline()">
+          <h3><i class="fas fa-route"></i> Supply Chain Journey</h3>
+          <div class="timeline-toggle">
+            <span class="timeline-count" id="timelineCount">0</span>
+            <span>checkpoints</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+        <div class="timeline-content" id="timelineContent"></div>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
         <a href="#" id="blockchainLink" target="_blank" class="action-btn action-btn-primary">
-          <i class="fas fa-cube"></i> View on Blockchain
+          <i class="fas fa-cube"></i> Blockchain
         </a>
         <a href="#" id="ipfsLink" target="_blank" class="action-btn action-btn-secondary">
-          <i class="fas fa-database"></i> View on IPFS
+          <i class="fas fa-database"></i> IPFS Data
         </a>
+      </div>
+
+      <!-- Blockchain Details (Collapsible) -->
+      <div class="blockchain-section" id="blockchainSection">
+        <div class="blockchain-header" onclick="toggleBlockchainDetails()">
+          <h3><i class="fas fa-link"></i> Technical Details</h3>
+          <i class="fas fa-chevron-down toggle"></i>
+        </div>
+        <div class="blockchain-content" id="blockchainContent">
+          <div class="blockchain-item">
+            <div class="blockchain-label">Product ID</div>
+            <div class="blockchain-value" id="productId">-</div>
+          </div>
+          <div class="blockchain-item">
+            <div class="blockchain-label">Data Hash</div>
+            <div class="blockchain-value" id="dataHash">-</div>
+          </div>
+          <div class="blockchain-item">
+            <div class="blockchain-label">XRPL Transaction</div>
+            <a href="#" id="xrplTxLink" target="_blank" class="blockchain-link">
+              View on XRPL <i class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Footer -->
@@ -1489,201 +1137,198 @@
         <i class="fas fa-shield-check"></i> Verified at <span id="verifiedTime">...</span>
       </div>
     </div>
-
   </main>
 
-  <!-- Claim Points Modal -->
+  <!-- Claim Modal -->
   <div class="claim-modal" id="claimModal">
-    <div class="claim-modal-content" id="claimModalContent">
-      <!-- Initial State -->
+    <div class="claim-modal-content">
       <div id="claimForm">
         <h2>🎁 Claim Your Points</h2>
-        <p>Enter your email to earn points from <strong id="businessName">this business</strong>.</p>
+        <p>Enter your email to earn rewards!</p>
         <input type="email" id="claimEmail" placeholder="your@email.com" />
-        <p style="font-size: 0.8rem; color: #94A3B8; margin-top: -0.5rem;">
-          Use the same email each time to accumulate points for discounts!
-        </p>
         <div class="claim-modal-buttons">
-          <button class="claim-cancel-btn" onclick="closeClaimModal()">Cancel</button>
-          <button class="claim-submit-btn" id="submitClaimBtn" onclick="submitClaim()">
-            Claim Points
-          </button>
+          <button class="claim-modal-btn secondary" onclick="closeClaimModal()">Cancel</button>
+          <button class="claim-modal-btn primary" id="submitClaimBtn" onclick="submitClaim()">Claim Points</button>
         </div>
       </div>
-      
-      <!-- Success State -->
       <div id="claimSuccess" class="claim-success" style="display: none;">
-        <div class="claim-success-icon">🎉</div>
+        <div class="success-icon">🎉</div>
         <h2>Points Claimed!</h2>
-        <div class="points-earned">+<span id="pointsEarned">10</span></div>
-        <p>points added to your account</p>
-        <div class="total-points">
-          Your total: <span id="totalPoints">0</span> points
+        <div class="points-display">
+          <div class="points-earned">+<span id="pointsEarned">0</span></div>
+          <div class="points-label">points earned</div>
         </div>
-        <button class="claim-btn" onclick="closeClaimModal()" style="margin-top: 1.5rem; width: 100%;">
-          Done
-        </button>
+        <p class="total-points">You now have <strong id="totalPoints">0</strong> total points</p>
+        <button class="claim-modal-btn primary" onclick="closeClaimModal()" style="width: 100%; margin-top: 1rem;">Awesome!</button>
       </div>
     </div>
   </div>
 
-  <!-- Lightbox -->
+  <!-- Photo Lightbox -->
   <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightboxClose">
+    <button class="lightbox-close" onclick="closeLightbox()">
       <i class="fas fa-times"></i>
     </button>
-    <img id="lightboxImg" src="" alt="Product Photo">
+    <button class="lightbox-nav lightbox-prev" onclick="lightboxPrev()">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <img id="lightboxImg" src="" alt="Product photo" />
+    <button class="lightbox-nav lightbox-next" onclick="lightboxNext()">
+      <i class="fas fa-chevron-right"></i>
+    </button>
   </div>
 
   <script>
-    // ===== GLOBAL STATE =====
-    let isLoggedIn = false;
-    let currentPhotoIndex = 0;
-    let photos = [];
+    // ===== GLOBALS =====
     let productData = null;
     let rewardsData = null;
+    let photos = [];
+    let currentPhotoIndex = 0;
 
-    // ===== AUTH CHECK =====
-    function checkAuth() {
-      const token = localStorage.getItem('biztrack-auth-token');
-      return !!token;
-    }
+    // ===== INITIALIZATION =====
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
 
-    function setupBackButton() {
-      isLoggedIn = checkAuth();
-      const backButton = document.getElementById('backButton');
-      const backButtonText = document.getElementById('backButtonText');
-      
-      if (isLoggedIn) {
-        backButton.href = 'dashboard.html';
-        backButtonText.textContent = 'Back to Dashboard';
+      if (productId) {
+        loadProduct(productId);
       } else {
-        backButton.href = 'verify.html';
-        backButtonText.textContent = 'Back to Verify';
+        showError('No product ID provided.');
       }
-    }
-
-    // ===== INIT =====
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-
-    if (!productId) {
-      document.getElementById('landingState').style.display = 'block';
-    } else {
-      document.getElementById('productState').style.display = 'block';
-      setupBackButton();
-      loadProduct(productId);
-    }
+    });
 
     // ===== LOAD PRODUCT =====
-    async function loadProduct(id) {
+    async function loadProduct(productId) {
       try {
-        const response = await fetch(`/api/verify-product?id=${id}`);
+        const response = await fetch(`/api/verify-product?id=${encodeURIComponent(productId)}`);
         const data = await response.json();
 
-        if (!data.success) {
+        if (!response.ok || !data.success) {
           throw new Error(data.error || 'Product not found');
         }
 
         productData = data.product;
-        const product = productData;
 
-        // Set product info
-        document.getElementById('productName').textContent = product.productName;
-        document.getElementById('productId').textContent = `Product ID: ${product.productId}`;
-        document.getElementById('sku').textContent = product.sku || 'N/A';
-        document.getElementById('batchNumber').textContent = product.batchNumber || 'N/A';
-        document.getElementById('mintedOn').textContent = new Date(product.timestamp || product.finalizedAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        });
+        // Hide loading, show product
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('productState').style.display = 'block';
 
-        // Show batch item badge if this is from a batch order
-        if (product.batchInfo && product.batchInfo.isBatchOrder) {
-          const badge = document.getElementById('batchItemBadge');
-          const numberText = document.getElementById('batchItemNumber');
-          badge.style.display = 'flex';
-          numberText.textContent = `Item ${product.batchInfo.itemNumber} of ${product.batchInfo.totalInBatch}`;
+        // Populate data
+        document.getElementById('productName').textContent = productData.productName;
+        document.getElementById('productId').textContent = productData.productId;
+
+        // Quick info
+        if (productData.sku) {
+          document.getElementById('skuItem').style.display = 'flex';
+          document.getElementById('skuValue').textContent = productData.sku;
         }
 
-        // Set blockchain links
-        document.getElementById('blockchainLink').href = `https://livenet.xrpl.org/transactions/${product.xrplTxHash}`;
-        document.getElementById('ipfsLink').href = product.ipfsUrl;
+        if (productData.batchNumber) {
+          document.getElementById('batchItem').style.display = 'flex';
+          document.getElementById('batchValue').textContent = productData.batchNumber;
+        }
 
-        // Set verified time
+        // Batch badge (if part of batch order)
+        if (productData.batchInfo && productData.batchInfo.isBatchOrder) {
+          document.getElementById('batchBadge').style.display = 'flex';
+          document.getElementById('batchBadgeValue').textContent = 
+            `Item #${productData.batchInfo.itemNumber} of ${productData.batchInfo.totalInBatch}`;
+        }
+
+        // Mint date
+        const mintDate = new Date(productData.createdAt);
+        document.getElementById('mintDate').textContent = mintDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        // Data hash (truncate for display)
+        if (productData.dataHash) {
+          const hash = productData.dataHash;
+          document.getElementById('dataHash').textContent = hash.length > 40 
+            ? hash.substring(0, 20) + '...' + hash.substring(hash.length - 10)
+            : hash;
+        }
+
+        // Blockchain links
+        document.getElementById('blockchainLink').href = `https://livenet.xrpl.org/transactions/${productData.xrplTxHash}`;
+        document.getElementById('ipfsLink').href = productData.ipfsUrl;
+        document.getElementById('xrplTxLink').href = `https://livenet.xrpl.org/transactions/${productData.xrplTxHash}`;
+
+        // Verified time
         document.getElementById('verifiedTime').textContent = new Date().toLocaleTimeString('en-US', {
           hour: 'numeric',
           minute: '2-digit',
           hour12: true
         });
 
-        // Check for rewards program
+        // Rewards
         if (data.rewards) {
-          loadRewardsSection(data.rewards);
+          loadRewards(data.rewards);
         }
 
-        // Load supply chain timeline if available
-        if (product.supplyChain && product.supplyChain.timeline && product.supplyChain.timeline.length > 0) {
-          loadSupplyChainTimeline(product.supplyChain);
+        // Photos
+        if (productData.photos && productData.photos.length > 0) {
+          photos = productData.photos;
+          loadPhotos();
         }
 
-        // Load photos if available
-        if (product.photos && product.photos.length > 0) {
-          photos = product.photos;
-          loadPhotoGallery();
+        // Notes
+        if (productData.metadata && productData.metadata.notes) {
+          document.getElementById('notesSection').style.display = 'block';
+          document.getElementById('notesContent').textContent = productData.metadata.notes;
         }
 
-        // Load map if location available
-        if (product.location) {
-          loadMap(product.location);
+        // Location/Map
+        if (productData.location && productData.location.latitude && productData.location.longitude) {
+          loadMap(productData.location);
         }
 
-        // Load metadata (filter out internal fields)
-        if (product.metadata && Object.keys(product.metadata).length > 0) {
-          loadMetadata(product.metadata);
+        // Supply chain timeline
+        if (productData.supplyChain && productData.supplyChain.timeline && productData.supplyChain.timeline.length > 0) {
+          loadTimeline(productData.supplyChain.timeline);
         }
 
       } catch (error) {
         console.error('Error loading product:', error);
-        document.getElementById('productName').textContent = 'Product Not Found';
-        alert('Error: ' + error.message);
+        showError(error.message);
       }
     }
 
-    // ===== REWARDS SECTION =====
-    function loadRewardsSection(rewards) {
+    function showError(message) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('errorMessage').textContent = message;
+    }
+
+    // ===== REWARDS =====
+    function loadRewards(rewards) {
       rewardsData = rewards;
-      const section = document.getElementById('rewardsSection');
-      const claimBtn = document.getElementById('claimBtn');
-      const claimedBadge = document.getElementById('claimedBadge');
-      const title = document.getElementById('rewardsTitle');
-      const desc = document.getElementById('rewardsDescription');
-      const businessNameEl = document.getElementById('businessName');
-      const headerBadge = document.getElementById('pointsClaimedBadge');
 
       if (rewards.alreadyClaimed) {
-        // Already claimed - show small badge in header, hide full section
-        section.style.display = 'none';
-        headerBadge.classList.add('show');
+        // Show badge in header, hide rewards section
+        document.getElementById('pointsClaimedBadge').classList.add('show');
+        document.getElementById('rewardsSection').style.display = 'none';
       } else {
-        // Can claim - show full rewards section
-        section.style.display = 'block';
-        headerBadge.classList.remove('show');
+        // Show rewards section
+        document.getElementById('rewardsSection').style.display = 'block';
         
-        if (rewards.businessName) {
-          businessNameEl.textContent = rewards.businessName;
-        }
-
         if (rewards.programName) {
-          title.textContent = rewards.programName;
+          document.getElementById('rewardsTitle').textContent = '🎁 ' + rewards.programName;
         }
+        
+        document.getElementById('rewardsDescription').textContent = 
+          `Earn ${rewards.pointsPerClaim} points for purchasing this product!`;
 
-        desc.textContent = `Earn ${rewards.pointsPerClaim} points for purchasing this product!`;
+        // Show business name if available
+        if (rewards.businessName) {
+          document.getElementById('businessName').style.display = 'block';
+          document.getElementById('businessNameText').textContent = rewards.businessName;
+        }
       }
     }
 
-    // ===== CLAIM MODAL =====
     function openClaimModal() {
       document.getElementById('claimModal').classList.add('active');
       document.getElementById('claimForm').style.display = 'block';
@@ -1698,15 +1343,15 @@
 
     async function submitClaim() {
       const email = document.getElementById('claimEmail').value.trim();
-      const submitBtn = document.getElementById('submitClaimBtn');
+      const btn = document.getElementById('submitClaimBtn');
 
       if (!email || !email.includes('@')) {
         alert('Please enter a valid email address.');
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Claiming...';
+      btn.disabled = true;
+      btn.textContent = 'Claiming...';
 
       try {
         const response = await fetch('/api/claim-points', {
@@ -1725,295 +1370,214 @@
           throw new Error(data.error || 'Failed to claim points');
         }
 
-        // Save email for future use
+        // Save email
         localStorage.setItem('biztrack-rewards-email', email);
 
-        // Show success in modal
+        // Show success
         document.getElementById('claimForm').style.display = 'none';
         document.getElementById('claimSuccess').style.display = 'block';
         document.getElementById('pointsEarned').textContent = data.pointsAwarded;
         document.getElementById('totalPoints').textContent = data.totalPoints;
 
-        // Hide the full rewards section and show header badge
-        const section = document.getElementById('rewardsSection');
-        const headerBadge = document.getElementById('pointsClaimedBadge');
-        
-        section.style.display = 'none';
-        headerBadge.classList.add('show');
+        // Update UI
+        document.getElementById('rewardsSection').style.display = 'none';
+        document.getElementById('pointsClaimedBadge').classList.add('show');
 
       } catch (error) {
         alert('Error: ' + error.message);
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Claim Points';
+        btn.disabled = false;
+        btn.textContent = 'Claim Points';
       }
     }
 
     // Close modal on outside click
     document.getElementById('claimModal').addEventListener('click', (e) => {
-      if (e.target.id === 'claimModal') {
-        closeClaimModal();
-      }
+      if (e.target.id === 'claimModal') closeClaimModal();
     });
 
-    // ===== SUPPLY CHAIN TIMELINE =====
-    function loadSupplyChainTimeline(supplyChain) {
-      const section = document.getElementById('supplyChainSection');
-      const summary = document.getElementById('supplyChainSummary');
-      const timeline = document.getElementById('supplyChainTimeline');
-      
-      section.style.display = 'block';
-
-      const checkpoints = supplyChain.timeline;
-      const totalCheckpoints = checkpoints.length;
-      const locationsWithCoords = checkpoints.filter(cp => cp.latitude && cp.longitude);
-      
-      // Calculate time span
-      let timeSpan = 'N/A';
-      if (checkpoints.length >= 2) {
-        const firstDate = new Date(checkpoints[0].scannedAt);
-        const lastDate = new Date(checkpoints[checkpoints.length - 1].scannedAt);
-        const diffDays = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24));
-        if (diffDays === 0) {
-          const diffHours = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60));
-          timeSpan = diffHours <= 1 ? '< 1 hour' : `${diffHours} hours`;
-        } else {
-          timeSpan = `${diffDays} day${diffDays > 1 ? 's' : ''}`;
-        }
-      }
-
-      summary.innerHTML = `
-        <div class="summary-stat">
-          <div class="summary-stat-value">${totalCheckpoints}</div>
-          <div class="summary-stat-label">Checkpoints</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-stat-value">${locationsWithCoords.length}</div>
-          <div class="summary-stat-label">Locations Tracked</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-stat-value">${timeSpan}</div>
-          <div class="summary-stat-label">Journey Time</div>
-        </div>
-      `;
-
-      timeline.innerHTML = checkpoints.map((cp, index) => `
-        <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-check"></i></div>
-          <div class="timeline-step">Step ${index + 1}</div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <span class="timeline-who">${escapeHtml(cp.scannedByName || 'Unknown')}</span>
-                ${cp.scannedByRole ? `<span class="timeline-role">${escapeHtml(cp.scannedByRole)}</span>` : ''}
-              </div>
-              <span class="timeline-when">${formatDateTime(cp.scannedAt)}</span>
-            </div>
-            ${cp.locationName ? `
-              <div class="timeline-location">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>${escapeHtml(cp.locationName)}</span>
-              </div>
-            ` : ''}
-            ${cp.notes ? `<div class="timeline-notes">${escapeHtml(cp.notes)}</div>` : ''}
-            ${cp.photos && cp.photos.length > 0 ? `
-              <div class="timeline-photos">
-                ${cp.photos.map((photo) => `
-                  <img src="${photo}" alt="Checkpoint photo" onclick="openLightboxPhoto('${photo}')" />
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      if (locationsWithCoords.length >= 2) {
-        showJourneyMap(locationsWithCoords);
-      }
-    }
-
-    function showJourneyMap(locations) {
-      const mapSection = document.getElementById('journeyMapSection');
-      const mapContainer = document.getElementById('journeyMapContainer');
-      
-      mapSection.style.display = 'block';
-
-      const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
-      
-      if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
-        const origin = `${locations[0].latitude},${locations[0].longitude}`;
-        const destination = `${locations[locations.length - 1].latitude},${locations[locations.length - 1].longitude}`;
-        const waypoints = locations.slice(1, -1).map(loc => `${loc.latitude},${loc.longitude}`).join('|');
-        
-        let mapUrl = `https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_MAPS_API_KEY}&origin=${origin}&destination=${destination}&mode=driving`;
-        if (waypoints) {
-          mapUrl += `&waypoints=${waypoints}`;
-        }
-        
-        mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
-      } else {
-        const directionsUrl = `https://www.google.com/maps/dir/${locations.map(l => `${l.latitude},${l.longitude}`).join('/')}`;
-        mapContainer.innerHTML = `
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem; text-align: center;">
-            <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: #10B981;"></i>
-            <p style="color: #64748B; margin: 0;">
-              ${locations.length} locations tracked in this product's journey.<br>
-              <a href="${directionsUrl}" target="_blank" style="color: #4F46E5; font-weight: 600;">
-                View full journey on Google Maps →
-              </a>
-            </p>
-          </div>
-        `;
-      }
-    }
-
-    // ===== PHOTO GALLERY =====
-    function loadPhotoGallery() {
-      const gallery = document.getElementById('photoGallery');
+    // ===== PHOTOS =====
+    function loadPhotos() {
+      const section = document.getElementById('photoSection');
       const track = document.getElementById('photoTrack');
       const dots = document.getElementById('carouselDots');
 
-      gallery.style.display = 'block';
+      section.style.display = 'block';
 
       photos.forEach((photo, index) => {
+        // Slide
         const slide = document.createElement('div');
         slide.className = 'photo-slide';
         slide.innerHTML = `<img src="${photo}" alt="Product photo ${index + 1}">`;
         slide.addEventListener('click', () => openLightbox(index));
         track.appendChild(slide);
 
+        // Dot
         const dot = document.createElement('div');
         dot.className = index === 0 ? 'dot active' : 'dot';
         dot.addEventListener('click', () => goToSlide(index));
         dots.appendChild(dot);
       });
 
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
+      // Hide controls if only 1 photo
       if (photos.length <= 1) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
+        document.getElementById('carouselControls').style.display = 'none';
         dots.style.display = 'none';
       }
 
-      prevBtn.addEventListener('click', () => {
+      // Event listeners
+      document.getElementById('prevBtn').addEventListener('click', () => {
         currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
-        updateCarousel();
+        goToSlide(currentPhotoIndex);
       });
 
-      nextBtn.addEventListener('click', () => {
+      document.getElementById('nextBtn').addEventListener('click', () => {
         currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-        updateCarousel();
-      });
-    }
-
-    function updateCarousel() {
-      const track = document.getElementById('photoTrack');
-      const dots = document.querySelectorAll('.dot');
-      track.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentPhotoIndex);
+        goToSlide(currentPhotoIndex);
       });
     }
 
     function goToSlide(index) {
       currentPhotoIndex = index;
-      updateCarousel();
+      const track = document.getElementById('photoTrack');
+      track.style.transform = `translateX(-${index * 100}%)`;
+
+      // Update dots
+      document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
     }
 
+    // Lightbox
     function openLightbox(index) {
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightboxImg');
-      lightboxImg.src = photos[index];
-      lightbox.classList.add('active');
+      currentPhotoIndex = index;
+      document.getElementById('lightbox').classList.add('active');
+      document.getElementById('lightboxImg').src = photos[index];
     }
 
-    function openLightboxPhoto(src) {
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightboxImg');
-      lightboxImg.src = src;
-      lightbox.classList.add('active');
-    }
-
-    document.getElementById('lightboxClose').addEventListener('click', () => {
+    function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
-    });
+    }
 
-    document.getElementById('lightbox').addEventListener('click', (e) => {
-      if (e.target.id === 'lightbox') {
-        document.getElementById('lightbox').classList.remove('active');
+    function lightboxPrev() {
+      currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+      document.getElementById('lightboxImg').src = photos[currentPhotoIndex];
+    }
+
+    function lightboxNext() {
+      currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+      document.getElementById('lightboxImg').src = photos[currentPhotoIndex];
+    }
+
+    // Close lightbox on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeClaimModal();
       }
     });
 
     // ===== MAP =====
     function loadMap(location) {
-      const mapSection = document.getElementById('mapSection');
-      const mapContainer = document.getElementById('mapContainer');
-      const coords = document.getElementById('coordinates');
-      const mapsLink = document.getElementById('viewOnGoogleMaps');
-
-      mapSection.style.display = 'block';
-
-      coords.textContent = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
-
-      const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
-      
-      if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
-        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.latitude},${location.longitude}&zoom=15`;
-        mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
-      } else {
-        mapContainer.innerHTML = `
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem;">
-            <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: #64748B;"></i>
-            <p style="color: #64748B; text-align: center; margin: 0;">
-              <a href="https://www.google.com/maps?q=${location.latitude},${location.longitude}" target="_blank" style="color: #4F46E5; font-weight: 600;">
-                View location on Google Maps →
-              </a>
-            </p>
-          </div>
-        `;
-      }
-
-      mapsLink.href = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-    }
-
-    // ===== METADATA =====
-    function loadMetadata(metadata) {
-      const section = document.getElementById('metadataSection');
-      const content = document.getElementById('metadataContent');
-
-      // Filter out internal/system fields
-      const excludeKeys = ['batchDisplayName', 'batchSkuPrefix', 'sameSku', 'notes'];
-      const displayableMetadata = Object.entries(metadata).filter(([key]) => !excludeKeys.includes(key));
-
-      // Include notes if present (user-facing)
-      if (metadata.notes) {
-        displayableMetadata.unshift(['Notes', metadata.notes]);
-      }
-
-      if (displayableMetadata.length === 0) {
-        return;
-      }
+      const section = document.getElementById('mapSection');
+      const container = document.getElementById('mapContainer');
+      const coords = document.getElementById('mapCoords');
+      const link = document.getElementById('googleMapsLink');
 
       section.style.display = 'block';
 
-      displayableMetadata.forEach(([key, value]) => {
-        const item = document.createElement('div');
-        item.className = 'metadata-item';
-        item.innerHTML = `
-          <span class="metadata-key">${escapeHtml(formatMetadataKey(key))}:</span>
-          <span class="metadata-value">${escapeHtml(String(value))}</span>
+      coords.textContent = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+      link.href = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+
+      // Google Maps embed
+      const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
+      
+      if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.latitude},${location.longitude}&zoom=14`;
+        container.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
+      } else {
+        container.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem;">
+            <i class="fas fa-map-marked-alt" style="font-size: 2.5rem; color: #10B981;"></i>
+            <a href="${link.href}" target="_blank" style="color: #4F46E5; font-weight: 600;">
+              View on Google Maps →
+            </a>
+          </div>
         `;
-        content.appendChild(item);
-      });
+      }
     }
 
-    function formatMetadataKey(key) {
-      // Convert camelCase to Title Case
-      return key
-        .replace(/([A-Z])/g, ' $1')
-        .replace(/^./, str => str.toUpperCase())
-        .trim();
+    // ===== TIMELINE (Accordion Style) =====
+    function loadTimeline(checkpoints) {
+      const section = document.getElementById('timelineSection');
+      const content = document.getElementById('timelineContent');
+      const countEl = document.getElementById('timelineCount');
+
+      section.style.display = 'block';
+      countEl.textContent = checkpoints.length;
+
+      content.innerHTML = checkpoints.map((cp, index) => `
+        <div class="timeline-entry">
+          <div class="timeline-entry-header" onclick="toggleTimelineEntry(${index})">
+            <div class="timeline-entry-number">${index + 1}</div>
+            <div class="timeline-entry-info">
+              <div class="timeline-entry-title">${escapeHtml(cp.stage || cp.location || 'Checkpoint ' + (index + 1))}</div>
+              <div class="timeline-entry-date">${formatDateTime(cp.timestamp)}</div>
+            </div>
+            <i class="fas fa-chevron-down timeline-entry-arrow"></i>
+          </div>
+          <div class="timeline-entry-details" id="timelineEntry${index}">
+            ${cp.notes ? `<div class="timeline-entry-notes">${escapeHtml(cp.notes)}</div>` : ''}
+            ${cp.latitude && cp.longitude ? `
+              <div class="timeline-entry-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${cp.latitude.toFixed(4)}, ${cp.longitude.toFixed(4)}</span>
+                <a href="https://www.google.com/maps?q=${cp.latitude},${cp.longitude}" target="_blank" style="color: #4F46E5; margin-left: 0.5rem;">View</a>
+              </div>
+            ` : ''}
+            ${cp.photos && cp.photos.length > 0 ? `
+              <div class="timeline-entry-photos">
+                ${cp.photos.map(photo => `
+                  <img src="${photo}" alt="Checkpoint photo" class="timeline-entry-photo" onclick="openLightboxPhoto('${photo}')" />
+                `).join('')}
+              </div>
+            ` : ''}
+            ${!cp.notes && !(cp.latitude && cp.longitude) && !(cp.photos && cp.photos.length > 0) ? `
+              <div class="timeline-entry-notes" style="color: #94A3B8; font-style: italic;">No additional details recorded.</div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleTimeline() {
+      const header = document.querySelector('.timeline-header');
+      const content = document.getElementById('timelineContent');
+      
+      header.classList.toggle('open');
+      content.classList.toggle('show');
+    }
+
+    function toggleTimelineEntry(index) {
+      const header = document.querySelectorAll('.timeline-entry-header')[index];
+      const details = document.getElementById('timelineEntry' + index);
+      
+      header.classList.toggle('open');
+      details.classList.toggle('show');
+    }
+
+    function openLightboxPhoto(photoUrl) {
+      document.getElementById('lightbox').classList.add('active');
+      document.getElementById('lightboxImg').src = photoUrl;
+    }
+
+    // ===== BLOCKCHAIN DETAILS TOGGLE =====
+    function toggleBlockchainDetails() {
+      const header = document.querySelector('.blockchain-header');
+      const content = document.getElementById('blockchainContent');
+      
+      header.classList.toggle('open');
+      content.classList.toggle('show');
     }
 
     // ===== HELPERS =====
@@ -2035,6 +1599,5 @@
       });
     }
   </script>
-  <script src="js/sidebar.js"></script>
 </body>
 </html>

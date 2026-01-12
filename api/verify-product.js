@@ -1,4 +1,5 @@
 // api/verify-product.js - Public product verification endpoint
+// Updated for Vercel Blob storage (not IPFS)
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -44,20 +45,42 @@ module.exports = async (req, res) => {
 
     const product = result.rows[0];
 
-    // Build photo URLs from stored hashes
+    // ==========================================
+    // PHOTOS - Check both photo_urls (new) and photo_hashes (old)
+    // ==========================================
     let photos = [];
-    if (product.photo_hashes) {
+    
+    // New format: Vercel Blob URLs stored directly
+    if (product.photo_urls) {
+      try {
+        const urls = typeof product.photo_urls === 'string' 
+          ? JSON.parse(product.photo_urls) 
+          : product.photo_urls;
+        if (Array.isArray(urls)) {
+          photos = urls;
+        }
+      } catch (e) {
+        console.error('Error parsing photo_urls:', e);
+      }
+    }
+    
+    // Fallback: Old format with IPFS hashes
+    if (photos.length === 0 && product.photo_hashes) {
       try {
         const hashes = typeof product.photo_hashes === 'string' 
           ? JSON.parse(product.photo_hashes) 
           : product.photo_hashes;
-        photos = hashes.map(hash => `https://gateway.pinata.cloud/ipfs/${hash}`);
+        if (Array.isArray(hashes)) {
+          photos = hashes.map(hash => `https://gateway.pinata.cloud/ipfs/${hash}`);
+        }
       } catch (e) {
-        console.error('Error parsing photo hashes:', e);
+        console.error('Error parsing photo_hashes:', e);
       }
     }
 
-    // Parse location data
+    // ==========================================
+    // LOCATION DATA
+    // ==========================================
     let location = null;
     if (product.location_data) {
       try {
@@ -65,11 +88,13 @@ module.exports = async (req, res) => {
           ? JSON.parse(product.location_data)
           : product.location_data;
       } catch (e) {
-        console.error('Error parsing location data:', e);
+        console.error('Error parsing location_data:', e);
       }
     }
 
-    // Parse metadata
+    // ==========================================
+    // METADATA
+    // ==========================================
     let metadata = {};
     if (product.metadata) {
       try {
@@ -81,42 +106,55 @@ module.exports = async (req, res) => {
       }
     }
 
-    // Get supply chain checkpoints if this is a finalized production product
+    // ==========================================
+    // SUPPLY CHAIN CHECKPOINTS
+    // ==========================================
     let supplyChain = null;
-    if (product.mode === 'production' || product.checkpoints) {
-      const checkpointsResult = await pool.query(
-        `SELECT * FROM checkpoints 
-         WHERE product_id = $1 
-         ORDER BY scanned_at ASC`,
-        [id]
-      );
+    const checkpointsResult = await pool.query(
+      `SELECT * FROM checkpoints 
+       WHERE product_id = $1 
+       ORDER BY scanned_at ASC`,
+      [id]
+    );
 
-      if (checkpointsResult.rows.length > 0) {
-        supplyChain = {
-          timeline: checkpointsResult.rows.map(cp => ({
-            scannedAt: cp.scanned_at,
+    if (checkpointsResult.rows.length > 0) {
+      supplyChain = {
+        timeline: checkpointsResult.rows.map(cp => {
+          // Parse checkpoint photos
+          let cpPhotos = [];
+          if (cp.photo_urls) {
+            try {
+              cpPhotos = typeof cp.photo_urls === 'string' 
+                ? JSON.parse(cp.photo_urls) 
+                : cp.photo_urls;
+            } catch (e) {}
+          }
+
+          return {
+            stage: cp.location_name || cp.scanned_by_role || 'Checkpoint',
+            timestamp: cp.scanned_at,
             scannedByName: cp.scanned_by_name,
             scannedByRole: cp.scanned_by_role,
-            locationName: cp.location_name,
-            latitude: cp.latitude,
-            longitude: cp.longitude,
+            location: cp.location_name,
+            latitude: cp.latitude ? parseFloat(cp.latitude) : null,
+            longitude: cp.longitude ? parseFloat(cp.longitude) : null,
             notes: cp.notes,
-            photos: cp.photo_urls ? (typeof cp.photo_urls === 'string' ? JSON.parse(cp.photo_urls) : cp.photo_urls) : []
-          }))
-        };
-      }
+            photos: cpPhotos
+          };
+        })
+      };
     }
 
-    // Build batch info if applicable
+    // ==========================================
+    // BATCH INFO
+    // ==========================================
     let batchInfo = null;
     if (product.batch_group_id) {
-      // Get count of items in this batch
       const batchCountResult = await pool.query(
         `SELECT COUNT(*) as count FROM products WHERE batch_group_id = $1`,
         [product.batch_group_id]
       );
       
-      // Get position in batch (simplified - based on creation order)
       const positionResult = await pool.query(
         `SELECT COUNT(*) as position FROM products 
          WHERE batch_group_id = $1 AND created_at <= $2`,
@@ -131,7 +169,9 @@ module.exports = async (req, res) => {
       };
     }
 
-    // Check rewards status
+    // ==========================================
+    // REWARDS STATUS
+    // ==========================================
     let rewards = null;
     if (product.rewards_enabled) {
       const claimKey = product.batch_group_id || product.product_id;
@@ -152,7 +192,9 @@ module.exports = async (req, res) => {
       };
     }
 
-    // Build response
+    // ==========================================
+    // BUILD RESPONSE
+    // ==========================================
     const response = {
       success: true,
       product: {
@@ -160,19 +202,18 @@ module.exports = async (req, res) => {
         productName: product.product_name,
         sku: product.sku,
         batchNumber: product.batch_number,
-        timestamp: product.created_at,
+        createdAt: product.created_at,
         finalizedAt: product.finalized_at,
         mode: product.mode,
         isFinalized: product.is_finalized,
         
         // Blockchain info
         xrplTxHash: product.xrpl_tx_hash,
-        ipfsHash: product.ipfs_hash,
-        ipfsUrl: product.ipfs_hash ? `https://gateway.pinata.cloud/ipfs/${product.ipfs_hash}` : null,
+        dataHash: metadata.dataHash || null,
         
-        // QR codes
-        qrCodeUrl: product.qr_code_ipfs_hash ? `https://gateway.pinata.cloud/ipfs/${product.qr_code_ipfs_hash}` : null,
-        inventoryQrCodeUrl: product.inventory_qr_code_ipfs_hash ? `https://gateway.pinata.cloud/ipfs/${product.inventory_qr_code_ipfs_hash}` : null,
+        // QR code URLs (Vercel Blob)
+        qrCodeUrl: product.qr_code_url,
+        inventoryQrCodeUrl: product.inventory_qr_code_url,
         
         // Rich data
         photos,

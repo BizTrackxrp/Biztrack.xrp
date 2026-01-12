@@ -229,28 +229,23 @@ module.exports = async (req, res) => {
       if (isBatchOrder && sameSku) {
         productMetadata.sameSku = true;
       }
-      // Store photos and location in metadata (matching live mode pattern)
-      if (photoUrls.length > 0) {
-        productMetadata.photoUrls = photoUrls;
-      }
-      if (location) {
-        productMetadata.location = location;
-      }
       
       await pool.query(
         `INSERT INTO products (
           product_id, product_name, sku, batch_number, 
           qr_code_url, metadata, user_id,
           is_batch_group, batch_group_id, batch_quantity,
-          mode, is_finalized
+          mode, is_finalized, photo_urls, location_data
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           productId, productName, skuPrefix || null, batchNumber || null, 
           trackingQrUrl, productMetadata, user.id,
           is_batch_group, batchGroupId,
           isExcelBatch ? excelBatchTotal : quantity,
-          'production', false
+          'production', false,
+          photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
+          location ? JSON.stringify(location) : null
         ]
       );
 
@@ -450,22 +445,27 @@ module.exports = async (req, res) => {
         productMetadata.batchSkuPrefix = skuPrefix;
       }
       
+      // ==========================================
+      // FIXED: Now includes photo_urls and location_data!
+      // ==========================================
       await pool.query(
         `INSERT INTO products (
           product_id, product_name, sku, batch_number, 
           xrpl_tx_hash, qr_code_url, inventory_qr_code_url,
           metadata, user_id,
           is_batch_group, batch_group_id, batch_quantity,
-          mode, is_finalized
+          mode, is_finalized, photo_urls, location_data
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
         [
           productId, productName, productSku, batchNumber, 
           txHash, smartQrUrl, dumbQrUrl,
           productMetadata, user.id,
           isBatchLeader, batchGroupId,
           isExcelBatch ? excelBatchTotal : (isBatchOrder ? quantity : null),
-          'live', true
+          'live', true,
+          photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
+          location ? JSON.stringify(location) : null
         ]
       );
 

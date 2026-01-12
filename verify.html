@@ -144,12 +144,8 @@
     }
 
     @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     .verify-landing h1 {
@@ -273,14 +269,8 @@
     }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .verified-badge i {
@@ -310,11 +300,15 @@
       border: 1px solid #E2E8F0;
     }
 
+    /* TEXT OVERFLOW FIXES */
     .product-name {
       font-size: 2.5rem;
       font-weight: 800;
       color: #1E293B;
       margin-bottom: 1rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
 
     .product-id {
@@ -325,6 +319,9 @@
       padding: 0.5rem 1rem;
       border-radius: 8px;
       display: inline-block;
+      max-width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     /* Info Cards */
@@ -342,6 +339,7 @@
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #E2E8F0;
       transition: all 0.2s;
+      overflow: hidden;
     }
 
     .info-card:hover {
@@ -362,6 +360,222 @@
       font-size: 1.5rem;
       font-weight: 700;
       color: #1E293B;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* ========================================== */
+    /* REWARDS / POINTS CLAIM SECTION            */
+    /* ========================================== */
+    .rewards-section {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 2px solid #F59E0B;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .rewards-section.claimed {
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border-color: #10B981;
+    }
+
+    .rewards-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .rewards-section h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #92400E;
+      margin-bottom: 0.5rem;
+    }
+
+    .rewards-section.claimed h3 {
+      color: #065F46;
+    }
+
+    .rewards-section p {
+      color: #B45309;
+      margin-bottom: 1.5rem;
+    }
+
+    .rewards-section.claimed p {
+      color: #047857;
+    }
+
+    .claim-btn {
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .claim-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    .claim-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .claimed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #10B981;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    /* Claim Modal */
+    .claim-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .claim-modal.active {
+      display: flex;
+    }
+
+    .claim-modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      animation: modalSlide 0.3s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .claim-modal-content h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #1E293B;
+    }
+
+    .claim-modal-content p {
+      color: #64748B;
+      margin-bottom: 1.5rem;
+    }
+
+    .claim-modal-content input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .claim-modal-content input:focus {
+      outline: none;
+      border-color: #F59E0B;
+    }
+
+    .claim-modal-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .claim-modal-buttons button {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .claim-cancel-btn {
+      background: #F1F5F9;
+      color: #64748B;
+      border: none;
+    }
+
+    .claim-cancel-btn:hover {
+      background: #E2E8F0;
+    }
+
+    .claim-submit-btn {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      border: none;
+    }
+
+    .claim-submit-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .claim-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Success State */
+    .claim-success {
+      padding: 2rem;
+    }
+
+    .claim-success-icon {
+      font-size: 4rem;
+      color: #10B981;
+      margin-bottom: 1rem;
+    }
+
+    .claim-success h2 {
+      color: #065F46;
+      margin-bottom: 0.5rem;
+    }
+
+    .points-earned {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #F59E0B;
+      margin: 1rem 0;
+    }
+
+    .total-points {
+      background: #FEF3C7;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    .total-points span {
+      font-weight: 700;
+      color: #D97706;
     }
 
     /* Batch Item Badge */
@@ -573,6 +787,8 @@
       border-radius: 8px;
       margin-top: 0.5rem;
       border-left: 3px solid #10B981;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .timeline-photos {
@@ -790,6 +1006,7 @@
 
     .map-coords-text {
       flex: 1;
+      min-width: 200px;
     }
 
     .map-coords-label {
@@ -802,6 +1019,28 @@
       font-family: 'Courier New', monospace;
       font-weight: 600;
       color: #1E293B;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .map-link-btn {
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      font-size: 0.875rem;
+      background: white;
+      color: #4F46E5;
+      border: 2px solid #4F46E5;
+      border-radius: 10px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .map-link-btn:hover {
+      background: #4F46E5;
+      color: white;
     }
 
     /* Metadata Section */
@@ -831,17 +1070,24 @@
       margin-bottom: 0.75rem;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .metadata-key {
       font-weight: 600;
       color: #64748B;
+      flex-shrink: 0;
     }
 
     .metadata-value {
       color: #1E293B;
       font-weight: 500;
+      text-align: right;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 70%;
     }
 
     /* Action Buttons */
@@ -945,7 +1191,7 @@
       transform: rotate(90deg);
     }
 
-    /* Responsive - NO horizontal sidebar (let sidebar.js handle mobile) */
+    /* Responsive */
     @media (max-width: 768px) {
       .main-content {
         margin-left: 0;
@@ -963,6 +1209,10 @@
 
       .verify-landing h1 {
         font-size: 2rem;
+      }
+
+      .product-view {
+        padding: 1rem;
       }
 
       .product-name {
@@ -1008,6 +1258,21 @@
 
       .batch-item-number {
         font-size: 1.1rem;
+      }
+
+      .metadata-value {
+        max-width: 100%;
+        text-align: left;
+      }
+
+      .map-coords {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .map-link-btn {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -1085,6 +1350,20 @@
         <span class="product-id" id="productId">Product ID: ...</span>
       </div>
 
+      <!-- Rewards Section (shown if business has rewards enabled) -->
+      <div class="rewards-section" id="rewardsSection" style="display: none;">
+        <div class="rewards-icon">🎁</div>
+        <h3 id="rewardsTitle">Claim Your Points!</h3>
+        <p id="rewardsDescription">Earn rewards for purchasing this product.</p>
+        <button class="claim-btn" id="claimBtn" onclick="openClaimModal()">
+          <i class="fas fa-gift"></i> Claim Points
+        </button>
+        <div class="claimed-badge" id="claimedBadge" style="display: none;">
+          <i class="fas fa-check-circle"></i>
+          <span>Points Already Claimed</span>
+        </div>
+      </div>
+
       <!-- Info Cards -->
       <div class="info-grid">
         <div class="info-card">
@@ -1153,8 +1432,8 @@
             <div class="map-coords-label">Coordinates:</div>
             <div class="map-coords-value" id="coordinates">-</div>
           </div>
-          <a href="#" id="viewOnGoogleMaps" target="_blank" class="action-btn-secondary" style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.875rem;">
-            <i class="fas fa-external-link-alt"></i> View on Google Maps
+          <a href="#" id="viewOnGoogleMaps" target="_blank" class="map-link-btn">
+            <i class="fas fa-external-link-alt"></i> Open in Google Maps
           </a>
         </div>
       </div>
@@ -1183,6 +1462,41 @@
 
   </main>
 
+  <!-- Claim Points Modal -->
+  <div class="claim-modal" id="claimModal">
+    <div class="claim-modal-content" id="claimModalContent">
+      <!-- Initial State -->
+      <div id="claimForm">
+        <h2>🎁 Claim Your Points</h2>
+        <p>Enter your email to earn points from <strong id="businessName">this business</strong>.</p>
+        <input type="email" id="claimEmail" placeholder="your@email.com" />
+        <p style="font-size: 0.8rem; color: #94A3B8; margin-top: -0.5rem;">
+          Use the same email each time to accumulate points for discounts!
+        </p>
+        <div class="claim-modal-buttons">
+          <button class="claim-cancel-btn" onclick="closeClaimModal()">Cancel</button>
+          <button class="claim-submit-btn" id="submitClaimBtn" onclick="submitClaim()">
+            Claim Points
+          </button>
+        </div>
+      </div>
+      
+      <!-- Success State -->
+      <div id="claimSuccess" class="claim-success" style="display: none;">
+        <div class="claim-success-icon">🎉</div>
+        <h2>Points Claimed!</h2>
+        <div class="points-earned">+<span id="pointsEarned">10</span></div>
+        <p>points added to your account</p>
+        <div class="total-points">
+          Your total: <span id="totalPoints">0</span> points
+        </div>
+        <button class="claim-btn" onclick="closeClaimModal()" style="margin-top: 1.5rem; width: 100%;">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose">
@@ -1192,9 +1506,14 @@
   </div>
 
   <script>
-    // ===== SIMPLE AUTH CHECK FOR BACK BUTTON =====
+    // ===== GLOBAL STATE =====
     let isLoggedIn = false;
-    
+    let currentPhotoIndex = 0;
+    let photos = [];
+    let productData = null;
+    let rewardsData = null;
+
+    // ===== AUTH CHECK =====
     function checkAuth() {
       const token = localStorage.getItem('biztrack-auth-token');
       return !!token;
@@ -1214,11 +1533,7 @@
       }
     }
 
-    let currentPhotoIndex = 0;
-    let photos = [];
-    let allLightboxPhotos = [];
-
-    // Get product ID from URL
+    // ===== INIT =====
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
@@ -1230,6 +1545,7 @@
       loadProduct(productId);
     }
 
+    // ===== LOAD PRODUCT =====
     async function loadProduct(id) {
       try {
         const response = await fetch(`/api/verify-product?id=${id}`);
@@ -1239,7 +1555,8 @@
           throw new Error(data.error || 'Product not found');
         }
 
-        const product = data.product;
+        productData = data.product;
+        const product = productData;
 
         // Set product info
         document.getElementById('productName').textContent = product.productName;
@@ -1271,6 +1588,11 @@
           hour12: true
         });
 
+        // Check for rewards program
+        if (data.rewards) {
+          loadRewardsSection(data.rewards);
+        }
+
         // Load supply chain timeline if available
         if (product.supplyChain && product.supplyChain.timeline && product.supplyChain.timeline.length > 0) {
           loadSupplyChainTimeline(product.supplyChain);
@@ -1287,7 +1609,7 @@
           loadMap(product.location);
         }
 
-        // Load metadata
+        // Load metadata (filter out internal fields)
         if (product.metadata && Object.keys(product.metadata).length > 0) {
           loadMetadata(product.metadata);
         }
@@ -1299,9 +1621,119 @@
       }
     }
 
-    // ==========================================
-    // SUPPLY CHAIN TIMELINE
-    // ==========================================
+    // ===== REWARDS SECTION =====
+    function loadRewardsSection(rewards) {
+      rewardsData = rewards;
+      const section = document.getElementById('rewardsSection');
+      const claimBtn = document.getElementById('claimBtn');
+      const claimedBadge = document.getElementById('claimedBadge');
+      const title = document.getElementById('rewardsTitle');
+      const desc = document.getElementById('rewardsDescription');
+      const businessNameEl = document.getElementById('businessName');
+
+      section.style.display = 'block';
+      
+      if (rewards.businessName) {
+        businessNameEl.textContent = rewards.businessName;
+      }
+
+      if (rewards.programName) {
+        title.textContent = rewards.programName;
+      }
+
+      if (rewards.alreadyClaimed) {
+        // Already claimed state
+        section.classList.add('claimed');
+        claimBtn.style.display = 'none';
+        claimedBadge.style.display = 'inline-flex';
+        title.textContent = '✓ Points Already Claimed';
+        desc.textContent = `This ${rewards.claimType === 'batch' ? 'order' : 'product'} was claimed on ${new Date(rewards.claimedAt).toLocaleDateString()}.`;
+      } else {
+        // Can claim state
+        desc.textContent = `Earn ${rewards.pointsPerClaim} points for purchasing this product!`;
+      }
+    }
+
+    // ===== CLAIM MODAL =====
+    function openClaimModal() {
+      document.getElementById('claimModal').classList.add('active');
+      document.getElementById('claimForm').style.display = 'block';
+      document.getElementById('claimSuccess').style.display = 'none';
+      document.getElementById('claimEmail').value = localStorage.getItem('biztrack-rewards-email') || '';
+      document.getElementById('claimEmail').focus();
+    }
+
+    function closeClaimModal() {
+      document.getElementById('claimModal').classList.remove('active');
+    }
+
+    async function submitClaim() {
+      const email = document.getElementById('claimEmail').value.trim();
+      const submitBtn = document.getElementById('submitClaimBtn');
+
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Claiming...';
+
+      try {
+        const response = await fetch('/api/claim-points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: productData.productId,
+            batchGroupId: productData.batchInfo?.batchGroupId || null,
+            email: email
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to claim points');
+        }
+
+        // Save email for future use
+        localStorage.setItem('biztrack-rewards-email', email);
+
+        // Show success
+        document.getElementById('claimForm').style.display = 'none';
+        document.getElementById('claimSuccess').style.display = 'block';
+        document.getElementById('pointsEarned').textContent = data.pointsAwarded;
+        document.getElementById('totalPoints').textContent = data.totalPoints;
+
+        // Update the rewards section
+        const section = document.getElementById('rewardsSection');
+        const claimBtn = document.getElementById('claimBtn');
+        const claimedBadge = document.getElementById('claimedBadge');
+        const title = document.getElementById('rewardsTitle');
+        const desc = document.getElementById('rewardsDescription');
+
+        section.classList.add('claimed');
+        claimBtn.style.display = 'none';
+        claimedBadge.style.display = 'inline-flex';
+        title.textContent = '✓ Points Claimed!';
+        desc.textContent = `You earned ${data.pointsAwarded} points!`;
+
+      } catch (error) {
+        alert('Error: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Claim Points';
+      }
+    }
+
+    // Close modal on outside click
+    document.getElementById('claimModal').addEventListener('click', (e) => {
+      if (e.target.id === 'claimModal') {
+        closeClaimModal();
+      }
+    });
+
+    // ===== SUPPLY CHAIN TIMELINE =====
     function loadSupplyChainTimeline(supplyChain) {
       const section = document.getElementById('supplyChainSection');
       const summary = document.getElementById('supplyChainSummary');
@@ -1309,11 +1741,8 @@
       
       section.style.display = 'block';
 
-      // Calculate journey stats
       const checkpoints = supplyChain.timeline;
       const totalCheckpoints = checkpoints.length;
-      
-      // Calculate locations with coordinates
       const locationsWithCoords = checkpoints.filter(cp => cp.latitude && cp.longitude);
       
       // Calculate time span
@@ -1330,7 +1759,6 @@
         }
       }
 
-      // Render summary stats
       summary.innerHTML = `
         <div class="summary-stat">
           <div class="summary-stat-value">${totalCheckpoints}</div>
@@ -1346,7 +1774,6 @@
         </div>
       `;
 
-      // Render timeline
       timeline.innerHTML = checkpoints.map((cp, index) => `
         <div class="timeline-item">
           <div class="timeline-dot"><i class="fas fa-check"></i></div>
@@ -1368,7 +1795,7 @@
             ${cp.notes ? `<div class="timeline-notes">${escapeHtml(cp.notes)}</div>` : ''}
             ${cp.photos && cp.photos.length > 0 ? `
               <div class="timeline-photos">
-                ${cp.photos.map((photo, pIdx) => `
+                ${cp.photos.map((photo) => `
                   <img src="${photo}" alt="Checkpoint photo" onclick="openLightboxPhoto('${photo}')" />
                 `).join('')}
               </div>
@@ -1377,7 +1804,6 @@
         </div>
       `).join('');
 
-      // Show journey map if we have multiple locations
       if (locationsWithCoords.length >= 2) {
         showJourneyMap(locationsWithCoords);
       }
@@ -1389,16 +1815,9 @@
       
       mapSection.style.display = 'block';
 
-      // Build path string for Google Maps Static API
-      const pathPoints = locations.map(loc => `${loc.latitude},${loc.longitude}`).join('|');
-      const markers = locations.map((loc, idx) => `markers=color:green%7Clabel:${idx + 1}%7C${loc.latitude},${loc.longitude}`).join('&');
-      
-      // Use embed API for interactive map
-      const center = locations[Math.floor(locations.length / 2)];
       const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
       
       if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
-        // Create waypoints for directions
         const origin = `${locations[0].latitude},${locations[0].longitude}`;
         const destination = `${locations[locations.length - 1].latitude},${locations[locations.length - 1].longitude}`;
         const waypoints = locations.slice(1, -1).map(loc => `${loc.latitude},${loc.longitude}`).join('|');
@@ -1410,13 +1829,13 @@
         
         mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
       } else {
-        // Fallback without API key
+        const directionsUrl = `https://www.google.com/maps/dir/${locations.map(l => `${l.latitude},${l.longitude}`).join('/')}`;
         mapContainer.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem; text-align: center;">
             <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: #10B981;"></i>
             <p style="color: #64748B; margin: 0;">
               ${locations.length} locations tracked in this product's journey.<br>
-              <a href="https://www.google.com/maps/dir/${locations.map(l => `${l.latitude},${l.longitude}`).join('/')}" target="_blank" style="color: #4F46E5; font-weight: 600;">
+              <a href="${directionsUrl}" target="_blank" style="color: #4F46E5; font-weight: 600;">
                 View full journey on Google Maps →
               </a>
             </p>
@@ -1425,9 +1844,7 @@
       }
     }
 
-    // ==========================================
-    // PHOTO GALLERY
-    // ==========================================
+    // ===== PHOTO GALLERY =====
     function loadPhotoGallery() {
       const gallery = document.getElementById('photoGallery');
       const track = document.getElementById('photoTrack');
@@ -1454,10 +1871,6 @@
         prevBtn.style.display = 'none';
         nextBtn.style.display = 'none';
         dots.style.display = 'none';
-      } else {
-        prevBtn.style.display = 'flex';
-        nextBtn.style.display = 'flex';
-        dots.style.display = 'flex';
       }
 
       prevBtn.addEventListener('click', () => {
@@ -1474,9 +1887,7 @@
     function updateCarousel() {
       const track = document.getElementById('photoTrack');
       const dots = document.querySelectorAll('.dot');
-
       track.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
-
       dots.forEach((dot, index) => {
         dot.classList.toggle('active', index === currentPhotoIndex);
       });
@@ -1490,7 +1901,6 @@
     function openLightbox(index) {
       const lightbox = document.getElementById('lightbox');
       const lightboxImg = document.getElementById('lightboxImg');
-
       lightboxImg.src = photos[index];
       lightbox.classList.add('active');
     }
@@ -1498,7 +1908,6 @@
     function openLightboxPhoto(src) {
       const lightbox = document.getElementById('lightbox');
       const lightboxImg = document.getElementById('lightboxImg');
-
       lightboxImg.src = src;
       lightbox.classList.add('active');
     }
@@ -1513,9 +1922,7 @@
       }
     });
 
-    // ==========================================
-    // MAP
-    // ==========================================
+    // ===== MAP =====
     function loadMap(location) {
       const mapSection = document.getElementById('mapSection');
       const mapContainer = document.getElementById('mapContainer');
@@ -1528,49 +1935,65 @@
 
       const GOOGLE_MAPS_API_KEY = 'AIzaSyDZQcXMsi4KMnDwvv9aeEkUWDQa9ObqN1U';
       
-      if (GOOGLE_MAPS_API_KEY === 'YOUR_API_KEY_HERE') {
+      if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.latitude},${location.longitude}&zoom=15`;
+        mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
+      } else {
         mapContainer.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1rem; padding: 2rem;">
             <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: #64748B;"></i>
             <p style="color: #64748B; text-align: center; margin: 0;">
-              Google Maps API key not configured.<br>
               <a href="https://www.google.com/maps?q=${location.latitude},${location.longitude}" target="_blank" style="color: #4F46E5; font-weight: 600;">
                 View location on Google Maps →
               </a>
             </p>
           </div>
         `;
-      } else {
-        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.latitude},${location.longitude}&zoom=15`;
-        mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>`;
       }
 
       mapsLink.href = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
     }
 
-    // ==========================================
-    // METADATA
-    // ==========================================
+    // ===== METADATA =====
     function loadMetadata(metadata) {
       const section = document.getElementById('metadataSection');
       const content = document.getElementById('metadataContent');
 
+      // Filter out internal/system fields
+      const excludeKeys = ['batchDisplayName', 'batchSkuPrefix', 'sameSku', 'notes'];
+      const displayableMetadata = Object.entries(metadata).filter(([key]) => !excludeKeys.includes(key));
+
+      // Include notes if present (user-facing)
+      if (metadata.notes) {
+        displayableMetadata.unshift(['Notes', metadata.notes]);
+      }
+
+      if (displayableMetadata.length === 0) {
+        return;
+      }
+
       section.style.display = 'block';
 
-      Object.entries(metadata).forEach(([key, value]) => {
+      displayableMetadata.forEach(([key, value]) => {
         const item = document.createElement('div');
         item.className = 'metadata-item';
         item.innerHTML = `
-          <span class="metadata-key">${escapeHtml(key)}:</span>
+          <span class="metadata-key">${escapeHtml(formatMetadataKey(key))}:</span>
           <span class="metadata-value">${escapeHtml(String(value))}</span>
         `;
         content.appendChild(item);
       });
     }
 
-    // ==========================================
-    // HELPERS
-    // ==========================================
+    function formatMetadataKey(key) {
+      // Convert camelCase to Title Case
+      return key
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase())
+        .trim();
+    }
+
+    // ===== HELPERS =====
     function escapeHtml(text) {
       if (!text) return '';
       const div = document.createElement('div');

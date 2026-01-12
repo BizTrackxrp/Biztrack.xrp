@@ -1098,13 +1098,10 @@
         <div class="timeline-content" id="timelineContent"></div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="action-buttons">
+      <!-- Action Button -->
+      <div class="action-buttons" style="grid-template-columns: 1fr;">
         <a href="#" id="blockchainLink" target="_blank" class="action-btn action-btn-primary">
-          <i class="fas fa-cube"></i> Blockchain
-        </a>
-        <a href="#" id="ipfsLink" target="_blank" class="action-btn action-btn-secondary">
-          <i class="fas fa-database"></i> IPFS Data
+          <i class="fas fa-cube"></i> View on Blockchain
         </a>
       </div>
 
@@ -1235,13 +1232,21 @@
             `Item #${productData.batchInfo.itemNumber} of ${productData.batchInfo.totalInBatch}`;
         }
 
-        // Mint date
-        const mintDate = new Date(productData.createdAt);
-        document.getElementById('mintDate').textContent = mintDate.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
-        });
+        // Mint date (handle missing/invalid)
+        if (productData.createdAt) {
+          const mintDate = new Date(productData.createdAt);
+          if (!isNaN(mintDate.getTime())) {
+            document.getElementById('mintDate').textContent = mintDate.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            });
+          } else {
+            document.getElementById('mintDate').textContent = 'Verified';
+          }
+        } else {
+          document.getElementById('mintDate').textContent = 'Verified';
+        }
 
         // Data hash (truncate for display)
         if (productData.dataHash) {
@@ -1253,7 +1258,6 @@
 
         // Blockchain links
         document.getElementById('blockchainLink').href = `https://livenet.xrpl.org/transactions/${productData.xrplTxHash}`;
-        document.getElementById('ipfsLink').href = productData.ipfsUrl;
         document.getElementById('xrplTxLink').href = `https://livenet.xrpl.org/transactions/${productData.xrplTxHash}`;
 
         // Verified time

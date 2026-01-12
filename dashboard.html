@@ -143,11 +143,13 @@
     }
     .toggle-container.production { border-color: #10B981; }
     .toggle-container.excel { border-color: #F59E0B; }
+    .toggle-container.rewards { border-color: #F59E0B; background: #FFFBEB; }
     
     .toggle-label { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; color: #334155; }
     .toggle-label i { color: #4F46E5; }
     .toggle-label i.production { color: #10B981; }
     .toggle-label i.excel { color: #F59E0B; }
+    .toggle-label i.rewards { color: #F59E0B; }
 
     .toggle-switch {
       position: relative;
@@ -162,6 +164,7 @@
     .toggle-switch.active { background: #4F46E5; }
     .toggle-switch.active.production { background: #10B981; }
     .toggle-switch.active.excel { background: #F59E0B; }
+    .toggle-switch.active.rewards { background: #F59E0B; }
     .toggle-switch-slider {
       position: absolute;
       top: 4px;
@@ -238,16 +241,53 @@
     .expandable-section.batch { background: #FEF3C7; border: 2px solid #FDE047; }
     .expandable-section.production { background: #ECFDF5; border: 2px solid #10B981; }
     .expandable-section.excel { background: #FEF3C7; border: 2px solid #F59E0B; }
+    .expandable-section.rewards { background: #FEF3C7; border: 2px solid #F59E0B; }
     .expandable-section h4 { margin-bottom: 0.75rem; }
     .expandable-section.batch h4 { color: #92400E; }
     .expandable-section.production h4 { color: #065F46; }
     .expandable-section.excel h4 { color: #92400E; }
+    .expandable-section.rewards h4 { color: #92400E; }
     .expandable-section p { font-size: 0.9rem; margin-bottom: 0; }
     .expandable-section.batch p { color: #92400E; }
     .expandable-section.production p { color: #047857; }
     .expandable-section.excel p { color: #92400E; }
+    .expandable-section.rewards p { color: #92400E; }
 
     .batch-info { margin-top: 1rem; padding: 0.75rem; background: white; border-radius: 8px; font-size: 0.875rem; color: #92400E; }
+
+    /* Rewards Points Input */
+    .rewards-points-input {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 10px;
+    }
+    .rewards-points-input label {
+      font-weight: 600;
+      color: #92400E;
+      white-space: nowrap;
+    }
+    .rewards-points-input input {
+      width: 100px;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #F59E0B;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      color: #92400E;
+    }
+    .rewards-points-input input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+    .rewards-points-input span {
+      color: #B45309;
+      font-size: 0.85rem;
+    }
 
     /* Excel Upload Area */
     .excel-instructions {
@@ -486,6 +526,7 @@
       .toggle-container { flex-wrap: wrap; gap: 0.75rem; }
       .industry-selector { flex: 1; height: auto; }
       .qr-badge { flex: 1; justify-content: center; height: auto; }
+      .rewards-points-input { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -569,6 +610,38 @@
         </div>
         <div class="toggle-switch production" id="productionToggle" onclick="toggleProductionMode()">
           <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <!-- Customer Rewards Toggle (NEW) -->
+      <div class="toggle-container rewards" id="rewardsToggleContainer" style="display: none;">
+        <div class="toggle-label">
+          <i class="fas fa-gift rewards"></i>
+          <span>Customer Rewards</span>
+          <span class="info-icon" onclick="toggleTooltip(event, 'rewardsTooltip')"><i class="fas fa-info"></i></span>
+        </div>
+        <div class="info-tooltip" id="rewardsTooltip">
+          <strong>What are Customer Rewards?</strong><br><br>
+          Let customers earn loyalty points when they scan this product's QR code! Great for repeat purchases and building customer loyalty.<br><br>
+          <strong>How it works:</strong><br>
+          • Customer scans the QR code<br>
+          • Enters their email to claim points<br>
+          • Points accumulate for discounts<br><br>
+          Set the point value based on your own scale (e.g., small item = 5pts, large = 15pts).
+        </div>
+        <div class="toggle-switch rewards" id="rewardsToggle" onclick="toggleRewardsMode()">
+          <div class="toggle-switch-slider"></div>
+        </div>
+      </div>
+
+      <!-- Rewards Points Section (NEW) -->
+      <div class="expandable-section rewards" id="rewardsSection">
+        <h4><i class="fas fa-coins"></i> Reward Points for This Product</h4>
+        <p>Customers who scan and claim will earn these points. Create your own scale!</p>
+        <div class="rewards-points-input">
+          <label for="rewardsPoints">Points:</label>
+          <input type="number" id="rewardsPoints" value="10" min="1" max="1000" />
+          <span>💡 Example: Small=5, Medium=10, Large=15, Premium=25</span>
         </div>
       </div>
 
@@ -745,6 +818,8 @@
 
     let isBatchMode = false;
     let isProductionMode = false;
+    let isRewardsMode = false;
+    let rewardsEnabled = false; // From user settings
     let selectedPhotos = [];
     let capturedLocation = null;
     let qrUsedThisMonth = 0;
@@ -819,6 +894,49 @@
     };
 
     // ==========================================
+    // REWARDS SETTINGS CHECK
+    // ==========================================
+    async function loadRewardsSettings() {
+      try {
+        const response = await authenticatedFetch('/api/rewards-settings');
+        const data = await response.json();
+        
+        if (data.success && data.settings) {
+          rewardsEnabled = data.settings.rewardsEnabled;
+          
+          // Show/hide the rewards toggle based on whether rewards are enabled for this business
+          const rewardsToggleContainer = document.getElementById('rewardsToggleContainer');
+          if (rewardsEnabled) {
+            rewardsToggleContainer.style.display = 'flex';
+            // Set default points value from settings
+            document.getElementById('rewardsPoints').value = data.settings.pointsPerClaim || 10;
+          } else {
+            rewardsToggleContainer.style.display = 'none';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load rewards settings:', error);
+      }
+    }
+
+    // ==========================================
+    // TOGGLE REWARDS MODE
+    // ==========================================
+    function toggleRewardsMode() {
+      isRewardsMode = !isRewardsMode;
+      const toggle = document.getElementById('rewardsToggle');
+      const section = document.getElementById('rewardsSection');
+      
+      if (isRewardsMode) {
+        toggle.classList.add('active');
+        section.classList.add('show');
+      } else {
+        toggle.classList.remove('active');
+        section.classList.remove('show');
+      }
+    }
+
+    // ==========================================
     // INDUSTRY PREFERENCE HANDLING
     // ==========================================
     async function loadIndustryPreference() {
@@ -843,7 +961,6 @@
       const newIndustry = document.getElementById('industrySelect').value;
       currentIndustry = newIndustry;
       
-      // If they change away from saved preference, uncheck the save box
       if (savedIndustryPreference && newIndustry !== savedIndustryPreference) {
         document.getElementById('savePreferenceCheckbox').checked = false;
         updateSavePreferenceUI(false);
@@ -860,7 +977,6 @@
       const isChecked = checkbox.checked;
       
       if (isChecked) {
-        // Save the current selection as preference
         try {
           const response = await authenticatedFetch('/api/industry-preference', {
             method: 'POST',
@@ -878,7 +994,6 @@
           checkbox.checked = false;
         }
       } else {
-        // Clear the preference (set to general)
         try {
           const response = await authenticatedFetch('/api/industry-preference', {
             method: 'POST',
@@ -914,20 +1029,15 @@
       const content = industryContent[currentIndustry];
       const selector = document.getElementById('industrySelector');
       
-      // Update selector styling
       if (currentIndustry === 'food') {
         selector.classList.add('food');
       } else {
         selector.classList.remove('food');
       }
       
-      // Update header
       document.getElementById('headerSubtitle').textContent = content.headerSubtitle;
-      
-      // Update card title
       document.getElementById('cardTitle').textContent = content.cardTitle;
       
-      // Update form labels and placeholders
       const prodNameLabel = document.getElementById('prodNameLabel');
       const prodNameInput = document.getElementById('dashProdName');
       
@@ -939,40 +1049,32 @@
         prodNameInput.placeholder = content.prodNamePlaceholder;
       }
       
-      // SKU
       document.getElementById('dashSku').placeholder = content.skuPlaceholder;
       document.getElementById('skuTooltipContent').innerHTML = content.skuTooltipContent;
       
-      // Batch number
       document.getElementById('batchNumberLabel').innerHTML = content.batchNumberLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span><span class="info-icon" onclick="toggleTooltip(event, \'batchTooltip2\')"><i class="fas fa-info"></i></span>';
       document.getElementById('dashBatch').placeholder = content.batchNumberPlaceholder;
       document.getElementById('batchTooltip2Title').textContent = content.batchTooltip2Title;
       document.getElementById('batchTooltip2Content').innerHTML = content.batchTooltip2Content;
       
-      // Metadata
       document.getElementById('metadataLabel').innerHTML = content.metadataLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span>';
       document.getElementById('dashMetadata').placeholder = content.metadataPlaceholder;
       
-      // Helper text
       document.getElementById('singleItemHelperText').innerHTML = content.singleItemHelperText;
       
-      // Batch section
       document.getElementById('batchTooltipContent').innerHTML = content.batchTooltipContent;
       document.getElementById('batchQuantityLabel').textContent = content.batchQuantityLabel;
       document.getElementById('batchSkuHelp').textContent = content.batchSkuHelp;
       
-      // Production mode
       document.getElementById('productionTooltipTitle').textContent = content.productionTooltipTitle;
       document.getElementById('productionTooltipContent').innerHTML = content.productionTooltipContent;
       document.getElementById('productionSectionDesc').innerHTML = content.productionSectionDesc;
       
-      // Excel
       document.getElementById('excelInstructions').innerHTML = content.excelInstructions;
       const headerRow = document.getElementById('excelPreviewHeader');
       headerRow.innerHTML = content.excelPreviewHeaders.map(h => `<th>${h}</th>`).join('');
       document.getElementById('excelRowLabel').textContent = content.excelRowLabel;
       
-      // Photos
       document.getElementById('photosLabel').textContent = content.photosLabel;
       document.getElementById('locationDisplayText').textContent = content.locationDisplayText;
     }
@@ -1357,6 +1459,9 @@
       const btn = document.getElementById('dashCreateBtn');
       msgEl.innerHTML = '';
 
+      // Get rewards points if enabled
+      const rewardsPoints = isRewardsMode ? parseInt(document.getElementById('rewardsPoints').value) || 10 : null;
+
       // Excel mode
       if (excelData.length > 0) {
         btn.disabled = true;
@@ -1413,7 +1518,8 @@
                 excelBatchTotal: totalItems,
                 excelBatchIndex: i + 1,
                 excelBatchName: batchName,
-                industryType: currentIndustry
+                industryType: currentIndustry,
+                rewardsPoints: rewardsPoints
               })
             });
             
@@ -1492,7 +1598,8 @@
             batchQuantity,
             sameSku: isBatchMode ? document.getElementById('sameSku').checked : false,
             mode: isProductionMode ? 'production' : 'live',
-            industryType: currentIndustry
+            industryType: currentIndustry,
+            rewardsPoints: rewardsPoints
           })
         });
 
@@ -1533,7 +1640,8 @@
     loadSubscriptionLimits();
     loadProductCounts();
     loadIndustryPreference();
-    applyIndustryContent(); // Apply default content initially
+    loadRewardsSettings(); // Load rewards settings to show/hide toggle
+    applyIndustryContent();
   </script>
 </body>
 </html>

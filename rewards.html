@@ -50,17 +50,28 @@
     /* Stats Cards */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.25rem;
       margin-bottom: 2rem;
     }
 
     .stat-card {
       background: white;
-      padding: 1.5rem;
+      padding: 1.25rem;
       border-radius: 16px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       border: 1px solid #E2E8F0;
+      transition: all 0.2s;
+    }
+
+    .stat-card.clickable {
+      cursor: pointer;
+    }
+
+    .stat-card.clickable:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-color: #F59E0B;
     }
 
     .stat-card.highlight {
@@ -68,45 +79,67 @@
       border-color: #F59E0B;
     }
 
-    .stat-label {
-      font-size: 0.875rem;
-      color: #64748B;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
+    .stat-card.green {
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      border-color: #10B981;
     }
 
-    .stat-card.highlight .stat-label {
-      color: #92400E;
+    .stat-card.blue {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      border-color: #3B82F6;
     }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748B;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .stat-card.highlight .stat-label { color: #92400E; }
+    .stat-card.green .stat-label { color: #065F46; }
+    .stat-card.blue .stat-label { color: #1E40AF; }
 
     .stat-value {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #1E293B;
     }
 
-    .stat-card.highlight .stat-value {
-      color: #B45309;
+    .stat-card.highlight .stat-value { color: #B45309; }
+    .stat-card.green .stat-value { color: #047857; }
+    .stat-card.blue .stat-value { color: #1D4ED8; }
+
+    .stat-hint {
+      font-size: 0.75rem;
+      color: #94A3B8;
+      margin-top: 0.25rem;
+    }
+
+    .stat-card.clickable .stat-hint {
+      color: #F59E0B;
     }
 
     /* Cards */
     .card {
       background: white;
       border-radius: 16px;
-      padding: 2rem;
+      padding: 1.5rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       border: 1px solid #E2E8F0;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .card h2 {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 700;
       color: #1E293B;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
     .card h2 i {
@@ -116,12 +149,12 @@
     /* Settings Form */
     .settings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.25rem;
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .form-group label {
@@ -129,14 +162,15 @@
       font-weight: 600;
       margin-bottom: 0.5rem;
       color: #334155;
+      font-size: 0.9rem;
     }
 
     .form-group input {
       width: 100%;
-      padding: 0.875rem 1rem;
+      padding: 0.75rem 1rem;
       border: 2px solid #E2E8F0;
-      border-radius: 12px;
-      font-size: 1rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
       font-family: 'Inter', sans-serif;
       transition: all 0.2s;
       background: #F8FAFC;
@@ -145,15 +179,15 @@
     .form-group input:focus {
       outline: none;
       border-color: #F59E0B;
-      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
       background: white;
     }
 
     .form-group small {
       display: block;
-      margin-top: 0.5rem;
+      margin-top: 0.4rem;
       color: #64748B;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     /* Toggle */
@@ -164,12 +198,13 @@
       padding: 1rem;
       background: #F8FAFC;
       border-radius: 12px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
+      border: 2px solid transparent;
     }
 
     .toggle-row.active {
       background: #FEF3C7;
-      border: 2px solid #F59E0B;
+      border-color: #F59E0B;
     }
 
     .toggle-label {
@@ -182,14 +217,15 @@
       font-weight: 400;
       color: #64748B;
       margin-top: 0.25rem;
+      font-size: 0.85rem;
     }
 
     .toggle-switch {
       position: relative;
-      width: 60px;
-      height: 32px;
+      width: 56px;
+      height: 30px;
       background: #CBD5E1;
-      border-radius: 16px;
+      border-radius: 15px;
       cursor: pointer;
       transition: all 0.3s;
       flex-shrink: 0;
@@ -201,8 +237,8 @@
 
     .toggle-switch-slider {
       position: absolute;
-      top: 4px;
-      left: 4px;
+      top: 3px;
+      left: 3px;
       width: 24px;
       height: 24px;
       background: white;
@@ -212,13 +248,13 @@
     }
 
     .toggle-switch.active .toggle-switch-slider {
-      transform: translateX(28px);
+      transform: translateX(26px);
     }
 
     /* Buttons */
     .btn {
-      padding: 0.875rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -226,7 +262,7 @@
       align-items: center;
       gap: 0.5rem;
       border: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
     .btn-primary {
@@ -237,7 +273,7 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
     }
 
     .btn-secondary {
@@ -251,6 +287,144 @@
       background: #F8FAFC;
     }
 
+    /* Product Cards Grid (Horizontal Scroll) */
+    .products-section {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .products-section.show {
+      display: block;
+    }
+
+    .products-scroll {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 0.5rem 0 1rem 0;
+      scroll-snap-type: x mandatory;
+    }
+
+    .products-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .products-scroll::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 4px;
+    }
+
+    .products-scroll::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    .product-card {
+      flex: 0 0 280px;
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 2px solid #E2E8F0;
+      scroll-snap-align: start;
+      transition: all 0.2s;
+    }
+
+    .product-card:hover {
+      border-color: #F59E0B;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .product-card.claimed {
+      border-color: #10B981;
+      background: #F0FDF4;
+    }
+
+    .product-card.unclaimed {
+      border-color: #3B82F6;
+      background: #EFF6FF;
+    }
+
+    .product-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .product-card-name {
+      font-weight: 700;
+      color: #1E293B;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .product-card-points {
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .product-card-sku {
+      font-size: 0.8rem;
+      color: #64748B;
+      margin-bottom: 0.75rem;
+    }
+
+    .product-card-qr {
+      width: 100%;
+      height: 120px;
+      background: #F8FAFC;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .product-card-qr img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .product-card-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+    }
+
+    .product-card-status.claimed {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .product-card-status.unclaimed {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .section-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: #64748B;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .section-toggle:hover {
+      color: #F59E0B;
+    }
+
     /* Leaderboard Table */
     .table-container {
       overflow-x: auto;
@@ -262,7 +436,7 @@
     }
 
     th, td {
-      padding: 1rem;
+      padding: 0.875rem;
       text-align: left;
       border-bottom: 1px solid #E2E8F0;
     }
@@ -271,13 +445,14 @@
       background: #F8FAFC;
       font-weight: 600;
       color: #64748B;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     td {
       color: #334155;
+      font-size: 0.9rem;
     }
 
     tr:hover td {
@@ -288,32 +463,17 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       font-weight: 700;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
     }
 
-    .rank-1 {
-      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-      color: #92400E;
-    }
-
-    .rank-2 {
-      background: #E2E8F0;
-      color: #475569;
-    }
-
-    .rank-3 {
-      background: #FED7AA;
-      color: #9A3412;
-    }
-
-    .rank-other {
-      background: #F1F5F9;
-      color: #64748B;
-    }
+    .rank-1 { background: linear-gradient(135deg, #FEF3C7, #FDE68A); color: #92400E; }
+    .rank-2 { background: #E2E8F0; color: #475569; }
+    .rank-3 { background: #FED7AA; color: #9A3412; }
+    .rank-other { background: #F1F5F9; color: #64748B; }
 
     .points-badge {
       display: inline-flex;
@@ -321,93 +481,40 @@
       gap: 0.25rem;
       background: #FEF3C7;
       color: #92400E;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
+      padding: 0.2rem 0.6rem;
+      border-radius: 16px;
       font-weight: 700;
-    }
-
-    .email-cell {
-      font-family: monospace;
-      font-size: 0.9rem;
-    }
-
-    .date-cell {
-      color: #64748B;
-      font-size: 0.875rem;
-    }
-
-    /* Recent Claims */
-    .recent-claim {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: #F8FAFC;
-      border-radius: 12px;
-      margin-bottom: 0.75rem;
-    }
-
-    .recent-claim-icon {
-      width: 40px;
-      height: 40px;
-      background: #FEF3C7;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #F59E0B;
-    }
-
-    .recent-claim-info {
-      flex: 1;
-    }
-
-    .recent-claim-email {
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .recent-claim-product {
-      font-size: 0.875rem;
-      color: #64748B;
-    }
-
-    .recent-claim-points {
-      font-weight: 700;
-      color: #F59E0B;
-    }
-
-    .recent-claim-time {
-      font-size: 0.8rem;
-      color: #94A3B8;
+      font-size: 0.85rem;
     }
 
     /* Empty State */
     .empty-state {
       text-align: center;
-      padding: 3rem;
+      padding: 2rem;
       color: #64748B;
     }
 
     .empty-state i {
-      font-size: 3rem;
+      font-size: 2.5rem;
       color: #CBD5E1;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .empty-state h3 {
       color: #334155;
       margin-bottom: 0.5rem;
+      font-size: 1rem;
     }
 
     /* Messages */
     .message {
-      padding: 1rem;
-      border-radius: 12px;
+      padding: 0.875rem;
+      border-radius: 10px;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      font-size: 0.9rem;
     }
 
     .message.success {
@@ -432,18 +539,23 @@
 
       .stats-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
       }
 
       .settings-grid {
         grid-template-columns: 1fr;
       }
 
-      table {
-        font-size: 0.875rem;
-      }
-
-      th, td {
-        padding: 0.75rem 0.5rem;
+      .product-card {
+        flex: 0 0 240px;
       }
     }
   </style>
@@ -458,22 +570,50 @@
     </div>
 
     <!-- Stats -->
-    <div class="stats-grid" id="statsGrid">
+    <div class="stats-grid">
       <div class="stat-card highlight">
         <div class="stat-label">Total Customers</div>
         <div class="stat-value" id="totalCustomers">-</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Points Awarded</div>
-        <div class="stat-value" id="totalPoints">-</div>
+      <div class="stat-card green clickable" onclick="toggleSection('claimed')">
+        <div class="stat-label">Points Claimed</div>
+        <div class="stat-value" id="pointsClaimed">-</div>
+        <div class="stat-hint">Click to view products →</div>
+      </div>
+      <div class="stat-card blue clickable" onclick="toggleSection('unclaimed')">
+        <div class="stat-label">Points Unclaimed</div>
+        <div class="stat-value" id="pointsUnclaimed">-</div>
+        <div class="stat-hint">Click to view products →</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Total Claims</div>
         <div class="stat-value" id="totalClaims">-</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Points Per Claim</div>
-        <div class="stat-value" id="pointsPerClaim">-</div>
+    </div>
+
+    <!-- Claimed Products Section (Hidden by default) -->
+    <div class="card products-section" id="claimedSection">
+      <h2><i class="fas fa-check-circle" style="color: #10B981;"></i> Claimed Products 
+        <span style="font-weight: 400; font-size: 0.9rem; color: #64748B;" id="claimedCount"></span>
+      </h2>
+      <div class="products-scroll" id="claimedProducts">
+        <!-- Products will be rendered here -->
+      </div>
+      <div class="section-toggle" onclick="toggleSection('claimed')">
+        <i class="fas fa-chevron-up"></i> Hide
+      </div>
+    </div>
+
+    <!-- Unclaimed Products Section (Hidden by default) -->
+    <div class="card products-section" id="unclaimedSection">
+      <h2><i class="fas fa-clock" style="color: #3B82F6;"></i> Awaiting Claims 
+        <span style="font-weight: 400; font-size: 0.9rem; color: #64748B;" id="unclaimedCount"></span>
+      </h2>
+      <div class="products-scroll" id="unclaimedProducts">
+        <!-- Products will be rendered here -->
+      </div>
+      <div class="section-toggle" onclick="toggleSection('unclaimed')">
+        <i class="fas fa-chevron-up"></i> Hide
       </div>
     </div>
 
@@ -514,18 +654,6 @@
       <button class="btn btn-primary" id="saveSettingsBtn" onclick="saveSettings()">
         <i class="fas fa-save"></i> Save Settings
       </button>
-    </div>
-
-    <!-- Recent Claims -->
-    <div class="card">
-      <h2><i class="fas fa-clock"></i> Recent Claims</h2>
-      <div id="recentClaims">
-        <div class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <h3>No claims yet</h3>
-          <p>When customers claim points, they'll appear here.</p>
-        </div>
-      </div>
     </div>
 
     <!-- Leaderboard -->
@@ -575,6 +703,23 @@
     };
 
     let leaderboardData = [];
+    let claimedProductsData = [];
+    let unclaimedProductsData = [];
+
+    // ==========================================
+    // TOGGLE SECTIONS
+    // ==========================================
+    function toggleSection(type) {
+      const section = document.getElementById(type + 'Section');
+      if (section.classList.contains('show')) {
+        section.classList.remove('show');
+      } else {
+        // Hide other section
+        document.getElementById('claimedSection').classList.remove('show');
+        document.getElementById('unclaimedSection').classList.remove('show');
+        section.classList.add('show');
+      }
+    }
 
     // ==========================================
     // LOAD DATA
@@ -590,29 +735,78 @@
           applySettings();
         }
 
-        // Load leaderboard
+        // Load leaderboard with new stats
         const leaderboardResponse = await authenticatedFetch('/api/rewards-leaderboard');
-        const leaderboardResponseData = await leaderboardResponse.json();
+        const data = await leaderboardResponse.json();
         
-        if (leaderboardResponseData.success) {
-          // Update stats
-          document.getElementById('totalCustomers').textContent = leaderboardResponseData.stats.totalCustomers.toLocaleString();
-          document.getElementById('totalPoints').textContent = leaderboardResponseData.stats.totalPointsAwarded.toLocaleString();
-          document.getElementById('totalClaims').textContent = leaderboardResponseData.stats.totalClaims.toLocaleString();
-          document.getElementById('pointsPerClaim').textContent = settings.pointsPerClaim || '-';
+        if (data.success) {
+          // Update stats with new metrics
+          document.getElementById('totalCustomers').textContent = (data.stats.totalCustomers || 0).toLocaleString();
+          document.getElementById('pointsClaimed').textContent = (data.stats.pointsClaimed || 0).toLocaleString();
+          document.getElementById('pointsUnclaimed').textContent = (data.stats.pointsUnclaimed || 0).toLocaleString();
+          document.getElementById('totalClaims').textContent = (data.stats.totalClaims || 0).toLocaleString();
 
-          // Store leaderboard data for export
-          leaderboardData = leaderboardResponseData.leaderboard;
+          // Store data
+          leaderboardData = data.leaderboard || [];
+          claimedProductsData = data.claimedProducts || [];
+          unclaimedProductsData = data.unclaimedProducts || [];
 
-          // Render leaderboard
-          renderLeaderboard(leaderboardResponseData.leaderboard);
+          // Update counts
+          document.getElementById('claimedCount').textContent = `(${claimedProductsData.length} products)`;
+          document.getElementById('unclaimedCount').textContent = `(${unclaimedProductsData.length} products)`;
 
-          // Render recent claims
-          renderRecentClaims(leaderboardResponseData.recentClaims);
+          // Render everything
+          renderLeaderboard(leaderboardData);
+          renderProductCards('claimedProducts', claimedProductsData, 'claimed');
+          renderProductCards('unclaimedProducts', unclaimedProductsData, 'unclaimed');
         }
       } catch (error) {
         console.error('Failed to load rewards data:', error);
       }
+    }
+
+    // ==========================================
+    // RENDER PRODUCT CARDS
+    // ==========================================
+    function renderProductCards(containerId, products, type) {
+      const container = document.getElementById(containerId);
+      
+      if (!products || products.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="width: 100%;">
+            <i class="fas fa-box-open"></i>
+            <h3>No ${type} products</h3>
+            <p>${type === 'claimed' ? 'Products that customers have scanned will appear here.' : 'Products awaiting customer scans will appear here.'}</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = products.map(product => {
+        const points = product.pointsAwarded || product.rewardPoints || settings.pointsPerClaim || 10;
+        
+        return `
+          <div class="product-card ${type}">
+            <div class="product-card-header">
+              <div class="product-card-name">${escapeHtml(product.productName)}</div>
+              <div class="product-card-points">${points} pts</div>
+            </div>
+            <div class="product-card-sku">SKU: ${escapeHtml(product.sku || 'N/A')}</div>
+            <div class="product-card-qr">
+              ${product.qrCodeUrl 
+                ? `<img src="${product.qrCodeUrl}" alt="QR Code" />`
+                : '<i class="fas fa-qrcode" style="font-size: 3rem; color: #CBD5E1;"></i>'
+              }
+            </div>
+            <div class="product-card-status ${type}">
+              ${type === 'claimed' 
+                ? `<i class="fas fa-check-circle"></i> Claimed by ${product.claimedBy || 'customer'}`
+                : `<i class="fas fa-clock"></i> Awaiting scan`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function applySettings() {
@@ -669,9 +863,8 @@
         const data = await response.json();
 
         if (data.success) {
-          msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Settings saved successfully!</div>';
+          msgEl.innerHTML = '<div class="message success"><i class="fas fa-check-circle"></i> Settings saved!</div>';
           settings = data.settings;
-          document.getElementById('pointsPerClaim').textContent = settings.pointsPerClaim;
         } else {
           throw new Error(data.error || 'Failed to save');
         }
@@ -681,10 +874,7 @@
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-save"></i> Save Settings';
         
-        // Clear message after 3 seconds
-        setTimeout(() => {
-          msgEl.innerHTML = '';
-        }, 3000);
+        setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
       }
     }
 
@@ -719,47 +909,13 @@
         return `
           <tr>
             <td><span class="rank-badge ${rankClass}">${rank}</span></td>
-            <td class="email-cell">${escapeHtml(customer.email)}</td>
-            <td><span class="points-badge"><i class="fas fa-star"></i> ${customer.points.toLocaleString()}</span></td>
-            <td>${customer.claims}</td>
-            <td class="date-cell">${formatDate(customer.lastActivity)}</td>
+            <td>${escapeHtml(customer.email)}</td>
+            <td><span class="points-badge"><i class="fas fa-star"></i> ${(customer.points || 0).toLocaleString()}</span></td>
+            <td>${customer.claims || 0}</td>
+            <td style="color: #64748B; font-size: 0.85rem;">${formatDate(customer.lastActivity)}</td>
           </tr>
         `;
       }).join('');
-    }
-
-    // ==========================================
-    // RENDER RECENT CLAIMS
-    // ==========================================
-    function renderRecentClaims(claims) {
-      const container = document.getElementById('recentClaims');
-
-      if (!claims || claims.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <h3>No claims yet</h3>
-            <p>When customers claim points, they'll appear here.</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = claims.map(claim => `
-        <div class="recent-claim">
-          <div class="recent-claim-icon">
-            <i class="fas fa-gift"></i>
-          </div>
-          <div class="recent-claim-info">
-            <div class="recent-claim-email">${escapeHtml(maskEmail(claim.email))}</div>
-            <div class="recent-claim-product">${escapeHtml(claim.productName || 'Product')}</div>
-          </div>
-          <div style="text-align: right;">
-            <div class="recent-claim-points">+${claim.points} pts</div>
-            <div class="recent-claim-time">${formatTimeAgo(claim.claimedAt)}</div>
-          </div>
-        </div>
-      `).join('');
     }
 
     // ==========================================
@@ -771,13 +927,12 @@
         return;
       }
 
-      const headers = ['Rank', 'Email', 'Points', 'Claims', 'First Claim', 'Last Activity'];
+      const headers = ['Rank', 'Email', 'Points', 'Claims', 'Last Activity'];
       const rows = leaderboardData.map((customer, index) => [
         index + 1,
         customer.email,
         customer.points,
         customer.claims,
-        formatDateCSV(customer.firstClaim),
         formatDateCSV(customer.lastActivity)
       ]);
 
@@ -803,14 +958,6 @@
       return div.innerHTML;
     }
 
-    function maskEmail(email) {
-      if (!email) return '';
-      const [local, domain] = email.split('@');
-      if (!domain) return email;
-      const masked = local.substring(0, 2) + '***';
-      return masked + '@' + domain;
-    }
-
     function formatDate(dateStr) {
       if (!dateStr) return '-';
       const date = new Date(dateStr);
@@ -824,22 +971,6 @@
     function formatDateCSV(dateStr) {
       if (!dateStr) return '';
       return new Date(dateStr).toISOString().split('T')[0];
-    }
-
-    function formatTimeAgo(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      const now = new Date();
-      const diffMs = now - date;
-      const diffMins = Math.floor(diffMs / 60000);
-      const diffHours = Math.floor(diffMs / 3600000);
-      const diffDays = Math.floor(diffMs / 86400000);
-
-      if (diffMins < 1) return 'just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      if (diffDays < 7) return `${diffDays}d ago`;
-      return formatDate(dateStr);
     }
 
     // ==========================================

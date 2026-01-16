@@ -1,4 +1,5 @@
 // api/claim-points.js - Claim loyalty points for a product/batch
+// FIXED: Now checks product-level custom points first, then business default
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -26,7 +27,7 @@ module.exports = async (req, res) => {
 
     // Get the product to find the business
     const productResult = await pool.query(
-      `SELECT p.*, u.rewards_enabled, u.points_per_claim, u.rewards_program_name, u.business_name
+      `SELECT p.*, u.rewards_enabled, u.points_per_claim as default_points, u.rewards_program_name, u.business_name
        FROM products p
        JOIN users u ON p.user_id = u.id
        WHERE p.product_id = $1`,
@@ -45,7 +46,28 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Rewards program not enabled for this business' });
     }
 
-    const pointsToAward = product.points_per_claim || 10;
+    // ==========================================
+    // FIXED: Check product-level points FIRST
+    // Priority: product.metadata.rewardPoints > user.points_per_claim > 10
+    // ==========================================
+    let pointsToAward = product.default_points || 10;
+    
+    // Check if product has custom points in metadata
+    if (product.metadata) {
+      try {
+        const metadata = typeof product.metadata === 'string' 
+          ? JSON.parse(product.metadata) 
+          : product.metadata;
+        
+        // Check for custom reward points (set during minting)
+        if (metadata.rewardPoints && !isNaN(parseInt(metadata.rewardPoints))) {
+          pointsToAward = parseInt(metadata.rewardPoints);
+          console.log(`[REWARDS] Using product-level points: ${pointsToAward}`);
+        }
+      } catch (e) {
+        console.error('Error parsing product metadata:', e);
+      }
+    }
 
     // Determine claim key (batch_group_id for batches, product_id for singles)
     // For batches, ANY product in the batch can trigger the claim, but only once per batch

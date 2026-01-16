@@ -190,9 +190,15 @@ module.exports = async (req, res) => {
           [claimKey]
         );
 
+        // FIXED: Check product-level points first (from metadata), then fall back to user default
+        let pointsForProduct = product.points_per_claim || 10;
+        if (metadata && metadata.rewardPoints && !isNaN(parseInt(metadata.rewardPoints))) {
+          pointsForProduct = parseInt(metadata.rewardPoints);
+        }
+
         rewards = {
           enabled: true,
-          pointsPerClaim: product.points_per_claim || 10,
+          pointsPerClaim: pointsForProduct,
           programName: product.rewards_program_name || 'Loyalty Rewards',
           businessName: product.business_name,
           claimType: product.batch_group_id ? 'batch' : 'product',

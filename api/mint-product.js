@@ -71,7 +71,9 @@ module.exports = async (req, res) => {
       excelBatchIndex,
       excelBatchName,
       // Industry type (for general/food modes)
-      industryType
+      industryType,
+      // Customer rewards points (per product) - FIXED: Now extracted!
+      rewardsPoints
     } = req.body;
 
     // Validate mode (default to 'live')
@@ -220,7 +222,9 @@ module.exports = async (req, res) => {
       // Save to database
       console.log('Saving production entry to database...');
       
-      // For Excel batch leaders, store batch name in metadata for group display
+      // ==========================================
+      // FIXED: Include rewardPoints in metadata!
+      // ==========================================
       const productMetadata = { ...(metadata || {}), industryType: industryType || 'general' };
       if (isExcelBatch && excelBatchIndex === 1 && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
@@ -228,6 +232,11 @@ module.exports = async (req, res) => {
       // Store sameSku preference for finalization
       if (isBatchOrder && sameSku) {
         productMetadata.sameSku = true;
+      }
+      // FIXED: Store rewardPoints if provided
+      if (rewardsPoints && !isNaN(parseInt(rewardsPoints))) {
+        productMetadata.rewardPoints = parseInt(rewardsPoints);
+        console.log(`[REWARDS] Storing ${rewardsPoints} reward points for product`);
       }
       
       await pool.query(
@@ -371,13 +380,22 @@ module.exports = async (req, res) => {
         console.log('DUMB QR Code URL:', dumbQrUrl);
       }
 
+      // ==========================================
+      // FIXED: Include rewardPoints in metadata!
+      // ==========================================
+      const baseMetadata = { ...(metadata || {}), industryType: industryType || 'general' };
+      if (rewardsPoints && !isNaN(parseInt(rewardsPoints))) {
+        baseMetadata.rewardPoints = parseInt(rewardsPoints);
+        console.log(`[REWARDS] Storing ${rewardsPoints} reward points for product`);
+      }
+
       // Build product data
       const productData = {
         productId,
         productName,
         sku: productSku,
         batchNumber: batchNumber || null,
-        metadata: { ...(metadata || {}), industryType: industryType || 'general' },
+        metadata: baseMetadata,
         photoUrls: photoUrls.length > 0 ? photoUrls : null,
         location: location || null,
         smartQrUrl,
@@ -437,7 +455,7 @@ module.exports = async (req, res) => {
       
       // For batch leaders, store display info in metadata
       const isBatchLeader = isExcelBatch ? (excelBatchIndex === 1) : (isBatchOrder && itemNumber === 1);
-      const productMetadata = { ...(metadata || {}), industryType: industryType || 'general', dataHash: productDataHash };
+      const productMetadata = { ...baseMetadata, dataHash: productDataHash };
       if (isExcelBatch && isBatchLeader && excelBatchName) {
         productMetadata.batchDisplayName = excelBatchName;
       }

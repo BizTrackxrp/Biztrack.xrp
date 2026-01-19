@@ -927,11 +927,11 @@
     let labelConfig = {
       width: 4, height: 3,
       elements: {
-        logo: { enabled: true, x: 10, y: 10, width: 160, height: 140 },
-        netQuantity: { enabled: true, x: 100, y: 125, width: 70, height: 22 },
-        nutrition: { enabled: false, x: 180, y: 10, width: 100, height: 150 },
-        customerQR: { enabled: true, x: 180, y: 10, width: 80, height: 80 },
-        inventoryQR: { enabled: false, x: 180, y: 100, width: 70, height: 70 }
+        logo: { enabled: true, x: 'center', y: 10, width: 140, height: 120 },
+        netQuantity: { enabled: true, x: 'center', y: 'below-logo', width: 80, height: 24 },
+        nutrition: { enabled: false, x: 10, y: 'below-netqty', width: 100, height: 120 },
+        customerQR: { enabled: true, x: 'right', y: 'bottom', width: 60, height: 60 },
+        inventoryQR: { enabled: false, x: 'left', y: 'bottom', width: 60, height: 60 }
       }
     };
     let previewZoom = 100;
@@ -1039,8 +1039,11 @@
     function updatePreview() {
       const preview = document.getElementById('labelPreview');
       const scale = previewZoom / 100;
-      preview.style.width = Math.round(labelConfig.width * 72 * scale) + 'px';
-      preview.style.height = Math.round(labelConfig.height * 72 * scale) + 'px';
+      const labelWidthPx = labelConfig.width * 72;
+      const labelHeightPx = labelConfig.height * 72;
+      
+      preview.style.width = Math.round(labelWidthPx * scale) + 'px';
+      preview.style.height = Math.round(labelHeightPx * scale) + 'px';
       
       labelConfig.elements.logo.enabled = document.getElementById('includeLogo').checked;
       labelConfig.elements.netQuantity.enabled = document.getElementById('includeNetQuantity').checked;
@@ -1051,36 +1054,51 @@
       let html = '';
       const item = currentLabelBatch?.items?.[0] || currentLabelBatch;
       const nq = item?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
+      const nf = item?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
       
-      // Logo (big, dominant - FRONT of label)
+      // Calculate dynamic sizes based on label dimensions
+      const logoWidth = Math.min(labelWidthPx * 0.7, 180);
+      const logoHeight = Math.min(labelHeightPx * 0.4, 160);
+      const logoX = (labelWidthPx - logoWidth) / 2;
+      const logoY = 15;
+      
+      const netQtyWidth = 90;
+      const netQtyHeight = 26;
+      const netQtyX = (labelWidthPx - netQtyWidth) / 2;
+      const netQtyY = logoY + logoHeight + 10;
+      
+      const qrSize = Math.min(60, labelWidthPx * 0.25);
+      const qrX = labelWidthPx - qrSize - 15;
+      const qrY = labelHeightPx - qrSize - 25;
+      
+      // Logo (centered at top)
       if (labelConfig.elements.logo.enabled && companyLogo) {
-        const el = labelConfig.elements.logo;
-        html += '<div class="label-element" data-element="logo" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
+        html += '<div class="label-element" data-element="logo" style="left:' + (logoX * scale) + 'px;top:' + (logoY * scale) + 'px;width:' + (logoWidth * scale) + 'px;height:' + (logoHeight * scale) + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
       }
       
-      // Net Quantity (bottom right of logo area - FDA required on FRONT)
+      // Net Quantity (centered below logo)
       if (labelConfig.elements.netQuantity.enabled && nq) {
-        const el = labelConfig.elements.netQuantity;
-        html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;font-size:' + (8 * scale) + 'px;display:flex;align-items:center;justify-content:center;">' + escapeHtml(nq.display || (nq.value + ' ' + nq.unit)) + '</div>';
+        html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + (netQtyX * scale) + 'px;top:' + (netQtyY * scale) + 'px;width:' + (netQtyWidth * scale) + 'px;height:' + (netQtyHeight * scale) + 'px;font-size:' + (10 * scale) + 'px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1.5px solid #1E293B;border-radius:4px;font-weight:700;">' + escapeHtml(nq.display || (nq.value + ' ' + nq.unit)) + '</div>';
       }
       
-      // Nutrition Facts (optional, for back of label)
+      // Nutrition Facts (below net qty, left side)
       if (labelConfig.elements.nutrition.enabled) {
-        const el = labelConfig.elements.nutrition;
-        const nf = item?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
-        html += '<div class="label-element" data-element="nutrition" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;background:white;border:1px solid #000;padding:4px;font-size:' + (6 * scale) + 'px;overflow:hidden;"><div style="font-weight:900;font-size:' + (10 * scale) + 'px;border-bottom:1px solid #000;">Nutrition Facts</div><div>Serving: ' + (nf.servingSize || '___') + '</div><div style="font-weight:bold;">Calories ' + (nf.calories || '0') + '</div><div>Fat ' + (nf.totalFat || '0') + 'g</div><div>Carbs ' + (nf.totalCarbs || '0') + 'g</div><div>Protein ' + (nf.protein || '0') + 'g</div></div>';
+        const nutX = 10;
+        const nutY = netQtyY + netQtyHeight + 15;
+        const nutWidth = Math.min(100, labelWidthPx * 0.4);
+        const nutHeight = Math.min(120, labelHeightPx * 0.35);
+        html += '<div class="label-element" data-element="nutrition" style="left:' + (nutX * scale) + 'px;top:' + (nutY * scale) + 'px;width:' + (nutWidth * scale) + 'px;height:' + (nutHeight * scale) + 'px;background:white;border:1px solid #000;padding:4px;font-size:' + (5 * scale) + 'px;overflow:hidden;"><div style="font-weight:900;font-size:' + (8 * scale) + 'px;border-bottom:1px solid #000;">Nutrition Facts</div><div>Serving: ' + (nf.servingSize || '___') + '</div><div style="font-weight:bold;">Calories ' + (nf.calories || '0') + '</div><div>Fat ' + (nf.totalFat || '0') + 'g</div><div>Carbs ' + (nf.totalCarbs || '0') + 'g</div><div>Protein ' + (nf.protein || '0') + 'g</div></div>';
       }
       
-      // Customer QR Code (smaller, for BACK of label)
+      // Customer QR Code (bottom right, always visible)
       if (labelConfig.elements.customerQR.enabled && item?.qrCodeUrl) {
-        const el = labelConfig.elements.customerQR;
-        html += '<div class="label-element" data-element="customerQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.qrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (5 * scale) + 'px;font-weight:bold;margin-top:2px;">SCAN TO VERIFY</div></div>';
+        html += '<div class="label-element" data-element="customerQR" style="left:' + (qrX * scale) + 'px;top:' + (qrY * scale) + 'px;width:' + (qrSize * scale) + 'px;height:' + (qrSize * scale) + 'px;"><img src="' + item.qrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (4 * scale) + 'px;font-weight:bold;margin-top:1px;">SCAN TO VERIFY</div></div>';
       }
       
-      // Inventory QR Code (optional, internal use)
+      // Inventory QR Code (bottom left if enabled)
       if (labelConfig.elements.inventoryQR.enabled && item?.inventoryQrCodeUrl) {
-        const el = labelConfig.elements.inventoryQR;
-        html += '<div class="label-element" data-element="inventoryQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.inventoryQrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (4 * scale) + 'px;color:#64748B;margin-top:2px;">INVENTORY</div></div>';
+        const invQrX = 15;
+        html += '<div class="label-element" data-element="inventoryQR" style="left:' + (invQrX * scale) + 'px;top:' + (qrY * scale) + 'px;width:' + (qrSize * scale) + 'px;height:' + (qrSize * scale) + 'px;"><img src="' + item.inventoryQrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (3 * scale) + 'px;color:#64748B;margin-top:1px;">INVENTORY</div></div>';
       }
       
       preview.innerHTML = html;
@@ -1141,94 +1159,115 @@
           unit: 'in',
           format: [labelConfig.width, labelConfig.height]
         });
+        
         const nf = items[0]?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
         const nq = items[0]?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
+        
+        // Calculate positions in inches
+        const labelW = labelConfig.width;
+        const labelH = labelConfig.height;
+        
+        const logoW = Math.min(labelW * 0.7, 2.5);
+        const logoH = Math.min(labelH * 0.4, 2.2);
+        const logoX = (labelW - logoW) / 2;
+        const logoY = 0.2;
+        
+        const netQtyW = 1.25;
+        const netQtyH = 0.35;
+        const netQtyX = (labelW - netQtyW) / 2;
+        const netQtyY = logoY + logoH + 0.15;
+        
+        const qrSize = Math.min(0.8, labelW * 0.25);
+        const qrX = labelW - qrSize - 0.2;
+        const qrY = labelH - qrSize - 0.35;
         
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
           if (i > 0) pdf.addPage([labelConfig.width, labelConfig.height]);
+          
           pdf.setFillColor(255, 255, 255);
-          pdf.rect(0, 0, labelConfig.width, labelConfig.height, 'F');
+          pdf.rect(0, 0, labelW, labelH, 'F');
           pdf.setDrawColor(200);
           pdf.setLineWidth(0.01);
-          pdf.rect(0.05, 0.05, labelConfig.width - 0.1, labelConfig.height - 0.1);
+          pdf.rect(0.05, 0.05, labelW - 0.1, labelH - 0.1);
           
-          // Logo (big, dominant)
+          // Logo (centered at top)
           if (labelConfig.elements.logo.enabled && companyLogo) {
-            const el = labelConfig.elements.logo;
-            try { pdf.addImage(companyLogo, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72); } catch (e) {}
+            try { pdf.addImage(companyLogo, 'PNG', logoX, logoY, logoW, logoH); } catch (e) {}
           }
           
-          // Net Quantity (bottom right, FDA required)
+          // Net Quantity (centered below logo)
           if (labelConfig.elements.netQuantity.enabled && nq) {
-            const el = labelConfig.elements.netQuantity;
-            const x = el.x / 72, y = el.y / 72, w = el.width / 72, h = el.height / 72;
-            pdf.setDrawColor(0);
-            pdf.setLineWidth(0.01);
-            pdf.rect(x, y, w, h);
+            pdf.setDrawColor(30, 41, 59);
+            pdf.setLineWidth(0.02);
             pdf.setFillColor(255, 255, 255);
-            pdf.rect(x, y, w, h, 'F');
-            pdf.setDrawColor(0);
-            pdf.rect(x, y, w, h, 'S');
-            pdf.setFontSize(9);
+            pdf.rect(netQtyX, netQtyY, netQtyW, netQtyH, 'FD');
+            pdf.setFontSize(12);
             pdf.setFont('helvetica', 'bold');
-            pdf.setTextColor(0);
+            pdf.setTextColor(30, 41, 59);
             const nqText = nq.display || (nq.value + ' ' + nq.unit);
-            pdf.text(nqText, x + w/2, y + h/2 + 0.03, { align: 'center' });
+            pdf.text(nqText, netQtyX + netQtyW/2, netQtyY + netQtyH/2 + 0.05, { align: 'center' });
           }
           
-          // Nutrition Facts
+          // Nutrition Facts (below net qty, left side)
           if (labelConfig.elements.nutrition.enabled) {
-            const el = labelConfig.elements.nutrition;
-            const x = el.x / 72, y = el.y / 72, w = el.width / 72, h = el.height / 72;
+            const nutX = 0.15;
+            const nutY = netQtyY + netQtyH + 0.2;
+            const nutW = Math.min(1.4, labelW * 0.4);
+            const nutH = Math.min(1.7, labelH * 0.35);
+            
             pdf.setDrawColor(0);
             pdf.setLineWidth(0.02);
-            pdf.rect(x, y, w, h);
+            pdf.rect(nutX, nutY, nutW, nutH);
             pdf.setFontSize(8);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('Nutrition Facts', x + 0.05, y + 0.12);
+            pdf.setTextColor(0);
+            pdf.text('Nutrition Facts', nutX + 0.05, nutY + 0.12);
             pdf.setLineWidth(0.01);
-            pdf.line(x, y + 0.15, x + w, y + 0.15);
+            pdf.line(nutX, nutY + 0.15, nutX + nutW, nutY + 0.15);
             pdf.setFontSize(5);
             pdf.setFont('helvetica', 'normal');
-            let ty = y + 0.22;
-            pdf.text('Serving: ' + (nf.servingSize || '___'), x + 0.05, ty); ty += 0.08;
+            let ty = nutY + 0.22;
+            pdf.text('Serving: ' + (nf.servingSize || '___'), nutX + 0.05, ty); ty += 0.08;
             pdf.setFont('helvetica', 'bold');
-            pdf.text('Calories: ' + (nf.calories || '0'), x + 0.05, ty); ty += 0.08;
+            pdf.text('Calories: ' + (nf.calories || '0'), nutX + 0.05, ty); ty += 0.08;
             pdf.setFont('helvetica', 'normal');
-            pdf.text('Total Fat: ' + (nf.totalFat || '0') + 'g', x + 0.05, ty); ty += 0.08;
-            pdf.text('Total Carbs: ' + (nf.totalCarbs || '0') + 'g', x + 0.05, ty); ty += 0.08;
-            pdf.text('Protein: ' + (nf.protein || '0') + 'g', x + 0.05, ty);
+            pdf.text('Total Fat: ' + (nf.totalFat || '0') + 'g', nutX + 0.05, ty); ty += 0.08;
+            pdf.text('Total Carbs: ' + (nf.totalCarbs || '0') + 'g', nutX + 0.05, ty); ty += 0.08;
+            pdf.text('Protein: ' + (nf.protein || '0') + 'g', nutX + 0.05, ty);
           }
           
-          // Customer QR (smaller)
+          // Customer QR (bottom right)
           if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
-            const el = labelConfig.elements.customerQR;
             try {
               const img = await loadImageAsDataUrl(item.qrCodeUrl);
-              pdf.addImage(img, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72);
+              pdf.addImage(img, 'PNG', qrX, qrY, qrSize, qrSize);
               pdf.setFontSize(5);
               pdf.setFont('helvetica', 'bold');
-              pdf.text('SCAN TO VERIFY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.08, { align: 'center' });
+              pdf.setTextColor(0);
+              pdf.text('SCAN TO VERIFY', qrX + qrSize/2, qrY + qrSize + 0.1, { align: 'center' });
             } catch (e) {}
           }
           
-          // Inventory QR
+          // Inventory QR (bottom left)
           if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
-            const el = labelConfig.elements.inventoryQR;
+            const invQrX = 0.2;
             try {
               const img = await loadImageAsDataUrl(item.inventoryQrCodeUrl);
-              pdf.addImage(img, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72);
+              pdf.addImage(img, 'PNG', invQrX, qrY, qrSize, qrSize);
               pdf.setFontSize(4);
-              pdf.text('INVENTORY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.06, { align: 'center' });
+              pdf.setTextColor(100);
+              pdf.text('INVENTORY', invQrX + qrSize/2, qrY + qrSize + 0.08, { align: 'center' });
             } catch (e) {}
           }
           
+          // SKU at very bottom center
           pdf.setFontSize(4);
-          pdf.setTextColor(100);
-          pdf.text('SKU: ' + (item.sku || item.productId), labelConfig.width / 2, labelConfig.height - 0.1, { align: 'center' });
+          pdf.setTextColor(150);
+          pdf.text('SKU: ' + (item.sku || item.productId), labelW / 2, labelH - 0.08, { align: 'center' });
           pdf.setTextColor(0);
         }
+        
         const fileName = (currentLabelBatch.metadata?.batchDisplayName || currentLabelBatch.productName || 'labels').replace(/[^a-z0-9]/gi, '_');
         pdf.save(fileName + '_labels.pdf');
         btn.innerHTML = '<i class="fas fa-check"></i> Done!';

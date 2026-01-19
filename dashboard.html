@@ -45,7 +45,7 @@
     }
     .card h3 i { color: #4F46E5; }
 
-    /* Industry Selector - fixed height to match QR badge */
+    /* Industry Selector */
     .industry-selector {
       display: flex;
       align-items: center;
@@ -86,9 +86,6 @@
       padding: 0;
       margin: 0;
       margin-left: -3px;
-      outline: none;
-    }
-    .industry-selector select:focus {
       outline: none;
     }
     .industry-selector.food {
@@ -412,8 +409,6 @@
     .message.error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
     .message.info { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
 
-    /* Quick Links - Stacked */
-
     /* Compact Header Bar */
     .header-bar {
       display: flex;
@@ -440,7 +435,7 @@
       gap: 0.75rem;
     }
     
-    /* Quick Links - Stacked to match height */
+    /* Quick Links */
     .quick-links-stacked {
       display: flex;
       flex-direction: column;
@@ -518,6 +513,183 @@
       margin-right: 0.5rem;
     }
 
+    /* ==========================================
+       NUTRITIONAL TABLE LINK & MODAL
+    ========================================== */
+    .nutrition-link-container {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #F0FDF4;
+      border: 2px solid #BBF7D0;
+      border-radius: 12px;
+    }
+    .nutrition-link {
+      color: #059669;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nutrition-link:hover {
+      color: #047857;
+    }
+    .nutrition-link i {
+      font-size: 1rem;
+    }
+    .nutrition-link.has-data {
+      color: #059669;
+    }
+    .nutrition-link.has-data::after {
+      content: '✓';
+      margin-left: 0.25rem;
+      color: #10B981;
+    }
+    .nutrition-status {
+      font-size: 0.85rem;
+      color: #047857;
+      margin-top: 0.5rem;
+    }
+
+    /* Nutrition Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1400;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .nutrition-modal {
+      background: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 550px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .nutrition-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .nutrition-modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nutrition-modal-header h2 i {
+      color: #10B981;
+    }
+    .modal-close {
+      background: #F1F5F9;
+      border: none;
+      font-size: 1.25rem;
+      color: #64748B;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: #E2E8F0;
+      color: #1E293B;
+    }
+    .nutrition-modal-body {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .nutrition-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .nutrition-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .nutrition-field.full-width {
+      grid-column: 1 / -1;
+    }
+    .nutrition-field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+    .nutrition-field input {
+      padding: 0.6rem 0.75rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .nutrition-field input:focus {
+      outline: none;
+      border-color: #10B981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    .nutrition-divider {
+      grid-column: 1 / -1;
+      border-top: 1px solid #E2E8F0;
+      margin: 0.5rem 0;
+    }
+    .nutrition-section-title {
+      grid-column: 1 / -1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #10B981;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+    .nutrition-modal-footer {
+      padding: 1rem 2rem;
+      border-top: 2px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nutrition-modal-footer .btn {
+      width: auto;
+      padding: 0.75rem 1.5rem;
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #10B981, #059669);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .btn-success:hover:not(:disabled) {
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-outline {
+      background: white;
+      color: #64748B;
+      border: 2px solid #E2E8F0;
+      box-shadow: none;
+    }
+    .btn-outline:hover:not(:disabled) {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
     @media (max-width: 768px) {
       .main-with-sidebar { margin-left: 0; padding: 1.5rem; padding-top: 5rem; }
       .header-bar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
@@ -527,6 +699,7 @@
       .industry-selector { flex: 1; height: auto; }
       .qr-badge { flex: 1; justify-content: center; height: auto; }
       .rewards-points-input { flex-direction: column; align-items: flex-start; }
+      .nutrition-form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -613,7 +786,7 @@
         </div>
       </div>
 
-      <!-- Customer Rewards Toggle (NEW) -->
+      <!-- Customer Rewards Toggle -->
       <div class="toggle-container rewards" id="rewardsToggleContainer" style="display: none;">
         <div class="toggle-label">
           <i class="fas fa-gift rewards"></i>
@@ -622,41 +795,34 @@
         </div>
         <div class="info-tooltip" id="rewardsTooltip">
           <strong>What are Customer Rewards?</strong><br><br>
-          Let customers earn loyalty points when they scan this product's QR code! Great for repeat purchases and building customer loyalty.<br><br>
-          <strong>How it works:</strong><br>
-          • Customer scans the QR code<br>
-          • Enters their email to claim points<br>
-          • Points accumulate for discounts<br><br>
-          Set the point value based on your own scale (e.g., small item = 5pts, large = 15pts).
+          Let customers earn loyalty points when they scan this product's QR code!
         </div>
         <div class="toggle-switch rewards" id="rewardsToggle" onclick="toggleRewardsMode()">
           <div class="toggle-switch-slider"></div>
         </div>
       </div>
 
-      <!-- Rewards Points Section (NEW) -->
+      <!-- Rewards Points Section -->
       <div class="expandable-section rewards" id="rewardsSection">
         <h4><i class="fas fa-coins"></i> Reward Points for This Product</h4>
-        <p>Customers who scan and claim will earn these points. Create your own scale!</p>
+        <p>Customers who scan and claim will earn these points.</p>
         <div class="rewards-points-input">
           <label for="rewardsPoints">Points:</label>
           <input type="number" id="rewardsPoints" value="10" min="1" max="1000" />
-          <span>💡 Example: Small=5, Medium=10, Large=15, Premium=25</span>
+          <span>💡 Example: Small=5, Medium=10, Large=15</span>
         </div>
       </div>
 
       <!-- Single Item Helper Text -->
       <p class="single-item-helper" id="singleItemHelper">
         <i class="fas fa-lightbulb"></i>
-        <span id="singleItemHelperText"><strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. 
-        It doesn't have to be a product—mint anything: documents, certificates, artwork, event tickets, or any data point you want permanently verified.</span>
+        <span id="singleItemHelperText"><strong>Just need one QR code?</strong> Skip the toggles and fill out the form below.</span>
       </p>
 
-      <!-- Batch Section (quantity input + Excel option below) -->
+      <!-- Batch Section -->
       <div class="expandable-section batch" id="batchSection">
         <h4><i class="fas fa-boxes"></i> <span id="batchSectionTitle">Batch Settings</span></h4>
         
-        <!-- Quantity Input -->
         <div class="form-group">
           <label for="batchQuantity">
             <span id="batchQuantityLabel">How many identical items?</span>
@@ -664,22 +830,19 @@
           </label>
           <input id="batchQuantity" type="number" min="1" max="1000" value="5" placeholder="Enter quantity..." />
           <p style="font-size: 0.8rem; color: #92400E; margin-top: 0.5rem;" id="batchSkuHelp">
-            SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...)
+            SKUs will be auto-generated
           </p>
         </div>
 
-        <!-- OR divider -->
         <div style="display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0;">
           <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
-          <span style="color: #92400E; font-weight: 600; font-size: 0.85rem;" id="batchOrDivider">OR upload an Excel for a batch with individual items</span>
+          <span style="color: #92400E; font-weight: 600; font-size: 0.85rem;" id="batchOrDivider">OR upload Excel</span>
           <div style="flex: 1; height: 2px; background: #E2E8F0;"></div>
         </div>
 
-        <!-- Excel Upload -->
         <div id="batchExcelInput">
           <p class="excel-instructions" id="excelInstructions">
-            <strong>Do not include headers.</strong> Each row becomes a product entry.<br>
-            Enter data in columns as follows:<br>
+            <strong>Do not include headers.</strong> Each row becomes a product.<br>
             <code>A: Product Name</code> <code>B: SKU</code> <code>C: Batch #</code> <code>D: Notes</code>
           </p>
           
@@ -721,64 +884,57 @@
       <!-- Production Mode Section -->
       <div class="expandable-section production" id="productionSection">
         <h4><i class="fas fa-info-circle"></i> <span id="productionSectionTitle">Production Mode Enabled</span></h4>
-        <p id="productionSectionDesc">Products will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing for customer verification. No QR codes charged until you "Go Live".</p>
+        <p id="productionSectionDesc">Products will start in <strong>production tracking mode</strong>. No QR codes charged until you "Go Live".</p>
       </div>
 
       <!-- Manual Entry Form -->
       <div id="manualEntryForm">
         <div class="form-group">
           <label for="dashProdName" id="prodNameLabel">Name *</label>
-          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey, Certificate #1042, Event Ticket" id="prodNameInput" />
+          <input id="dashProdName" type="text" placeholder="e.g. Organic Honey, Certificate #1042" />
         </div>
         
         <div class="form-group" id="skuGroup">
           <label for="dashSku" id="skuLabel">
             SKU <span style="color: #64748B; font-weight: 400;">(optional)</span>
-            <span class="info-icon" onclick="toggleTooltip(event, 'skuTooltip')"><i class="fas fa-info"></i></span>
           </label>
-          <div class="info-tooltip" id="skuTooltip">
-            <strong>What is a SKU?</strong><br><br>
-            <span id="skuTooltipContent">SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>
-            • <code>STRAW-LEM-001</code><br>
-            • <code>HONEY-RAW-16OZ</code><br><br>
-            <strong>Leave blank</strong> and we'll auto-generate one for you!</span>
-          </div>
-          <input id="dashSku" type="text" placeholder="e.g. MANGO-001 or leave blank to auto-generate" />
+          <input id="dashSku" type="text" placeholder="e.g. MANGO-001 or leave blank" />
           <p id="skuSingleHelp" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
-            This is encoded in your inventory barcode for internal tracking
+            Encoded in your inventory barcode
           </p>
           <div id="skuBatchOptions" style="display: none; margin-top: 0.5rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.875rem; color: #475569; cursor: pointer;">
               <input type="checkbox" id="sameSku" style="width: 16px; height: 16px; cursor: pointer;" />
               <span id="sameSkuLabel">Give all items the same SKU</span>
             </label>
-            <p id="skuHelpText" style="font-size: 0.8rem; color: #64748B; margin-top: 0.25rem;">
-              If unchecked, we'll add -001, -002, etc. to make each item unique
-            </p>
           </div>
         </div>
         
         <div class="form-group">
           <label for="dashBatch" id="batchNumberLabel">
             Batch Number <span style="color: #64748B; font-weight: 400;">(optional)</span>
-            <span class="info-icon" onclick="toggleTooltip(event, 'batchTooltip2')"><i class="fas fa-info"></i></span>
           </label>
-          <div class="info-tooltip" id="batchTooltip2">
-            <strong id="batchTooltip2Title">What is a Batch Number?</strong><br><br>
-            <span id="batchTooltip2Content">Use this to group products made together. Examples:<br>
-            • Date made: <code>120524</code><br>
-            • Batch ID: <code>BATCH-042</code><br>
-            • Or just: <code>1</code><br><br>
-            <strong>Skip it</strong> if you make products fresh/individually!</span>
-          </div>
-          <input id="dashBatch" type="text" placeholder="e.g. 120524, BATCH-001, or skip" />
+          <input id="dashBatch" type="text" placeholder="e.g. 120524, BATCH-001" />
         </div>
         
         <div class="form-group">
           <label for="dashMetadata" id="metadataLabel">
             Additional Info <span style="color: #64748B; font-weight: 400;">(optional)</span>
           </label>
-          <textarea id="dashMetadata" placeholder="e.g. Made with real fruit, Fresh squeezed daily, Local pickup available, Ingredients: lemon, sugar, water" rows="3"></textarea>
+          <textarea id="dashMetadata" placeholder="e.g. Made with real fruit, Ingredients: lemon, sugar, water" rows="3"></textarea>
+        </div>
+
+        <!-- ==========================================
+             NUTRITIONAL TABLE LINK (NEW!)
+        ========================================== -->
+        <div class="nutrition-link-container" id="nutritionLinkContainer">
+          <span class="nutrition-link" id="nutritionLink" onclick="openNutritionModal()">
+            <i class="fas fa-clipboard-list"></i>
+            <span id="nutritionLinkText">Need a nutritional table? Click here</span>
+          </span>
+          <p class="nutrition-status" id="nutritionStatus" style="display: none;">
+            <i class="fas fa-check-circle"></i> Nutritional data saved — will appear on customer verification page
+          </p>
         </div>
 
         <div class="form-group">
@@ -812,6 +968,114 @@
     </div>
   </div>
 
+  <!-- ==========================================
+       NUTRITIONAL TABLE MODAL
+  ========================================== -->
+  <div class="modal-overlay" id="nutritionModalOverlay" onclick="closeNutritionModal(event)">
+    <div class="nutrition-modal" onclick="event.stopPropagation()">
+      <div class="nutrition-modal-header">
+        <h2><i class="fas fa-clipboard-list"></i> Nutrition Facts</h2>
+        <button class="modal-close" onclick="closeNutritionModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="nutrition-modal-body">
+        <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 1rem;">
+          Fill out the FDA-style nutrition facts. This will be displayed when customers scan your product's QR code.
+        </p>
+        <div class="nutrition-form-grid">
+          <div class="nutrition-field full-width">
+            <label>Serving Size *</label>
+            <input type="text" id="nf_servingSize" placeholder="e.g., 1 bottle (240ml), 1 cup (30g)" />
+          </div>
+          <div class="nutrition-field">
+            <label>Servings Per Container</label>
+            <input type="text" id="nf_servingsPerContainer" placeholder="e.g., 1, 2, About 8" />
+          </div>
+          <div class="nutrition-field">
+            <label>Calories *</label>
+            <input type="text" id="nf_calories" placeholder="e.g., 120" />
+          </div>
+          
+          <div class="nutrition-section-title">Fats</div>
+          <div class="nutrition-field">
+            <label>Total Fat (g)</label>
+            <input type="text" id="nf_totalFat" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Saturated Fat (g)</label>
+            <input type="text" id="nf_saturatedFat" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Trans Fat (g)</label>
+            <input type="text" id="nf_transFat" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Cholesterol (mg)</label>
+            <input type="text" id="nf_cholesterol" placeholder="0" />
+          </div>
+          
+          <div class="nutrition-section-title">Carbohydrates</div>
+          <div class="nutrition-field">
+            <label>Sodium (mg)</label>
+            <input type="text" id="nf_sodium" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Total Carbohydrates (g)</label>
+            <input type="text" id="nf_totalCarbs" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Dietary Fiber (g)</label>
+            <input type="text" id="nf_fiber" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Total Sugars (g)</label>
+            <input type="text" id="nf_sugars" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Added Sugars (g)</label>
+            <input type="text" id="nf_addedSugars" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Protein (g)</label>
+            <input type="text" id="nf_protein" placeholder="0" />
+          </div>
+          
+          <div class="nutrition-section-title">Vitamins & Minerals</div>
+          <div class="nutrition-field">
+            <label>Vitamin D (mcg)</label>
+            <input type="text" id="nf_vitaminD" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Calcium (mg)</label>
+            <input type="text" id="nf_calcium" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Iron (mg)</label>
+            <input type="text" id="nf_iron" placeholder="0" />
+          </div>
+          <div class="nutrition-field">
+            <label>Potassium (mg)</label>
+            <input type="text" id="nf_potassium" placeholder="0" />
+          </div>
+          <div class="nutrition-field full-width">
+            <label>Ingredients List (optional)</label>
+            <input type="text" id="nf_ingredients" placeholder="e.g., Water, Lemon Juice, Cane Sugar, Natural Flavors" />
+          </div>
+        </div>
+      </div>
+      <div class="nutrition-modal-footer">
+        <button class="btn btn-outline" onclick="clearNutritionForm()">
+          <i class="fas fa-eraser"></i> Clear All
+        </button>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-outline" onclick="closeNutritionModal()">Cancel</button>
+          <button class="btn btn-success" onclick="saveNutrition()">
+            <i class="fas fa-save"></i> Save Nutrition Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/auth.js"></script>
   <script>
     requireAuth();
@@ -819,7 +1083,7 @@
     let isBatchMode = false;
     let isProductionMode = false;
     let isRewardsMode = false;
-    let rewardsEnabled = false; // From user settings
+    let rewardsEnabled = false;
     let selectedPhotos = [];
     let capturedLocation = null;
     let qrUsedThisMonth = 0;
@@ -828,6 +1092,120 @@
     let excelData = [];
     let currentIndustry = 'general';
     let savedIndustryPreference = null;
+    
+    // ==========================================
+    // NUTRITIONAL DATA STATE (NEW!)
+    // ==========================================
+    let nutritionData = null; // Will hold the nutrition facts object
+
+    // ==========================================
+    // NUTRITION MODAL FUNCTIONS (NEW!)
+    // ==========================================
+    function openNutritionModal() {
+      // If we have existing data, populate the form
+      if (nutritionData) {
+        loadNutritionForm(nutritionData);
+      }
+      document.getElementById('nutritionModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeNutritionModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('nutritionModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function getNutritionFormData() {
+      return {
+        servingSize: document.getElementById('nf_servingSize').value.trim(),
+        servingsPerContainer: document.getElementById('nf_servingsPerContainer').value.trim(),
+        calories: document.getElementById('nf_calories').value.trim(),
+        totalFat: document.getElementById('nf_totalFat').value.trim(),
+        saturatedFat: document.getElementById('nf_saturatedFat').value.trim(),
+        transFat: document.getElementById('nf_transFat').value.trim(),
+        cholesterol: document.getElementById('nf_cholesterol').value.trim(),
+        sodium: document.getElementById('nf_sodium').value.trim(),
+        totalCarbs: document.getElementById('nf_totalCarbs').value.trim(),
+        fiber: document.getElementById('nf_fiber').value.trim(),
+        sugars: document.getElementById('nf_sugars').value.trim(),
+        addedSugars: document.getElementById('nf_addedSugars').value.trim(),
+        protein: document.getElementById('nf_protein').value.trim(),
+        vitaminD: document.getElementById('nf_vitaminD').value.trim(),
+        calcium: document.getElementById('nf_calcium').value.trim(),
+        iron: document.getElementById('nf_iron').value.trim(),
+        potassium: document.getElementById('nf_potassium').value.trim(),
+        ingredients: document.getElementById('nf_ingredients').value.trim()
+      };
+    }
+
+    function loadNutritionForm(data) {
+      document.getElementById('nf_servingSize').value = data.servingSize || '';
+      document.getElementById('nf_servingsPerContainer').value = data.servingsPerContainer || '';
+      document.getElementById('nf_calories').value = data.calories || '';
+      document.getElementById('nf_totalFat').value = data.totalFat || '';
+      document.getElementById('nf_saturatedFat').value = data.saturatedFat || '';
+      document.getElementById('nf_transFat').value = data.transFat || '';
+      document.getElementById('nf_cholesterol').value = data.cholesterol || '';
+      document.getElementById('nf_sodium').value = data.sodium || '';
+      document.getElementById('nf_totalCarbs').value = data.totalCarbs || '';
+      document.getElementById('nf_fiber').value = data.fiber || '';
+      document.getElementById('nf_sugars').value = data.sugars || '';
+      document.getElementById('nf_addedSugars').value = data.addedSugars || '';
+      document.getElementById('nf_protein').value = data.protein || '';
+      document.getElementById('nf_vitaminD').value = data.vitaminD || '';
+      document.getElementById('nf_calcium').value = data.calcium || '';
+      document.getElementById('nf_iron').value = data.iron || '';
+      document.getElementById('nf_potassium').value = data.potassium || '';
+      document.getElementById('nf_ingredients').value = data.ingredients || '';
+    }
+
+    function clearNutritionForm() {
+      document.querySelectorAll('.nutrition-modal-body input').forEach(input => input.value = '');
+    }
+
+    function saveNutrition() {
+      const data = getNutritionFormData();
+      
+      // Check if at least serving size and calories are filled
+      if (!data.servingSize && !data.calories) {
+        alert('Please fill in at least Serving Size and Calories');
+        return;
+      }
+      
+      // Save to state
+      nutritionData = data;
+      
+      // Update the link to show it's filled
+      const link = document.getElementById('nutritionLink');
+      const linkText = document.getElementById('nutritionLinkText');
+      const status = document.getElementById('nutritionStatus');
+      
+      link.classList.add('has-data');
+      linkText.textContent = 'Nutritional Table (click to edit)';
+      status.style.display = 'block';
+      
+      closeNutritionModal();
+    }
+
+    function resetNutritionUI() {
+      nutritionData = null;
+      const link = document.getElementById('nutritionLink');
+      const linkText = document.getElementById('nutritionLinkText');
+      const status = document.getElementById('nutritionStatus');
+      
+      link.classList.remove('has-data');
+      linkText.textContent = 'Need a nutritional table? Click here';
+      status.style.display = 'none';
+      clearNutritionForm();
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeNutritionModal();
+      }
+    });
 
     // ==========================================
     // INDUSTRY-SPECIFIC CONTENT
@@ -837,247 +1215,15 @@
         headerSubtitle: 'Mint products, documents, certificates, or any data to the blockchain for permanent verification.',
         cardTitle: 'New Product',
         prodNameLabel: 'Name *',
-        prodNameLabelBatch: 'Batch Name *',
-        prodNamePlaceholder: 'e.g. Organic Honey, Certificate #1042, Event Ticket',
-        prodNamePlaceholderBatch: 'e.g. Summer 2025 Collection',
-        skuPlaceholder: 'e.g. MANGO-001 or leave blank to auto-generate',
-        skuTooltipContent: 'SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>• <code>STRAW-LEM-001</code><br>• <code>HONEY-RAW-16OZ</code><br><br><strong>Leave blank</strong> and we\'ll auto-generate one for you!',
-        batchNumberLabel: 'Batch Number',
-        batchNumberPlaceholder: 'e.g. 120524, BATCH-001, or skip',
-        batchTooltip2Title: 'What is a Batch Number?',
-        batchTooltip2Content: 'Use this to group products made together. Examples:<br>• Date made: <code>120524</code><br>• Batch ID: <code>BATCH-042</code><br>• Or just: <code>1</code><br><br><strong>Skip it</strong> if you make products fresh/individually!',
-        metadataLabel: 'Additional Info',
-        metadataPlaceholder: 'e.g. Made with real fruit, Fresh squeezed daily, Local pickup available, Ingredients: lemon, sugar, water',
-        singleItemHelperText: '<strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. It doesn\'t have to be a product—mint anything: documents, certificates, artwork, event tickets, or any data point you want permanently verified.',
-        batchTooltipContent: 'Have multiple items to mint at once? Enable batch mode to either enter a quantity (for identical items) or upload an Excel file (for different products with unique SKUs).',
-        batchQuantityLabel: 'How many identical items?',
-        batchSkuHelp: 'SKUs will be auto-generated (e.g., HONEY-001, HONEY-002, ...)',
-        productionTooltipTitle: 'What is Production Mode?',
-        productionTooltipContent: 'Does your product have multiple steps before reaching a consumer? Production Mode lets you track each checkpoint in your supply chain—manufacturing, quality checks, shipping, distribution—before going live.<br><br>Each stop scans the same QR code to log their part of the journey. When ready, hit "Go Live" and customers see the full verified timeline.',
-        productionSectionDesc: 'Products will start in <strong>production tracking mode</strong>. You can log checkpoints (QC, shipping, etc.) before finalizing for customer verification. No QR codes charged until you "Go Live".',
-        excelInstructions: '<strong>Do not include headers.</strong> Each row becomes a product entry.<br>Enter data in columns as follows:<br><code>A: Product Name</code> <code>B: SKU</code> <code>C: Batch #</code> <code>D: Notes</code>',
-        excelPreviewHeaders: ['Product Name', 'SKU', 'Batch #', 'Notes'],
-        excelRowLabel: 'products',
-        photosLabel: 'Photos (optional)',
-        locationDisplayText: 'Location captured!',
-        selectorIcon: 'fa-industry'
+        prodNamePlaceholder: 'e.g. Organic Honey, Certificate #1042, Event Ticket'
       },
       food: {
         headerSubtitle: 'Track food products from farm to table with blockchain-verified supply chain transparency.',
         cardTitle: 'New Product / Harvest',
         prodNameLabel: 'Product / Harvest Name *',
-        prodNameLabelBatch: 'Harvest Batch Name *',
-        prodNamePlaceholder: 'e.g. Organic Strawberries, Free-Range Eggs, Atlantic Salmon',
-        prodNamePlaceholderBatch: 'e.g. June 2025 Strawberry Harvest',
-        skuPlaceholder: 'e.g. STRW-ORG-001 or leave blank to auto-generate',
-        skuTooltipContent: 'SKU (Stock Keeping Unit) is your internal product code for inventory tracking. Examples:<br>• <code>STRW-ORG-001</code> (Organic Strawberries)<br>• <code>EGG-FR-DOZ</code> (Free-Range Eggs, Dozen)<br><br><strong>Leave blank</strong> and we\'ll auto-generate one for you!',
-        batchNumberLabel: 'Lot / Batch Number',
-        batchNumberPlaceholder: 'e.g. LOT-2025-06-15, HARVEST-042',
-        batchTooltip2Title: 'What is a Lot/Batch Number?',
-        batchTooltip2Content: 'Use this to group products harvested or processed together. Examples:<br>• Harvest date: <code>LOT-2025-06-15</code><br>• Processing batch: <code>PROC-042</code><br>• Farm + date: <code>SMITH-0615</code><br><br>Critical for traceability and recalls!',
-        metadataLabel: 'Product Details',
-        metadataPlaceholder: 'e.g. Certified Organic, Non-GMO, Farm: Smith Family Farms, Harvest temp: 45°F, Certifications: USDA Organic',
-        singleItemHelperText: '<strong>Just need one QR code?</strong> Skip the toggles and fill out the form below. Track a single harvest, shipment, or product with full farm-to-table transparency.',
-        batchTooltipContent: 'Have a full harvest or shipment to track? Enable batch mode to either enter a quantity (for identical items from same harvest) or upload an Excel file (for different products with unique lot numbers).',
-        batchQuantityLabel: 'How many identical items from this harvest?',
-        batchSkuHelp: 'SKUs will be auto-generated (e.g., STRWB-001, STRWB-002, ...)',
-        productionTooltipTitle: 'What is Supply Chain Tracking?',
-        productionTooltipContent: 'Track your product\'s journey from farm to table! Log each checkpoint:<br><br>🌱 <strong>Harvest</strong> — Date, farm, conditions<br>🏭 <strong>Processing</strong> — Facility, handling, temp<br>❄️ <strong>Cold Storage</strong> — Temperature logs<br>🚚 <strong>Distribution</strong> — Transport, delivery<br>🏪 <strong>Retail</strong> — Final destination<br><br>When ready, hit "Go Live" and consumers see the full verified journey.',
-        productionSectionDesc: 'Products will start in <strong>supply chain tracking mode</strong>. Log checkpoints (harvest, processing, cold storage, distribution) before finalizing. Consumers will see the complete farm-to-table journey. No QR codes charged until you "Go Live".',
-        excelInstructions: '<strong>Do not include headers.</strong> Each row becomes a product entry.<br>Enter data in columns as follows:<br><code>A: Product Name</code> <code>B: SKU/Lot #</code> <code>C: Harvest Date</code> <code>D: Notes/Origin</code>',
-        excelPreviewHeaders: ['Product Name', 'SKU/Lot #', 'Harvest Date', 'Notes/Origin'],
-        excelRowLabel: 'items',
-        photosLabel: 'Photos (optional) — harvest, facility, certifications',
-        locationDisplayText: 'Farm/facility location captured!',
-        selectorIcon: 'fa-seedling'
+        prodNamePlaceholder: 'e.g. Organic Strawberries, Free-Range Eggs'
       }
     };
-
-    // ==========================================
-    // REWARDS SETTINGS CHECK
-    // ==========================================
-    async function loadRewardsSettings() {
-      try {
-        const response = await authenticatedFetch('/api/rewards-settings');
-        const data = await response.json();
-        
-        if (data.success && data.settings) {
-          rewardsEnabled = data.settings.rewardsEnabled;
-          
-          // Show/hide the rewards toggle based on whether rewards are enabled for this business
-          const rewardsToggleContainer = document.getElementById('rewardsToggleContainer');
-          if (rewardsEnabled) {
-            rewardsToggleContainer.style.display = 'flex';
-            // Set default points value from settings
-            document.getElementById('rewardsPoints').value = data.settings.pointsPerClaim || 10;
-          } else {
-            rewardsToggleContainer.style.display = 'none';
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load rewards settings:', error);
-      }
-    }
-
-    // ==========================================
-    // TOGGLE REWARDS MODE
-    // ==========================================
-    function toggleRewardsMode() {
-      isRewardsMode = !isRewardsMode;
-      const toggle = document.getElementById('rewardsToggle');
-      const section = document.getElementById('rewardsSection');
-      
-      if (isRewardsMode) {
-        toggle.classList.add('active');
-        section.classList.add('show');
-      } else {
-        toggle.classList.remove('active');
-        section.classList.remove('show');
-      }
-    }
-
-    // ==========================================
-    // INDUSTRY PREFERENCE HANDLING
-    // ==========================================
-    async function loadIndustryPreference() {
-      try {
-        const response = await authenticatedFetch('/api/industry-preference');
-        const data = await response.json();
-        
-        if (data.success && data.industryPreference) {
-          savedIndustryPreference = data.industryPreference;
-          currentIndustry = data.industryPreference;
-          document.getElementById('industrySelect').value = currentIndustry;
-          document.getElementById('savePreferenceCheckbox').checked = true;
-          updateSavePreferenceUI(true);
-          applyIndustryContent();
-        }
-      } catch (error) {
-        console.error('Failed to load industry preference:', error);
-      }
-    }
-
-    function handleIndustryChange() {
-      const newIndustry = document.getElementById('industrySelect').value;
-      currentIndustry = newIndustry;
-      
-      if (savedIndustryPreference && newIndustry !== savedIndustryPreference) {
-        document.getElementById('savePreferenceCheckbox').checked = false;
-        updateSavePreferenceUI(false);
-      } else if (savedIndustryPreference && newIndustry === savedIndustryPreference) {
-        document.getElementById('savePreferenceCheckbox').checked = true;
-        updateSavePreferenceUI(true);
-      }
-      
-      applyIndustryContent();
-    }
-
-    async function handleSavePreference() {
-      const checkbox = document.getElementById('savePreferenceCheckbox');
-      const isChecked = checkbox.checked;
-      
-      if (isChecked) {
-        try {
-          const response = await authenticatedFetch('/api/industry-preference', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ industryPreference: currentIndustry })
-          });
-          
-          const data = await response.json();
-          if (data.success) {
-            savedIndustryPreference = currentIndustry;
-            updateSavePreferenceUI(true);
-          }
-        } catch (error) {
-          console.error('Failed to save preference:', error);
-          checkbox.checked = false;
-        }
-      } else {
-        try {
-          const response = await authenticatedFetch('/api/industry-preference', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ industryPreference: 'general' })
-          });
-          
-          const data = await response.json();
-          if (data.success) {
-            savedIndustryPreference = null;
-            updateSavePreferenceUI(false);
-          }
-        } catch (error) {
-          console.error('Failed to clear preference:', error);
-        }
-      }
-    }
-
-    function updateSavePreferenceUI(isSaved) {
-      const label = document.getElementById('savePreferenceLabel');
-      const text = document.getElementById('savePreferenceText');
-      
-      if (isSaved) {
-        label.classList.add('saved');
-        text.textContent = 'Saved';
-      } else {
-        label.classList.remove('saved');
-        text.textContent = 'Save';
-      }
-    }
-
-    function applyIndustryContent() {
-      const content = industryContent[currentIndustry];
-      const selector = document.getElementById('industrySelector');
-      
-      if (currentIndustry === 'food') {
-        selector.classList.add('food');
-      } else {
-        selector.classList.remove('food');
-      }
-      
-      document.getElementById('headerSubtitle').textContent = content.headerSubtitle;
-      document.getElementById('cardTitle').textContent = content.cardTitle;
-      
-      const prodNameLabel = document.getElementById('prodNameLabel');
-      const prodNameInput = document.getElementById('dashProdName');
-      
-      if (isBatchMode) {
-        prodNameLabel.textContent = content.prodNameLabelBatch;
-        prodNameInput.placeholder = content.prodNamePlaceholderBatch;
-      } else {
-        prodNameLabel.textContent = content.prodNameLabel;
-        prodNameInput.placeholder = content.prodNamePlaceholder;
-      }
-      
-      document.getElementById('dashSku').placeholder = content.skuPlaceholder;
-      document.getElementById('skuTooltipContent').innerHTML = content.skuTooltipContent;
-      
-      document.getElementById('batchNumberLabel').innerHTML = content.batchNumberLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span><span class="info-icon" onclick="toggleTooltip(event, \'batchTooltip2\')"><i class="fas fa-info"></i></span>';
-      document.getElementById('dashBatch').placeholder = content.batchNumberPlaceholder;
-      document.getElementById('batchTooltip2Title').textContent = content.batchTooltip2Title;
-      document.getElementById('batchTooltip2Content').innerHTML = content.batchTooltip2Content;
-      
-      document.getElementById('metadataLabel').innerHTML = content.metadataLabel + ' <span style="color: #64748B; font-weight: 400;">(optional)</span>';
-      document.getElementById('dashMetadata').placeholder = content.metadataPlaceholder;
-      
-      document.getElementById('singleItemHelperText').innerHTML = content.singleItemHelperText;
-      
-      document.getElementById('batchTooltipContent').innerHTML = content.batchTooltipContent;
-      document.getElementById('batchQuantityLabel').textContent = content.batchQuantityLabel;
-      document.getElementById('batchSkuHelp').textContent = content.batchSkuHelp;
-      
-      document.getElementById('productionTooltipTitle').textContent = content.productionTooltipTitle;
-      document.getElementById('productionTooltipContent').innerHTML = content.productionTooltipContent;
-      document.getElementById('productionSectionDesc').innerHTML = content.productionSectionDesc;
-      
-      document.getElementById('excelInstructions').innerHTML = content.excelInstructions;
-      const headerRow = document.getElementById('excelPreviewHeader');
-      headerRow.innerHTML = content.excelPreviewHeaders.map(h => `<th>${h}</th>`).join('');
-      document.getElementById('excelRowLabel').textContent = content.excelRowLabel;
-      
-      document.getElementById('photosLabel').textContent = content.photosLabel;
-      document.getElementById('locationDisplayText').textContent = content.locationDisplayText;
-    }
 
     // ==========================================
     // TOOLTIPS
@@ -1104,54 +1250,25 @@
       const toggle = document.getElementById('batchToggle');
       const section = document.getElementById('batchSection');
       const toggleText = document.getElementById('batchToggleText');
-      const skuInput = document.getElementById('dashSku');
-      const skuLabel = document.getElementById('skuLabel');
-      const skuBatchOptions = document.getElementById('skuBatchOptions');
-      const skuSingleHelp = document.getElementById('skuSingleHelp');
-      const content = industryContent[currentIndustry];
       
       if (isBatchMode) {
         toggle.classList.add('active');
         section.classList.add('show');
         toggleText.textContent = 'Batch Upload ✓';
-        skuInput.disabled = false;
-        skuLabel.textContent = 'SKU';
-        skuInput.placeholder = 'Leave blank to auto-generate';
-        skuBatchOptions.style.display = 'block';
-        skuSingleHelp.style.display = 'none';
-        document.getElementById('sameSku').checked = false;
-        updateSkuHelpText();
-        document.getElementById('prodNameLabel').textContent = content.prodNameLabelBatch;
-        document.getElementById('dashProdName').placeholder = content.prodNamePlaceholderBatch;
+        document.getElementById('skuBatchOptions').style.display = 'block';
+        document.getElementById('skuSingleHelp').style.display = 'none';
         document.getElementById('remainingQRs').textContent = '(' + (qrLimit - qrUsedThisMonth) + ' available)';
       } else {
         toggle.classList.remove('active');
         section.classList.remove('show');
         toggleText.textContent = 'Batch Upload';
-        skuInput.disabled = false;
-        skuLabel.textContent = 'SKU';
-        skuInput.placeholder = content.skuPlaceholder;
-        skuBatchOptions.style.display = 'none';
-        skuSingleHelp.style.display = 'block';
-        document.getElementById('prodNameLabel').textContent = content.prodNameLabel;
-        document.getElementById('dashProdName').placeholder = content.prodNamePlaceholder;
+        document.getElementById('skuBatchOptions').style.display = 'none';
+        document.getElementById('skuSingleHelp').style.display = 'block';
         document.getElementById('remainingQRs').textContent = '';
         clearExcelUpload();
       }
       updateMintButtonText();
     }
-    
-    function updateSkuHelpText() {
-      const sameSku = document.getElementById('sameSku').checked;
-      const helpText = document.getElementById('skuHelpText');
-      if (sameSku) {
-        helpText.textContent = 'All items will have the exact same SKU';
-      } else {
-        helpText.textContent = "If unchecked, we'll add -001, -002, etc. to make each item unique";
-      }
-    }
-    
-    document.getElementById('sameSku').addEventListener('change', updateSkuHelpText);
 
     function toggleProductionMode() {
       isProductionMode = !isProductionMode;
@@ -1162,37 +1279,101 @@
       if (isProductionMode) {
         toggle.classList.add('active');
         section.classList.add('show');
-        toggleText.textContent = currentIndustry === 'food' ? 'Supply Chain Tracking ✓' : 'Production Mode ✓';
+        toggleText.textContent = 'Production Mode ✓';
       } else {
         toggle.classList.remove('active');
         section.classList.remove('show');
-        toggleText.textContent = currentIndustry === 'food' ? 'Supply Chain Tracking' : 'Production Mode';
+        toggleText.textContent = 'Production Mode';
       }
       updateMintButtonText();
+    }
+
+    function toggleRewardsMode() {
+      isRewardsMode = !isRewardsMode;
+      const toggle = document.getElementById('rewardsToggle');
+      const section = document.getElementById('rewardsSection');
+      
+      if (isRewardsMode) {
+        toggle.classList.add('active');
+        section.classList.add('show');
+      } else {
+        toggle.classList.remove('active');
+        section.classList.remove('show');
+      }
     }
 
     function updateMintButtonText() {
       const text = document.getElementById('mintButtonText');
       const hasExcel = excelData.length > 0;
-      const isFood = currentIndustry === 'food';
       
       if (isProductionMode) {
-        if (hasExcel) {
-          text.textContent = isFood ? 'Create Supply Chain Entries' : 'Create Production Entries';
-        } else if (isBatchMode) {
-          text.textContent = isFood ? 'Create Supply Chain Batch' : 'Create Production Batch';
-        } else {
-          text.textContent = isFood ? 'Create Supply Chain Entry' : 'Create Production Entry';
-        }
+        if (hasExcel) text.textContent = 'Create Production Entries';
+        else if (isBatchMode) text.textContent = 'Create Production Batch';
+        else text.textContent = 'Create Production Entry';
       } else {
-        if (hasExcel) {
-          text.textContent = 'Upload & Mint All';
-        } else if (isBatchMode) {
-          text.textContent = 'Mint Batch to Blockchain';
-        } else {
-          text.textContent = 'Mint to Blockchain';
-        }
+        if (hasExcel) text.textContent = 'Upload & Mint All';
+        else if (isBatchMode) text.textContent = 'Mint Batch to Blockchain';
+        else text.textContent = 'Mint to Blockchain';
       }
+    }
+
+    // ==========================================
+    // INDUSTRY HANDLING
+    // ==========================================
+    async function loadIndustryPreference() {
+      try {
+        const response = await authenticatedFetch('/api/industry-preference');
+        const data = await response.json();
+        if (data.success && data.industryPreference) {
+          savedIndustryPreference = data.industryPreference;
+          currentIndustry = data.industryPreference;
+          document.getElementById('industrySelect').value = currentIndustry;
+          document.getElementById('savePreferenceCheckbox').checked = true;
+          updateSavePreferenceUI(true);
+          applyIndustryContent();
+        }
+      } catch (error) {
+        console.error('Failed to load industry preference:', error);
+      }
+    }
+
+    function handleIndustryChange() {
+      currentIndustry = document.getElementById('industrySelect').value;
+      if (currentIndustry === 'food') {
+        document.getElementById('industrySelector').classList.add('food');
+      } else {
+        document.getElementById('industrySelector').classList.remove('food');
+      }
+      applyIndustryContent();
+    }
+
+    async function handleSavePreference() {
+      const checkbox = document.getElementById('savePreferenceCheckbox');
+      try {
+        await authenticatedFetch('/api/industry-preference', {
+          method: 'POST',
+          body: JSON.stringify({ industryPreference: checkbox.checked ? currentIndustry : 'general' })
+        });
+        savedIndustryPreference = checkbox.checked ? currentIndustry : null;
+        updateSavePreferenceUI(checkbox.checked);
+      } catch (error) {
+        console.error('Failed to save preference:', error);
+      }
+    }
+
+    function updateSavePreferenceUI(isSaved) {
+      const label = document.getElementById('savePreferenceLabel');
+      const text = document.getElementById('savePreferenceText');
+      if (isSaved) { label.classList.add('saved'); text.textContent = 'Saved'; }
+      else { label.classList.remove('saved'); text.textContent = 'Save'; }
+    }
+
+    function applyIndustryContent() {
+      const content = industryContent[currentIndustry];
+      document.getElementById('headerSubtitle').textContent = content.headerSubtitle;
+      document.getElementById('cardTitle').textContent = content.cardTitle;
+      document.getElementById('prodNameLabel').textContent = content.prodNameLabel;
+      document.getElementById('dashProdName').placeholder = content.prodNamePlaceholder;
     }
 
     // ==========================================
@@ -1202,25 +1383,11 @@
     const excelUploadArea = document.getElementById('excelUploadArea');
 
     excelInput.addEventListener('change', handleExcelFile);
+    excelUploadArea.addEventListener('dragover', (e) => { e.preventDefault(); excelUploadArea.classList.add('dragover'); });
+    excelUploadArea.addEventListener('dragleave', () => { excelUploadArea.classList.remove('dragover'); });
+    excelUploadArea.addEventListener('drop', (e) => { e.preventDefault(); excelUploadArea.classList.remove('dragover'); if (e.dataTransfer.files[0]) processExcelFile(e.dataTransfer.files[0]); });
 
-    excelUploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      excelUploadArea.classList.add('dragover');
-    });
-    excelUploadArea.addEventListener('dragleave', () => {
-      excelUploadArea.classList.remove('dragover');
-    });
-    excelUploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      excelUploadArea.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      if (file) processExcelFile(file);
-    });
-
-    function handleExcelFile(e) {
-      const file = e.target.files[0];
-      if (file) processExcelFile(file);
-    }
+    function handleExcelFile(e) { if (e.target.files[0]) processExcelFile(e.target.files[0]); }
 
     function processExcelFile(file) {
       const reader = new FileReader();
@@ -1230,17 +1397,12 @@
           const workbook = XLSX.read(data, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-          
           excelData = rows.filter(row => row.length > 0 && row[0]);
           
-          if (excelData.length === 0) {
-            alert('No data found in the spreadsheet.');
-            return;
-          }
-
+          if (excelData.length === 0) { alert('No data found'); return; }
           const remaining = qrLimit - qrUsedThisMonth;
           if (!isProductionMode && excelData.length > remaining) {
-            alert(`You have ${remaining} QR codes remaining but are trying to upload ${excelData.length} products. Please upgrade your plan or reduce the number of products.`);
+            alert(`You have ${remaining} QR codes remaining but are trying to upload ${excelData.length} products.`);
             excelData = [];
             return;
           }
@@ -1250,19 +1412,11 @@
           
           const tbody = document.getElementById('excelPreviewBody');
           tbody.innerHTML = '';
-          
-          const previewRows = excelData.slice(0, 5);
-          previewRows.forEach(row => {
+          excelData.slice(0, 5).forEach(row => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${escapeHtml(row[0] || '')}</td>
-              <td>${escapeHtml(row[1] || '')}</td>
-              <td>${escapeHtml(row[2] || '')}</td>
-              <td>${escapeHtml(row[3] || '')}</td>
-            `;
+            tr.innerHTML = `<td>${escapeHtml(row[0]||'')}</td><td>${escapeHtml(row[1]||'')}</td><td>${escapeHtml(row[2]||'')}</td><td>${escapeHtml(row[3]||'')}</td>`;
             tbody.appendChild(tr);
           });
-          
           if (excelData.length > 5) {
             const tr = document.createElement('tr');
             tr.innerHTML = `<td colspan="4" style="text-align:center;color:#64748B;font-style:italic;">...and ${excelData.length - 5} more</td>`;
@@ -1271,53 +1425,22 @@
 
           document.getElementById('excelPreview').style.display = 'block';
           document.getElementById('excelUploadArea').style.display = 'none';
-          document.getElementById('batchToggle').style.pointerEvents = 'none';
-          document.getElementById('batchToggle').style.opacity = '0.5';
           document.getElementById('dashSku').disabled = true;
-          document.getElementById('dashSku').value = '';
-          document.getElementById('dashSku').placeholder = 'Provided in Excel';
-          document.getElementById('skuBatchOptions').style.display = 'none';
           document.getElementById('dashBatch').disabled = true;
-          document.getElementById('dashBatch').placeholder = 'Provided in Excel';
           updateMintButtonText();
-        } catch (err) {
-          alert('Error reading file: ' + err.message);
-        }
+        } catch (err) { alert('Error reading file: ' + err.message); }
       };
       reader.readAsArrayBuffer(file);
     }
 
     function clearExcelUpload() {
-      const content = industryContent[currentIndustry];
       excelData = [];
       document.getElementById('excelInput').value = '';
       document.getElementById('excelPreview').style.display = 'none';
       document.getElementById('excelUploadArea').style.display = 'block';
-      document.getElementById('batchToggle').style.pointerEvents = 'auto';
-      document.getElementById('batchToggle').style.opacity = '1';
       document.getElementById('dashSku').disabled = false;
-      document.getElementById('skuLabel').textContent = 'SKU';
-      document.getElementById('dashSku').placeholder = content.skuPlaceholder;
-      document.getElementById('skuBatchOptions').style.display = 'block';
       document.getElementById('dashBatch').disabled = false;
-      document.getElementById('dashBatch').placeholder = content.batchNumberPlaceholder;
       updateMintButtonText();
-    }
-
-    function clearForm() {
-      const content = industryContent[currentIndustry];
-      document.getElementById('dashProdName').value = '';
-      document.getElementById('dashSku').value = '';
-      document.getElementById('dashBatch').value = '';
-      document.getElementById('dashMetadata').value = '';
-      if (document.getElementById('batchQuantity')) {
-        document.getElementById('batchQuantity').value = '5';
-      }
-      selectedPhotos = [];
-      document.getElementById('photoPreview').innerHTML = '';
-      capturedLocation = null;
-      document.getElementById('locationDisplay').style.display = 'none';
-      document.getElementById('locationBtnText').textContent = 'Location';
     }
 
     // ==========================================
@@ -1327,51 +1450,44 @@
       try {
         const response = await authenticatedFetch('/api/check-limits');
         const data = await response.json();
-        
         if (data.success) {
           qrUsedThisMonth = data.subscription.qrUsed;
           qrLimit = data.subscription.qrLimit;
           currentTier = data.subscription.tier;
-          
           document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
           document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
           document.getElementById('tierName').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1);
-          
-          const remaining = qrLimit - qrUsedThisMonth;
-          const maxBatch = Math.min(data.subscription.maxBatchSize || 10, remaining);
-          document.getElementById('batchQuantity').max = maxBatch;
+          document.getElementById('batchQuantity').max = Math.min(data.subscription.maxBatchSize || 10, qrLimit - qrUsedThisMonth);
         }
-      } catch (error) {
-        console.error('Failed to load limits:', error);
-      }
+      } catch (error) { console.error('Failed to load limits:', error); }
     }
 
-    // ==========================================
-    // LOAD PRODUCT COUNTS
-    // ==========================================
     async function loadProductCounts() {
       try {
         const response = await authenticatedFetch('/api/list-products');
         const data = await response.json();
-        
         if (data.success && data.products) {
-          let finished = 0;
-          let production = 0;
-          
+          let finished = 0, production = 0;
           data.products.forEach(p => {
-            if (p.mode === 'production' && !p.isFinalized) {
-              production++;
-            } else {
-              finished++;
-            }
+            if (p.mode === 'production' && !p.isFinalized) production++;
+            else finished++;
           });
-          
           document.getElementById('finishedCount').textContent = finished;
           document.getElementById('productionCount').textContent = production;
         }
-      } catch (error) {
-        console.error('Failed to load counts:', error);
-      }
+      } catch (error) { console.error('Failed to load counts:', error); }
+    }
+
+    async function loadRewardsSettings() {
+      try {
+        const response = await authenticatedFetch('/api/rewards-settings');
+        const data = await response.json();
+        if (data.success && data.settings?.rewardsEnabled) {
+          rewardsEnabled = true;
+          document.getElementById('rewardsToggleContainer').style.display = 'flex';
+          document.getElementById('rewardsPoints').value = data.settings.pointsPerClaim || 10;
+        }
+      } catch (error) { console.error('Failed to load rewards settings:', error); }
     }
 
     // ==========================================
@@ -1434,7 +1550,6 @@
       const btn = document.getElementById('captureLocationBtn');
       btn.disabled = true;
       document.getElementById('locationBtnText').textContent = 'Getting...';
-      
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           capturedLocation = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
@@ -1442,49 +1557,46 @@
           btn.disabled = false;
           document.getElementById('locationBtnText').textContent = 'Update';
         },
-        (err) => {
-          btn.disabled = false;
-          document.getElementById('locationBtnText').textContent = 'Location';
-          alert('Location error: ' + err.message);
-        },
+        (err) => { btn.disabled = false; document.getElementById('locationBtnText').textContent = 'Location'; alert('Location error: ' + err.message); },
         { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
       );
     });
 
+    function clearForm() {
+      document.getElementById('dashProdName').value = '';
+      document.getElementById('dashSku').value = '';
+      document.getElementById('dashBatch').value = '';
+      document.getElementById('dashMetadata').value = '';
+      document.getElementById('batchQuantity').value = '5';
+      selectedPhotos = [];
+      document.getElementById('photoPreview').innerHTML = '';
+      capturedLocation = null;
+      document.getElementById('locationDisplay').style.display = 'none';
+      document.getElementById('locationBtnText').textContent = 'Location';
+      resetNutritionUI(); // Reset nutrition data too!
+    }
+
     // ==========================================
-    // MINT / CREATE PRODUCT
+    // MINT / CREATE PRODUCT (UPDATED WITH NUTRITION!)
     // ==========================================
     document.getElementById('dashCreateBtn').addEventListener('click', async () => {
       const msgEl = document.getElementById('dashMsg');
       const btn = document.getElementById('dashCreateBtn');
       msgEl.innerHTML = '';
 
-      // Get rewards points if enabled
       const rewardsPoints = isRewardsMode ? parseInt(document.getElementById('rewardsPoints').value) || 10 : null;
 
       // Excel mode
       if (excelData.length > 0) {
         btn.disabled = true;
         const origText = btn.innerHTML;
-        
         const batchGroupId = 'batch-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         const totalItems = excelData.length;
         const batchName = document.getElementById('dashProdName').value.trim() || 'Excel Batch Upload';
-        const batchNumberFromForm = document.getElementById('dashBatch').value.trim();
         
-        const mintingMessage = isProductionMode 
-          ? `<div class="message info" style="text-align: left;">
-              <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${totalItems} products in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode...</strong><br>
-              <small style="color: #64748B;">Products will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
-            </div>`
-          : `<div class="message info" style="text-align: left;">
-              <i class="fas fa-spinner fa-spin"></i> <strong>Minting ${totalItems} products to blockchain...</strong><br>
-              <small style="color: #64748B;">We're recording each product on IPFS & XRPL for permanent verification. Creating unique QR codes for each item. Please don't refresh the page.</small>
-            </div>`;
-        msgEl.innerHTML = mintingMessage;
+        msgEl.innerHTML = `<div class="message info"><i class="fas fa-spinner fa-spin"></i> Creating ${totalItems} products...</div>`;
         
-        let successCount = 0;
-        let errorCount = 0;
+        let successCount = 0, errorCount = 0;
         
         for (let i = 0; i < excelData.length; i++) {
           const row = excelData[i];
@@ -1493,25 +1605,23 @@
           const batchNumber = String(row[2] || '').trim();
           const notes = String(row[3] || '').trim();
           
-          if (!productName || !sku) {
-            errorCount++;
-            continue;
-          }
+          if (!productName || !sku) { errorCount++; continue; }
           
           btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1} / ${totalItems}...`;
           
           try {
+            // Build metadata including nutrition if provided
+            const metadata = notes ? { notes } : {};
+            if (nutritionData) {
+              metadata.nutritionFacts = nutritionData;
+            }
+            
             const response = await fetch('/api/mint-product', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('biztrack-auth-token')
-              },
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('biztrack-auth-token') },
               body: JSON.stringify({
-                productName,
-                sku,
-                batchNumber: batchNumber || batchNumberFromForm,
-                metadata: notes ? { notes } : {},
+                productName, sku, batchNumber,
+                metadata,
                 mode: isProductionMode ? 'production' : 'live',
                 isExcelBatch: true,
                 excelBatchGroupId: batchGroupId,
@@ -1519,19 +1629,14 @@
                 excelBatchIndex: i + 1,
                 excelBatchName: batchName,
                 industryType: currentIndustry,
-                rewardsPoints: rewardsPoints
+                rewardsPoints
               })
             });
             
             const result = await response.json();
-            if (response.ok && result.success) {
-              successCount++;
-            } else {
-              errorCount++;
-            }
-          } catch (err) {
-            errorCount++;
-          }
+            if (response.ok && result.success) successCount++;
+            else errorCount++;
+          } catch (err) { errorCount++; }
         }
         
         btn.disabled = false;
@@ -1540,9 +1645,9 @@
         const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
         const viewLink = isProductionMode ? 'production.html' : 'products.html';
         if (errorCount === 0) {
-          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully created ${successCount} products as a batch! <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
+          msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> Successfully created ${successCount} products! <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         } else {
-          msgEl.innerHTML = `<div class="message info"><i class="fas fa-info-circle"></i> Created ${successCount} products. ${errorCount} failed (missing name or SKU). <a href="${viewLink}" style="color: #1E40AF; font-weight: 600;">View in ${viewPage} →</a></div>`;
+          msgEl.innerHTML = `<div class="message info"><i class="fas fa-info-circle"></i> Created ${successCount} products. ${errorCount} failed. <a href="${viewLink}" style="color: #1E40AF; font-weight: 600;">View in ${viewPage} →</a></div>`;
         }
         
         clearExcelUpload();
@@ -1556,7 +1661,7 @@
       const productName = document.getElementById('dashProdName').value.trim();
       const sku = document.getElementById('dashSku').value.trim();
       const batchNumber = document.getElementById('dashBatch').value.trim();
-      const metadata = document.getElementById('dashMetadata').value.trim();
+      const metadataNotes = document.getElementById('dashMetadata').value.trim();
       const batchQuantity = isBatchMode ? parseInt(document.getElementById('batchQuantity').value) : 1;
       
       if (!productName) {
@@ -1569,20 +1674,23 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Minting...';
       
       const itemCount = isBatchMode ? batchQuantity : 1;
-      const mintingMessage = isProductionMode 
-        ? `<div class="message info" style="text-align: left;">
-            <i class="fas fa-spinner fa-spin"></i> <strong>Creating ${itemCount > 1 ? itemCount + ' products' : 'product'} in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode...</strong><br>
-            <small style="color: #64748B;">Your product${itemCount > 1 ? 's' : ''} will be ready for checkpoint tracking. No blockchain minting until you "Go Live".</small>
-          </div>`
-        : `<div class="message info" style="text-align: left;">
-            <i class="fas fa-spinner fa-spin"></i> <strong>Minting ${itemCount > 1 ? itemCount + ' products' : 'product'} to blockchain...</strong><br>
-            <small style="color: #64748B;">We're permanently recording data on IPFS & the XRP Ledger for customer verification. Creating unique QR codes. Please don't refresh.</small>
-          </div>`;
-      msgEl.innerHTML = mintingMessage;
+      msgEl.innerHTML = `<div class="message info"><i class="fas fa-spinner fa-spin"></i> Creating ${itemCount > 1 ? itemCount + ' products' : 'product'}...</div>`;
 
       try {
         const token = localStorage.getItem('biztrack-auth-token');
         if (!token) throw new Error('Session expired');
+
+        // ==========================================
+        // BUILD METADATA WITH NUTRITION DATA (NEW!)
+        // ==========================================
+        const metadata = {};
+        if (metadataNotes) {
+          metadata.notes = metadataNotes;
+        }
+        if (nutritionData) {
+          metadata.nutritionFacts = nutritionData;
+          console.log('[NUTRITION] Including nutrition facts in product:', nutritionData);
+        }
 
         const response = await fetch('/api/mint-product', {
           method: 'POST',
@@ -1591,7 +1699,7 @@
             productName,
             sku: isBatchMode ? (sku || undefined) : sku,
             batchNumber,
-            metadata: metadata ? { notes: metadata } : {},
+            metadata: Object.keys(metadata).length > 0 ? metadata : {},
             photos: selectedPhotos.length ? selectedPhotos : null,
             location: capturedLocation,
             isBatchOrder: isBatchMode,
@@ -1599,7 +1707,7 @@
             sameSku: isBatchMode ? document.getElementById('sameSku').checked : false,
             mode: isProductionMode ? 'production' : 'live',
             industryType: currentIndustry,
-            rewardsPoints: rewardsPoints
+            rewardsPoints
           })
         });
 
@@ -1608,10 +1716,11 @@
 
         const viewPage = isProductionMode ? 'In Progress' : 'Finished Products';
         const viewLink = isProductionMode ? 'production.html' : 'products.html';
-        const successMsg = isProductionMode 
-          ? (result.isBatch ? `Batch of ${batchQuantity} created in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode!` : `Product created in ${currentIndustry === 'food' ? 'Supply Chain' : 'Production'} Mode!`)
-          : (result.isBatch ? `Batch of ${batchQuantity} minted to blockchain!` : 'Product minted to blockchain!');
-        msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
+        const successMsg = result.isBatch ? `Batch of ${batchQuantity} created!` : 'Product created!';
+        
+        // Show nutrition confirmation if it was included
+        const nutritionNote = nutritionData ? ' Nutrition facts included.' : '';
+        msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg}${nutritionNote} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         
         clearForm();
         await loadSubscriptionLimits();
@@ -1640,7 +1749,7 @@
     loadSubscriptionLimits();
     loadProductCounts();
     loadIndustryPreference();
-    loadRewardsSettings(); // Load rewards settings to show/hide toggle
+    loadRewardsSettings();
     applyIndustryContent();
   </script>
 </body>

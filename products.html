@@ -611,12 +611,23 @@
     .element-toggle { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: #F8FAFC; border-radius: 8px; }
     .element-toggle input { width: 18px; height: 18px; cursor: pointer; }
     .element-toggle label { font-size: 0.85rem; font-weight: 500; color: #334155; cursor: pointer; flex: 1; }
+    .element-toggle.disabled { opacity: 0.5; }
     .label-preview-section { background: #F8FAFC; border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
     .label-preview-controls { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
     .label-preview-container { border: 1px solid #E2E8F0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
     .label-preview-container .label-element { position: absolute; cursor: move; }
     .label-preview-container .label-element.dragging { opacity: 0.7; z-index: 10; }
     .label-modal-footer { padding: 1rem 2rem; border-top: 2px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Net Quantity styling in preview */
+    .net-quantity-display {
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-weight: 700;
+      text-align: center;
+    }
 
     /* Pagination */
     .pagination {
@@ -830,6 +841,7 @@
           <h4 style="margin-top: 1.5rem;"><i class="fas fa-layer-group"></i> Include Elements</h4>
           <div class="element-toggles">
             <div class="element-toggle"><input type="checkbox" id="includeLogo" checked onchange="updatePreview()" /><label for="includeLogo">Company Logo</label></div>
+            <div class="element-toggle" id="netQuantityToggle"><input type="checkbox" id="includeNetQuantity" checked onchange="updatePreview()" /><label for="includeNetQuantity">Net Quantity (FDA Required)</label></div>
             <div class="element-toggle"><input type="checkbox" id="includeNutrition" onchange="updatePreview()" /><label for="includeNutrition">Nutrition Facts</label></div>
             <div class="element-toggle"><input type="checkbox" id="includeCustomerQR" checked onchange="updatePreview()" /><label for="includeCustomerQR">Customer QR Code</label></div>
             <div class="element-toggle"><input type="checkbox" id="includeInventoryQR" onchange="updatePreview()" /><label for="includeInventoryQR">Inventory QR Code</label></div>
@@ -915,10 +927,11 @@
     let labelConfig = {
       width: 4, height: 3,
       elements: {
-        logo: { enabled: true, x: 10, y: 10, width: 80, height: 60 },
-        nutrition: { enabled: false, x: 100, y: 10, width: 100, height: 150 },
-        customerQR: { enabled: true, x: 10, y: 80, width: 90, height: 90 },
-        inventoryQR: { enabled: false, x: 110, y: 80, width: 90, height: 90 }
+        logo: { enabled: true, x: 10, y: 10, width: 160, height: 140 },
+        netQuantity: { enabled: true, x: 100, y: 125, width: 70, height: 22 },
+        nutrition: { enabled: false, x: 180, y: 10, width: 100, height: 150 },
+        customerQR: { enabled: true, x: 180, y: 10, width: 80, height: 80 },
+        inventoryQR: { enabled: false, x: 180, y: 100, width: 70, height: 70 }
       }
     };
     let previewZoom = 100;
@@ -932,10 +945,19 @@
       if (!batch) { alert('Batch not found'); return; }
       currentLabelBatch = batch;
       document.getElementById('labelBatchInfo').innerHTML = 'Batch: <strong>' + escapeHtml(batch.metadata?.batchDisplayName || batch.productName) + '</strong> • <strong>' + (batch.items?.length || 1) + '</strong> labels';
+      
+      // Check for nutrition data
       const hasNutrition = batch.items?.[0]?.metadata?.nutritionFacts || batch.metadata?.nutritionFacts;
       document.getElementById('includeNutrition').checked = !!hasNutrition;
       document.getElementById('includeNutrition').disabled = !hasNutrition;
       document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      
+      // Check for net quantity data
+      const hasNetQuantity = batch.items?.[0]?.metadata?.netQuantity || batch.metadata?.netQuantity;
+      document.getElementById('includeNetQuantity').checked = !!hasNetQuantity;
+      document.getElementById('includeNetQuantity').disabled = !hasNetQuantity;
+      document.getElementById('netQuantityToggle').style.opacity = hasNetQuantity ? '1' : '0.5';
+      
       updatePreview();
       document.getElementById('labelModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
@@ -945,10 +967,19 @@
       if (typeof p === 'string') p = JSON.parse(p);
       currentLabelBatch = { ...p, items: [p] };
       document.getElementById('labelBatchInfo').innerHTML = 'Product: <strong>' + escapeHtml(p.productName) + '</strong>';
+      
+      // Check for nutrition data
       const hasNutrition = p.metadata?.nutritionFacts;
       document.getElementById('includeNutrition').checked = !!hasNutrition;
       document.getElementById('includeNutrition').disabled = !hasNutrition;
       document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      
+      // Check for net quantity data
+      const hasNetQuantity = p.metadata?.netQuantity;
+      document.getElementById('includeNetQuantity').checked = !!hasNetQuantity;
+      document.getElementById('includeNetQuantity').disabled = !hasNetQuantity;
+      document.getElementById('netQuantityToggle').style.opacity = hasNetQuantity ? '1' : '0.5';
+      
       updatePreview();
       document.getElementById('labelModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
@@ -1010,29 +1041,48 @@
       const scale = previewZoom / 100;
       preview.style.width = Math.round(labelConfig.width * 72 * scale) + 'px';
       preview.style.height = Math.round(labelConfig.height * 72 * scale) + 'px';
+      
       labelConfig.elements.logo.enabled = document.getElementById('includeLogo').checked;
+      labelConfig.elements.netQuantity.enabled = document.getElementById('includeNetQuantity').checked;
       labelConfig.elements.nutrition.enabled = document.getElementById('includeNutrition').checked;
       labelConfig.elements.customerQR.enabled = document.getElementById('includeCustomerQR').checked;
       labelConfig.elements.inventoryQR.enabled = document.getElementById('includeInventoryQR').checked;
+      
       let html = '';
       const item = currentLabelBatch?.items?.[0] || currentLabelBatch;
+      const nq = item?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
+      
+      // Logo (big, dominant - FRONT of label)
       if (labelConfig.elements.logo.enabled && companyLogo) {
         const el = labelConfig.elements.logo;
         html += '<div class="label-element" data-element="logo" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
       }
+      
+      // Net Quantity (bottom right of logo area - FDA required on FRONT)
+      if (labelConfig.elements.netQuantity.enabled && nq) {
+        const el = labelConfig.elements.netQuantity;
+        html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;font-size:' + (8 * scale) + 'px;display:flex;align-items:center;justify-content:center;">' + escapeHtml(nq.display || (nq.value + ' ' + nq.unit)) + '</div>';
+      }
+      
+      // Nutrition Facts (optional, for back of label)
       if (labelConfig.elements.nutrition.enabled) {
         const el = labelConfig.elements.nutrition;
         const nf = item?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
         html += '<div class="label-element" data-element="nutrition" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;background:white;border:1px solid #000;padding:4px;font-size:' + (6 * scale) + 'px;overflow:hidden;"><div style="font-weight:900;font-size:' + (10 * scale) + 'px;border-bottom:1px solid #000;">Nutrition Facts</div><div>Serving: ' + (nf.servingSize || '___') + '</div><div style="font-weight:bold;">Calories ' + (nf.calories || '0') + '</div><div>Fat ' + (nf.totalFat || '0') + 'g</div><div>Carbs ' + (nf.totalCarbs || '0') + 'g</div><div>Protein ' + (nf.protein || '0') + 'g</div></div>';
       }
+      
+      // Customer QR Code (smaller, for BACK of label)
       if (labelConfig.elements.customerQR.enabled && item?.qrCodeUrl) {
         const el = labelConfig.elements.customerQR;
         html += '<div class="label-element" data-element="customerQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.qrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (5 * scale) + 'px;font-weight:bold;margin-top:2px;">SCAN TO VERIFY</div></div>';
       }
+      
+      // Inventory QR Code (optional, internal use)
       if (labelConfig.elements.inventoryQR.enabled && item?.inventoryQrCodeUrl) {
         const el = labelConfig.elements.inventoryQR;
         html += '<div class="label-element" data-element="inventoryQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.inventoryQrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (4 * scale) + 'px;color:#64748B;margin-top:2px;">INVENTORY</div></div>';
       }
+      
       preview.innerHTML = html;
       if (rearrangeMode) attachDrag();
     }
@@ -1092,6 +1142,8 @@
           format: [labelConfig.width, labelConfig.height]
         });
         const nf = items[0]?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
+        const nq = items[0]?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
+        
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
           if (i > 0) pdf.addPage([labelConfig.width, labelConfig.height]);
@@ -1100,10 +1152,32 @@
           pdf.setDrawColor(200);
           pdf.setLineWidth(0.01);
           pdf.rect(0.05, 0.05, labelConfig.width - 0.1, labelConfig.height - 0.1);
+          
+          // Logo (big, dominant)
           if (labelConfig.elements.logo.enabled && companyLogo) {
             const el = labelConfig.elements.logo;
             try { pdf.addImage(companyLogo, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72); } catch (e) {}
           }
+          
+          // Net Quantity (bottom right, FDA required)
+          if (labelConfig.elements.netQuantity.enabled && nq) {
+            const el = labelConfig.elements.netQuantity;
+            const x = el.x / 72, y = el.y / 72, w = el.width / 72, h = el.height / 72;
+            pdf.setDrawColor(0);
+            pdf.setLineWidth(0.01);
+            pdf.rect(x, y, w, h);
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(x, y, w, h, 'F');
+            pdf.setDrawColor(0);
+            pdf.rect(x, y, w, h, 'S');
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0);
+            const nqText = nq.display || (nq.value + ' ' + nq.unit);
+            pdf.text(nqText, x + w/2, y + h/2 + 0.03, { align: 'center' });
+          }
+          
+          // Nutrition Facts
           if (labelConfig.elements.nutrition.enabled) {
             const el = labelConfig.elements.nutrition;
             const x = el.x / 72, y = el.y / 72, w = el.width / 72, h = el.height / 72;
@@ -1126,6 +1200,8 @@
             pdf.text('Total Carbs: ' + (nf.totalCarbs || '0') + 'g', x + 0.05, ty); ty += 0.08;
             pdf.text('Protein: ' + (nf.protein || '0') + 'g', x + 0.05, ty);
           }
+          
+          // Customer QR (smaller)
           if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
             const el = labelConfig.elements.customerQR;
             try {
@@ -1136,6 +1212,8 @@
               pdf.text('SCAN TO VERIFY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.08, { align: 'center' });
             } catch (e) {}
           }
+          
+          // Inventory QR
           if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
             const el = labelConfig.elements.inventoryQR;
             try {
@@ -1145,6 +1223,7 @@
               pdf.text('INVENTORY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.06, { align: 'center' });
             } catch (e) {}
           }
+          
           pdf.setFontSize(4);
           pdf.setTextColor(100);
           pdf.text('SKU: ' + (item.sku || item.productId), labelConfig.width / 2, labelConfig.height - 0.1, { align: 'center' });
@@ -1348,7 +1427,7 @@
         labelBtn.className = 'zip-option-btn';
         labelBtn.style.borderColor = '#10B981';
         labelBtn.style.background = '#F0FDF4';
-        labelBtn.innerHTML = '<i class="fas fa-tag" style="color: #10B981;"></i><span>Full Label Builder</span><small>Logo + Nutrition + QR codes</small>';
+        labelBtn.innerHTML = '<i class="fas fa-tag" style="color: #10B981;"></i><span>Full Label Builder</span><small>Logo + Net Qty + Nutrition + QR</small>';
         labelBtn.onclick = function() { openLabelBuilder(); };
         zipOptions.appendChild(labelBtn);
       }

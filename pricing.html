@@ -107,6 +107,102 @@
       font-weight: 800;
     }
 
+    /* Promo Code Section - Always visible */
+    .promo-section {
+      background: linear-gradient(135deg, #FEFCE8, #FEF3C7);
+      border: 2px solid #FDE047;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .promo-section-text {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .promo-section-text h3 {
+      color: #A16207;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .promo-section-text p {
+      color: #92400E;
+      font-size: 0.95rem;
+    }
+
+    .promo-section-form {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .promo-section-form input {
+      padding: 0.75rem 1rem;
+      border: 2px solid #FDE047;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      width: 200px;
+      background: white;
+    }
+
+    .promo-section-form input:focus {
+      outline: none;
+      border-color: #F59E0B;
+    }
+
+    .promo-section-form button {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .promo-section-form button:hover {
+      background: linear-gradient(135deg, #D97706, #B45309);
+      transform: translateY(-1px);
+    }
+
+    .promo-section-form button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #promoMessage {
+      width: 100%;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .promo-success {
+      color: #059669;
+    }
+
+    .promo-error {
+      color: #DC2626;
+    }
+
     /* Pricing Grid */
     .pricing-grid {
       display: grid;
@@ -377,36 +473,6 @@
       background: #B91C1C;
     }
 
-    .manage-card.promo {
-      border-color: #FDE047;
-      background: #FEFCE8;
-    }
-
-    .manage-card.promo h4 {
-      color: #A16207;
-    }
-
-    .manage-card.promo button {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-    }
-
-    .manage-card.promo button:hover {
-      background: linear-gradient(135deg, #D97706, #B45309);
-    }
-
-    .manage-card.promo input:focus {
-      outline: none;
-      border-color: #F59E0B;
-    }
-
-    .promo-success {
-      color: #059669;
-    }
-
-    .promo-error {
-      color: #DC2626;
-    }
-
     /* Modal */
     .modal-overlay {
       display: none;
@@ -604,6 +670,22 @@
       .modal-buttons {
         flex-direction: column-reverse;
       }
+
+      .promo-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .promo-section-form {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .promo-section-form input {
+        flex: 1;
+        min-width: 0;
+      }
     }
   </style>
 </head>
@@ -628,31 +710,31 @@
         <p>We give you <strong>10 free QR codes</strong> when you sign up — no credit card required.</p>
       </div>
 
+      <!-- Promo Code Section - Always Visible -->
+      <div class="promo-section" id="promoSection">
+        <div class="promo-section-text">
+          <h3><i class="fas fa-gift"></i> Have a Promo Code?</h3>
+          <p>Enter your code to unlock bonus QR codes instantly!</p>
+        </div>
+        <div class="promo-section-form">
+          <input type="text" id="promoCodeInput" placeholder="Enter code" maxlength="30" />
+          <button onclick="redeemPromoCode()" id="redeemPromoBtn">
+            <i class="fas fa-check"></i> Redeem
+          </button>
+        </div>
+        <div id="promoMessage"></div>
+      </div>
+
       <!-- Pricing Cards -->
       <div class="pricing-grid" id="pricingGrid"></div>
 
-      <!-- Manage Subscription Section -->
+      <!-- Manage Subscription Section (only for paid users) -->
       <div class="manage-section" id="manageSection">
         <h3>Manage Your Subscription</h3>
         <div class="manage-grid">
           
-          <!-- Promo Code Card -->
-          <div class="manage-card promo" style="min-height: 220px; position: relative;">
-            <h4><i class="fas fa-gift"></i> Have a Promo Code?</h4>
-            <p>Enter your code to unlock bonus QR codes for this month.</p>
-            <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
-              <div style="display: flex; gap: 0.5rem;">
-                <input type="text" id="promoCodeInput" placeholder="Enter code" maxlength="30" style="flex: 1; padding: 0.625rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; text-transform: uppercase; font-family: 'Inter', sans-serif;" />
-                <button onclick="redeemPromoCode()" id="redeemPromoBtn">
-                  <i class="fas fa-check"></i> Redeem
-                </button>
-              </div>
-            </div>
-            <div id="promoMessage" style="position: absolute; bottom: 0.25rem; left: 1.5rem; right: 1.5rem; font-size: 0.875rem;"></div>
-          </div>
-
           <!-- Cancel Card -->
-          <div class="manage-card cancel" style="min-height: 220px; position: relative;">
+          <div class="manage-card cancel" style="min-height: 180px; position: relative;">
             <h4><i class="fas fa-times-circle"></i> Need to Cancel?</h4>
             <p>Your subscription will remain active until the end of your billing period.</p>
             <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
@@ -686,7 +768,7 @@
   </div>
 
   <!-- Scripts -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/auth.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/SI-sidebar.js"></script>
   <script>
     requireAuth();

@@ -1132,8 +1132,11 @@
             <input type="text" id="nf_potassium" placeholder="0" />
           </div>
           <div class="nutrition-field full-width">
-            <label>Ingredients List (optional)</label>
+            <label>Ingredients List *</label>
             <input type="text" id="nf_ingredients" placeholder="e.g., Water, Lemon Juice, Cane Sugar, Natural Flavors" />
+            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0.25rem;">
+              <i class="fas fa-info-circle"></i> <strong>FDA requires:</strong> List ingredients in order from <strong>most</strong> to <strong>least</strong> by weight
+            </p>
           </div>
         </div>
       </div>
@@ -1241,8 +1244,20 @@
     function saveNutrition() {
       const data = getNutritionFormData();
       
-      if (!data.servingSize && !data.calories) {
-        alert('Please fill in at least Serving Size and Calories');
+      // Check required fields: serving size, calories, and ingredients
+      if (!data.servingSize) {
+        alert('Please fill in Serving Size');
+        document.getElementById('nf_servingSize').focus();
+        return;
+      }
+      if (!data.calories) {
+        alert('Please fill in Calories');
+        document.getElementById('nf_calories').focus();
+        return;
+      }
+      if (!data.ingredients) {
+        alert('Please fill in Ingredients List (required by FDA)');
+        document.getElementById('nf_ingredients').focus();
         return;
       }
       

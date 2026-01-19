@@ -85,16 +85,24 @@ module.exports = async (req, res) => {
     }
 
     // Check batch quantity against tier limits (applies to both modes)
-    if (isBatchOrder) {
-      const tierConfig = stripeConfig.getTierConfig(user.subscription_tier);
-      const maxBatch = tierConfig.maxBatchSize || 10;
-
-      if (!batchQuantity || batchQuantity < 1 || batchQuantity > maxBatch) {
-        return res.status(400).json({ 
-          error: `Batch quantity must be between 1 and ${maxBatch} for your ${user.subscription_tier} plan` 
-        });
-      }
+   if (isBatchOrder) {
+  if (!batchQuantity || batchQuantity < 1) {
+    return res.status(400).json({ 
+      error: 'Batch quantity must be at least 1' 
+    });
+  }
+  
+  // Only check against remaining QR codes for live mode
+  // Production mode skips this check entirely (handled later)
+  if (!isProductionMode) {
+    const remaining = user.qr_codes_limit - user.qr_codes_used;
+    if (batchQuantity > remaining) {
+      return res.status(400).json({ 
+        error: `You have ${remaining} QR codes remaining but requested ${batchQuantity}. Upgrade your plan or reduce quantity.` 
+      });
     }
+  }
+}
 
     const quantity = isBatchOrder ? parseInt(batchQuantity) : 1;
 

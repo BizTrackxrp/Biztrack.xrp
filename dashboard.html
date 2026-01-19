@@ -356,7 +356,7 @@
 
     .form-group { margin-bottom: 1.5rem; }
     .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155; }
-    .form-group input, .form-group textarea {
+    .form-group input, .form-group textarea, .form-group select {
       width: 100%;
       padding: 0.875rem 1rem;
       border: 2px solid #E2E8F0;
@@ -366,14 +366,47 @@
       transition: all 0.2s;
       background: #F8FAFC;
     }
-    .form-group input:disabled { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; opacity: 0.6; }
-    .form-group input:focus:not(:disabled), .form-group textarea:focus {
+    .form-group input:disabled, .form-group select:disabled { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; opacity: 0.6; }
+    .form-group input:focus:not(:disabled), .form-group textarea:focus, .form-group select:focus:not(:disabled) {
       outline: none;
       border-color: #4F46E5;
       box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
       background: white;
     }
     .form-group textarea { resize: vertical; min-height: 80px; }
+
+    /* Net Quantity Row */
+    .net-quantity-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+    .net-quantity-row .form-group {
+      margin-bottom: 0;
+    }
+    .net-quantity-row .form-group:first-child {
+      flex: 1;
+      max-width: 150px;
+    }
+    .net-quantity-row .form-group:nth-child(2) {
+      flex: 1;
+      max-width: 140px;
+    }
+    .net-quantity-row .form-group:nth-child(2) select {
+      padding: 0.875rem 0.75rem;
+    }
+    .net-quantity-help {
+      font-size: 0.8rem;
+      color: #64748B;
+      margin-top: 0.5rem;
+    }
+    .net-quantity-help code {
+      background: #F1F5F9;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #475569;
+    }
 
     .btn {
       padding: 1rem 2rem;
@@ -700,6 +733,9 @@
       .qr-badge { flex: 1; justify-content: center; height: auto; }
       .rewards-points-input { flex-direction: column; align-items: flex-start; }
       .nutrition-form-grid { grid-template-columns: 1fr; }
+      .net-quantity-row { flex-direction: column; align-items: stretch; }
+      .net-quantity-row .form-group:first-child,
+      .net-quantity-row .form-group:nth-child(2) { max-width: none; }
     }
   </style>
 </head>
@@ -893,6 +929,45 @@
           <label for="dashProdName" id="prodNameLabel">Name *</label>
           <input id="dashProdName" type="text" placeholder="e.g. Organic Honey, Certificate #1042" />
         </div>
+
+        <!-- ==========================================
+             NET QUANTITY FIELDS (FDA REQUIRED - NEW!)
+        ========================================== -->
+        <div id="netQuantityGroup">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155;">
+            Net Quantity <span style="color: #64748B; font-weight: 400;">(for labels)</span>
+          </label>
+          <div class="net-quantity-row">
+            <div class="form-group">
+              <input id="netQuantityValue" type="number" step="0.01" min="0" placeholder="e.g. 12" />
+            </div>
+            <div class="form-group">
+              <select id="netQuantityUnit">
+                <option value="">Select unit</option>
+                <optgroup label="Volume (liquids)">
+                  <option value="fl oz">fl oz</option>
+                  <option value="mL">mL</option>
+                  <option value="L">L</option>
+                  <option value="gal">gal</option>
+                </optgroup>
+                <optgroup label="Weight (solids)">
+                  <option value="oz">oz</option>
+                  <option value="g">g</option>
+                  <option value="kg">kg</option>
+                  <option value="lb">lb</option>
+                </optgroup>
+                <optgroup label="Count">
+                  <option value="ct">ct (count)</option>
+                  <option value="pcs">pcs (pieces)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <p class="net-quantity-help">
+            <i class="fas fa-info-circle" style="color: #64748B;"></i>
+            FDA requires this on labels. Example: <code>Net 12 fl oz (355 mL)</code>
+          </p>
+        </div>
         
         <div class="form-group" id="skuGroup">
           <label for="dashSku" id="skuLabel">
@@ -925,7 +1000,7 @@
         </div>
 
         <!-- ==========================================
-             NUTRITIONAL TABLE LINK (NEW!)
+             NUTRITIONAL TABLE LINK
         ========================================== -->
         <div class="nutrition-link-container" id="nutritionLinkContainer">
           <span class="nutrition-link" id="nutritionLink" onclick="openNutritionModal()">
@@ -1094,15 +1169,14 @@
     let savedIndustryPreference = null;
     
     // ==========================================
-    // NUTRITIONAL DATA STATE (NEW!)
+    // NUTRITIONAL DATA STATE
     // ==========================================
-    let nutritionData = null; // Will hold the nutrition facts object
+    let nutritionData = null;
 
     // ==========================================
-    // NUTRITION MODAL FUNCTIONS (NEW!)
+    // NUTRITION MODAL FUNCTIONS
     // ==========================================
     function openNutritionModal() {
-      // If we have existing data, populate the form
       if (nutritionData) {
         loadNutritionForm(nutritionData);
       }
@@ -1167,16 +1241,13 @@
     function saveNutrition() {
       const data = getNutritionFormData();
       
-      // Check if at least serving size and calories are filled
       if (!data.servingSize && !data.calories) {
         alert('Please fill in at least Serving Size and Calories');
         return;
       }
       
-      // Save to state
       nutritionData = data;
       
-      // Update the link to show it's filled
       const link = document.getElementById('nutritionLink');
       const linkText = document.getElementById('nutritionLinkText');
       const status = document.getElementById('nutritionStatus');
@@ -1200,7 +1271,6 @@
       clearNutritionForm();
     }
 
-    // Close modal on Escape
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         closeNutritionModal();
@@ -1215,13 +1285,15 @@
         headerSubtitle: 'Mint products, documents, certificates, or any data to the blockchain for permanent verification.',
         cardTitle: 'New Product',
         prodNameLabel: 'Name *',
-        prodNamePlaceholder: 'e.g. Organic Honey, Certificate #1042, Event Ticket'
+        prodNamePlaceholder: 'e.g. Organic Honey, Certificate #1042, Event Ticket',
+        showNetQuantity: false
       },
       food: {
         headerSubtitle: 'Track food products from farm to table with blockchain-verified supply chain transparency.',
         cardTitle: 'New Product / Harvest',
         prodNameLabel: 'Product / Harvest Name *',
-        prodNamePlaceholder: 'e.g. Organic Strawberries, Free-Range Eggs'
+        prodNamePlaceholder: 'e.g. Organic Strawberries, Free-Range Eggs',
+        showNetQuantity: true
       }
     };
 
@@ -1374,6 +1446,14 @@
       document.getElementById('cardTitle').textContent = content.cardTitle;
       document.getElementById('prodNameLabel').textContent = content.prodNameLabel;
       document.getElementById('dashProdName').placeholder = content.prodNamePlaceholder;
+      
+      // Show/hide net quantity based on industry
+      const netQuantityGroup = document.getElementById('netQuantityGroup');
+      if (content.showNetQuantity) {
+        netQuantityGroup.style.display = 'block';
+      } else {
+        netQuantityGroup.style.display = 'none';
+      }
     }
 
     // ==========================================
@@ -1568,16 +1648,18 @@
       document.getElementById('dashBatch').value = '';
       document.getElementById('dashMetadata').value = '';
       document.getElementById('batchQuantity').value = '5';
+      document.getElementById('netQuantityValue').value = '';
+      document.getElementById('netQuantityUnit').value = '';
       selectedPhotos = [];
       document.getElementById('photoPreview').innerHTML = '';
       capturedLocation = null;
       document.getElementById('locationDisplay').style.display = 'none';
       document.getElementById('locationBtnText').textContent = 'Location';
-      resetNutritionUI(); // Reset nutrition data too!
+      resetNutritionUI();
     }
 
     // ==========================================
-    // MINT / CREATE PRODUCT (UPDATED WITH NUTRITION!)
+    // MINT / CREATE PRODUCT
     // ==========================================
     document.getElementById('dashCreateBtn').addEventListener('click', async () => {
       const msgEl = document.getElementById('dashMsg');
@@ -1585,6 +1667,18 @@
       msgEl.innerHTML = '';
 
       const rewardsPoints = isRewardsMode ? parseInt(document.getElementById('rewardsPoints').value) || 10 : null;
+      
+      // Get net quantity data
+      const netQuantityValue = document.getElementById('netQuantityValue').value.trim();
+      const netQuantityUnit = document.getElementById('netQuantityUnit').value;
+      let netQuantity = null;
+      if (netQuantityValue && netQuantityUnit) {
+        netQuantity = {
+          value: parseFloat(netQuantityValue),
+          unit: netQuantityUnit,
+          display: `${netQuantityValue} ${netQuantityUnit}`
+        };
+      }
 
       // Excel mode
       if (excelData.length > 0) {
@@ -1610,10 +1704,12 @@
           btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1} / ${totalItems}...`;
           
           try {
-            // Build metadata including nutrition if provided
             const metadata = notes ? { notes } : {};
             if (nutritionData) {
               metadata.nutritionFacts = nutritionData;
+            }
+            if (netQuantity) {
+              metadata.netQuantity = netQuantity;
             }
             
             const response = await fetch('/api/mint-product', {
@@ -1680,9 +1776,7 @@
         const token = localStorage.getItem('biztrack-auth-token');
         if (!token) throw new Error('Session expired');
 
-        // ==========================================
-        // BUILD METADATA WITH NUTRITION DATA (NEW!)
-        // ==========================================
+        // Build metadata with nutrition and net quantity
         const metadata = {};
         if (metadataNotes) {
           metadata.notes = metadataNotes;
@@ -1690,6 +1784,10 @@
         if (nutritionData) {
           metadata.nutritionFacts = nutritionData;
           console.log('[NUTRITION] Including nutrition facts in product:', nutritionData);
+        }
+        if (netQuantity) {
+          metadata.netQuantity = netQuantity;
+          console.log('[NET QUANTITY] Including net quantity in product:', netQuantity);
         }
 
         const response = await fetch('/api/mint-product', {
@@ -1718,9 +1816,9 @@
         const viewLink = isProductionMode ? 'production.html' : 'products.html';
         const successMsg = result.isBatch ? `Batch of ${batchQuantity} created!` : 'Product created!';
         
-        // Show nutrition confirmation if it was included
         const nutritionNote = nutritionData ? ' Nutrition facts included.' : '';
-        msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg}${nutritionNote} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
+        const netQtyNote = netQuantity ? ` Net quantity: ${netQuantity.display}.` : '';
+        msgEl.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${successMsg}${nutritionNote}${netQtyNote} <a href="${viewLink}" style="color: #065F46; font-weight: 600;">View in ${viewPage} →</a></div>`;
         
         clearForm();
         await loadSubscriptionLimits();

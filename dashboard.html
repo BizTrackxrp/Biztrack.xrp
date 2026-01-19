@@ -1552,7 +1552,7 @@
           document.getElementById('qrUsedCount').textContent = qrUsedThisMonth.toLocaleString();
           document.getElementById('qrLimitCount').textContent = qrLimit.toLocaleString();
           document.getElementById('tierName').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1);
-          document.getElementById('batchQuantity').max = Math.min(data.subscription.maxBatchSize || 10, qrLimit - qrUsedThisMonth);
+         document.getElementById('batchQuantity').max = qrLimit - qrUsedThisMonth;
         }
       } catch (error) { console.error('Failed to load limits:', error); }
     }

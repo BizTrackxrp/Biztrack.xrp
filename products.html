@@ -1057,28 +1057,37 @@
       const nf = item?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
       
       // Calculate dynamic sizes based on label dimensions
-      const logoWidth = Math.min(labelWidthPx * 0.7, 180);
-      const logoHeight = Math.min(labelHeightPx * 0.4, 160);
+      // Logo takes up most of the width and is centered vertically
+      const logoWidth = labelWidthPx * 0.85;
+      const logoHeight = labelHeightPx * 0.45;
       const logoX = (labelWidthPx - logoWidth) / 2;
-      const logoY = 15;
+      
+      // Net quantity and QR code heights
+      const netQtyHeight = 28;
+      const qrSize = Math.min(55, labelWidthPx * 0.22);
+      const bottomPadding = 15;
+      const qrTotalHeight = qrSize + 15; // QR + "SCAN TO VERIFY" text
+      
+      // Calculate vertical center for logo + net qty combo
+      const contentHeight = logoHeight + 15 + netQtyHeight; // logo + gap + netqty
+      const topSpace = (labelHeightPx - contentHeight - qrTotalHeight - bottomPadding) / 2;
+      const logoY = Math.max(10, topSpace);
       
       const netQtyWidth = 90;
-      const netQtyHeight = 26;
       const netQtyX = (labelWidthPx - netQtyWidth) / 2;
-      const netQtyY = logoY + logoHeight + 10;
+      const netQtyY = logoY + logoHeight + 12;
       
-      const qrSize = Math.min(60, labelWidthPx * 0.25);
-      const qrX = labelWidthPx - qrSize - 15;
-      const qrY = labelHeightPx - qrSize - 25;
+      const qrX = labelWidthPx - qrSize - 12;
+      const qrY = labelHeightPx - qrSize - 22;
       
-      // Logo (centered at top)
+      // Logo (centered horizontally AND vertically, BIG)
       if (labelConfig.elements.logo.enabled && companyLogo) {
         html += '<div class="label-element" data-element="logo" style="left:' + (logoX * scale) + 'px;top:' + (logoY * scale) + 'px;width:' + (logoWidth * scale) + 'px;height:' + (logoHeight * scale) + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
       }
       
       // Net Quantity (centered below logo)
       if (labelConfig.elements.netQuantity.enabled && nq) {
-        html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + (netQtyX * scale) + 'px;top:' + (netQtyY * scale) + 'px;width:' + (netQtyWidth * scale) + 'px;height:' + (netQtyHeight * scale) + 'px;font-size:' + (10 * scale) + 'px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1.5px solid #1E293B;border-radius:4px;font-weight:700;">' + escapeHtml(nq.display || (nq.value + ' ' + nq.unit)) + '</div>';
+        html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + (netQtyX * scale) + 'px;top:' + (netQtyY * scale) + 'px;width:' + (netQtyWidth * scale) + 'px;height:' + (netQtyHeight * scale) + 'px;font-size:' + (11 * scale) + 'px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1.5px solid #1E293B;border-radius:4px;font-weight:700;">' + escapeHtml(nq.display || (nq.value + ' ' + nq.unit)) + '</div>';
       }
       
       // Nutrition Facts (below net qty, left side)
@@ -1086,7 +1095,7 @@
         const nutX = 10;
         const nutY = netQtyY + netQtyHeight + 15;
         const nutWidth = Math.min(100, labelWidthPx * 0.4);
-        const nutHeight = Math.min(120, labelHeightPx * 0.35);
+        const nutHeight = Math.min(120, labelHeightPx * 0.25);
         html += '<div class="label-element" data-element="nutrition" style="left:' + (nutX * scale) + 'px;top:' + (nutY * scale) + 'px;width:' + (nutWidth * scale) + 'px;height:' + (nutHeight * scale) + 'px;background:white;border:1px solid #000;padding:4px;font-size:' + (5 * scale) + 'px;overflow:hidden;"><div style="font-weight:900;font-size:' + (8 * scale) + 'px;border-bottom:1px solid #000;">Nutrition Facts</div><div>Serving: ' + (nf.servingSize || '___') + '</div><div style="font-weight:bold;">Calories ' + (nf.calories || '0') + '</div><div>Fat ' + (nf.totalFat || '0') + 'g</div><div>Carbs ' + (nf.totalCarbs || '0') + 'g</div><div>Protein ' + (nf.protein || '0') + 'g</div></div>';
       }
       
@@ -1097,7 +1106,7 @@
       
       // Inventory QR Code (bottom left if enabled)
       if (labelConfig.elements.inventoryQR.enabled && item?.inventoryQrCodeUrl) {
-        const invQrX = 15;
+        const invQrX = 12;
         html += '<div class="label-element" data-element="inventoryQR" style="left:' + (invQrX * scale) + 'px;top:' + (qrY * scale) + 'px;width:' + (qrSize * scale) + 'px;height:' + (qrSize * scale) + 'px;"><img src="' + item.inventoryQrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (3 * scale) + 'px;color:#64748B;margin-top:1px;">INVENTORY</div></div>';
       }
       

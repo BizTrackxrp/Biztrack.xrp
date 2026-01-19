@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -50,6 +51,41 @@
     }
     .stat-box-value { font-size: 1.5rem; font-weight: 800; color: #4F46E5; }
     .stat-box-label { font-size: 0.75rem; color: #64748B; text-transform: uppercase; }
+
+    /* Company Logo Banner */
+    .logo-banner {
+      background: linear-gradient(135deg, #F0FDF4, #ECFDF5);
+      border: 2px dashed #10B981;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .logo-upload-slot {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: white;
+      border: 2px dashed #CBD5E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logo-upload-slot:hover { border-color: #10B981; background: #F0FDF4; }
+    .logo-upload-slot img { width: 100%; height: 100%; object-fit: contain; }
+    .logo-upload-slot i { font-size: 1.5rem; color: #94A3B8; }
+    .logo-banner-text h3 { font-size: 1rem; font-weight: 700; color: #065F46; margin-bottom: 0.25rem; }
+    .logo-banner-text p { font-size: 0.85rem; color: #047857; }
+    .logo-banner-actions { margin-left: auto; display: flex; gap: 0.5rem; }
+    .logo-banner-actions button { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .logo-change-btn { background: white; border: 1px solid #10B981; color: #059669; }
+    .logo-remove-btn { background: white; border: 1px solid #E2E8F0; color: #64748B; }
 
     /* Search & Filters */
     .filters-bar {
@@ -169,6 +205,7 @@
     .badge-live { background: #DBEAFE; color: #1D4ED8; }
     .badge-batch { background: #E0E7FF; color: #4338CA; }
     .badge-finalized { background: #D1FAE5; color: #065F46; }
+    .badge-nutrition { background: #FEF3C7; color: #92400E; }
 
     .product-card-body {
       padding: 1.25rem;
@@ -229,6 +266,11 @@
       border: 2px solid #4F46E5;
     }
     .btn-outline:hover { background: #F5F3FF; }
+    .btn-success {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+    }
+    .btn-success:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
     /* Empty State */
     .empty-state {
@@ -353,27 +395,6 @@
     }
     .qr-download-btn.both:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
 
-    /* Batch Items Expansion */
-    .batch-items-section {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #E2E8F0;
-      display: none;
-    }
-    .batch-items-section.show { display: block; }
-    .batch-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0.75rem;
-      background: #F8FAFC;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-      font-size: 0.85rem;
-    }
-    .batch-item:last-child { margin-bottom: 0; }
-    .batch-item-sku { font-family: monospace; font-weight: 600; }
-
     /* Batch Modal */
     .batch-modal-overlay {
       display: none;
@@ -429,10 +450,7 @@
       border-radius: 12px;
       margin-bottom: 0.75rem;
       border: 1px solid #E2E8F0;
-      transition: all 0.2s;
     }
-    .batch-modal-item:hover { background: #F1F5F9; border-color: #CBD5E1; }
-    .batch-modal-item:last-child { margin-bottom: 0; }
     .batch-modal-item-info { display: flex; flex-direction: column; gap: 0.25rem; }
     .batch-modal-item-name { font-weight: 700; font-size: 1rem; color: #1E293B; }
     .batch-modal-item-sku { font-size: 0.8rem; color: #64748B; }
@@ -546,6 +564,60 @@
     }
     .zip-cancel-btn:hover { color: #1E293B; }
 
+    /* Label Builder Modal */
+    .label-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1300;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .label-modal-overlay.show { display: flex; }
+    .label-modal {
+      background: white;
+      border-radius: 20px;
+      width: 95%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .label-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .label-modal-header h2 { font-size: 1.25rem; font-weight: 700; color: #1E293B; display: flex; align-items: center; gap: 0.5rem; }
+    .label-modal-header h2 i { color: #10B981; }
+    .label-modal-body { padding: 1.5rem 2rem; overflow-y: auto; flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .label-config-section h4 { font-size: 0.9rem; font-weight: 700; color: #334155; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .label-config-section h4 i { color: #4F46E5; }
+    .size-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+    .size-option { padding: 0.6rem; border: 2px solid #E2E8F0; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .size-option:hover { border-color: #4F46E5; }
+    .size-option.selected { border-color: #4F46E5; background: #F5F3FF; }
+    .size-option-name { font-weight: 600; font-size: 0.8rem; color: #334155; }
+    .size-option-dims { font-size: 0.7rem; color: #64748B; }
+    .custom-size-inputs { display: none; gap: 0.5rem; margin-bottom: 1rem; }
+    .custom-size-inputs.show { display: flex; }
+    .custom-size-inputs input { width: 80px; padding: 0.5rem; border: 2px solid #E2E8F0; border-radius: 8px; text-align: center; }
+    .element-toggles { display: flex; flex-direction: column; gap: 0.5rem; }
+    .element-toggle { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: #F8FAFC; border-radius: 8px; }
+    .element-toggle input { width: 18px; height: 18px; cursor: pointer; }
+    .element-toggle label { font-size: 0.85rem; font-weight: 500; color: #334155; cursor: pointer; flex: 1; }
+    .label-preview-section { background: #F8FAFC; border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
+    .label-preview-controls { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .label-preview-container { border: 1px solid #E2E8F0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
+    .label-preview-container .label-element { position: absolute; cursor: move; }
+    .label-preview-container .label-element.dragging { opacity: 0.7; z-index: 10; }
+    .label-modal-footer { padding: 1rem 2rem; border-top: 2px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; }
+
     /* Pagination */
     .pagination {
       display: flex;
@@ -577,6 +649,7 @@
       .stat-box { flex: 1; }
       .products-grid { grid-template-columns: 1fr; }
       .qr-codes-container { grid-template-columns: 1fr; }
+      .label-modal-body { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -598,6 +671,23 @@
           <div class="stat-box-value" id="totalBatches">-</div>
           <div class="stat-box-label">Batches</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Company Logo Banner -->
+    <div class="logo-banner" id="logoBanner">
+      <input type="file" id="logoInput" accept="image/*" style="display: none;" />
+      <div class="logo-upload-slot" id="logoSlot" onclick="document.getElementById('logoInput').click()">
+        <i class="fas fa-image" id="logoPlaceholder"></i>
+        <img id="logoPreview" src="" style="display: none;" />
+      </div>
+      <div class="logo-banner-text">
+        <h3>Company Logo</h3>
+        <p id="logoStatus">Click to upload your logo for product labels</p>
+      </div>
+      <div class="logo-banner-actions" id="logoActions" style="display: none;">
+        <button class="logo-change-btn" onclick="document.getElementById('logoInput').click()">Change</button>
+        <button class="logo-remove-btn" onclick="removeCompanyLogo()">Remove</button>
       </div>
     </div>
 
@@ -640,15 +730,9 @@
     <div class="qr-modal" onclick="event.stopPropagation()">
       <div class="qr-modal-header">
         <h2><i class="fas fa-qrcode" style="color: #4F46E5;"></i> QR Codes</h2>
-        <button class="qr-modal-close" onclick="closeQRModal()">
-          <i class="fas fa-times"></i>
-        </button>
+        <button class="qr-modal-close" onclick="closeQRModal()"><i class="fas fa-times"></i></button>
       </div>
-      
-      <div class="qr-modal-sku">
-        <span id="modalSku">SKU: ---</span>
-      </div>
-
+      <div class="qr-modal-sku"><span id="modalSku">SKU: ---</span></div>
       <div class="qr-codes-container">
         <div class="qr-code-box customer">
           <div class="qr-loading" id="customerQRLoading"><i class="fas fa-spinner fa-spin"></i></div>
@@ -661,17 +745,10 @@
           <div class="qr-code-label">Inventory</div>
         </div>
       </div>
-
       <div class="qr-download-buttons">
-        <button id="downloadCustomerBtn" class="qr-download-btn customer" onclick="downloadQR('customer')">
-          <i class="fas fa-download"></i> Customer
-        </button>
-        <button id="downloadInventoryBtn" class="qr-download-btn inventory" onclick="downloadQR('inventory')">
-          <i class="fas fa-download"></i> Inventory
-        </button>
-        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()">
-          <i class="fas fa-layer-group"></i> Both
-        </button>
+        <button id="downloadCustomerBtn" class="qr-download-btn customer" onclick="downloadQR('customer')"><i class="fas fa-download"></i> Customer</button>
+        <button id="downloadInventoryBtn" class="qr-download-btn inventory" onclick="downloadQR('inventory')"><i class="fas fa-download"></i> Inventory</button>
+        <button id="downloadBothBtn" class="qr-download-btn both" onclick="downloadBothQRs()"><i class="fas fa-layer-group"></i> Both</button>
       </div>
     </div>
   </div>
@@ -684,13 +761,9 @@
           <h2 id="batchModalTitle">Batch Items</h2>
           <p id="batchModalSubtitle" style="color: #64748B; font-size: 0.9rem; margin-top: 0.25rem;"></p>
         </div>
-        <button class="batch-modal-close" onclick="closeBatchModal()">
-          <i class="fas fa-times"></i>
-        </button>
+        <button class="batch-modal-close" onclick="closeBatchModal()"><i class="fas fa-times"></i></button>
       </div>
-      <div class="batch-modal-body" id="batchModalBody">
-        <!-- Items will be populated here -->
-      </div>
+      <div class="batch-modal-body" id="batchModalBody"></div>
     </div>
   </div>
 
@@ -699,29 +772,84 @@
     <div class="zip-modal" onclick="event.stopPropagation()">
       <div class="zip-modal-header">
         <h2><i class="fas fa-file-archive" style="color: #10B981;"></i> Download ZIP</h2>
-        <button class="zip-modal-close" onclick="closeZipModal()">
-          <i class="fas fa-times"></i>
-        </button>
+        <button class="zip-modal-close" onclick="closeZipModal()"><i class="fas fa-times"></i></button>
       </div>
       <p class="zip-modal-subtitle" id="zipModalSubtitle">Choose which QR codes to download</p>
       <div class="zip-modal-options">
         <button class="zip-option-btn" onclick="downloadBatchZip('customer')">
-          <i class="fas fa-mobile-alt"></i>
-          <span>Customer QRs</span>
-          <small>Verification links for customers</small>
+          <i class="fas fa-mobile-alt"></i><span>Customer QRs</span><small>Verification links for customers</small>
         </button>
         <button class="zip-option-btn" onclick="downloadBatchZip('inventory')">
-          <i class="fas fa-barcode"></i>
-          <span>Inventory QRs</span>
-          <small>Raw SKU codes for internal use</small>
+          <i class="fas fa-barcode"></i><span>Inventory QRs</span><small>Raw SKU codes for internal use</small>
         </button>
         <button class="zip-option-btn both" onclick="downloadBatchZip('both')">
-          <i class="fas fa-layer-group"></i>
-          <span>Both</span>
-          <small>All QR codes in one ZIP</small>
+          <i class="fas fa-layer-group"></i><span>Both</span><small>All QR codes in one ZIP</small>
         </button>
       </div>
       <button class="zip-cancel-btn" onclick="closeZipModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Full Label Builder Modal -->
+  <div class="label-modal-overlay" id="labelModalOverlay" onclick="closeLabelModal(event)">
+    <div class="label-modal" onclick="event.stopPropagation()">
+      <div class="label-modal-header">
+        <h2><i class="fas fa-tag"></i> Full Label Builder</h2>
+        <button class="batch-modal-close" onclick="closeLabelModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="labelBatchInfo" style="padding: 0 2rem; color: #64748B; font-size: 0.9rem;"></div>
+      <div class="label-modal-body">
+        <div class="label-config-section">
+          <h4><i class="fas fa-ruler-combined"></i> Sticker Size</h4>
+          <div class="size-options">
+            <div class="size-option selected" data-width="4" data-height="3" onclick="selectSize(this)">
+              <div class="size-option-name">Standard</div><div class="size-option-dims">4" × 3"</div>
+            </div>
+            <div class="size-option" data-width="4" data-height="6" onclick="selectSize(this)">
+              <div class="size-option-name">Tall</div><div class="size-option-dims">4" × 6"</div>
+            </div>
+            <div class="size-option" data-width="2" data-height="4" onclick="selectSize(this)">
+              <div class="size-option-name">Slim</div><div class="size-option-dims">2" × 4"</div>
+            </div>
+            <div class="size-option" data-width="3" data-height="3" onclick="selectSize(this)">
+              <div class="size-option-name">Square</div><div class="size-option-dims">3" × 3"</div>
+            </div>
+            <div class="size-option" data-width="2.25" data-height="7.5" onclick="selectSize(this)">
+              <div class="size-option-name">Bottle</div><div class="size-option-dims">2.25" × 7.5"</div>
+            </div>
+            <div class="size-option" data-width="0" data-height="0" onclick="selectSize(this)">
+              <div class="size-option-name">Custom</div><div class="size-option-dims">Your size</div>
+            </div>
+          </div>
+          <div class="custom-size-inputs" id="customSizeInputs">
+            <input type="number" id="customWidth" placeholder="Width" step="0.25" min="1" max="12" value="4" onchange="updateCustomSize()" />
+            <span style="color: #64748B;">×</span>
+            <input type="number" id="customHeight" placeholder="Height" step="0.25" min="1" max="12" value="6" onchange="updateCustomSize()" />
+            <span style="color: #64748B;">inches</span>
+          </div>
+          <h4 style="margin-top: 1.5rem;"><i class="fas fa-layer-group"></i> Include Elements</h4>
+          <div class="element-toggles">
+            <div class="element-toggle"><input type="checkbox" id="includeLogo" checked onchange="updatePreview()" /><label for="includeLogo">Company Logo</label></div>
+            <div class="element-toggle"><input type="checkbox" id="includeNutrition" onchange="updatePreview()" /><label for="includeNutrition">Nutrition Facts</label></div>
+            <div class="element-toggle"><input type="checkbox" id="includeCustomerQR" checked onchange="updatePreview()" /><label for="includeCustomerQR">Customer QR Code</label></div>
+            <div class="element-toggle"><input type="checkbox" id="includeInventoryQR" onchange="updatePreview()" /><label for="includeInventoryQR">Inventory QR Code</label></div>
+          </div>
+          <button class="btn btn-secondary" id="rearrangeBtn" onclick="toggleRearrangeMode()" style="margin-top: 1rem; width: 100%;"><i class="fas fa-arrows-alt"></i> Rearrange Elements</button>
+        </div>
+        <div class="label-preview-section">
+          <h4 style="align-self: flex-start; margin-bottom: 0;"><i class="fas fa-eye" style="color: #4F46E5;"></i> Preview</h4>
+          <div class="label-preview-controls">
+            <button class="btn btn-secondary" onclick="zoomPreview(-25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-minus"></i></button>
+            <span id="zoomLevel" style="font-size: 0.8rem; color: #64748B; min-width: 50px; text-align: center;">100%</span>
+            <button class="btn btn-secondary" onclick="zoomPreview(25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-plus"></i></button>
+          </div>
+          <div class="label-preview-container" id="labelPreview" style="width: 288px; height: 216px;"></div>
+        </div>
+      </div>
+      <div class="label-modal-footer">
+        <button class="btn btn-secondary" onclick="closeLabelModal()">Cancel</button>
+        <button class="btn btn-success" id="downloadLabelsBtn" onclick="downloadLabels()"><i class="fas fa-download"></i> Download Labels (PDF)</button>
+      </div>
     </div>
   </div>
 
@@ -734,6 +862,320 @@
     let currentPage = 1;
     const itemsPerPage = 12;
     let currentQRData = null;
+    let currentZipBatchGroupId = null;
+    let currentZipProductName = null;
+
+    // ==========================================
+    // COMPANY LOGO
+    // ==========================================
+    let companyLogo = null;
+
+    function initCompanyLogo() {
+      const saved = localStorage.getItem('biztrack_company_logo');
+      if (saved) {
+        companyLogo = saved;
+        document.getElementById('logoPreview').src = saved;
+        document.getElementById('logoPreview').style.display = 'block';
+        document.getElementById('logoPlaceholder').style.display = 'none';
+        document.getElementById('logoActions').style.display = 'flex';
+        document.getElementById('logoStatus').textContent = 'Logo saved for all labels';
+      }
+    }
+
+    document.getElementById('logoInput').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        companyLogo = ev.target.result;
+        localStorage.setItem('biztrack_company_logo', companyLogo);
+        document.getElementById('logoPreview').src = companyLogo;
+        document.getElementById('logoPreview').style.display = 'block';
+        document.getElementById('logoPlaceholder').style.display = 'none';
+        document.getElementById('logoActions').style.display = 'flex';
+        document.getElementById('logoStatus').textContent = 'Logo saved for all labels';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    window.removeCompanyLogo = function() {
+      companyLogo = null;
+      localStorage.removeItem('biztrack_company_logo');
+      document.getElementById('logoPreview').src = '';
+      document.getElementById('logoPreview').style.display = 'none';
+      document.getElementById('logoPlaceholder').style.display = 'block';
+      document.getElementById('logoActions').style.display = 'none';
+      document.getElementById('logoStatus').textContent = 'Click to upload your logo for product labels';
+    };
+
+    // ==========================================
+    // LABEL BUILDER
+    // ==========================================
+    let currentLabelBatch = null;
+    let labelConfig = {
+      width: 4, height: 3,
+      elements: {
+        logo: { enabled: true, x: 10, y: 10, width: 80, height: 60 },
+        nutrition: { enabled: false, x: 100, y: 10, width: 100, height: 150 },
+        customerQR: { enabled: true, x: 10, y: 80, width: 90, height: 90 },
+        inventoryQR: { enabled: false, x: 110, y: 80, width: 90, height: 90 }
+      }
+    };
+    let previewZoom = 100;
+    let rearrangeMode = false;
+    let draggedElement = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    window.openLabelBuilder = function() {
+      closeZipModal();
+      const batch = allProducts.find(p => p.batchGroupId === currentZipBatchGroupId);
+      if (!batch) { alert('Batch not found'); return; }
+      currentLabelBatch = batch;
+      document.getElementById('labelBatchInfo').innerHTML = 'Batch: <strong>' + escapeHtml(batch.metadata?.batchDisplayName || batch.productName) + '</strong> • <strong>' + (batch.items?.length || 1) + '</strong> labels';
+      const hasNutrition = batch.items?.[0]?.metadata?.nutritionFacts || batch.metadata?.nutritionFacts;
+      document.getElementById('includeNutrition').checked = !!hasNutrition;
+      document.getElementById('includeNutrition').disabled = !hasNutrition;
+      document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      updatePreview();
+      document.getElementById('labelModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.openSingleLabel = function(p) {
+      if (typeof p === 'string') p = JSON.parse(p);
+      currentLabelBatch = { ...p, items: [p] };
+      document.getElementById('labelBatchInfo').innerHTML = 'Product: <strong>' + escapeHtml(p.productName) + '</strong>';
+      const hasNutrition = p.metadata?.nutritionFacts;
+      document.getElementById('includeNutrition').checked = !!hasNutrition;
+      document.getElementById('includeNutrition').disabled = !hasNutrition;
+      document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      updatePreview();
+      document.getElementById('labelModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeLabelModal = function(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('labelModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      currentLabelBatch = null;
+      rearrangeMode = false;
+    };
+
+    window.selectSize = function(el) {
+      document.querySelectorAll('.size-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      const w = parseFloat(el.dataset.width), h = parseFloat(el.dataset.height);
+      if (w === 0) {
+        document.getElementById('customSizeInputs').classList.add('show');
+        labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 4;
+        labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 6;
+      } else {
+        document.getElementById('customSizeInputs').classList.remove('show');
+        labelConfig.width = w;
+        labelConfig.height = h;
+      }
+      updatePreview();
+    };
+
+    window.updateCustomSize = function() {
+      labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 4;
+      labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 6;
+      updatePreview();
+    };
+
+    window.zoomPreview = function(d) {
+      previewZoom = Math.max(50, Math.min(200, previewZoom + d));
+      document.getElementById('zoomLevel').textContent = previewZoom + '%';
+      updatePreview();
+    };
+
+    window.toggleRearrangeMode = function() {
+      rearrangeMode = !rearrangeMode;
+      const btn = document.getElementById('rearrangeBtn');
+      if (rearrangeMode) {
+        btn.innerHTML = '<i class="fas fa-check"></i> Done Rearranging';
+        btn.style.background = '#10B981';
+        btn.style.color = 'white';
+      } else {
+        btn.innerHTML = '<i class="fas fa-arrows-alt"></i> Rearrange Elements';
+        btn.style.background = '';
+        btn.style.color = '';
+      }
+      updatePreview();
+    };
+
+    function updatePreview() {
+      const preview = document.getElementById('labelPreview');
+      const scale = previewZoom / 100;
+      preview.style.width = Math.round(labelConfig.width * 72 * scale) + 'px';
+      preview.style.height = Math.round(labelConfig.height * 72 * scale) + 'px';
+      labelConfig.elements.logo.enabled = document.getElementById('includeLogo').checked;
+      labelConfig.elements.nutrition.enabled = document.getElementById('includeNutrition').checked;
+      labelConfig.elements.customerQR.enabled = document.getElementById('includeCustomerQR').checked;
+      labelConfig.elements.inventoryQR.enabled = document.getElementById('includeInventoryQR').checked;
+      let html = '';
+      const item = currentLabelBatch?.items?.[0] || currentLabelBatch;
+      if (labelConfig.elements.logo.enabled && companyLogo) {
+        const el = labelConfig.elements.logo;
+        html += '<div class="label-element" data-element="logo" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
+      }
+      if (labelConfig.elements.nutrition.enabled) {
+        const el = labelConfig.elements.nutrition;
+        const nf = item?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
+        html += '<div class="label-element" data-element="nutrition" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;background:white;border:1px solid #000;padding:4px;font-size:' + (6 * scale) + 'px;overflow:hidden;"><div style="font-weight:900;font-size:' + (10 * scale) + 'px;border-bottom:1px solid #000;">Nutrition Facts</div><div>Serving: ' + (nf.servingSize || '___') + '</div><div style="font-weight:bold;">Calories ' + (nf.calories || '0') + '</div><div>Fat ' + (nf.totalFat || '0') + 'g</div><div>Carbs ' + (nf.totalCarbs || '0') + 'g</div><div>Protein ' + (nf.protein || '0') + 'g</div></div>';
+      }
+      if (labelConfig.elements.customerQR.enabled && item?.qrCodeUrl) {
+        const el = labelConfig.elements.customerQR;
+        html += '<div class="label-element" data-element="customerQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.qrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (5 * scale) + 'px;font-weight:bold;margin-top:2px;">SCAN TO VERIFY</div></div>';
+      }
+      if (labelConfig.elements.inventoryQR.enabled && item?.inventoryQrCodeUrl) {
+        const el = labelConfig.elements.inventoryQR;
+        html += '<div class="label-element" data-element="inventoryQR" style="left:' + (el.x * scale) + 'px;top:' + (el.y * scale) + 'px;width:' + (el.width * scale) + 'px;height:' + (el.height * scale) + 'px;"><img src="' + item.inventoryQrCodeUrl + '" style="width:100%;height:100%;" /><div style="text-align:center;font-size:' + (4 * scale) + 'px;color:#64748B;margin-top:2px;">INVENTORY</div></div>';
+      }
+      preview.innerHTML = html;
+      if (rearrangeMode) attachDrag();
+    }
+
+    function attachDrag() {
+      document.querySelectorAll('.label-element').forEach(el => {
+        el.style.cursor = 'move';
+        el.addEventListener('mousedown', function(e) {
+          if (!rearrangeMode) return;
+          draggedElement = this;
+          draggedElement.classList.add('dragging');
+          const rect = this.getBoundingClientRect();
+          dragOffset.x = e.clientX - rect.left;
+          dragOffset.y = e.clientY - rect.top;
+          e.preventDefault();
+        });
+      });
+    }
+
+    document.addEventListener('mousemove', function(e) {
+      if (!draggedElement) return;
+      const preview = document.getElementById('labelPreview');
+      const rect = preview.getBoundingClientRect();
+      const scale = previewZoom / 100;
+      let x = Math.max(0, Math.min(e.clientX - rect.left - dragOffset.x, rect.width - draggedElement.offsetWidth));
+      let y = Math.max(0, Math.min(e.clientY - rect.top - dragOffset.y, rect.height - draggedElement.offsetHeight));
+      draggedElement.style.left = x + 'px';
+      draggedElement.style.top = y + 'px';
+      const name = draggedElement.dataset.element;
+      if (labelConfig.elements[name]) {
+        labelConfig.elements[name].x = x / scale;
+        labelConfig.elements[name].y = y / scale;
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+        draggedElement = null;
+      }
+    });
+
+    // ==========================================
+    // PDF DOWNLOAD
+    // ==========================================
+    window.downloadLabels = async function() {
+      if (!currentLabelBatch) return;
+      const btn = document.getElementById('downloadLabelsBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+      try {
+        const { jsPDF } = window.jspdf;
+        const items = currentLabelBatch.items || [currentLabelBatch];
+        const pdf = new jsPDF({
+          orientation: labelConfig.width > labelConfig.height ? 'landscape' : 'portrait',
+          unit: 'in',
+          format: [labelConfig.width, labelConfig.height]
+        });
+        const nf = items[0]?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (i > 0) pdf.addPage([labelConfig.width, labelConfig.height]);
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(0, 0, labelConfig.width, labelConfig.height, 'F');
+          pdf.setDrawColor(200);
+          pdf.setLineWidth(0.01);
+          pdf.rect(0.05, 0.05, labelConfig.width - 0.1, labelConfig.height - 0.1);
+          if (labelConfig.elements.logo.enabled && companyLogo) {
+            const el = labelConfig.elements.logo;
+            try { pdf.addImage(companyLogo, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72); } catch (e) {}
+          }
+          if (labelConfig.elements.nutrition.enabled) {
+            const el = labelConfig.elements.nutrition;
+            const x = el.x / 72, y = el.y / 72, w = el.width / 72, h = el.height / 72;
+            pdf.setDrawColor(0);
+            pdf.setLineWidth(0.02);
+            pdf.rect(x, y, w, h);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Nutrition Facts', x + 0.05, y + 0.12);
+            pdf.setLineWidth(0.01);
+            pdf.line(x, y + 0.15, x + w, y + 0.15);
+            pdf.setFontSize(5);
+            pdf.setFont('helvetica', 'normal');
+            let ty = y + 0.22;
+            pdf.text('Serving: ' + (nf.servingSize || '___'), x + 0.05, ty); ty += 0.08;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Calories: ' + (nf.calories || '0'), x + 0.05, ty); ty += 0.08;
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('Total Fat: ' + (nf.totalFat || '0') + 'g', x + 0.05, ty); ty += 0.08;
+            pdf.text('Total Carbs: ' + (nf.totalCarbs || '0') + 'g', x + 0.05, ty); ty += 0.08;
+            pdf.text('Protein: ' + (nf.protein || '0') + 'g', x + 0.05, ty);
+          }
+          if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
+            const el = labelConfig.elements.customerQR;
+            try {
+              const img = await loadImageAsDataUrl(item.qrCodeUrl);
+              pdf.addImage(img, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72);
+              pdf.setFontSize(5);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text('SCAN TO VERIFY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.08, { align: 'center' });
+            } catch (e) {}
+          }
+          if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
+            const el = labelConfig.elements.inventoryQR;
+            try {
+              const img = await loadImageAsDataUrl(item.inventoryQrCodeUrl);
+              pdf.addImage(img, 'PNG', el.x / 72, el.y / 72, el.width / 72, el.height / 72);
+              pdf.setFontSize(4);
+              pdf.text('INVENTORY', el.x / 72 + el.width / 144, el.y / 72 + el.height / 72 + 0.06, { align: 'center' });
+            } catch (e) {}
+          }
+          pdf.setFontSize(4);
+          pdf.setTextColor(100);
+          pdf.text('SKU: ' + (item.sku || item.productId), labelConfig.width / 2, labelConfig.height - 0.1, { align: 'center' });
+          pdf.setTextColor(0);
+        }
+        const fileName = (currentLabelBatch.metadata?.batchDisplayName || currentLabelBatch.productName || 'labels').replace(/[^a-z0-9]/gi, '_');
+        pdf.save(fileName + '_labels.pdf');
+        btn.innerHTML = '<i class="fas fa-check"></i> Done!';
+        setTimeout(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-download"></i> Download Labels (PDF)'; }, 2000);
+      } catch (err) {
+        alert('PDF Error: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> Download Labels (PDF)';
+      }
+    };
+
+    function loadImageAsDataUrl(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
 
     // ==========================================
     // LOAD PRODUCTS
@@ -742,50 +1184,21 @@
       try {
         const response = await authenticatedFetch('/api/list-products');
         const data = await response.json();
-
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to load products');
-        }
-
-        // Filter for finished products only (live or finalized)
-        // Products are "finished" if: mode is 'live', OR isFinalized is true, OR mode is not set (legacy products)
+        if (!data.success) throw new Error(data.error || 'Failed to load products');
         allProducts = (data.products || []).filter(p => {
-          // If it's in production mode and NOT finalized, it's not finished
-          if (p.mode === 'production' && !p.isFinalized) {
-            return false;
-          }
-          // Everything else is finished (live, finalized, or legacy products without mode)
+          if (p.mode === 'production' && !p.isFinalized) return false;
           return true;
         });
-
-        console.log('Loaded finished products:', allProducts.length, allProducts);
-
-        // Calculate stats
-        let totalProducts = 0;
-        let totalBatches = 0;
-        
+        let totalProducts = 0, totalBatches = 0;
         allProducts.forEach(p => {
-          if (p.isBatchGroup) {
-            totalBatches++;
-            totalProducts += (p.items?.length || p.quantity || 1);
-          } else {
-            totalProducts++;
-          }
+          if (p.isBatchGroup) { totalBatches++; totalProducts += (p.items?.length || p.quantity || 1); }
+          else { totalProducts++; }
         });
-
         document.getElementById('totalProducts').textContent = totalProducts;
         document.getElementById('totalBatches').textContent = totalBatches;
-
         applyFilters();
       } catch (error) {
-        console.error('Error loading products:', error);
-        document.getElementById('productsContainer').innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Error Loading Products</h3>
-            <p>${error.message}</p>
-          </div>
-        `;
+        document.getElementById('productsContainer').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error Loading Products</h3><p>' + error.message + '</p></div>';
       }
     }
 
@@ -796,40 +1209,20 @@
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
       const sortBy = document.getElementById('sortSelect').value;
       const typeFilter = document.getElementById('typeSelect').value;
-
-      // Filter
       filteredProducts = allProducts.filter(p => {
-        // Search
-        const matchesSearch = !searchTerm || 
-          p.productName?.toLowerCase().includes(searchTerm) ||
-          p.sku?.toLowerCase().includes(searchTerm) ||
-          p.batchNumber?.toLowerCase().includes(searchTerm) ||
-          p.productId?.toLowerCase().includes(searchTerm);
-
-        // Type
-        const matchesType = typeFilter === 'all' ||
-          (typeFilter === 'batch' && p.isBatchGroup) ||
-          (typeFilter === 'single' && !p.isBatchGroup);
-
+        const matchesSearch = !searchTerm || p.productName?.toLowerCase().includes(searchTerm) || p.sku?.toLowerCase().includes(searchTerm) || p.batchNumber?.toLowerCase().includes(searchTerm) || p.productId?.toLowerCase().includes(searchTerm);
+        const matchesType = typeFilter === 'all' || (typeFilter === 'batch' && p.isBatchGroup) || (typeFilter === 'single' && !p.isBatchGroup);
         return matchesSearch && matchesType;
       });
-
-      // Sort
       filteredProducts.sort((a, b) => {
         switch (sortBy) {
-          case 'newest':
-            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-          case 'oldest':
-            return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-          case 'name-az':
-            return (a.productName || '').localeCompare(b.productName || '');
-          case 'name-za':
-            return (b.productName || '').localeCompare(a.productName || '');
-          default:
-            return 0;
+          case 'newest': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          case 'oldest': return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          case 'name-az': return (a.productName || '').localeCompare(b.productName || '');
+          case 'name-za': return (b.productName || '').localeCompare(a.productName || '');
+          default: return 0;
         }
       });
-
       currentPage = 1;
       renderProducts();
     }
@@ -841,17 +1234,13 @@
       applyFilters();
     }
 
-    // Event listeners for filters
     document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
     document.getElementById('sortSelect').addEventListener('change', applyFilters);
     document.getElementById('typeSelect').addEventListener('change', applyFilters);
 
     function debounce(func, wait) {
       let timeout;
-      return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
+      return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); };
     }
 
     // ==========================================
@@ -859,34 +1248,15 @@
     // ==========================================
     function renderProducts() {
       const container = document.getElementById('productsContainer');
-
       if (filteredProducts.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-box-open"></i>
-            <h3>No Finished Products Yet</h3>
-            <p>Products will appear here once they're minted or finalized from production.</p>
-            <a href="dashboard.html"><i class="fas fa-plus"></i> Create Your First Product</a>
-          </div>
-        `;
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><h3>No Finished Products Yet</h3><p>Products will appear here once they\'re minted or finalized from production.</p><a href="dashboard.html"><i class="fas fa-plus"></i> Create Your First Product</a></div>';
         document.getElementById('pagination').style.display = 'none';
         return;
       }
-
-      // Pagination
       const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
       const startIdx = (currentPage - 1) * itemsPerPage;
-      const endIdx = startIdx + itemsPerPage;
-      const pageProducts = filteredProducts.slice(startIdx, endIdx);
-
-      // Render cards
-      container.innerHTML = `
-        <div class="products-grid">
-          ${pageProducts.map(product => renderProductCard(product)).join('')}
-        </div>
-      `;
-
-      // Render pagination
+      const pageProducts = filteredProducts.slice(startIdx, startIdx + itemsPerPage);
+      container.innerHTML = '<div class="products-grid">' + pageProducts.map(product => renderProductCard(product)).join('') + '</div>';
       renderPagination(totalPages);
     }
 
@@ -895,102 +1265,43 @@
       const items = product.items || [];
       const itemCount = items.length || product.quantity || 1;
       const createdDate = product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'N/A';
+      const hasNutrition = product.metadata?.nutritionFacts || (isBatch && product.items?.[0]?.metadata?.nutritionFacts);
       
-      // Badges
       let badges = '';
-      if (product.isFinalized) {
-        badges += '<span class="badge badge-finalized">Finalized</span>';
+      if (product.isFinalized) badges += '<span class="badge badge-finalized">Finalized</span>';
+      else badges += '<span class="badge badge-live">Live</span>';
+      if (isBatch) badges += '<span class="badge badge-batch">Batch ' + itemCount + '</span>';
+      if (hasNutrition) badges += '<span class="badge badge-nutrition">Nutrition</span>';
+
+      const displayTitle = (isBatch && product.metadata?.batchDisplayName) ? product.metadata.batchDisplayName : product.productName;
+      const displaySku = (isBatch && product.metadata?.batchSkuPrefix) ? product.metadata.batchSkuPrefix : (product.sku || product.productId);
+      
+      let actions = '<a href="' + (product.verificationUrl || '/verify.html?id=' + product.productId) + '" target="_blank" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>';
+      
+      if (!isBatch) {
+        actions += '<button class="btn btn-primary" onclick=\'openQRModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button>';
+        actions += '<button class="btn btn-success" onclick=\'openSingleLabel(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-tag"></i> Label</button>';
       } else {
-        badges += '<span class="badge badge-live">Live</span>';
-      }
-      if (isBatch) {
-        badges += `<span class="badge badge-batch">Batch ${itemCount}</span>`;
+        actions += '<button class="btn btn-secondary" onclick=\'openBatchModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-list"></i> Items (' + itemCount + ')</button>';
+        actions += '<button class="btn btn-primary" onclick="openZipModal(\'' + product.batchGroupId + '\', \'' + escapeHtml(displayTitle).replace(/'/g, "\\'") + '\')"><i class="fas fa-download"></i> ZIP</button>';
       }
 
-      // Batch items section - removed inline, now uses modal
-      // Use batchDisplayName from metadata if available for batch groups
-      const displayTitle = (isBatch && product.metadata?.batchDisplayName) 
-        ? product.metadata.batchDisplayName 
-        : product.productName;
-      
-      // For batches, show the base SKU prefix if available, otherwise first item's SKU
-      const displaySku = (isBatch && product.metadata?.batchSkuPrefix) 
-        ? product.metadata.batchSkuPrefix 
-        : (product.sku || product.productId);
-      
-      return `
-        <div class="product-card">
-          <div class="product-card-header">
-            <div>
-              <div class="product-card-title">${escapeHtml(displayTitle)}</div>
-              <div class="product-card-sku">${escapeHtml(displaySku)}</div>
-            </div>
-            <div class="product-card-badges">${badges}</div>
-          </div>
-          <div class="product-card-body">
-            <div class="product-card-meta">
-              <div class="meta-item">
-                <div class="meta-item-label">Batch #</div>
-                <div class="meta-item-value">${escapeHtml(product.batchNumber || 'N/A')}</div>
-              </div>
-              <div class="meta-item">
-                <div class="meta-item-label">Created</div>
-                <div class="meta-item-value">${createdDate}</div>
-              </div>
-            </div>
-            <div class="product-card-actions">
-              <a href="${product.verificationUrl || '/verify.html?id=' + product.productId}" target="_blank" class="btn btn-secondary">
-                <i class="fas fa-eye"></i> View
-              </a>
-              ${!isBatch ? `
-                <button class="btn btn-primary" onclick='openQRModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
-                  <i class="fas fa-qrcode"></i> QR
-                </button>
-              ` : ''}
-              ${isBatch ? `
-                <button class="btn btn-secondary" onclick='openBatchModal(${JSON.stringify(product).replace(/'/g, "\\'")})'>
-                  <i class="fas fa-list"></i> Items (${itemCount})
-                </button>
-                <button class="btn btn-primary" onclick="openZipModal('${product.batchGroupId}', '${escapeHtml(displayTitle)}')">
-                  <i class="fas fa-download"></i> ZIP
-                </button>
-              ` : ''}
-            </div>
-          </div>
-        </div>
-      `;
+      return '<div class="product-card"><div class="product-card-header"><div><div class="product-card-title">' + escapeHtml(displayTitle) + '</div><div class="product-card-sku">' + escapeHtml(displaySku) + '</div></div><div class="product-card-badges">' + badges + '</div></div><div class="product-card-body"><div class="product-card-meta"><div class="meta-item"><div class="meta-item-label">Batch #</div><div class="meta-item-value">' + escapeHtml(product.batchNumber || 'N/A') + '</div></div><div class="meta-item"><div class="meta-item-label">Created</div><div class="meta-item-value">' + createdDate + '</div></div></div><div class="product-card-actions">' + actions + '</div></div></div>';
     }
 
     function renderPagination(totalPages) {
       const pagination = document.getElementById('pagination');
-      
-      if (totalPages <= 1) {
-        pagination.style.display = 'none';
-        return;
-      }
-
+      if (totalPages <= 1) { pagination.style.display = 'none'; return; }
       pagination.style.display = 'flex';
-      
-      let html = `
-        <button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-          <i class="fas fa-chevron-left"></i>
-        </button>
-      `;
-
+      let html = '<button class="pagination-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
       for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-          html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+          html += '<button class="pagination-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
         } else if (i === currentPage - 2 || i === currentPage + 2) {
-          html += `<span class="pagination-info">...</span>`;
+          html += '<span class="pagination-info">...</span>';
         }
       }
-
-      html += `
-        <button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      `;
-
+      html += '<button class="pagination-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
       pagination.innerHTML = html;
     }
 
@@ -1007,32 +1318,11 @@
     // ==========================================
     window.openBatchModal = function(product) {
       if (typeof product === 'string') product = JSON.parse(product);
-      
       const items = product.items || [];
-      
-      // Use batchDisplayName from metadata if available, otherwise use productName
       const batchTitle = product.metadata?.batchDisplayName || product.productName;
       document.getElementById('batchModalTitle').textContent = batchTitle;
-      document.getElementById('batchModalSubtitle').textContent = `${items.length} items in batch • Batch #${product.batchNumber || 'N/A'}`;
-      
-      const body = document.getElementById('batchModalBody');
-      body.innerHTML = items.map(item => `
-        <div class="batch-modal-item">
-          <div class="batch-modal-item-info">
-            <span class="batch-modal-item-name">${escapeHtml(item.productName)}</span>
-            <span class="batch-modal-item-sku">SKU: ${escapeHtml(item.sku)}${item.batchNumber ? ' • Batch #' + escapeHtml(item.batchNumber) : ''}</span>
-          </div>
-          <div class="batch-modal-item-actions">
-            <a href="${item.verificationUrl}" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 0.75rem;">
-              <i class="fas fa-eye"></i> View
-            </a>
-            <button class="btn btn-primary" style="padding: 0.5rem 0.75rem;" onclick='openQRModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>
-              <i class="fas fa-qrcode"></i> QR
-            </button>
-          </div>
-        </div>
-      `).join('');
-      
+      document.getElementById('batchModalSubtitle').textContent = items.length + ' items in batch • Batch #' + (product.batchNumber || 'N/A');
+      document.getElementById('batchModalBody').innerHTML = items.map(item => '<div class="batch-modal-item"><div class="batch-modal-item-info"><span class="batch-modal-item-name">' + escapeHtml(item.productName) + '</span><span class="batch-modal-item-sku">SKU: ' + escapeHtml(item.sku) + (item.batchNumber ? ' • Batch #' + escapeHtml(item.batchNumber) : '') + '</span></div><div class="batch-modal-item-actions"><a href="' + item.verificationUrl + '" target="_blank" class="btn btn-secondary" style="padding: 0.5rem 0.75rem;"><i class="fas fa-eye"></i> View</a><button class="btn btn-primary" style="padding: 0.5rem 0.75rem;" onclick=\'openQRModal(' + JSON.stringify(item).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button></div></div>').join('');
       document.getElementById('batchModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     };
@@ -1046,13 +1336,22 @@
     // ==========================================
     // ZIP MODAL
     // ==========================================
-    let currentZipBatchGroupId = null;
-    let currentZipProductName = null;
-
     window.openZipModal = function(batchGroupId, productName) {
       currentZipBatchGroupId = batchGroupId;
       currentZipProductName = productName;
-      document.getElementById('zipModalSubtitle').textContent = `Download QR codes for "${productName}"`;
+      document.getElementById('zipModalSubtitle').textContent = 'Download QR codes for "' + productName + '"';
+      // Add Full Label Builder button if not already added
+      const zipOptions = document.querySelector('.zip-modal-options');
+      if (!document.getElementById('labelBuilderBtn')) {
+        const labelBtn = document.createElement('button');
+        labelBtn.id = 'labelBuilderBtn';
+        labelBtn.className = 'zip-option-btn';
+        labelBtn.style.borderColor = '#10B981';
+        labelBtn.style.background = '#F0FDF4';
+        labelBtn.innerHTML = '<i class="fas fa-tag" style="color: #10B981;"></i><span>Full Label Builder</span><small>Logo + Nutrition + QR codes</small>';
+        labelBtn.onclick = function() { openLabelBuilder(); };
+        zipOptions.appendChild(labelBtn);
+      }
       document.getElementById('zipModalOverlay').classList.add('show');
     };
 
@@ -1065,22 +1364,16 @@
 
     window.downloadBatchZip = async function(type) {
       if (!currentZipBatchGroupId) return;
-
       const btn = event.target.closest('button');
       const originalHTML = btn.innerHTML;
       btn.classList.add('downloading');
       btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i><span>Downloading...</span><small>Please wait</small>';
-
       try {
         const batch = allProducts.find(p => p.batchGroupId === currentZipBatchGroupId);
         if (!batch || !batch.items?.length) throw new Error('Batch not found');
-
         const zip = new JSZip();
-        
-        // Create folders based on type
         const customerFolder = (type === 'customer' || type === 'both') ? zip.folder('Customer-QR-Codes') : null;
         const inventoryFolder = (type === 'inventory' || type === 'both') ? zip.folder('Inventory-QR-Codes') : null;
-
         for (const item of batch.items) {
           if (customerFolder && item.qrCodeUrl) {
             const r = await fetch(item.qrCodeUrl);
@@ -1091,15 +1384,11 @@
             inventoryFolder.file(item.sku + '-inventory.png', await r.blob());
           }
         }
-
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(zipBlob);
-        const suffix = type === 'both' ? 'all-qr' : type + '-qr';
-        a.download = currentZipProductName.replace(/[^a-z0-9]/gi, '_') + '_' + suffix + '.zip';
+        a.download = currentZipProductName.replace(/[^a-z0-9]/gi, '_') + '_' + (type === 'both' ? 'all-qr' : type + '-qr') + '.zip';
         a.click();
-
-        // Close modal after successful download
         closeZipModal();
       } catch (err) {
         alert('ZIP error: ' + err.message);
@@ -1114,20 +1403,13 @@
     window.openQRModal = function(product) {
       if (typeof product === 'string') product = JSON.parse(product);
       currentQRData = product;
-
       document.getElementById('modalSku').textContent = 'SKU: ' + (product.sku || product.productId);
-      
-      // Show loading spinners
       document.getElementById('customerQRLoading').style.display = 'block';
       document.getElementById('inventoryQRLoading').style.display = 'block';
-      
-      // Load images
       document.getElementById('modalCustomerQR').src = product.qrCodeUrl;
-
       const inventoryBox = document.getElementById('inventoryQRBox');
       const inventoryBtn = document.getElementById('downloadInventoryBtn');
       const bothBtn = document.getElementById('downloadBothBtn');
-
       if (product.inventoryQrCodeUrl) {
         document.getElementById('modalInventoryQR').src = product.inventoryQrCodeUrl;
         inventoryBox.style.display = 'block';
@@ -1138,7 +1420,6 @@
         inventoryBtn.style.display = 'none';
         bothBtn.style.display = 'none';
       }
-
       document.getElementById('qrModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     };
@@ -1150,33 +1431,21 @@
       currentQRData = null;
     };
 
-    // Download individual QR code
     window.downloadQR = async function(type) {
       if (!currentQRData) return;
-      
       const btn = document.getElementById(type === 'customer' ? 'downloadCustomerBtn' : 'downloadInventoryBtn');
-      const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       btn.disabled = true;
-
       try {
         const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.inventoryQrCodeUrl;
         const response = await fetch(url);
         const blob = await response.blob();
-        
-        const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = downloadUrl;
+        a.href = URL.createObjectURL(blob);
         a.download = (currentQRData.sku || currentQRData.productId) + '-' + type + '-qr.png';
-        document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(downloadUrl);
       } catch (error) {
-        console.error('Download failed:', error);
-        // Fallback: open in new tab
-        const url = type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.inventoryQrCodeUrl;
-        window.open(url, '_blank');
+        window.open(type === 'customer' ? currentQRData.qrCodeUrl : currentQRData.inventoryQrCodeUrl, '_blank');
       } finally {
         btn.innerHTML = '<i class="fas fa-download"></i> ' + (type === 'customer' ? 'Customer' : 'Inventory');
         btn.disabled = false;
@@ -1185,52 +1454,38 @@
 
     window.downloadBothQRs = async function() {
       if (!currentQRData) return;
-
       const btn = document.getElementById('downloadBothBtn');
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       btn.disabled = true;
-
       try {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 600;
         canvas.height = 380;
-
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         const customerImg = new Image();
         const inventoryImg = new Image();
         customerImg.crossOrigin = 'anonymous';
         inventoryImg.crossOrigin = 'anonymous';
-
         await Promise.all([
           new Promise((resolve, reject) => { customerImg.onload = resolve; customerImg.onerror = reject; customerImg.src = currentQRData.qrCodeUrl; }),
           new Promise((resolve, reject) => { inventoryImg.onload = resolve; inventoryImg.onerror = reject; inventoryImg.src = currentQRData.inventoryQrCodeUrl; })
         ]);
-
         ctx.fillStyle = '#1E293B';
         ctx.font = 'bold 22px Inter, Arial, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(currentQRData.productName || 'Product', canvas.width / 2, 32);
-
         ctx.fillStyle = '#64748B';
         ctx.font = '14px Inter, Arial, sans-serif';
         ctx.fillText('SKU: ' + (currentQRData.sku || currentQRData.productId), canvas.width / 2, 55);
-
-        const qrSize = 140;
-        const qrY = 75;
-
-        ctx.drawImage(customerImg, 80, qrY, qrSize, qrSize);
-        ctx.drawImage(inventoryImg, 380, qrY, qrSize, qrSize);
-
+        ctx.drawImage(customerImg, 80, 75, 140, 140);
+        ctx.drawImage(inventoryImg, 380, 75, 140, 140);
         ctx.fillStyle = '#4F46E5';
         ctx.font = 'bold 13px Inter, Arial, sans-serif';
-        ctx.fillText('Customer', 150, qrY + qrSize + 22);
-
+        ctx.fillText('Customer', 150, 237);
         ctx.fillStyle = '#64748B';
-        ctx.fillText('Inventory', 450, qrY + qrSize + 22);
-
+        ctx.fillText('Inventory', 450, 237);
         const link = document.createElement('a');
         link.download = (currentQRData.sku || currentQRData.productId) + '-label.png';
         link.href = canvas.toDataURL('image/png');
@@ -1243,16 +1498,8 @@
       }
     };
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeQRModal();
-        closeBatchModal();
-        closeZipModal();
-      }
-    });
-
     // ==========================================
-    // HELPERS
+    // HELPERS & INIT
     // ==========================================
     function escapeHtml(text) {
       if (!text) return '';
@@ -1261,9 +1508,11 @@
       return div.innerHTML;
     }
 
-    // ==========================================
-    // INIT
-    // ==========================================
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeQRModal(); closeBatchModal(); closeZipModal(); closeLabelModal(); }
+    });
+
+    initCompanyLogo();
     loadProducts();
   </script>
 </body>

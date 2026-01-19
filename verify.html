@@ -323,6 +323,137 @@
       word-wrap: break-word;
     }
 
+    /* ==========================================
+       NUTRITION FACTS SECTION (NEW!)
+    ========================================== */
+    .nutrition-section {
+      background: white;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .nutrition-section > h3 {
+      padding: 1rem 1.25rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .nutrition-panel {
+      border: 2px solid #000;
+      margin: 0 1rem 1rem;
+      padding: 0.5rem;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    .nf-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #000;
+      margin: 0;
+      padding-bottom: 0.25rem;
+    }
+
+    .nf-serving {
+      font-size: 0.85rem;
+      color: #000;
+      border-bottom: 8px solid #000;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .nf-calories-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 5px solid #000;
+      padding: 0.35rem 0;
+    }
+
+    .nf-calories-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .nf-calories-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #000;
+    }
+
+    .nf-daily-header {
+      text-align: right;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #000;
+    }
+
+    .nf-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+      border-bottom: 1px solid #ccc;
+      font-size: 0.85rem;
+    }
+
+    .nf-row.thick-border {
+      border-bottom: 5px solid #000;
+    }
+
+    .nf-row.indent {
+      padding-left: 1rem;
+    }
+
+    .nf-row-label {
+      color: #000;
+    }
+
+    .nf-row-label strong {
+      font-weight: 700;
+    }
+
+    .nf-row-value {
+      color: #000;
+      font-weight: 500;
+    }
+
+    .nf-vitamins {
+      border-top: 5px solid #000;
+      padding-top: 0.25rem;
+    }
+
+    .nf-vitamins-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.15rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .nf-vitamin-item {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .nf-ingredients {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #ccc;
+      font-size: 0.8rem;
+    }
+
+    .nf-ingredients-label {
+      font-weight: 700;
+    }
+
     /* Map Section */
     .map-section {
       background: white;
@@ -1073,6 +1204,14 @@
         <div class="notes-content" id="notesContent"></div>
       </div>
 
+      <!-- Nutrition Facts Section (NEW!) -->
+      <div class="nutrition-section" id="nutritionSection" style="display: none;">
+        <h3><i class="fas fa-clipboard-list" style="color: #10B981;"></i> Nutrition Facts</h3>
+        <div class="nutrition-panel" id="nutritionPanel">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+
       <!-- Map Section (for single location products) -->
       <div class="map-section" id="mapSection" style="display: none;">
         <h3>📍 Origin Location</h3>
@@ -1284,6 +1423,13 @@
           document.getElementById('notesContent').textContent = productData.metadata.notes;
         }
 
+        // ==========================================
+        // NUTRITION FACTS (NEW!)
+        // ==========================================
+        if (productData.metadata && productData.metadata.nutritionFacts) {
+          loadNutritionFacts(productData.metadata.nutritionFacts);
+        }
+
         // Location/Map
         if (productData.location && productData.location.latitude && productData.location.longitude) {
           loadMap(productData.location);
@@ -1304,6 +1450,159 @@
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('errorState').style.display = 'block';
       document.getElementById('errorMessage').textContent = message;
+    }
+
+    // ==========================================
+    // NUTRITION FACTS DISPLAY (NEW!)
+    // ==========================================
+    function loadNutritionFacts(nf) {
+      const section = document.getElementById('nutritionSection');
+      const panel = document.getElementById('nutritionPanel');
+      
+      // Only show if we have at least serving size or calories
+      if (!nf.servingSize && !nf.calories) {
+        return;
+      }
+
+      section.style.display = 'block';
+
+      // Build FDA-style nutrition facts panel
+      let html = `
+        <div class="nf-title">Nutrition Facts</div>
+        <div class="nf-serving">
+          ${nf.servingsPerContainer ? `<div>${nf.servingsPerContainer} servings per container</div>` : ''}
+          <div><strong>Serving size</strong> ${escapeHtml(nf.servingSize) || '---'}</div>
+        </div>
+        <div class="nf-calories-row">
+          <span class="nf-calories-label">Calories</span>
+          <span class="nf-calories-value">${nf.calories || '0'}</span>
+        </div>
+        <div class="nf-daily-header">% Daily Value*</div>
+      `;
+
+      // Fat section
+      if (nf.totalFat || nf.saturatedFat || nf.transFat) {
+        html += `
+          <div class="nf-row">
+            <span class="nf-row-label"><strong>Total Fat</strong> ${nf.totalFat || '0'}g</span>
+            <span class="nf-row-value">${calcDV(nf.totalFat, 78)}%</span>
+          </div>
+        `;
+        if (nf.saturatedFat) {
+          html += `
+            <div class="nf-row indent">
+              <span class="nf-row-label">Saturated Fat ${nf.saturatedFat}g</span>
+              <span class="nf-row-value">${calcDV(nf.saturatedFat, 20)}%</span>
+            </div>
+          `;
+        }
+        if (nf.transFat) {
+          html += `
+            <div class="nf-row indent">
+              <span class="nf-row-label"><em>Trans</em> Fat ${nf.transFat}g</span>
+              <span class="nf-row-value"></span>
+            </div>
+          `;
+        }
+      }
+
+      // Cholesterol
+      if (nf.cholesterol) {
+        html += `
+          <div class="nf-row">
+            <span class="nf-row-label"><strong>Cholesterol</strong> ${nf.cholesterol}mg</span>
+            <span class="nf-row-value">${calcDV(nf.cholesterol, 300)}%</span>
+          </div>
+        `;
+      }
+
+      // Sodium
+      if (nf.sodium) {
+        html += `
+          <div class="nf-row">
+            <span class="nf-row-label"><strong>Sodium</strong> ${nf.sodium}mg</span>
+            <span class="nf-row-value">${calcDV(nf.sodium, 2300)}%</span>
+          </div>
+        `;
+      }
+
+      // Carbs section
+      html += `
+        <div class="nf-row">
+          <span class="nf-row-label"><strong>Total Carbohydrate</strong> ${nf.totalCarbs || '0'}g</span>
+          <span class="nf-row-value">${calcDV(nf.totalCarbs, 275)}%</span>
+        </div>
+      `;
+      if (nf.fiber) {
+        html += `
+          <div class="nf-row indent">
+            <span class="nf-row-label">Dietary Fiber ${nf.fiber}g</span>
+            <span class="nf-row-value">${calcDV(nf.fiber, 28)}%</span>
+          </div>
+        `;
+      }
+      if (nf.sugars) {
+        html += `
+          <div class="nf-row indent">
+            <span class="nf-row-label">Total Sugars ${nf.sugars}g</span>
+            <span class="nf-row-value"></span>
+          </div>
+        `;
+      }
+      if (nf.addedSugars) {
+        html += `
+          <div class="nf-row indent" style="padding-left: 2rem;">
+            <span class="nf-row-label">Includes ${nf.addedSugars}g Added Sugars</span>
+            <span class="nf-row-value">${calcDV(nf.addedSugars, 50)}%</span>
+          </div>
+        `;
+      }
+
+      // Protein
+      html += `
+        <div class="nf-row thick-border">
+          <span class="nf-row-label"><strong>Protein</strong> ${nf.protein || '0'}g</span>
+          <span class="nf-row-value"></span>
+        </div>
+      `;
+
+      // Vitamins & Minerals
+      const hasVitamins = nf.vitaminD || nf.calcium || nf.iron || nf.potassium;
+      if (hasVitamins) {
+        html += `<div class="nf-vitamins"><div class="nf-vitamins-grid">`;
+        if (nf.vitaminD) {
+          html += `<div class="nf-vitamin-item"><span>Vitamin D ${nf.vitaminD}mcg</span><span>${calcDV(nf.vitaminD, 20)}%</span></div>`;
+        }
+        if (nf.calcium) {
+          html += `<div class="nf-vitamin-item"><span>Calcium ${nf.calcium}mg</span><span>${calcDV(nf.calcium, 1300)}%</span></div>`;
+        }
+        if (nf.iron) {
+          html += `<div class="nf-vitamin-item"><span>Iron ${nf.iron}mg</span><span>${calcDV(nf.iron, 18)}%</span></div>`;
+        }
+        if (nf.potassium) {
+          html += `<div class="nf-vitamin-item"><span>Potassium ${nf.potassium}mg</span><span>${calcDV(nf.potassium, 4700)}%</span></div>`;
+        }
+        html += `</div></div>`;
+      }
+
+      // Ingredients
+      if (nf.ingredients) {
+        html += `
+          <div class="nf-ingredients">
+            <span class="nf-ingredients-label">INGREDIENTS:</span> ${escapeHtml(nf.ingredients)}
+          </div>
+        `;
+      }
+
+      panel.innerHTML = html;
+    }
+
+    // Calculate % Daily Value
+    function calcDV(value, dailyValue) {
+      if (!value || !dailyValue) return 0;
+      const num = parseFloat(value);
+      if (isNaN(num)) return 0;
+      return Math.round((num / dailyValue) * 100);
     }
 
     // ===== REWARDS =====

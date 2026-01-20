@@ -841,7 +841,16 @@
           <h4 style="margin-top: 1.5rem;"><i class="fas fa-layer-group"></i> Include Elements</h4>
           <div class="element-toggles">
             <div class="element-toggle"><input type="checkbox" id="includeLogo" checked onchange="updatePreview()" /><label for="includeLogo">Company Logo</label></div>
+<div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: #F5F3FF; border-radius: 8px; margin-top: 0.25rem; margin-bottom: 0.5rem;">
+  <label style="font-size: 0.75rem; font-weight: 600; color: #4F46E5; min-width: 50px;">Size</label>
+  <input type="range" id="logoSizeSlider" min="40" max="95" value="75" onchange="updatePreview(); document.getElementById('logoSizeDisplay').textContent = this.value + '%';" oninput="updatePreview(); document.getElementById('logoSizeDisplay').textContent = this.value + '%';" style="flex: 1;" />
+  <span id="logoSizeDisplay" style="font-size: 0.75rem; color: #64748B; min-width: 35px;">75%</span>
+</div>
             <div class="element-toggle" id="netQuantityToggle"><input type="checkbox" id="includeNetQuantity" checked onchange="updatePreview()" /><label for="includeNetQuantity">Net Quantity (FDA Required)</label></div>
+<div id="netQuantityOptions" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: #F0FDF4; border-radius: 8px; margin-top: 0.25rem; margin-bottom: 0.5rem;">
+  <label style="font-size: 0.75rem; font-weight: 600; color: #059669; min-width: 50px;">Color</label>
+  <input type="color" id="netQuantityColor" value="#1E293B" onchange="updatePreview()" style="width: 32px; height: 24px; border: 1px solid #10B981; border-radius: 4px; cursor: pointer;" />
+</div>
             <div class="element-toggle"><input type="checkbox" id="includeNutrition" onchange="updatePreview()" /><label for="includeNutrition">Nutrition Facts</label></div>
             <div class="element-toggle"><input type="checkbox" id="includeCustomerQR" checked onchange="updatePreview()" /><label for="includeCustomerQR">Customer QR Code</label></div>
             <div class="element-toggle"><input type="checkbox" id="includeInventoryQR" onchange="updatePreview()" /><label for="includeInventoryQR">Inventory QR Code</label></div>
@@ -885,7 +894,6 @@
     <i class="fas fa-info-circle"></i> <span id="pageCountInfo">This will create 1 page</span>
   </div>
 </div>
-<button class="btn btn-secondary" id="rearrangeBtn" onclick="toggleRearrangeMode()" style="margin-top: 1rem; width: 100%;"><i class="fas fa-arrows-alt"></i> Rearrange Elements</button>
         </div>
         <div class="label-preview-section">
           <h4 style="align-self: flex-start; margin-bottom: 0;"><i class="fas fa-eye" style="color: #4F46E5;"></i> Preview</h4>
@@ -969,6 +977,8 @@
   borderStyle: 'none',
   borderColor: '#1E293B',
   borderWidth: 2,
+  logoSize: 75,
+  netQuantityColor: '#1E293B',
   elements: {
         logo: { enabled: true, x: 'center', y: 10, width: 140, height: 120 },
         netQuantity: { enabled: true, x: 'center', y: 'below-logo', width: 80, height: 24 },
@@ -1118,8 +1128,9 @@
         const nf = items[0]?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
         const nq = items[0]?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
         
-        const logoW = Math.min(labelW * 0.7, 2.5);
-        const logoH = Math.min(labelH * 0.35, 1.8);
+        const logoPercent = (labelConfig.logoSize || 75) / 100;
+const logoW = labelW * logoPercent;
+const logoH = labelH * 0.55 * logoPercent;
         const logoX = (labelW - logoW) / 2;
         const logoY = 0.15;
         
@@ -1168,17 +1179,17 @@
             try { pdf.addImage(companyLogo, 'PNG', x + logoX, y + logoY, logoW, logoH); } catch (e) {}
           }
           
-          if (labelConfig.elements.netQuantity.enabled && nq) {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setDrawColor(30, 41, 59);
-            pdf.setLineWidth(0.015);
-            pdf.rect(x + netQtyX, y + netQtyY, netQtyW, netQtyH, 'FD');
-            pdf.setFontSize(10);
-            pdf.setFont('helvetica', 'bold');
-            pdf.setTextColor(30, 41, 59);
-            const nqText = nq.display || (nq.value + ' ' + nq.unit);
-            pdf.text(nqText, x + netQtyX + netQtyW / 2, y + netQtyY + netQtyH / 2 + 0.04, { align: 'center' });
-          }
+         if (labelConfig.elements.netQuantity.enabled && nq) {
+  const nqText = nq.display || (nq.value + ' ' + nq.unit);
+  const nqColorHex = labelConfig.netQuantityColor || '#1E293B';
+  const nqRgb = hexToRgb(nqColorHex);
+  pdf.setFontSize(11);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setTextColor(nqRgb.r, nqRgb.g, nqRgb.b);
+  const nqX = labelConfig.elements.inventoryQR.enabled ? (qrPadding + qrSize + 0.1) : 0.12;
+  const nqY = qrY + qrSize - 0.02;
+  pdf.text(nqText, x + nqX, y + nqY);
+}
           
           if (labelConfig.elements.nutrition.enabled) {
             const nutX = 0.12;
@@ -1258,21 +1269,6 @@ window.zoomPreview = function(d) {
       updatePreview();
     };
 
-    window.toggleRearrangeMode = function() {
-      rearrangeMode = !rearrangeMode;
-      const btn = document.getElementById('rearrangeBtn');
-      if (rearrangeMode) {
-        btn.innerHTML = '<i class="fas fa-check"></i> Done Rearranging';
-        btn.style.background = '#10B981';
-        btn.style.color = 'white';
-      } else {
-        btn.innerHTML = '<i class="fas fa-arrows-alt"></i> Rearrange Elements';
-        btn.style.background = '';
-        btn.style.color = '';
-      }
-      updatePreview();
-    };
-
     function calculateMaxLabelsPerSheet() {
       const pageW = 8.5, pageH = 11, margin = 0.25;
       const usableW = pageW - (margin * 2);
@@ -1303,7 +1299,7 @@ window.zoomPreview = function(d) {
       document.getElementById('pageCountInfo').innerHTML = '📋 This will create <strong>' + totalPages + ' page' + (totalPages > 1 ? 's' : '') + '</strong> for <strong>' + itemCount + ' label' + (itemCount > 1 ? 's' : '') + '</strong>';
     }
 
-   function updatePreview() {
+  function updatePreview() {
   const preview = document.getElementById('labelPreview');
   const scale = previewZoom / 100;
   const pxPerInch = 72;
@@ -1318,14 +1314,18 @@ window.zoomPreview = function(d) {
   const borderStyle = document.getElementById('labelBorderStyle')?.value || 'none';
   const borderColor = document.getElementById('labelBorderColor')?.value || '#1E293B';
   const borderWidth = parseInt(document.getElementById('labelBorderWidth')?.value) || 2;
+  const logoSize = parseInt(document.getElementById('logoSizeSlider')?.value) || 75;
+  const netQuantityColor = document.getElementById('netQuantityColor')?.value || '#1E293B';
   
   // Update labelConfig
   labelConfig.bgColor = bgColor;
   labelConfig.borderStyle = borderStyle;
   labelConfig.borderColor = borderColor;
   labelConfig.borderWidth = borderWidth;
+  labelConfig.logoSize = logoSize;
+  labelConfig.netQuantityColor = netQuantityColor;
   
-  // Update element enabled states from checkboxes
+  // Update element enabled states
   labelConfig.elements.logo.enabled = document.getElementById('includeLogo')?.checked ?? true;
   labelConfig.elements.netQuantity.enabled = document.getElementById('includeNetQuantity')?.checked ?? true;
   labelConfig.elements.nutrition.enabled = document.getElementById('includeNutrition')?.checked ?? false;
@@ -1336,6 +1336,7 @@ window.zoomPreview = function(d) {
   preview.style.background = bgColor;
   
   // Apply border
+  preview.style.borderRadius = '0';
   if (borderStyle === 'none') {
     preview.style.border = '1px solid #E2E8F0';
   } else if (borderStyle === 'double') {
@@ -1347,11 +1348,6 @@ window.zoomPreview = function(d) {
     preview.style.borderRadius = '12px';
   } else {
     preview.style.border = borderWidth + 'px solid ' + borderColor;
-    preview.style.borderRadius = '0';
-  }
-  
-  if (borderStyle !== 'rounded') {
-    preview.style.borderRadius = '0';
   }
   
   // Build preview content
@@ -1360,57 +1356,55 @@ window.zoomPreview = function(d) {
   const nf = item.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
   const nq = item.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
   
-  // Logo
+  // Calculate QR positions first (we need these for net quantity alignment)
+  const qrSize = Math.min(60 * scale, w * 0.28);
+  const qrPadding = 10 * scale;
+  const qrBottomY = h - qrSize - qrPadding - (12 * scale);
+  
+  // Logo - BIG, using slider value
   if (labelConfig.elements.logo.enabled && companyLogo) {
-    const logoW = Math.min(w * 0.7, 180 * scale);
-    const logoH = Math.min(h * 0.35, 130 * scale);
+    const logoPercent = logoSize / 100;
+    const logoW = w * logoPercent;
+    const logoH = h * 0.55 * logoPercent;
     const logoX = (w - logoW) / 2;
-    const logoY = 10 * scale;
-    html += '<div class="label-element" data-element="logo" style="left:' + logoX + 'px;top:' + logoY + 'px;width:' + logoW + 'px;height:' + logoH + 'px;' + (rearrangeMode ? 'border:2px dashed #4F46E5;cursor:move;' : '') + '"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
+    const logoY = 8 * scale;
+    html += '<div style="position:absolute;left:' + logoX + 'px;top:' + logoY + 'px;width:' + logoW + 'px;height:' + logoH + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
   }
   
-  // Net Quantity
-  if (labelConfig.elements.netQuantity.enabled && nq) {
-    const nqW = 80 * scale;
-    const nqH = 24 * scale;
-    const nqX = (w - nqW) / 2;
-    const nqY = (labelConfig.elements.logo.enabled && companyLogo) ? (h * 0.4) : (20 * scale);
-    const nqText = nq.display || (nq.value + ' ' + nq.unit);
-    html += '<div class="label-element net-quantity-display" data-element="netQuantity" style="left:' + nqX + 'px;top:' + nqY + 'px;width:' + nqW + 'px;height:' + nqH + 'px;font-size:' + (10 * scale) + 'px;line-height:' + nqH + 'px;' + (rearrangeMode ? 'border:2px dashed #10B981;cursor:move;' : '') + '">' + escapeHtml(nqText) + '</div>';
-  }
-  
-  // Nutrition Facts (mini version for preview)
+  // Nutrition Facts (if enabled)
   if (labelConfig.elements.nutrition.enabled) {
-    const nutW = 100 * scale;
-    const nutH = 120 * scale;
-    const nutX = 10 * scale;
-    const nutY = h * 0.45;
-    html += '<div class="label-element" data-element="nutrition" style="left:' + nutX + 'px;top:' + nutY + 'px;width:' + nutW + 'px;height:' + nutH + 'px;background:white;border:1px solid #000;font-size:' + (6 * scale) + 'px;padding:' + (4 * scale) + 'px;overflow:hidden;' + (rearrangeMode ? 'border:2px dashed #F59E0B;cursor:move;' : '') + '"><strong style="font-size:' + (8 * scale) + 'px;">Nutrition Facts</strong><hr style="margin:2px 0;border:none;border-top:1px solid #000;"/><div>Serving: ' + (nf.servingSize || '___') + '</div><div><strong>Calories: ' + (nf.calories || '0') + '</strong></div><div>Fat: ' + (nf.totalFat || '0') + 'g</div><div>Carbs: ' + (nf.totalCarbs || '0') + 'g</div><div>Protein: ' + (nf.protein || '0') + 'g</div></div>';
+    const nutW = Math.min(90 * scale, w * 0.4);
+    const nutH = Math.min(100 * scale, h * 0.35);
+    const nutX = 8 * scale;
+    const nutY = h * 0.38;
+    html += '<div style="position:absolute;left:' + nutX + 'px;top:' + nutY + 'px;width:' + nutW + 'px;height:' + nutH + 'px;background:white;border:1px solid #000;font-size:' + (5 * scale) + 'px;padding:' + (3 * scale) + 'px;overflow:hidden;"><strong style="font-size:' + (7 * scale) + 'px;">Nutrition Facts</strong><hr style="margin:2px 0;border:none;border-top:1px solid #000;"/><div>Serving: ' + (nf.servingSize || '___') + '</div><div><strong>Cal: ' + (nf.calories || '0') + '</strong></div><div>Fat: ' + (nf.totalFat || '0') + 'g</div></div>';
   }
   
-  // Customer QR
+  // Customer QR (bottom right)
   if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
-    const qrSize = Math.min(60 * scale, w * 0.28);
-    const qrX = w - qrSize - (12 * scale);
-    const qrY = h - qrSize - (25 * scale);
-    html += '<div class="label-element" data-element="customerQR" style="left:' + qrX + 'px;top:' + qrY + 'px;width:' + qrSize + 'px;text-align:center;' + (rearrangeMode ? 'border:2px dashed #4F46E5;cursor:move;' : '') + '"><img src="' + item.qrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;" /><div style="font-size:' + (5 * scale) + 'px;font-weight:bold;color:#1E293B;margin-top:2px;">SCAN TO VERIFY</div></div>';
+    const qrX = w - qrSize - qrPadding;
+    html += '<div style="position:absolute;left:' + qrX + 'px;top:' + qrBottomY + 'px;width:' + qrSize + 'px;text-align:center;"><img src="' + item.qrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;background:white;" /><div style="font-size:' + (4 * scale) + 'px;font-weight:bold;color:#1E293B;margin-top:1px;">SCAN TO VERIFY</div></div>';
   }
   
-  // Inventory QR
+  // Inventory QR (bottom left)
   if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
-    const qrSize = Math.min(60 * scale, w * 0.28);
-    const qrX = 12 * scale;
-    const qrY = h - qrSize - (25 * scale);
-    html += '<div class="label-element" data-element="inventoryQR" style="left:' + qrX + 'px;top:' + qrY + 'px;width:' + qrSize + 'px;text-align:center;' + (rearrangeMode ? 'border:2px dashed #64748B;cursor:move;' : '') + '"><img src="' + item.inventoryQrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;" /><div style="font-size:' + (4 * scale) + 'px;color:#64748B;margin-top:2px;">INVENTORY</div></div>';
+    html += '<div style="position:absolute;left:' + qrPadding + 'px;top:' + qrBottomY + 'px;width:' + qrSize + 'px;text-align:center;"><img src="' + item.inventoryQrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;background:white;" /><div style="font-size:' + (3 * scale) + 'px;color:#64748B;margin-top:1px;">INVENTORY</div></div>';
   }
   
-  // SKU at bottom
+  // Net Quantity - NO BOX, just bold text, aligned with QR bottom
+  if (labelConfig.elements.netQuantity.enabled && nq) {
+    const nqText = nq.display || (nq.value + ' ' + nq.unit);
+    const nqFontSize = 11 * scale;
+    const nqY = qrBottomY + qrSize - nqFontSize;
+    const nqX = labelConfig.elements.inventoryQR.enabled ? (qrPadding + qrSize + (10 * scale)) : qrPadding;
+    html += '<div style="position:absolute;left:' + nqX + 'px;top:' + nqY + 'px;font-size:' + nqFontSize + 'px;font-weight:800;color:' + netQuantityColor + ';">' + escapeHtml(nqText) + '</div>';
+  }
+  
+  // SKU at very bottom center
   const sku = item.sku || item.productId || 'SKU';
-  html += '<div style="position:absolute;bottom:' + (4 * scale) + 'px;left:0;right:0;text-align:center;font-size:' + (4 * scale) + 'px;color:#94A3B8;">SKU: ' + escapeHtml(sku) + '</div>';
+  html += '<div style="position:absolute;bottom:' + (3 * scale) + 'px;left:0;right:0;text-align:center;font-size:' + (4 * scale) + 'px;color:#94A3B8;">SKU: ' + escapeHtml(sku) + '</div>';
   
   preview.innerHTML = html;
-  
-  // Update layout info
   updateLayoutInfo();
 }
     function loadImageAsDataUrl(url) {

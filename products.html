@@ -662,6 +662,232 @@
       .qr-codes-container { grid-template-columns: 1fr; }
       .label-modal-body { grid-template-columns: 1fr; }
     }
+    /* ==========================================
+   NEW LABEL BUILDER STYLES
+   ========================================== */
+
+/* Label Upload Zone */
+.label-upload-zone {
+  border: 3px dashed #CBD5E1;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s;
+  background: #F8FAFC;
+  margin-bottom: 1rem;
+}
+.label-upload-zone:hover, .label-upload-zone.dragover {
+  border-color: #10B981;
+  background: #F0FDF4;
+}
+.upload-prompt {
+  cursor: pointer;
+}
+.upload-prompt i {
+  font-size: 3rem;
+  color: #94A3B8;
+  margin-bottom: 1rem;
+  display: block;
+}
+.upload-prompt h3 {
+  font-size: 1.25rem;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+.upload-prompt p {
+  color: #64748B;
+  margin-bottom: 0.5rem;
+}
+.upload-hint {
+  font-size: 0.8rem;
+  color: #94A3B8;
+}
+.upload-preview {
+  position: relative;
+  display: inline-block;
+}
+.upload-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.change-image-btn {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 2px solid #E2E8F0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.change-image-btn:hover {
+  border-color: #10B981;
+  color: #059669;
+}
+
+/* Saved Labels */
+.saved-labels-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #F0F9FF;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+.saved-labels-section label {
+  font-weight: 600;
+  color: #0369A1;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+.saved-labels-section select {
+  flex: 1;
+  padding: 0.5rem;
+  border: 2px solid #BAE6FD;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* QR Settings */
+.qr-settings {
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 1rem;
+}
+.qr-setting-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.qr-setting-row label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #334155;
+  min-width: 60px;
+}
+.qr-setting-row input[type="range"] {
+  flex: 1;
+}
+.qr-setting-row span {
+  font-size: 0.8rem;
+  color: #64748B;
+  min-width: 35px;
+}
+
+/* QR Position Grid */
+.qr-position-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 80px;
+}
+.qr-pos-btn {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #E2E8F0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.qr-pos-btn:hover {
+  border-color: #4F46E5;
+}
+.qr-pos-btn.active {
+  background: #4F46E5;
+  color: white;
+  border-color: #4F46E5;
+}
+
+.qr-drag-hint {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+.qr-drag-hint i {
+  color: #4F46E5;
+}
+
+/* Preview placeholder */
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94A3B8;
+}
+.preview-placeholder i {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+.preview-placeholder span {
+  font-size: 0.9rem;
+}
+
+.preview-hint {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin-bottom: 0.5rem;
+  align-self: flex-start;
+}
+
+/* Save Label Row */
+.save-label-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.save-label-row input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.save-label-row input:focus {
+  outline: none;
+  border-color: #4F46E5;
+}
+
+/* Draggable QR in Preview */
+.qr-overlay {
+  position: absolute;
+  cursor: move;
+  background: white;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: box-shadow 0.2s;
+  user-select: none;
+}
+.qr-overlay:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.qr-overlay.dragging {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 100;
+}
+.qr-overlay img {
+  display: block;
+  pointer-events: none;
+}
+.qr-overlay .qr-label {
+  font-size: 6px;
+  text-align: center;
+  color: #334155;
+  font-weight: 700;
+  margin-top: 2px;
+}
   </style>
 </head>
 <body>
@@ -685,23 +911,7 @@
       </div>
     </div>
 
-    <!-- Company Logo Banner -->
-    <div class="logo-banner" id="logoBanner">
-      <input type="file" id="logoInput" accept="image/*" style="display: none;" />
-      <div class="logo-upload-slot" id="logoSlot" onclick="document.getElementById('logoInput').click()">
-        <i class="fas fa-image" id="logoPlaceholder"></i>
-        <img id="logoPreview" src="" style="display: none;" />
-      </div>
-      <div class="logo-banner-text">
-        <h3>Company Logo</h3>
-        <p id="logoStatus">Click to upload your logo for product labels</p>
-      </div>
-      <div class="logo-banner-actions" id="logoActions" style="display: none;">
-        <button class="logo-change-btn" onclick="document.getElementById('logoInput').click()">Change</button>
-        <button class="logo-remove-btn" onclick="removeCompanyLogo()">Remove</button>
-      </div>
-    </div>
-
+    
     <!-- Filters -->
     <div class="filters-bar">
       <div class="search-box">
@@ -802,118 +1012,144 @@
   </div>
 
   <!-- Full Label Builder Modal -->
-  <div class="label-modal-overlay" id="labelModalOverlay" onclick="closeLabelModal(event)">
-    <div class="label-modal" onclick="event.stopPropagation()">
-      <div class="label-modal-header">
-        <h2><i class="fas fa-tag"></i> Full Label Builder</h2>
-        <button class="batch-modal-close" onclick="closeLabelModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="labelBatchInfo" style="padding: 0 2rem; color: #64748B; font-size: 0.9rem;"></div>
-      <div class="label-modal-body">
-        <div class="label-config-section">
-          <h4><i class="fas fa-ruler-combined"></i> Sticker Size</h4>
-          <div class="size-options">
-            <div class="size-option selected" data-width="4" data-height="3" onclick="selectSize(this)">
-              <div class="size-option-name">Standard</div><div class="size-option-dims">4" × 3"</div>
-            </div>
-            <div class="size-option" data-width="4" data-height="6" onclick="selectSize(this)">
-              <div class="size-option-name">Tall</div><div class="size-option-dims">4" × 6"</div>
-            </div>
-            <div class="size-option" data-width="2" data-height="4" onclick="selectSize(this)">
-              <div class="size-option-name">Slim</div><div class="size-option-dims">2" × 4"</div>
-            </div>
-            <div class="size-option" data-width="3" data-height="3" onclick="selectSize(this)">
-              <div class="size-option-name">Square</div><div class="size-option-dims">3" × 3"</div>
-            </div>
-            <div class="size-option" data-width="2.25" data-height="7.5" onclick="selectSize(this)">
-              <div class="size-option-name">Bottle</div><div class="size-option-dims">2.25" × 7.5"</div>
-            </div>
-            <div class="size-option" data-width="0" data-height="0" onclick="selectSize(this)">
-              <div class="size-option-name">Custom</div><div class="size-option-dims">Your size</div>
-            </div>
+<div class="label-modal-overlay" id="labelModalOverlay" onclick="closeLabelModal(event)">
+  <div class="label-modal" onclick="event.stopPropagation()">
+    <div class="label-modal-header">
+      <h2><i class="fas fa-tag"></i> Full Label Builder</h2>
+      <button class="batch-modal-close" onclick="closeLabelModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="labelBatchInfo" style="padding: 0 2rem; color: #64748B; font-size: 0.9rem;"></div>
+    
+    <div class="label-modal-body">
+      <!-- LEFT COLUMN: Upload & Config -->
+      <div class="label-config-section">
+        
+        <!-- STEP 1: Upload Label Image -->
+        <div class="label-upload-zone" id="labelUploadZone">
+          <input type="file" id="labelImageInput" accept="image/*" style="display: none;" />
+          <div class="upload-prompt" id="uploadPrompt" onclick="document.getElementById('labelImageInput').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Upload Your Label Design</h3>
+            <p>Drop your full label image here, or click to browse</p>
+            <span class="upload-hint">PNG, JPG up to 10MB • This should be your complete label design</span>
           </div>
-          <div class="custom-size-inputs" id="customSizeInputs">
-            <input type="number" id="customWidth" placeholder="Width" step="0.25" min="1" max="12" value="4" onchange="updateCustomSize()" />
-            <span style="color: #64748B;">×</span>
-            <input type="number" id="customHeight" placeholder="Height" step="0.25" min="1" max="12" value="6" onchange="updateCustomSize()" />
-            <span style="color: #64748B;">inches</span>
+          <div class="upload-preview" id="uploadPreview" style="display: none;">
+            <img id="labelImagePreview" src="" />
+            <button class="change-image-btn" onclick="document.getElementById('labelImageInput').click()">
+              <i class="fas fa-sync-alt"></i> Change Image
+            </button>
           </div>
-          <h4 style="margin-top: 1.5rem;"><i class="fas fa-layer-group"></i> Include Elements</h4>
-          <div class="element-toggles">
-            <div class="element-toggle"><input type="checkbox" id="includeLogo" checked onchange="updatePreview()" /><label for="includeLogo">Company Logo</label></div>
-<div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: #F5F3FF; border-radius: 8px; margin-top: 0.25rem; margin-bottom: 0.5rem;">
-  <label style="font-size: 0.75rem; font-weight: 600; color: #4F46E5; min-width: 50px;">Size</label>
-  <input type="range" id="logoSizeSlider" min="40" max="95" value="75" onchange="updatePreview(); document.getElementById('logoSizeDisplay').textContent = this.value + '%';" oninput="updatePreview(); document.getElementById('logoSizeDisplay').textContent = this.value + '%';" style="flex: 1;" />
-  <span id="logoSizeDisplay" style="font-size: 0.75rem; color: #64748B; min-width: 35px;">75%</span>
-</div>
-            <div class="element-toggle" id="netQuantityToggle"><input type="checkbox" id="includeNetQuantity" checked onchange="updatePreview()" /><label for="includeNetQuantity">Net Quantity (FDA Required)</label></div>
-<div id="netQuantityOptions" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: #F0FDF4; border-radius: 8px; margin-top: 0.25rem; margin-bottom: 0.5rem;">
-  <label style="font-size: 0.75rem; font-weight: 600; color: #059669; min-width: 50px;">Color</label>
-  <input type="color" id="netQuantityColor" value="#1E293B" onchange="updatePreview()" style="width: 32px; height: 24px; border: 1px solid #10B981; border-radius: 4px; cursor: pointer;" />
-</div>
-            <div class="element-toggle"><input type="checkbox" id="includeNutrition" onchange="updatePreview()" /><label for="includeNutrition">Nutrition Facts</label></div>
-            <div class="element-toggle"><input type="checkbox" id="includeCustomerQR" checked onchange="updatePreview()" /><label for="includeCustomerQR">Customer QR Code</label></div>
-            <div class="element-toggle"><input type="checkbox" id="includeInventoryQR" onchange="updatePreview()" /><label for="includeInventoryQR">Inventory QR Code</label></div>
-          </div>
-          <h4 style="margin-top: 1.5rem;"><i class="fas fa-palette"></i> Label Style</h4>
-<div class="style-options" style="display: flex; flex-direction: column; gap: 0.75rem;">
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <label style="font-size: 0.85rem; font-weight: 500; color: #334155; min-width: 100px;">Background</label>
-    <input type="color" id="labelBgColor" value="#ffffff" onchange="updatePreview()" style="width: 40px; height: 32px; border: 2px solid #E2E8F0; border-radius: 6px; cursor: pointer; padding: 2px;" />
-    <button class="btn btn-secondary" onclick="document.getElementById('labelBgColor').value='#ffffff'; updatePreview();" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;">Reset</button>
-  </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <label style="font-size: 0.85rem; font-weight: 500; color: #334155; min-width: 100px;">Border</label>
-    <select id="labelBorderStyle" onchange="updatePreview()" style="padding: 0.4rem 0.6rem; border: 2px solid #E2E8F0; border-radius: 6px; font-size: 0.85rem;">
-      <option value="none">None</option>
-      <option value="solid">Solid</option>
-      <option value="double">Double</option>
-      <option value="dashed">Dashed</option>
-      <option value="rounded">Rounded</option>
-    </select>
-    <input type="color" id="labelBorderColor" value="#1E293B" onchange="updatePreview()" style="width: 40px; height: 32px; border: 2px solid #E2E8F0; border-radius: 6px; cursor: pointer; padding: 2px;" />
-  </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <label style="font-size: 0.85rem; font-weight: 500; color: #334155; min-width: 100px;">Border Width</label>
-    <input type="range" id="labelBorderWidth" min="1" max="6" value="2" onchange="updatePreview(); document.getElementById('borderWidthDisplay').textContent = this.value + 'px';" style="flex: 1;" />
-    <span id="borderWidthDisplay" style="font-size: 0.8rem; color: #64748B; min-width: 30px;">2px</span>
-  </div>
-</div>
-<h4 style="margin-top: 1.5rem;"><i class="fas fa-file-alt"></i> Print Layout</h4>
-<div id="printLayoutInfo" style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
-  <div style="font-size: 0.85rem; color: #0369A1; margin-bottom: 0.5rem;">
-    <span id="layoutRecommendation">Calculating...</span>
-  </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <label style="font-size: 0.85rem; font-weight: 500; color: #334155;">Labels per sheet:</label>
-    <select id="labelsPerSheet" onchange="updateLayoutInfo()" style="padding: 0.4rem 0.6rem; border: 2px solid #E2E8F0; border-radius: 6px; font-size: 0.85rem; min-width: 80px;">
-      <option value="1">1</option>
-    </select>
-  </div>
-  <div style="font-size: 0.8rem; color: #64748B; margin-top: 0.5rem;">
-    <i class="fas fa-info-circle"></i> <span id="pageCountInfo">This will create 1 page</span>
-  </div>
-</div>
         </div>
-        <div class="label-preview-section">
-          <h4 style="align-self: flex-start; margin-bottom: 0;"><i class="fas fa-eye" style="color: #4F46E5;"></i> Preview</h4>
-          <div class="label-preview-controls">
-            <button class="btn btn-secondary" onclick="zoomPreview(-25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-minus"></i></button>
-            <span id="zoomLevel" style="font-size: 0.8rem; color: #64748B; min-width: 50px; text-align: center;">100%</span>
-            <button class="btn btn-secondary" onclick="zoomPreview(25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-plus"></i></button>
-          </div>
-          <div class="label-preview-container" id="labelPreview" style="width: 288px; height: 216px;"></div>
+        
+        <!-- Saved Labels Dropdown -->
+        <div class="saved-labels-section" id="savedLabelsSection">
+          <label><i class="fas fa-bookmark"></i> Or use a saved label:</label>
+          <select id="savedLabelsSelect" onchange="loadSavedLabel(this.value)">
+            <option value="">-- Select saved label --</option>
+          </select>
         </div>
+
+        <!-- STEP 2: Sticker Size -->
+        <h4><i class="fas fa-ruler-combined"></i> Sticker Size</h4>
+        <div class="size-options">
+          <div class="size-option" data-width="4" data-height="3" onclick="selectSize(this)">
+            <div class="size-option-name">Standard</div><div class="size-option-dims">4" × 3"</div>
+          </div>
+          <div class="size-option" data-width="4" data-height="6" onclick="selectSize(this)">
+            <div class="size-option-name">Tall</div><div class="size-option-dims">4" × 6"</div>
+          </div>
+          <div class="size-option" data-width="3" data-height="2" onclick="selectSize(this)">
+            <div class="size-option-name">Small</div><div class="size-option-dims">3" × 2"</div>
+          </div>
+          <div class="size-option selected" data-width="3" data-height="4" onclick="selectSize(this)">
+            <div class="size-option-name">Heavenly</div><div class="size-option-dims">3" × 4"</div>
+          </div>
+          <div class="size-option" data-width="2.25" data-height="7.5" onclick="selectSize(this)">
+            <div class="size-option-name">Bottle</div><div class="size-option-dims">2.25" × 7.5"</div>
+          </div>
+          <div class="size-option" data-width="0" data-height="0" onclick="selectSize(this)">
+            <div class="size-option-name">Custom</div><div class="size-option-dims">Your size</div>
+          </div>
+        </div>
+        <div class="custom-size-inputs" id="customSizeInputs">
+          <input type="number" id="customWidth" placeholder="Width" step="0.25" min="1" max="12" value="3" onchange="updateCustomSize()" />
+          <span style="color: #64748B;">×</span>
+          <input type="number" id="customHeight" placeholder="Height" step="0.25" min="1" max="12" value="4" onchange="updateCustomSize()" />
+          <span style="color: #64748B;">inches</span>
+        </div>
+
+        <!-- STEP 3: QR Code Settings -->
+        <h4 style="margin-top: 1.5rem;"><i class="fas fa-qrcode"></i> QR Code Settings</h4>
+        <div class="qr-settings">
+          <div class="qr-setting-row">
+            <label>Size</label>
+            <input type="range" id="qrSizeSlider" min="10" max="35" value="20" onchange="updateQRSize()" oninput="updateQRSize()" />
+            <span id="qrSizeDisplay">20%</span>
+          </div>
+          <div class="qr-setting-row">
+            <label>Position</label>
+            <div class="qr-position-grid">
+              <button class="qr-pos-btn" data-pos="top-left" onclick="setQRPosition('top-left')">↖</button>
+              <button class="qr-pos-btn" data-pos="top-right" onclick="setQRPosition('top-right')">↗</button>
+              <button class="qr-pos-btn" data-pos="bottom-left" onclick="setQRPosition('bottom-left')">↙</button>
+              <button class="qr-pos-btn active" data-pos="bottom-right" onclick="setQRPosition('bottom-right')">↘</button>
+            </div>
+          </div>
+          <p class="qr-drag-hint"><i class="fas fa-hand-pointer"></i> Or drag the QR code in the preview</p>
+        </div>
+
+        <!-- STEP 4: Print Layout -->
+        <h4 style="margin-top: 1.5rem;"><i class="fas fa-file-alt"></i> Print Layout</h4>
+        <div id="printLayoutInfo" style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
+          <div style="font-size: 0.85rem; color: #0369A1; margin-bottom: 0.5rem;">
+            <span id="layoutRecommendation">Calculating...</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label style="font-size: 0.85rem; font-weight: 500; color: #334155;">Labels per sheet:</label>
+            <select id="labelsPerSheet" onchange="updateLayoutInfo()" style="padding: 0.4rem 0.6rem; border: 2px solid #E2E8F0; border-radius: 6px; font-size: 0.85rem; min-width: 80px;">
+              <option value="1">1</option>
+            </select>
+          </div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 0.5rem;">
+            <i class="fas fa-info-circle"></i> <span id="pageCountInfo">This will create 1 page</span>
+          </div>
+        </div>
+
+        <!-- STEP 5: Save Label Template -->
+        <h4 style="margin-top: 1.5rem;"><i class="fas fa-save"></i> Save This Label</h4>
+        <div class="save-label-row">
+          <input type="text" id="saveLabelName" placeholder="e.g. Guava Lemonade 12oz" />
+          <button class="btn btn-secondary" onclick="saveCurrentLabel()"><i class="fas fa-bookmark"></i> Save</button>
+        </div>
+        
       </div>
-      <div class="label-modal-footer">
-        <button class="btn btn-secondary" onclick="closeLabelModal()">Cancel</button>
-        <button class="btn btn-success" id="downloadLabelsBtn" onclick="downloadLabels()"><i class="fas fa-download"></i> Download Labels (PDF)</button>
+
+      <!-- RIGHT COLUMN: Live Preview -->
+      <div class="label-preview-section">
+        <h4 style="align-self: flex-start; margin-bottom: 0;"><i class="fas fa-eye" style="color: #4F46E5;"></i> Live Preview</h4>
+        <p class="preview-hint">Drag the QR code to reposition</p>
+        <div class="label-preview-controls">
+          <button class="btn btn-secondary" onclick="zoomPreview(-25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-minus"></i></button>
+          <span id="zoomLevel" style="font-size: 0.8rem; color: #64748B; min-width: 50px; text-align: center;">100%</span>
+          <button class="btn btn-secondary" onclick="zoomPreview(25)" style="padding: 0.4rem 0.6rem;"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="label-preview-container" id="labelPreview" style="width: 216px; height: 288px;">
+          <div class="preview-placeholder">
+            <i class="fas fa-image"></i>
+            <span>Upload a label to preview</span>
+          </div>
+        </div>
       </div>
     </div>
+    
+    <div class="label-modal-footer">
+      <button class="btn btn-secondary" onclick="closeLabelModal()">Cancel</button>
+      <button class="btn btn-success" id="downloadLabelsBtn" onclick="downloadLabels()"><i class="fas fa-download"></i> Download Labels (PDF)</button>
+    </div>
   </div>
-
+</div>
   <script src="js/auth.js"></script>
-  <script>
+<script>
     requireAuth();
 
     let allProducts = [];
@@ -925,70 +1161,214 @@
     let currentZipProductName = null;
 
     // ==========================================
-    // COMPANY LOGO
+  // ==========================================
+    // LABEL BUILDER - NEW VERSION
     // ==========================================
-    let companyLogo = null;
+    let currentLabelBatch = null;
+    let currentLabelImage = null;
+    let qrPosition = { x: 'right', y: 'bottom' }; // bottom-right default
+    let qrSizePercent = 20;
+    let previewZoom = 100;
+    let savedLabels = JSON.parse(localStorage.getItem('biztrack_saved_labels') || '[]');
+    
+    let labelConfig = {
+      width: 3, 
+      height: 4
+    };
 
-    function initCompanyLogo() {
-      const saved = localStorage.getItem('biztrack_company_logo');
-      if (saved) {
-        companyLogo = saved;
-        document.getElementById('logoPreview').src = saved;
-        document.getElementById('logoPreview').style.display = 'block';
-        document.getElementById('logoPlaceholder').style.display = 'none';
-        document.getElementById('logoActions').style.display = 'flex';
-        document.getElementById('logoStatus').textContent = 'Logo saved for all labels';
-      }
-    }
-
-    document.getElementById('logoInput').addEventListener('change', async function(e) {
+    // Handle label image upload
+    document.getElementById('labelImageInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
+      
       const reader = new FileReader();
       reader.onload = function(ev) {
-        companyLogo = ev.target.result;
-        localStorage.setItem('biztrack_company_logo', companyLogo);
-        document.getElementById('logoPreview').src = companyLogo;
-        document.getElementById('logoPreview').style.display = 'block';
-        document.getElementById('logoPlaceholder').style.display = 'none';
-        document.getElementById('logoActions').style.display = 'flex';
-        document.getElementById('logoStatus').textContent = 'Logo saved for all labels';
+        currentLabelImage = ev.target.result;
+        document.getElementById('labelImagePreview').src = currentLabelImage;
+        document.getElementById('uploadPrompt').style.display = 'none';
+        document.getElementById('uploadPreview').style.display = 'block';
+        updatePreview();
       };
       reader.readAsDataURL(file);
     });
 
-    window.removeCompanyLogo = function() {
-      companyLogo = null;
-      localStorage.removeItem('biztrack_company_logo');
-      document.getElementById('logoPreview').src = '';
-      document.getElementById('logoPreview').style.display = 'none';
-      document.getElementById('logoPlaceholder').style.display = 'block';
-      document.getElementById('logoActions').style.display = 'none';
-      document.getElementById('logoStatus').textContent = 'Click to upload your logo for product labels';
+    // Drag and drop support for label upload
+    const uploadZone = document.getElementById('labelUploadZone');
+    if (uploadZone) {
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+      });
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+      });
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const input = document.getElementById('labelImageInput');
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          input.files = dataTransfer.files;
+          input.dispatchEvent(new Event('change'));
+        }
+      });
+    }
+
+    // QR Position buttons
+    window.setQRPosition = function(pos) {
+      document.querySelectorAll('.qr-pos-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.qr-pos-btn[data-pos="${pos}"]`)?.classList.add('active');
+      
+      const [y, x] = pos.split('-');
+      qrPosition = { x, y, custom: false };
+      updatePreview();
     };
 
-    // ==========================================
-    // LABEL BUILDER
-    // ==========================================
-    let currentLabelBatch = null;
-    let labelConfig = {
-  width: 4, height: 3,
-  bgColor: '#ffffff',
-  borderStyle: 'none',
-  borderColor: '#1E293B',
-  borderWidth: 2,
-  logoSize: 75,
-  netQuantityColor: '#1E293B',
-  elements: {
-        logo: { enabled: true, x: 'center', y: 10, width: 140, height: 120 },
-        netQuantity: { enabled: true, x: 'center', y: 'below-logo', width: 80, height: 24 },
-        nutrition: { enabled: false, x: 10, y: 'below-netqty', width: 100, height: 120 },
-        customerQR: { enabled: true, x: 'right', y: 'bottom', width: 60, height: 60 },
-        inventoryQR: { enabled: false, x: 'left', y: 'bottom', width: 60, height: 60 }
-      }
+    // QR Size slider
+    window.updateQRSize = function() {
+      qrSizePercent = parseInt(document.getElementById('qrSizeSlider').value);
+      document.getElementById('qrSizeDisplay').textContent = qrSizePercent + '%';
+      updatePreview();
     };
-    let previewZoom = 100;
-    
+
+    // Make QR draggable in preview
+    function initDraggableQR() {
+      const preview = document.getElementById('labelPreview');
+      const qrOverlay = preview.querySelector('.qr-overlay');
+      if (!qrOverlay) return;
+      
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+      
+      qrOverlay.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        qrOverlay.classList.add('dragging');
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = qrOverlay.offsetLeft;
+        initialTop = qrOverlay.offsetTop;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+        
+        // Constrain to preview bounds
+        const maxX = preview.offsetWidth - qrOverlay.offsetWidth;
+        const maxY = preview.offsetHeight - qrOverlay.offsetHeight;
+        newLeft = Math.max(0, Math.min(newLeft, maxX));
+        newTop = Math.max(0, Math.min(newTop, maxY));
+        
+        qrOverlay.style.left = newLeft + 'px';
+        qrOverlay.style.top = newTop + 'px';
+        
+        // Clear position button selection since user is custom positioning
+        document.querySelectorAll('.qr-pos-btn').forEach(btn => btn.classList.remove('active'));
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          qrOverlay.classList.remove('dragging');
+          // Save custom position as percentages for PDF generation
+          const preview = document.getElementById('labelPreview');
+          const qrOverlayEl = preview.querySelector('.qr-overlay');
+          if (qrOverlayEl) {
+            qrPosition = {
+              xPercent: (qrOverlayEl.offsetLeft / preview.offsetWidth) * 100,
+              yPercent: (qrOverlayEl.offsetTop / preview.offsetHeight) * 100,
+              custom: true
+            };
+          }
+        }
+      });
+    }
+
+    // Save current label as template
+    window.saveCurrentLabel = function() {
+      const name = document.getElementById('saveLabelName').value.trim();
+      if (!name) {
+        alert('Please enter a name for this label');
+        return;
+      }
+      if (!currentLabelImage) {
+        alert('Please upload a label image first');
+        return;
+      }
+      
+      const labelTemplate = {
+        id: Date.now(),
+        name: name,
+        image: currentLabelImage,
+        width: labelConfig.width,
+        height: labelConfig.height,
+        qrSizePercent: qrSizePercent,
+        qrPosition: qrPosition
+      };
+      
+      savedLabels.push(labelTemplate);
+      localStorage.setItem('biztrack_saved_labels', JSON.stringify(savedLabels));
+      updateSavedLabelsDropdown();
+      document.getElementById('saveLabelName').value = '';
+      alert('Label saved! You can reuse it for future batches.');
+    };
+
+    // Load saved label
+    window.loadSavedLabel = function(id) {
+      if (!id) return;
+      const label = savedLabels.find(l => l.id == id);
+      if (!label) return;
+      
+      currentLabelImage = label.image;
+      document.getElementById('labelImagePreview').src = currentLabelImage;
+      document.getElementById('uploadPrompt').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'block';
+      
+      labelConfig.width = label.width;
+      labelConfig.height = label.height;
+      qrSizePercent = label.qrSizePercent || 20;
+      qrPosition = label.qrPosition || { x: 'right', y: 'bottom' };
+      
+      document.getElementById('qrSizeSlider').value = qrSizePercent;
+      document.getElementById('qrSizeDisplay').textContent = qrSizePercent + '%';
+      
+      // Update size selection
+      document.querySelectorAll('.size-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (parseFloat(opt.dataset.width) === label.width && parseFloat(opt.dataset.height) === label.height) {
+          opt.classList.add('selected');
+        }
+      });
+      
+      // Update QR position buttons
+      if (!qrPosition.custom) {
+        const posKey = qrPosition.y + '-' + qrPosition.x;
+        document.querySelectorAll('.qr-pos-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.qr-pos-btn[data-pos="${posKey}"]`)?.classList.add('active');
+      }
+      
+      updatePreview();
+      updateLayoutInfo();
+    };
+
+    function updateSavedLabelsDropdown() {
+      const select = document.getElementById('savedLabelsSelect');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Select saved label --</option>';
+      savedLabels.forEach(label => {
+        const opt = document.createElement('option');
+        opt.value = label.id;
+        opt.textContent = label.name;
+        select.appendChild(opt);
+      });
+    }
 
     window.openLabelBuilder = function() {
       closeZipModal();
@@ -997,19 +1377,24 @@
       currentLabelBatch = batch;
       document.getElementById('labelBatchInfo').innerHTML = 'Batch: <strong>' + escapeHtml(batch.metadata?.batchDisplayName || batch.productName) + '</strong> • <strong>' + (batch.items?.length || 1) + '</strong> labels';
       
-      // Check for nutrition data
-      const hasNutrition = batch.items?.[0]?.metadata?.nutritionFacts || batch.metadata?.nutritionFacts;
-      document.getElementById('includeNutrition').checked = !!hasNutrition;
-      document.getElementById('includeNutrition').disabled = !hasNutrition;
-      document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      // Reset upload state
+      currentLabelImage = null;
+      document.getElementById('uploadPrompt').style.display = 'block';
+      document.getElementById('uploadPreview').style.display = 'none';
+      document.getElementById('labelImagePreview').src = '';
+      document.getElementById('saveLabelName').value = '';
       
-      // Check for net quantity data
-      const hasNetQuantity = batch.items?.[0]?.metadata?.netQuantity || batch.metadata?.netQuantity;
-      document.getElementById('includeNetQuantity').checked = !!hasNetQuantity;
-      document.getElementById('includeNetQuantity').disabled = !hasNetQuantity;
-      document.getElementById('netQuantityToggle').style.opacity = hasNetQuantity ? '1' : '0.5';
+      // Reset QR settings
+      qrSizePercent = 20;
+      qrPosition = { x: 'right', y: 'bottom', custom: false };
+      document.getElementById('qrSizeSlider').value = 20;
+      document.getElementById('qrSizeDisplay').textContent = '20%';
+      document.querySelectorAll('.qr-pos-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.qr-pos-btn[data-pos="bottom-right"]')?.classList.add('active');
       
+      updateSavedLabelsDropdown();
       updatePreview();
+      updateLayoutInfo();
       document.getElementById('labelModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     };
@@ -1019,19 +1404,24 @@
       currentLabelBatch = { ...p, items: [p] };
       document.getElementById('labelBatchInfo').innerHTML = 'Product: <strong>' + escapeHtml(p.productName) + '</strong>';
       
-      // Check for nutrition data
-      const hasNutrition = p.metadata?.nutritionFacts;
-      document.getElementById('includeNutrition').checked = !!hasNutrition;
-      document.getElementById('includeNutrition').disabled = !hasNutrition;
-      document.getElementById('includeNutrition').parentElement.style.opacity = hasNutrition ? '1' : '0.5';
+      // Reset upload state
+      currentLabelImage = null;
+      document.getElementById('uploadPrompt').style.display = 'block';
+      document.getElementById('uploadPreview').style.display = 'none';
+      document.getElementById('labelImagePreview').src = '';
+      document.getElementById('saveLabelName').value = '';
       
-      // Check for net quantity data
-      const hasNetQuantity = p.metadata?.netQuantity;
-      document.getElementById('includeNetQuantity').checked = !!hasNetQuantity;
-      document.getElementById('includeNetQuantity').disabled = !hasNetQuantity;
-      document.getElementById('netQuantityToggle').style.opacity = hasNetQuantity ? '1' : '0.5';
+      // Reset QR settings
+      qrSizePercent = 20;
+      qrPosition = { x: 'right', y: 'bottom', custom: false };
+      document.getElementById('qrSizeSlider').value = 20;
+      document.getElementById('qrSizeDisplay').textContent = '20%';
+      document.querySelectorAll('.qr-pos-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.qr-pos-btn[data-pos="bottom-right"]')?.classList.add('active');
       
+      updateSavedLabelsDropdown();
       updatePreview();
+      updateLayoutInfo();
       document.getElementById('labelModalOverlay').classList.add('show');
       document.body.style.overflow = 'hidden';
     };
@@ -1041,7 +1431,7 @@
       document.getElementById('labelModalOverlay').classList.remove('show');
       document.body.style.overflow = '';
       currentLabelBatch = null;
-      rearrangeMode = false;
+      currentLabelImage = null;
     };
 
     window.selectSize = function(el) {
@@ -1050,8 +1440,8 @@
       const w = parseFloat(el.dataset.width), h = parseFloat(el.dataset.height);
       if (w === 0) {
         document.getElementById('customSizeInputs').classList.add('show');
-        labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 4;
-        labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 6;
+        labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 3;
+        labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 4;
       } else {
         document.getElementById('customSizeInputs').classList.remove('show');
         labelConfig.width = w;
@@ -1062,14 +1452,109 @@
     };
 
     window.updateCustomSize = function() {
-      labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 4;
-      labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 6;
+      labelConfig.width = parseFloat(document.getElementById('customWidth').value) || 3;
+      labelConfig.height = parseFloat(document.getElementById('customHeight').value) || 4;
       updatePreview();
       updateLayoutInfo();
     };
 
+    window.zoomPreview = function(d) {
+      previewZoom = Math.max(50, Math.min(200, previewZoom + d));
+      document.getElementById('zoomLevel').textContent = previewZoom + '%';
+      updatePreview();
+    };
+
+    function calculateMaxLabelsPerSheet() {
+      const pageW = 8.5, pageH = 11, margin = 0.25;
+      const usableW = pageW - (margin * 2);
+      const usableH = pageH - (margin * 2);
+      const cols = Math.floor(usableW / labelConfig.width);
+      const rows = Math.floor(usableH / labelConfig.height);
+      return Math.max(1, cols * rows);
+    }
+
+    function updateLayoutInfo() {
+      const maxPerSheet = calculateMaxLabelsPerSheet();
+      const select = document.getElementById('labelsPerSheet');
+      if (!select) return;
+      const currentVal = parseInt(select.value) || maxPerSheet;
+      select.innerHTML = '';
+      for (let i = maxPerSheet; i >= 1; i--) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i + (i === maxPerSheet ? ' (recommended)' : '');
+        select.appendChild(opt);
+      }
+      select.value = Math.min(currentVal, maxPerSheet);
+      const cols = Math.floor(8 / labelConfig.width);
+      const rows = Math.floor(10.5 / labelConfig.height);
+      document.getElementById('layoutRecommendation').innerHTML = 'Based on your <strong>' + labelConfig.width + '" × ' + labelConfig.height + '"</strong> labels: <strong>' + maxPerSheet + ' per sheet</strong> (' + Math.max(1,cols) + ' across × ' + Math.max(1,rows) + ' down)';
+      const itemCount = currentLabelBatch?.items?.length || 1;
+      const labelsPerSheet = parseInt(select.value) || maxPerSheet;
+      const totalPages = Math.ceil(itemCount / labelsPerSheet);
+      document.getElementById('pageCountInfo').innerHTML = '📋 This will create <strong>' + totalPages + ' page' + (totalPages > 1 ? 's' : '') + '</strong> for <strong>' + itemCount + ' label' + (itemCount > 1 ? 's' : '') + '</strong>';
+    }
+
+    function updatePreview() {
+      const preview = document.getElementById('labelPreview');
+      if (!preview) return;
+      
+      const scale = previewZoom / 100;
+      const pxPerInch = 72;
+      const w = labelConfig.width * pxPerInch * scale;
+      const h = labelConfig.height * pxPerInch * scale;
+      
+      preview.style.width = w + 'px';
+      preview.style.height = h + 'px';
+      
+      // If no label image uploaded yet, show placeholder
+      if (!currentLabelImage) {
+        preview.innerHTML = '<div class="preview-placeholder"><i class="fas fa-image"></i><span>Upload a label to preview</span></div>';
+        return;
+      }
+      
+      const item = currentLabelBatch?.items?.[0] || currentLabelBatch || {};
+      const qrUrl = item.qrCodeUrl || '';
+      
+      // Calculate QR size based on percentage of smaller dimension
+      const qrSize = (Math.min(w, h) * qrSizePercent / 100);
+      const qrPadding = 8 * scale;
+      
+      // Calculate QR position
+      let qrLeft, qrTop;
+      if (qrPosition.custom) {
+        qrLeft = (qrPosition.xPercent / 100) * w;
+        qrTop = (qrPosition.yPercent / 100) * h;
+      } else {
+        qrLeft = qrPosition.x === 'right' ? (w - qrSize - qrPadding - 6) : qrPadding;
+        qrTop = qrPosition.y === 'bottom' ? (h - qrSize - qrPadding - 14) : qrPadding;
+      }
+      
+      let html = '';
+      
+      // Full bleed label image
+      html += `<img src="${currentLabelImage}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:4px;" />`;
+      
+      // QR Code overlay (draggable)
+      if (qrUrl) {
+        html += `<div class="qr-overlay" style="left:${qrLeft}px;top:${qrTop}px;width:${qrSize}px;">
+          <img src="${qrUrl}" style="width:100%;height:auto;border-radius:2px;" />
+          <div class="qr-label">SCAN TO VERIFY</div>
+        </div>`;
+      }
+      
+      preview.innerHTML = html;
+      
+      // Reinitialize draggable after rendering
+      setTimeout(initDraggableQR, 10);
+    }
+
     window.downloadLabels = async function() {
-      if (!currentLabelBatch) return;
+      if (!currentLabelBatch || !currentLabelImage) {
+        alert('Please upload a label image first');
+        return;
+      }
+      
       const btn = document.getElementById('downloadLabelsBtn');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
@@ -1108,39 +1593,11 @@
         const offsetX = (pageW - gridW) / 2;
         const offsetY = (pageH - gridH) / 2;
         
-        const bgColor = labelConfig.bgColor || '#ffffff';
-        const borderStyle = labelConfig.borderStyle || 'none';
-        const borderColor = labelConfig.borderColor || '#1E293B';
-        const borderWidth = (labelConfig.borderWidth || 2) / 72;
-        
-        function hexToRgb(hex) {
-          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 255, g: 255, b: 255 };
-        }
-        
-        const bgRgb = hexToRgb(bgColor);
-        const borderRgb = hexToRgb(borderColor);
-        
         const pdf = new jsPDF({ orientation: 'portrait', unit: 'in', format: 'letter' });
         
-        const nf = items[0]?.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
-        const nq = items[0]?.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
-        
-        const logoPercent = (labelConfig.logoSize || 75) / 100;
-const logoW = labelW * logoPercent;
-const logoH = labelH * 0.55 * logoPercent;
-        const logoX = (labelW - logoW) / 2;
-        const logoY = 0.15;
-        
-        const netQtyW = 1.0;
-        const netQtyH = 0.3;
-        const netQtyX = (labelW - netQtyW) / 2;
-        const netQtyY = logoY + logoH + 0.1;
-        
-        const qrSize = Math.min(0.7, labelW * 0.28);
-        const qrPadding = 0.08;
-        const qrX = labelW - qrSize - qrPadding - 0.15;
-        const qrY = labelH - qrSize - qrPadding - 0.25;
+        // QR size as percentage of smaller dimension
+        const qrSize = (Math.min(labelW, labelH) * qrSizePercent / 100);
+        const qrPadding = 0.06;
         
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
@@ -1155,96 +1612,41 @@ const logoH = labelH * 0.55 * logoPercent;
           const x = offsetX + (col * labelW);
           const y = offsetY + (row * labelH);
           
-          pdf.setFillColor(bgRgb.r, bgRgb.g, bgRgb.b);
-          pdf.rect(x, y, labelW, labelH, 'F');
+          // Full bleed label image
+          try {
+            pdf.addImage(currentLabelImage, 'PNG', x, y, labelW, labelH);
+          } catch (e) {
+            console.error('Failed to add label image', e);
+          }
           
-          if (borderStyle !== 'none') {
-            pdf.setDrawColor(borderRgb.r, borderRgb.g, borderRgb.b);
-            pdf.setLineWidth(borderWidth);
-            if (borderStyle === 'double') {
-              pdf.rect(x + borderWidth, y + borderWidth, labelW - borderWidth * 2, labelH - borderWidth * 2);
-              pdf.rect(x + borderWidth * 3, y + borderWidth * 3, labelW - borderWidth * 6, labelH - borderWidth * 6);
-            } else if (borderStyle === 'dashed') {
-              pdf.setLineDashPattern([0.1, 0.05], 0);
-              pdf.rect(x + borderWidth / 2, y + borderWidth / 2, labelW - borderWidth, labelH - borderWidth);
-              pdf.setLineDashPattern([], 0);
+          // QR Code overlay
+          if (item.qrCodeUrl) {
+            let qrX, qrY;
+            if (qrPosition.custom) {
+              qrX = x + (qrPosition.xPercent / 100) * labelW;
+              qrY = y + (qrPosition.yPercent / 100) * labelH;
             } else {
-              pdf.rect(x + borderWidth / 2, y + borderWidth / 2, labelW - borderWidth, labelH - borderWidth);
+              qrX = qrPosition.x === 'right' ? (x + labelW - qrSize - qrPadding) : (x + qrPadding);
+              qrY = qrPosition.y === 'bottom' ? (y + labelH - qrSize - qrPadding - 0.1) : (y + qrPadding);
             }
-          }
-          
-          if (labelConfig.elements.logo.enabled && companyLogo) {
-            try { pdf.addImage(companyLogo, 'PNG', x + logoX, y + logoY, logoW, logoH); } catch (e) {}
-          }
-          
-         if (labelConfig.elements.netQuantity.enabled && nq) {
-  const nqText = nq.display || (nq.value + ' ' + nq.unit);
-  const nqColorHex = labelConfig.netQuantityColor || '#1E293B';
-  const nqRgb = hexToRgb(nqColorHex);
-  pdf.setFontSize(11);
-  pdf.setFont('helvetica', 'bold');
-  pdf.setTextColor(nqRgb.r, nqRgb.g, nqRgb.b);
-  const nqX = labelConfig.elements.inventoryQR.enabled ? (qrPadding + qrSize + 0.1) : 0.12;
-  const nqY = qrY + qrSize - 0.02;
-  pdf.text(nqText, x + nqX, y + nqY);
-}
-          
-          if (labelConfig.elements.nutrition.enabled) {
-            const nutX = 0.12;
-            const nutY = netQtyY + netQtyH + 0.15;
-            const nutW = Math.min(1.2, labelW * 0.4);
-            const nutH = Math.min(1.5, labelH * 0.3);
-            pdf.setFillColor(255, 255, 255);
-            pdf.setDrawColor(0);
-            pdf.setLineWidth(0.015);
-            pdf.rect(x + nutX, y + nutY, nutW, nutH, 'FD');
-            pdf.setFontSize(7);
-            pdf.setFont('helvetica', 'bold');
-            pdf.setTextColor(0);
-            pdf.text('Nutrition Facts', x + nutX + 0.04, y + nutY + 0.1);
-            pdf.setLineWidth(0.01);
-            pdf.line(x + nutX, y + nutY + 0.12, x + nutX + nutW, y + nutY + 0.12);
-            pdf.setFontSize(5);
-            pdf.setFont('helvetica', 'normal');
-            let ty = nutY + 0.18;
-            pdf.text('Serving: ' + (nf.servingSize || '___'), x + nutX + 0.04, y + ty); ty += 0.07;
-            pdf.setFont('helvetica', 'bold');
-            pdf.text('Calories: ' + (nf.calories || '0'), x + nutX + 0.04, y + ty); ty += 0.07;
-            pdf.setFont('helvetica', 'normal');
-            pdf.text('Total Fat: ' + (nf.totalFat || '0') + 'g', x + nutX + 0.04, y + ty); ty += 0.07;
-            pdf.text('Total Carbs: ' + (nf.totalCarbs || '0') + 'g', x + nutX + 0.04, y + ty); ty += 0.07;
-            pdf.text('Protein: ' + (nf.protein || '0') + 'g', x + nutX + 0.04, y + ty);
-          }
-          
-          if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
+            
             try {
+              // White background for QR
               pdf.setFillColor(255, 255, 255);
-              pdf.rect(x + qrX - qrPadding, y + qrY - qrPadding, qrSize + qrPadding * 2, qrSize + qrPadding * 2 + 0.1, 'F');
-              const img = await loadImageAsDataUrl(item.qrCodeUrl);
-              pdf.addImage(img, 'PNG', x + qrX, y + qrY, qrSize, qrSize);
+              pdf.rect(qrX - 0.04, qrY - 0.04, qrSize + 0.08, qrSize + 0.12, 'F');
+              
+              const qrImg = await loadImageAsDataUrl(item.qrCodeUrl);
+              pdf.addImage(qrImg, 'PNG', qrX, qrY, qrSize, qrSize);
+              
+              // "SCAN TO VERIFY" text
               pdf.setFontSize(4);
               pdf.setFont('helvetica', 'bold');
               pdf.setTextColor(30, 41, 59);
-              pdf.text('SCAN TO VERIFY', x + qrX + qrSize / 2, y + qrY + qrSize + 0.08, { align: 'center' });
-            } catch (e) {}
+              pdf.text('SCAN TO VERIFY', qrX + qrSize / 2, qrY + qrSize + 0.07, { align: 'center' });
+            } catch (e) {
+              console.error('Failed to add QR', e);
+            }
           }
-          
-          if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
-            const invQrX = 0.15 + qrPadding;
-            try {
-              pdf.setFillColor(255, 255, 255);
-              pdf.rect(x + invQrX - qrPadding, y + qrY - qrPadding, qrSize + qrPadding * 2, qrSize + qrPadding * 2 + 0.08, 'F');
-              const img = await loadImageAsDataUrl(item.inventoryQrCodeUrl);
-              pdf.addImage(img, 'PNG', x + invQrX, y + qrY, qrSize, qrSize);
-              pdf.setFontSize(3);
-              pdf.setTextColor(100);
-              pdf.text('INVENTORY', x + invQrX + qrSize / 2, y + qrY + qrSize + 0.06, { align: 'center' });
-            } catch (e) {}
-          }
-          
-          pdf.setFontSize(3);
-          pdf.setTextColor(150);
-          pdf.text('SKU: ' + (item.sku || item.productId), x + labelW / 2, y + labelH - 0.06, { align: 'center' });
         }
         
         const totalPages = Math.ceil(items.length / labelsPerPage);
@@ -1256,155 +1658,12 @@ const logoH = labelH * 0.55 * logoPercent;
         
       } catch (err) {
         console.error('PDF Error:', err);
-   alert('PDF Error: ' + err.message);
+        alert('PDF Error: ' + err.message);
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-download"></i> Download Labels (PDF)';
       }
     };
-window.zoomPreview = function(d) {
-      previewZoom = Math.max(50, Math.min(200, previewZoom + d));
-      document.getElementById('zoomLevel').textContent = previewZoom + '%';
-      updatePreview();
-    };
 
-    function calculateMaxLabelsPerSheet() {
-      const pageW = 8.5, pageH = 11, margin = 0.25;
-      const usableW = pageW - (margin * 2);
-      const usableH = pageH - (margin * 2);
-      const cols = Math.floor(usableW / labelConfig.width);
-      const rows = Math.floor(usableH / labelConfig.height);
-      return Math.max(1, cols * rows);
-    }
-
-    function updateLayoutInfo() {
-      const maxPerSheet = calculateMaxLabelsPerSheet();
-      const select = document.getElementById('labelsPerSheet');
-      const currentVal = parseInt(select.value) || maxPerSheet;
-      select.innerHTML = '';
-      for (let i = maxPerSheet; i >= 1; i--) {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = i + (i === maxPerSheet ? ' (recommended)' : '');
-        select.appendChild(opt);
-      }
-      select.value = Math.min(currentVal, maxPerSheet);
-      const cols = Math.floor(8 / labelConfig.width);
-      const rows = Math.floor(10.5 / labelConfig.height);
-      document.getElementById('layoutRecommendation').innerHTML = 'Based on your <strong>' + labelConfig.width + '" × ' + labelConfig.height + '"</strong> labels: <strong>' + maxPerSheet + ' per sheet</strong> (' + Math.max(1,cols) + ' across × ' + Math.max(1,rows) + ' down)';
-      const itemCount = currentLabelBatch?.items?.length || 1;
-      const labelsPerSheet = parseInt(select.value) || maxPerSheet;
-      const totalPages = Math.ceil(itemCount / labelsPerSheet);
-      document.getElementById('pageCountInfo').innerHTML = '📋 This will create <strong>' + totalPages + ' page' + (totalPages > 1 ? 's' : '') + '</strong> for <strong>' + itemCount + ' label' + (itemCount > 1 ? 's' : '') + '</strong>';
-    }
-
-  function updatePreview() {
-  const preview = document.getElementById('labelPreview');
-  const scale = previewZoom / 100;
-  const pxPerInch = 72;
-  const w = labelConfig.width * pxPerInch * scale;
-  const h = labelConfig.height * pxPerInch * scale;
-  
-  preview.style.width = w + 'px';
-  preview.style.height = h + 'px';
-  
-  // Get style settings
-  const bgColor = document.getElementById('labelBgColor')?.value || '#ffffff';
-  const borderStyle = document.getElementById('labelBorderStyle')?.value || 'none';
-  const borderColor = document.getElementById('labelBorderColor')?.value || '#1E293B';
-  const borderWidth = parseInt(document.getElementById('labelBorderWidth')?.value) || 2;
-  const logoSize = parseInt(document.getElementById('logoSizeSlider')?.value) || 75;
-  const netQuantityColor = document.getElementById('netQuantityColor')?.value || '#1E293B';
-  
-  // Update labelConfig
-  labelConfig.bgColor = bgColor;
-  labelConfig.borderStyle = borderStyle;
-  labelConfig.borderColor = borderColor;
-  labelConfig.borderWidth = borderWidth;
-  labelConfig.logoSize = logoSize;
-  labelConfig.netQuantityColor = netQuantityColor;
-  
-  // Update element enabled states
-  labelConfig.elements.logo.enabled = document.getElementById('includeLogo')?.checked ?? true;
-  labelConfig.elements.netQuantity.enabled = document.getElementById('includeNetQuantity')?.checked ?? true;
-  labelConfig.elements.nutrition.enabled = document.getElementById('includeNutrition')?.checked ?? false;
-  labelConfig.elements.customerQR.enabled = document.getElementById('includeCustomerQR')?.checked ?? true;
-  labelConfig.elements.inventoryQR.enabled = document.getElementById('includeInventoryQR')?.checked ?? false;
-  
-  // Apply background
-  preview.style.background = bgColor;
-  
-  // Apply border
-  preview.style.borderRadius = '0';
-  if (borderStyle === 'none') {
-    preview.style.border = '1px solid #E2E8F0';
-  } else if (borderStyle === 'double') {
-    preview.style.border = borderWidth + 'px double ' + borderColor;
-  } else if (borderStyle === 'dashed') {
-    preview.style.border = borderWidth + 'px dashed ' + borderColor;
-  } else if (borderStyle === 'rounded') {
-    preview.style.border = borderWidth + 'px solid ' + borderColor;
-    preview.style.borderRadius = '12px';
-  } else {
-    preview.style.border = borderWidth + 'px solid ' + borderColor;
-  }
-  
-  // Build preview content
-  let html = '';
-  const item = currentLabelBatch?.items?.[0] || currentLabelBatch || {};
-  const nf = item.metadata?.nutritionFacts || currentLabelBatch?.metadata?.nutritionFacts || {};
-  const nq = item.metadata?.netQuantity || currentLabelBatch?.metadata?.netQuantity;
-  
-  // Calculate QR positions first (we need these for net quantity alignment)
-  const qrSize = Math.min(60 * scale, w * 0.28);
-  const qrPadding = 10 * scale;
-  const qrBottomY = h - qrSize - qrPadding - (12 * scale);
-  
-  // Logo - BIG, using slider value
-  if (labelConfig.elements.logo.enabled && companyLogo) {
-    const logoPercent = logoSize / 100;
-    const logoW = w * logoPercent;
-    const logoH = h * 0.55 * logoPercent;
-    const logoX = (w - logoW) / 2;
-    const logoY = 8 * scale;
-    html += '<div style="position:absolute;left:' + logoX + 'px;top:' + logoY + 'px;width:' + logoW + 'px;height:' + logoH + 'px;"><img src="' + companyLogo + '" style="width:100%;height:100%;object-fit:contain;" /></div>';
-  }
-  
-  // Nutrition Facts (if enabled)
-  if (labelConfig.elements.nutrition.enabled) {
-    const nutW = Math.min(90 * scale, w * 0.4);
-    const nutH = Math.min(100 * scale, h * 0.35);
-    const nutX = 8 * scale;
-    const nutY = h * 0.38;
-    html += '<div style="position:absolute;left:' + nutX + 'px;top:' + nutY + 'px;width:' + nutW + 'px;height:' + nutH + 'px;background:white;border:1px solid #000;font-size:' + (5 * scale) + 'px;padding:' + (3 * scale) + 'px;overflow:hidden;"><strong style="font-size:' + (7 * scale) + 'px;">Nutrition Facts</strong><hr style="margin:2px 0;border:none;border-top:1px solid #000;"/><div>Serving: ' + (nf.servingSize || '___') + '</div><div><strong>Cal: ' + (nf.calories || '0') + '</strong></div><div>Fat: ' + (nf.totalFat || '0') + 'g</div></div>';
-  }
-  
-  // Customer QR (bottom right)
-  if (labelConfig.elements.customerQR.enabled && item.qrCodeUrl) {
-    const qrX = w - qrSize - qrPadding;
-    html += '<div style="position:absolute;left:' + qrX + 'px;top:' + qrBottomY + 'px;width:' + qrSize + 'px;text-align:center;"><img src="' + item.qrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;background:white;" /><div style="font-size:' + (4 * scale) + 'px;font-weight:bold;color:#1E293B;margin-top:1px;">SCAN TO VERIFY</div></div>';
-  }
-  
-  // Inventory QR (bottom left)
-  if (labelConfig.elements.inventoryQR.enabled && item.inventoryQrCodeUrl) {
-    html += '<div style="position:absolute;left:' + qrPadding + 'px;top:' + qrBottomY + 'px;width:' + qrSize + 'px;text-align:center;"><img src="' + item.inventoryQrCodeUrl + '" style="width:' + qrSize + 'px;height:' + qrSize + 'px;border-radius:4px;background:white;" /><div style="font-size:' + (3 * scale) + 'px;color:#64748B;margin-top:1px;">INVENTORY</div></div>';
-  }
-  
-  // Net Quantity - NO BOX, just bold text, aligned with QR bottom
-  if (labelConfig.elements.netQuantity.enabled && nq) {
-    const nqText = nq.display || (nq.value + ' ' + nq.unit);
-    const nqFontSize = 11 * scale;
-    const nqY = qrBottomY + qrSize - nqFontSize;
-    const nqX = labelConfig.elements.inventoryQR.enabled ? (qrPadding + qrSize + (10 * scale)) : qrPadding;
-    html += '<div style="position:absolute;left:' + nqX + 'px;top:' + nqY + 'px;font-size:' + nqFontSize + 'px;font-weight:800;color:' + netQuantityColor + ';">' + escapeHtml(nqText) + '</div>';
-  }
-  
-  // SKU at very bottom center
-  const sku = item.sku || item.productId || 'SKU';
-  html += '<div style="position:absolute;bottom:' + (3 * scale) + 'px;left:0;right:0;text-align:center;font-size:' + (4 * scale) + 'px;color:#94A3B8;">SKU: ' + escapeHtml(sku) + '</div>';
-  
-  preview.innerHTML = html;
-  updateLayoutInfo();
-}
     function loadImageAsDataUrl(url) {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -1421,6 +1680,8 @@ window.zoomPreview = function(d) {
       });
     }
 
+    // Initialize saved labels dropdown on page load
+    updateSavedLabelsDropdown();
     // ==========================================
     // LOAD PRODUCTS
     // ==========================================
@@ -1520,15 +1781,18 @@ window.zoomPreview = function(d) {
       const displayTitle = (isBatch && product.metadata?.batchDisplayName) ? product.metadata.batchDisplayName : product.productName;
       const displaySku = (isBatch && product.metadata?.batchSkuPrefix) ? product.metadata.batchSkuPrefix : (product.sku || product.productId);
       
-      let actions = '<a href="' + (product.verificationUrl || '/verify.html?id=' + product.productId) + '" target="_blank" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>';
+      let actions = '';
+if (!isBatch) {
+  actions += '<a href="' + (product.verificationUrl || '/verify.html?id=' + product.productId) + '" target="_blank" class="btn btn-secondary"><i class="fas fa-eye"></i> View</a>';
+}
       
       if (!isBatch) {
         actions += '<button class="btn btn-primary" onclick=\'openQRModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-qrcode"></i> QR</button>';
         actions += '<button class="btn btn-success" onclick=\'openSingleLabel(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-tag"></i> Label</button>';
       } else {
-        actions += '<button class="btn btn-secondary" onclick=\'openBatchModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-list"></i> Items (' + itemCount + ')</button>';
-        actions += '<button class="btn btn-primary" onclick="openZipModal(\'' + product.batchGroupId + '\', \'' + escapeHtml(displayTitle).replace(/'/g, "\\'") + '\')"><i class="fas fa-download"></i> ZIP</button>';
-      }
+  actions += '<button class="btn btn-secondary" onclick=\'openBatchModal(' + JSON.stringify(product).replace(/'/g, "\\'") + ')\'><i class="fas fa-list"></i> Items (' + itemCount + ')</button>';
+  actions += '<button class="btn btn-success" onclick="openZipModal(\'' + product.batchGroupId + '\', \'' + escapeHtml(displayTitle).replace(/'/g, "\\'") + '\')"><i class="fas fa-download"></i> Label</button>';
+}
 
       return '<div class="product-card"><div class="product-card-header"><div><div class="product-card-title">' + escapeHtml(displayTitle) + '</div><div class="product-card-sku">' + escapeHtml(displaySku) + '</div></div><div class="product-card-badges">' + badges + '</div></div><div class="product-card-body"><div class="product-card-meta"><div class="meta-item"><div class="meta-item-label">Batch #</div><div class="meta-item-value">' + escapeHtml(product.batchNumber || 'N/A') + '</div></div><div class="meta-item"><div class="meta-item-label">Created</div><div class="meta-item-value">' + createdDate + '</div></div></div><div class="product-card-actions">' + actions + '</div></div></div>';
     }
@@ -1756,7 +2020,6 @@ window.zoomPreview = function(d) {
       if (e.key === 'Escape') { closeQRModal(); closeBatchModal(); closeZipModal(); closeLabelModal(); }
     });
 
-    initCompanyLogo();
     loadProducts();
   </script>
 </body>

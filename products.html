@@ -1775,7 +1775,6 @@
       let badges = '';
       if (product.isFinalized) badges += '<span class="badge badge-finalized">Finalized</span>';
       else badges += '<span class="badge badge-live">Live</span>';
-      if (isBatch) badges += '<span class="badge badge-batch">Batch ' + itemCount + '</span>';
       if (hasNutrition) badges += '<span class="badge badge-nutrition">Nutrition</span>';
 
       const displayTitle = (isBatch && product.metadata?.batchDisplayName) ? product.metadata.batchDisplayName : product.productName;

@@ -1773,8 +1773,7 @@
       const hasNutrition = product.metadata?.nutritionFacts || (isBatch && product.items?.[0]?.metadata?.nutritionFacts);
       
       let badges = '';
-      if (product.isFinalized) badges += '<span class="badge badge-finalized">Finalized</span>';
-      else badges += '<span class="badge badge-live">Live</span>';
+      
       if (hasNutrition) badges += '<span class="badge badge-nutrition">Nutrition</span>';
 
       const displayTitle = (isBatch && product.metadata?.batchDisplayName) ? product.metadata.batchDisplayName : product.productName;
